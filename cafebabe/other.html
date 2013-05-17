@@ -1,0 +1,2014 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>other</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="other"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-05-17T11:45+0800"/>
+<meta name="author" content="sunway"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style><link rel="stylesheet" title="Standard" href="style.css" type="text/css" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">other</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 lisp</a>
+<ul>
+<li><a href="#sec-1-1">1.1 严格的函数式语言的特点</a></li>
+<li><a href="#sec-1-2">1.2 函数式编程的优点</a></li>
+<li><a href="#sec-1-3">1.3 what is lexical closure(词法闭包)?</a></li>
+</ul>
+</li>
+<li><a href="#sec-2">2 Perl</a>
+<ul>
+<li><a href="#sec-2-1">2.1 script name</a></li>
+<li><a href="#sec-2-2">2.2 argv</a></li>
+<li><a href="#sec-2-3">2.3 match</a></li>
+<li><a href="#sec-2-4">2.4 file</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3 Mobile Dev</a></li>
+<li><a href="#sec-4">4 Design Pattern</a>
+<ul>
+<li><a href="#sec-4-1">4.1 abstract factory</a></li>
+<li><a href="#sec-4-2">4.2 adapter</a></li>
+<li><a href="#sec-4-3">4.3 bridge</a></li>
+<li><a href="#sec-4-4">4.4 decorator</a></li>
+<li><a href="#sec-4-5">4.5 facade</a></li>
+<li><a href="#sec-4-6">4.6 factory</a></li>
+<li><a href="#sec-4-7">4.7 observer</a></li>
+<li><a href="#sec-4-8">4.8 reactor / proactor</a></li>
+<li><a href="#sec-4-9">4.9 Visiton Pattern</a></li>
+<li><a href="#sec-4-10">4.10 singleton</a></li>
+</ul>
+</li>
+<li><a href="#sec-5">5 Python</a>
+<ul>
+<li><a href="#sec-5-1">5.1 map,reduce,filter, [x*x for x in l if x&gt;10]</a></li>
+<li><a href="#sec-5-2">5.2 zip</a></li>
+</ul>
+</li>
+<li><a href="#sec-6">6 Algorithm</a>
+<ul>
+<li><a href="#sec-6-1">6.1 并查集(union find set)</a></li>
+<li><a href="#sec-6-2">6.2 红黑树(rb tree)</a></li>
+<li><a href="#sec-6-3">6.3 迪卡尔树 (Cartesian tree)</a></li>
+<li><a href="#sec-6-4">6.4 素数的判定</a></li>
+<li><a href="#sec-6-5">6.5 ip checksum</a></li>
+<li><a href="#sec-6-6">6.6 牛顿迭代法求平方根</a></li>
+<li><a href="#sec-6-7">6.7 tricky</a></li>
+<li><a href="#sec-6-8">6.8 floyd-warshall</a></li>
+<li><a href="#sec-6-9">6.9 串</a></li>
+</ul>
+</li>
+<li><a href="#sec-7">7 Kernel</a>
+<ul>
+<li><a href="#sec-7-1">7.1 信号为什么会打断系统调用</a></li>
+<li><a href="#sec-7-2">7.2 组相联cache</a></li>
+<li><a href="#sec-7-3">7.3 spinlock</a></li>
+<li><a href="#sec-7-4">7.4 汇编(asm)指令的原子性 (atomic) ulk p186</a></li>
+<li><a href="#sec-7-5">7.5 networking</a></li>
+<li><a href="#sec-7-6">7.6 关于线程的user mode stack</a></li>
+<li><a href="#sec-7-7">7.7 vfs,fs,page cache(disk cache)与io scheduler的关系</a></li>
+<li><a href="#sec-7-8">7.8 clone,fork,vfork</a></li>
+<li><a href="#sec-7-9">7.9 kernel stack与task<sub>struct</sub></a></li>
+<li><a href="#sec-7-10">7.10 syscall(系统调用)</a></li>
+<li><a href="#sec-7-11">7.11 linux timer</a></li>
+<li><a href="#sec-7-12">7.12 linux内存管理</a></li>
+</ul>
+</li>
+<li><a href="#sec-8">8 Protocol</a>
+<ul>
+<li><a href="#sec-8-1">8.1 XMPP</a></li>
+<li><a href="#sec-8-2">8.2 OMA</a></li>
+<li><a href="#sec-8-3">8.3 SYNCML</a></li>
+<li><a href="#sec-8-4">8.4 TCP</a></li>
+<li><a href="#sec-8-5">8.5 HTTP</a></li>
+</ul>
+</li>
+<li><a href="#sec-9">9 Regexp</a>
+<ul>
+<li><a href="#sec-9-1">9.1 贪婪 vs. 非贪婪</a></li>
+</ul>
+</li>
+<li><a href="#sec-10">10 Network</a>
+<ul>
+<li><a href="#sec-10-1">10.1 FTP两种工作模式：主动模式（Active FTP）和被动模式（Passive FTP）</a></li>
+<li><a href="#sec-10-2">10.2 various tunnel</a></li>
+<li><a href="#sec-10-3">10.3 在Debian如何根据网线连接状况来决定是否应该启动网络并进行相关的配置呢？</a></li>
+<li><a href="#sec-10-4">10.4 dhclient.conf</a></li>
+<li><a href="#sec-10-5">10.5 ssh端口转发(隧道)</a></li>
+<li><a href="#sec-10-6">10.6 ssh反向隧道</a></li>
+<li><a href="#sec-10-7">10.7 ssh x11 forwarding</a></li>
+<li><a href="#sec-10-8">10.8 nc</a></li>
+<li><a href="#sec-10-9">10.9 scp&amp;sftp</a></li>
+<li><a href="#sec-10-10">10.10 openvpn</a></li>
+<li><a href="#sec-10-11">10.11 brctrl</a></li>
+<li><a href="#sec-10-12">10.12 dnsmasq</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> lisp</h2>
+<div class="outline-text-2" id="text-1">
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> 严格的函数式语言的特点</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<p>   <a href="http://en.wikipedia.org/wiki/Functional_program">http://en.wikipedia.org/wiki/Functional_program</a>
+</p><ul>
+<li>没有副作用 (no side effect) (没有IO,赋值语句等)
+</li>
+<li>词法闭包 (lexical closure)
+</li>
+<li>高阶函数 (返回函数的函数,high order function) 或者 first class function (函数作为一级对象)
+</li>
+<li>惰性求值 (lazy evaluation)
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 函数式编程的优点</h3>
+<div class="outline-text-3" id="text-1-2">
+
+<p>    <a href="why-fp-matters-zh.pdf">~/why-fp-matters-zh.pdf</a>
+    使用惰性求值求解平方根:
+</p>
+
+
+<pre class="example">(defun within (N sq eps)
+(if (&lt; (- N (expt (car sq) 2)) eps)
+(car sq)
+(within (N (cdr sq) eps))
+)
+)
+(defun repeat (N sq)
+(setq sq (/ (+ sq (/ N sq)) 2))
+(cons sq (repeat N sq))
+)
+(within 4.0 (repeat 4.0 1) 0.1)
+</pre>
+
+<p>
+    可惜这段代码在emacs不能工作,因为elisp不支持惰性求值&hellip;
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> what is lexical closure(词法闭包)?</h3>
+<div class="outline-text-3" id="text-1-3">
+
+<p>   <a href="http://www.ibm.com/developerworks/cn/linux/l-cn-closure/?ca=drs-tp2808">http://www.ibm.com/developerworks/cn/linux/l-cn-closure/?ca=drs-tp2808</a>
+   <a href="http://en.wikipedia.org/wiki/Lexical_closure">http://en.wikipedia.org/wiki/Lexical_closure</a>
+</p>
+<p>
+   elisp不支持词法闭包!
+</p>
+
+
+<pre class="example">(defun make-add (n)
+(function (lambda (m) (+ n m))))  ; Return a function.
+
+(fset 'add2 (make-add 2))  ; Define function add2
+(add2 4)  =&gt;  error: (void-variable n)
+
+</pre>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Perl</h2>
+<div class="outline-text-2" id="text-2">
+
+
+</div>
+
+<div id="outline-container-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> script name</h3>
+<div class="outline-text-3" id="text-2-1">
+
+<p>   $0
+</p></div>
+
+</div>
+
+<div id="outline-container-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> argv</h3>
+<div class="outline-text-3" id="text-2-2">
+
+<p>   @ARGV<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup> is the first command line argument
+</p></div>
+
+</div>
+
+<div id="outline-container-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> match</h3>
+<div class="outline-text-3" id="text-2-3">
+
+
+
+
+<pre class="example">@all_matches=($string=~/(match_pattern)/g);
+my ($match1,$match2)=($string=~/(match_pattern1)(match_pattern2)/);
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-2-4" class="outline-3">
+<h3 id="sec-2-4"><span class="section-number-3">2.4</span> file</h3>
+<div class="outline-text-3" id="text-2-4">
+
+
+
+
+<pre class="example">open LOG,"&lt;log_file";
+for (&lt;LOG&gt;) {
+  print "$_";
+}
+</pre>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Mobile Dev &nbsp;&nbsp;&nbsp;<span class="tag"><span class="ARCHIVE">ARCHIVE</span></span></h2>
+<div class="outline-text-2" id="text-3">
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Design Pattern</h2>
+<div class="outline-text-2" id="text-4">
+
+
+</div>
+
+<div id="outline-container-4-1" class="outline-3">
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> abstract factory</h3>
+<div class="outline-text-3" id="text-4-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> adapter</h3>
+<div class="outline-text-3" id="text-4-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-4-3" class="outline-3">
+<h3 id="sec-4-3"><span class="section-number-3">4.3</span> bridge</h3>
+<div class="outline-text-3" id="text-4-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-4-4" class="outline-3">
+<h3 id="sec-4-4"><span class="section-number-3">4.4</span> decorator</h3>
+<div class="outline-text-3" id="text-4-4">
+
+</div>
+
+</div>
+
+<div id="outline-container-4-5" class="outline-3">
+<h3 id="sec-4-5"><span class="section-number-3">4.5</span> facade</h3>
+<div class="outline-text-3" id="text-4-5">
+
+</div>
+
+</div>
+
+<div id="outline-container-4-6" class="outline-3">
+<h3 id="sec-4-6"><span class="section-number-3">4.6</span> factory</h3>
+<div class="outline-text-3" id="text-4-6">
+
+</div>
+
+</div>
+
+<div id="outline-container-4-7" class="outline-3">
+<h3 id="sec-4-7"><span class="section-number-3">4.7</span> observer</h3>
+<div class="outline-text-3" id="text-4-7">
+
+</div>
+
+</div>
+
+<div id="outline-container-4-8" class="outline-3">
+<h3 id="sec-4-8"><span class="section-number-3">4.8</span> reactor / proactor</h3>
+<div class="outline-text-3" id="text-4-8">
+
+</div>
+
+</div>
+
+<div id="outline-container-4-9" class="outline-3">
+<h3 id="sec-4-9"><span class="section-number-3">4.9</span> Visiton Pattern</h3>
+<div class="outline-text-3" id="text-4-9">
+
+<p>   see also <a href="#ASM">ASM</a>
+</p></div>
+
+</div>
+
+<div id="outline-container-4-10" class="outline-3">
+<h3 id="sec-4-10"><span class="section-number-3">4.10</span> singleton</h3>
+<div class="outline-text-3" id="text-4-10">
+
+<p>   see <a href="#double-checked-locking">@double-checked locking</a>
+   see <a href="#initialization-on-demand-holder">@initialization on-demand holder</a>
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> Python</h2>
+<div class="outline-text-2" id="text-5">
+
+
+</div>
+
+<div id="outline-container-5-1" class="outline-3">
+<h3 id="sec-5-1"><span class="section-number-3">5.1</span> map,reduce,filter, [x*x for x in l if x&gt;10]</h3>
+<div class="outline-text-3" id="text-5-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-5-2" class="outline-3">
+<h3 id="sec-5-2"><span class="section-number-3">5.2</span> zip</h3>
+<div class="outline-text-3" id="text-5-2">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-6" class="outline-2">
+<h2 id="sec-6"><span class="section-number-2">6</span> Algorithm</h2>
+<div class="outline-text-2" id="text-6">
+
+
+</div>
+
+<div id="outline-container-6-1" class="outline-3">
+<h3 id="sec-6-1"><span class="section-number-3">6.1</span> 并查集(union find set)</h3>
+<div class="outline-text-3" id="text-6-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-6-2" class="outline-3">
+<h3 id="sec-6-2"><span class="section-number-3">6.2</span> 红黑树(rb tree)</h3>
+<div class="outline-text-3" id="text-6-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-6-3" class="outline-3">
+<h3 id="sec-6-3"><span class="section-number-3">6.3</span> 迪卡尔树 (Cartesian tree)</h3>
+<div class="outline-text-3" id="text-6-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-6-4" class="outline-3">
+<h3 id="sec-6-4"><span class="section-number-3">6.4</span> 素数的判定</h3>
+<div class="outline-text-3" id="text-6-4">
+
+<p>   费马说: 全部素数可分为4n+1和4n+3两种形式 (反之不成立)
+</p></div>
+
+</div>
+
+<div id="outline-container-6-5" class="outline-3">
+<h3 id="sec-6-5"><span class="section-number-3">6.5</span> ip checksum</h3>
+<div class="outline-text-3" id="text-6-5">
+
+
+
+
+<pre class="example">static uint16_t ip_sum_calc(uint16_t count,char *addr) {
+ /* Compute Internet Checksum for "count" bytes
+  * beginning at location "addr".
+  */
+ u_int32_t sum = 0;
+ while( count &gt; 1 ) {
+     /* This is the inner loop */
+     sum += ntohs(* (u_int16_t*) addr);
+     addr += 2;
+     count -= 2;
+ }
+ /* Add left-over byte, if any */
+ if( count &gt; 0 )
+     sum += * (u_int8_t *) addr;
+ /* Fold 32-bit sum to 16 bits */
+ while (sum&gt;&gt;16)
+     sum = (sum &amp; 0xffff) + (sum &gt;&gt; 16);
+ return (u_int16_t)~sum;
+}
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-6-6" class="outline-3">
+<h3 id="sec-6-6"><span class="section-number-3">6.6</span> 牛顿迭代法求平方根</h3>
+<div class="outline-text-3" id="text-6-6">
+
+<p>   a(n+1)=(a(n)+N/a(n))/2
+   其中a(0)是任意初始值,N是被开方的数,当n趋向无穷时,a(n)趋向于 sqrt(N)
+</p></div>
+
+</div>
+
+<div id="outline-container-6-7" class="outline-3">
+<h3 id="sec-6-7"><span class="section-number-3">6.7</span> tricky</h3>
+<div class="outline-text-3" id="text-6-7">
+
+
+</div>
+
+<div id="outline-container-6-7-1" class="outline-4">
+<h4 id="sec-6-7-1"><span class="section-number-4">6.7.1</span> 一次遍历随机取出链表中元素</h4>
+<div class="outline-text-4" id="text-6-7-1">
+
+
+<ul>
+<li>给你一个长度为N的链表。N很大，但你不知道N有多大。你的任务是从这N个元素中随
+     机取出k个元素。你只能遍历这个链表一次。你的算法必须保证取出的元素恰好有k个，
+     且它们是完全随机的（出现概率均等）。
+
+<ul>
+<li>A：不失一般性，令K=1。算法：从头开始遍历链表。对于第i个节点，在k/i的概率
+</li>
+</ul>
+
+<p>     下，让这个节点成为候选节点。最后留下个那个候选节点则是概率为K/N的幸运儿。
+</p>
+<p>
+     用数学归纳法证明: 任何一个节点的入选概率都是1/N。N = 1时自然正确。假设
+     N=i时，每个节点的入选概率都是1/i。也就是说，当前候选节点可能是1..i中的任何一
+     个。则当N=i+1时，当前候选节点继续保留的概率为(1 - 1/(i+1))。它的总入选概率是
+     1/i * (1 - (1/(i+1)) = 1/(i+1)。 而第i+1个节点的入选概率是1/(i+1)。因此，当
+     N=i+1时，每个节点的入选概率是1/(i+1)。(证毕)
+</p>
+<p>
+     当K&gt;1时，令候选节点集合大小为k。当要替换候选节点时，每次从中这个集合中随机替
+     换即可。
+</p></li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-6-7-2" class="outline-4">
+<h4 id="sec-6-7-2"><span class="section-number-4">6.7.2</span> 给你一个数组A[1..n]，请你在O(n)的时间里构造一个新的数组B[1..n]，使得B[i]=A<sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup>*A<sup><a class="footref" name="fnr-.3" href="#fn-.3">3</a></sup>*&hellip;*A[n]/A[i]。你不能使用除法运算</h4>
+<div class="outline-text-4" id="text-6-7-2">
+
+<p>    a<sup><a class="footref" name="fnr-.2.2" href="#fn-.2">2</a></sup>*a<sup><a class="footref" name="fnr-.3.2" href="#fn-.3">3</a></sup>*&hellip;*a[n]*exp(-ln(a[i])) ?
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-6-8" class="outline-3">
+<h3 id="sec-6-8"><span class="section-number-3">6.8</span> floyd-warshall</h3>
+<div class="outline-text-3" id="text-6-8">
+
+<p>   O(N<sup>3</sup>)求解最短路径
+</p>
+
+
+
+<pre class="example">for (int i=0;i&lt;N;++i) {
+    for (int j=0;i&lt;N;++i) {
+        for (int k=0;i&lt;N;++i) {
+            opt[j][k]=max(opt[j][k],opt[j][i]+opt[i][k])
+        }
+    }
+}
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-6-9" class="outline-3">
+<h3 id="sec-6-9"><span class="section-number-3">6.9</span> 串</h3>
+<div class="outline-text-3" id="text-6-9">
+
+
+</div>
+
+<div id="outline-container-6-9-1" class="outline-4">
+<h4 id="sec-6-9-1"><span class="section-number-4">6.9.1</span> 最长非重复子串</h4>
+<div class="outline-text-4" id="text-6-9-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-6-9-2" class="outline-4">
+<h4 id="sec-6-9-2"><span class="section-number-4">6.9.2</span> 最长公共子串</h4>
+<div class="outline-text-4" id="text-6-9-2">
+
+<p>    <a href="http://en.wikipedia.org/wiki/Longest_common_substring_problem">http://en.wikipedia.org/wiki/Longest_common_substring_problem</a>
+</p></div>
+
+</div>
+
+<div id="outline-container-6-9-3" class="outline-4">
+<h4 id="sec-6-9-3"><span class="section-number-4">6.9.3</span> 最长公共子序列</h4>
+<div class="outline-text-4" id="text-6-9-3">
+
+<p>    <a href="http://en.wikipedia.org/wiki/Longest_common_subsequence_problem">http://en.wikipedia.org/wiki/Longest_common_subsequence_problem</a>
+</p></div>
+
+</div>
+
+<div id="outline-container-6-9-4" class="outline-4">
+<h4 id="sec-6-9-4"><span class="section-number-4">6.9.4</span> 最长回文串 (后缀数组)</h4>
+<div class="outline-text-4" id="text-6-9-4">
+
+<p>    <a href="http://richardxx.yo2.cn/">http://richardxx.yo2.cn/</a>
+    <a href="http://en.wikipedia.org/wiki/Suffix_array">http://en.wikipedia.org/wiki/Suffix_array</a>
+    <a href="file:///home/sunway/suffix_array.pdf">~/suffix<sub>array</sub>.pdf</a>
+</p></div>
+
+</div>
+
+<div id="outline-container-6-9-5" class="outline-4">
+<h4 id="sec-6-9-5"><span class="section-number-4">6.9.5</span> RK算法 (hash based pattern matching algo)</h4>
+<div class="outline-text-4" id="text-6-9-5">
+
+<p>    <a href="http://en.wikipedia.org/wiki/Rabin-Karp_string_search_algorithm">http://en.wikipedia.org/wiki/Rabin-Karp_string_search_algorithm</a>
+</p></div>
+
+</div>
+
+<div id="outline-container-6-9-6" class="outline-4">
+<h4 id="sec-6-9-6"><span class="section-number-4">6.9.6</span> 拼写检查</h4>
+<div class="outline-text-4" id="text-6-9-6">
+
+<p>    <a href="http://www.matrix67.com/blog/archives/333">http://www.matrix67.com/blog/archives/333</a>
+    <a href="http://en.wikipedia.org/wiki/Levenshtein_distance">http://en.wikipedia.org/wiki/Levenshtein_distance</a>
+</p></div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2">7</span> Kernel</h2>
+<div class="outline-text-2" id="text-7">
+
+
+</div>
+
+<div id="outline-container-7-1" class="outline-3">
+<h3 id="sec-7-1"><span class="section-number-3">7.1</span> 信号为什么会打断系统调用</h3>
+<div class="outline-text-3" id="text-7-1">
+
+<p>   假设A阻塞在read()系统调用上,阻塞在read上,是指A通过system gate进入内核后,执行了以下语句:
+       set<sub>task</sub><sub>state</sub>(TASK<sub>INTERRUPTABLE</sub>);
+       add task to waitqueue of the fd
+       schedule()
+   当B给A发信号时,B的操作是修改A的sig,表示有信号发生.但B不能直接执行A的sig handler. 因为A的sig handler必须在A的上下文执行,
+   所以sig handler只会在A从内核态转回用户态的时候发生. 为此,B会修改A的stat为TASK<sub>RUNNING</sub>,借以唤醒A.
+</p>
+<p>
+   当A被唤醒时,就从系统调用返回了,所以系统调用就被打断了.返回到用户态之前,会调用sig handler. 如果相应信号的sigaction flag设置了
+   重启系统调用的标识,则处理完sig handler以后不会返回到用户态,而是重新启动被打断的系统调用.
+</p>
+<p>
+   总之,系统调用会被信号打断,是因为sig handler必须在原进程的上下文执行,而sig handler又只有在原进程返回到用户态之前才会被调用.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-7-2" class="outline-3">
+<h3 id="sec-7-2"><a name="8dih1b81uoe0-sunway-lab.bupt.edu.cn" id="8dih1b81uoe0-sunway-lab.bupt.edu.cn"></a><span class="section-number-3">7.2</span> 组相联cache &nbsp;&nbsp;&nbsp;<span class="tag"><span class="ATTACH">ATTACH</span></span></h3>
+<div class="outline-text-3" id="text-7-2">
+
+<p>    AMD64 的 cache 是这样的：
+</p>
+<p>
+    Cache 的结构就像一个矩阵。
+    行为 set , 列为 way
+    一个 4 way 的 cache 组织中，一个 set 有 4 个 cache line 组成
+    每个 cache line 由 3 个部分组成： tag 域、data 域 和 other information 域
+    每个 cache line 为 64 bytes。
+</p>
+<p>
+    虚拟地址经过 MMU 处理后的物理地址，为分为三个部分。
+</p>
+<p>
+    index 域：得出 cache 的 set 值，如上图所求，从 index 得出 set 为 2
+</p>
+<p>
+    tag 域：物理地址的 tag 分别与 set 中的每个 way 的 cache line 的 tag 进行比较，
+    直到匹配（hit）。在每个 way 进行搜索是通过一个 n:1 的乘法器得出每个 way 的地点。
+</p>
+<p>
+    offset 域：当 hit 时，通过 offset 域索引出 cache line 中 data 域的具体数据。
+    相联存储器 <a href="http://baike.baidu.com/view/93241.htm">http://baike.baidu.com/view/93241.htm</a>
+</p></div>
+
+</div>
+
+<div id="outline-container-7-3" class="outline-3">
+<h3 id="sec-7-3"><span class="section-number-3">7.3</span> spinlock</h3>
+<div class="outline-text-3" id="text-7-3">
+
+<p>   form ldd
+</p>
+<p>
+   5.5. Spinlocks Spinlocks are, by their nature, intended for use on
+multiprocessor systems, although a uniprocessor workstation running a preemptive
+kernel behaves like SMP, as far as concurrency is concerned. If a nonpreemptive
+uniprocessor system ever went into a spin on a lock, it would spin forever; no
+other thread would ever be able to obtain the CPU to release the lock. For this
+reason, spinlock operations on uniprocessor systems without preemption enabled
+are optimized to do nothing, with the exception of the ones that change the IRQ
+masking status. Because of preemption, even if you never expect your code to run
+on an SMP system, you still need to implement proper locking.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-7-4" class="outline-3">
+<h3 id="sec-7-4"><span class="section-number-3">7.4</span> 汇编(asm)指令的原子性 (atomic) ulk p186</h3>
+<div class="outline-text-3" id="text-7-4">
+
+<ul>
+<li>Assembly language instructions that make zero or one aligned memory access are
+     atomic.<sup><a class="footref" name="fnr-.3.3" href="#fn-.3">3</a></sup>, e.g. movl mem,%eax, where mem is align to 4 bytes
+
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+<p class="footnote"><sup><a class="footnum" name="fn-.3" href="#fnr-.3">3</a></sup> A data item is aligned in memory when its address is a
+          multiple of its size in bytes. For instance, the address of an
+          aligned short integer must be a multiple of two, while the
+          address of an aligned integer must be a multiple of four.
+          Generally speaking, a unaligned memory access is not
+          atomic.
+</p></li>
+<li>Read-modify-write assembly language instructions (such as inc or dec) that read
+    data from memory, update it, and write the updated value back to memory are
+    atomic if no other processor has taken the memory bus after the read and before the
+    write. Memory bus stealing never happens in a uniprocessor system.
+
+</li>
+<li>Read-modify-write assembly language instructions whose opcode is prefixed by the
+    lock byte (0xf0) are atomic even on a multiprocessor system. When the control
+    unit detects the prefix, it "locks" the memory bus until the instruction is finished.
+    Therefore, other processors cannot access the memory location while the locked
+    instruction is being executed.
+
+</li>
+<li>Assembly language instructions (whose opcode is prefixed by a rep byte (0xf2,
+    0xf3), which forces the control unit to repeat the same instruction several times)
+    are not atomic. The control unit checks for pending interrupts before executing a
+    new iteration.
+
+<ul>
+<li>只有一次访问对齐的地址的指令如movl mem,%eax是原子的,up,mp
+</li>
+<li>lock前缀的汇编指令都是原子的,up and mp
+</li>
+<li>大部分汇编指令在up都是原子的,除了rep前缀的
+</li>
+</ul>
+
+<p>    破坏原子性的两个原因:mp和中断,mp下可以通过lock前缀让指令具有原子性,而在up下,中断都是在每条汇编指令执行后执行的,所以
+    up下大部分汇编指令都是原子的
+</p></li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-7-5" class="outline-3">
+<h3 id="sec-7-5"><span class="section-number-3">7.5</span> networking</h3>
+<div class="outline-text-3" id="text-7-5">
+
+
+<p>
+   softnet<sub>data主要用来和softirq打交道</sub>,如netif<sub>rx</sub><sub>action</sub>,netif<sub>tx</sub><sub>action</sub>
+</p>
+<p>
+   ingress
+</p><ul>
+<li>interrupt
+<ul>
+<li>netif<sub>rx</sub>
+<ul>
+<li>netif<sub>rx</sub><sub>action</sub>
+<ul>
+<li>netif<sub>receive</sub>
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+<p>   egress
+</p><ul>
+<li>dev<sub>queue</sub><sub>xmit</sub>
+<ul>
+<li>netif<sub>tx</sub><sub>action</sub>
+<ul>
+<li>hard<sub>start</sub><sub>xmit</sub>
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-7-6" class="outline-3">
+<h3 id="sec-7-6"><span class="section-number-3">7.6</span> 关于线程的user mode stack</h3>
+<div class="outline-text-3" id="text-7-6">
+
+<p>   每个线程都有一个单独的user mode stack,这个stack的地址是clone时作为参数指定的,父进程保证给每个子线程分配一个新的stack
+   因为clone使用了CLONE<sub>VM</sub> flag生成线程,所以各个线程的虚地址空间是一样的,但又要求每个线程有不同的栈&hellip;实际上,线程的地址空间
+   包含多个栈,每个栈单独给某一个线程使用,如图:
+   [TEXT] [DATA] [HEAP] [LIB] [STACK FOR thread1] [STACK FOR thread2] &hellip;.
+   既然各个线程的栈实际上在同一个虚地址空间,所以通过更改线程的esp,ebp可以"共享"其他线程的栈&hellip;
+</p>
+<p>
+   一个进程创建的线程的用户栈在同一个地址空间里,这个问题的直接意义是:栈大小决定了单个进程能创建的线程个数!
+   比如默认情况下栈大小是8M,则在3G虚地址空间里最多能容纳3G/8M=384个线程,若想增加线程个数,只能ulimit -s缩小栈大小
+</p>
+
+
+
+<pre class="example">
+#include &lt;pthread.h&gt;
+int * pesp;
+int * pebp;
+void callBack1 (void * p) {
+    /* int a=1; */
+    /* printf ("%p\n",&amp;a); */
+    int retval,retval2;
+    int a=1000;
+    __asm__ (
+        "movl %%esp,%0\n\t"  \
+        "movl %%ebp,%1\n\t"  \
+        :"=m"(retval),"=m"(retval2)
+        );
+    *pesp=retval;
+    *pebp=retval2;
+    sleep (100);
+}
+
+void callBack2 (void * p) {
+    int a;
+    __asm__ (
+        "movl %0,%%esp\n\t"                     \
+        "movl %1,%%ebp\n\t"                     \
+        :                                       \
+        :"m"(*pesp),"m"(*pebp)
+        );
+    printf ("%d\n",a);
+
+}
+
+int
+main(int argc, char *argv[]) {
+    pesp=malloc (sizeof(int));
+    pebp=malloc (sizeof(int));
+    pthread_t p1,p2;
+    pthread_create (&amp;p1,NULL,callBack1,NULL);
+    sleep (2);
+    pthread_create (&amp;p2,NULL,callBack2,NULL);
+    pthread_join (p1,NULL);
+    pthread_join (p2,NULL);
+    return 0;
+    }
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-7-7" class="outline-3">
+<h3 id="sec-7-7"><a name="j2udxzl0efe0-sunway-lab.bupt.edu.cn" id="j2udxzl0efe0-sunway-lab.bupt.edu.cn"></a><span class="section-number-3">7.7</span> vfs,fs,page cache(disk cache)与io scheduler的关系 &nbsp;&nbsp;&nbsp;<span class="tag"><span class="ATTACH">ATTACH</span></span></h3>
+<div class="outline-text-3" id="text-7-7">
+
+<p>   page cache位于vfs与fs之间,而不是位于generic block层,因为page cache中是以page为单位的,一个Page可以包含多个block,
+   所以不能用block号为标识,实际上它是以file+offset为标识的,file是vfs的概念,所以只能放在vfs层之下
+</p></div>
+
+</div>
+
+<div id="outline-container-7-8" class="outline-3">
+<h3 id="sec-7-8"><a name="3fuhk9o0hfe0-sunway-lab.bupt.edu.cn" id="3fuhk9o0hfe0-sunway-lab.bupt.edu.cn"></a><span class="section-number-3">7.8</span> clone,fork,vfork &nbsp;&nbsp;&nbsp;<span class="tag"><span class="ATTACH">ATTACH</span></span></h3>
+<div class="outline-text-3" id="text-7-8">
+
+
+</div>
+
+</div>
+
+<div id="outline-container-7-9" class="outline-3">
+<h3 id="sec-7-9"><span class="section-number-3">7.9</span> kernel stack与task<sub>struct</sub></h3>
+<div class="outline-text-3" id="text-7-9">
+
+<p>   there is no "kernel stack space", each process gets an 8K (4K on some
+   systems, if you choose that option) kernel stack space, and the kernel uses
+   the current processes space.
+</p>
+<p>
+   ok, it goes like this: each process has an associated task<sub>struct</sub>, which is
+   used for process managament. to allocate this struct, the kernel allocates 2
+   pages (normally, but as mentioned, it can be only 1 page), which amounts to 8k,
+   and places the task<sub>struct</sub> at the bottom.  each time the host goes from user
+   space to kernel space (interrupt, system call , etc&hellip;), these 2 pages are used
+   for the kernel stack.  this is ok, since the stack begins at the top of the
+   pages, and grows downwards (however, try a bit of recursion. you'll get funky
+   effects&hellip;).
+</p>
+<p>
+   so, your module does not have a stack of it's own, but rather uses whats
+   available at the time of it's execution - either the 2 pages as i mentioned, or
+   the stack of a kernel thread which called it.
+</p>
+<p>
+   在内核中kernel stack的样子大致是:
+</p>
+<p>
+   -&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;8k stack start
+   kernel stack for the curent process
+   &hellip;..
+   &hellip;..
+   thread<sub>info</sub> struct(which contains task<sub>struct</sub>)
+   -&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;0k stack end   &lt;-current宏, esp掩掉最后12位即可得到stack end的地址
+</p>
+<p>
+   测试: esp与task<sub>struct的关系</sub>
+   test.c:
+   int init<sub>module</sub>(void) {
+       int retval;
+       _<sub>asm</sub>__ (
+           "movl %%esp,%0\n\t"  \
+           :"=m"(retval)
+       );
+       struct thread<sub>info</sub> * tmp=(struct thread<sub>info</sub> *)(tmp&amp;0xffffe000); //kernel stack大小为8k
+       printk (KERN<sub>ALERT</sub> "curr is %p\n",tmp-&gt;task);
+   }
+   ..
+   然后kdb在printk设断点,insmod test.ko,发现kdb显示的current和打印出来的current是一样的:
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-7-10" class="outline-3">
+<h3 id="sec-7-10"><span class="section-number-3">7.10</span> syscall(系统调用)</h3>
+<div class="outline-text-3" id="text-7-10">
+
+<p>   <a href="http://www.kerneltravel.net/journal/iv/syscall.htm">http://www.kerneltravel.net/journal/iv/syscall.htm</a>
+   <a href="http://www.clinux.org/node/27837">http://www.clinux.org/node/27837</a>
+   一个系统调用经历了 用户态-&gt;内核态-&gt;用户态 的过程
+   1 用户态
+     调用系统调用的三种方法:
+</p><ul>
+<li>使用libc提供的库函数,如read(int fd,char * buff,int size)
+</li>
+<li>使用libc提供的库函数 syscall(int sys<sub>num</sub>,&hellip;)
+</li>
+<li>使用嵌入汇编,如
+</li>
+</ul>
+
+
+
+
+<pre class="example">__asm__ (
+"int $0x80\n\t"                         \
+:"=a"(retval)                           \
+:"0"(325),                              \
+"b"(23)                         \
+);
+</pre>
+
+<p>
+      调用325号系统调用,并传入一个参数23
+</p>
+<p>
+      其中read(int fd,char * buffer,int size) 等价于 syscall (3,&hellip;) # 内核中sys<sub>read号为3</sub>
+      这三种方法是等价的,它们所做的是:
+</p><ul>
+<li>将系统调用号存入%eax
+</li>
+<li>将其他参数依次存入%ebx,%ecx&hellip;
+</li>
+<li>使用 int $0x80陷入内核
+</li>
+</ul>
+
+
+<p>
+   2 内核态
+     int $0x80后进入内核态,这期间所做的是:
+</p><ul>
+<li>程序跳转到entry<sub>32</sub>.S中的ENTRY(system<sub>call</sub>)处,调用SAVE<sub>ALL保存进程的上下文</sub>,并把%ebx,%ecx..中存的系统调用参数push到内核栈,以便系统调用
+</li>
+</ul>
+
+<p>     服务函数能够使用这个参数
+</p><ul>
+<li>检查%eax中的调用号是否超出系统已注册的调用号数目
+</li>
+<li>syscall<sub>call</sub>:
+</li>
+</ul>
+
+
+
+
+<pre class="src src-c">call *sys_call_table(,%eax,4)   #sys_call_table&#23450;&#20041;&#22312;syscall_table_32.S,&#23450;&#20041;&#30528;&#19981;&#33021;&#30340;&#31995;&#32479;&#35843;&#29992;&#21495;&#23545;&#24212;&#30340;&#20989;&#25968;
+</pre>
+
+
+<p>
+         movl %eax,PT<sub>EAX</sub>(%esp)         # 保存返回值
+</p><ul>
+<li>恢复SAVE<sub>ALL保存的上下文</sub>
+</li>
+</ul>
+
+<p>   3 用户态
+     从内核态返回后%eax中保存着返回值,库函数将%eax的值返回到调用者后,整个系统调用过程结束
+</p></div>
+
+</div>
+
+<div id="outline-container-7-11" class="outline-3">
+<h3 id="sec-7-11"><span class="section-number-3">7.11</span> <span class="done DONE">DONE</span> linux timer</h3>
+<div class="outline-text-3" id="text-7-11">
+
+<p>    <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2008-11-05 三 10:48</span></span><br/>
+</p><ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2008-11-05 三 10:48</span></span>
+</li>
+<li>State "WAIT" <span class="timestamp-wrapper"> <span class="timestamp">2008-11-04 二 20:48</span></span>
+     一般2.6 linux的HZ为1000(TICK为1ms),即PIT或HPET每1ms向IRQ0中断一次timer<sub>interrupt</sub>
+     timer<sub>interrupt所做的工作主要有</sub>:
+<ul>
+<li>响应中断等
+</li>
+<li>其他的大部分工作在TIMER SOFTIRQ执行,包括:
+<ul>
+<li>检查内核的timer是否有到期的,有的话执行那个timer<sub>list注册的函数</sub>,比如sleep,usleep,nanosleep系统调用
+           注册的函数一般是唤醒在timer<sub>list上睡眠的进程</sub>,alarm,setitimer系统调用注册的函数一般是向原来注册的进程
+           发送SIGALARM
+</li>
+<li>通过某一个可用的高精度时钟(按HPET,ACPI timer,TSC,PIT的顺序)的计数器,判断是否有丢失的IRQ0中断(因为内核在
+           执行某个ISR时一般会关中断,导致时钟中断丢失),将丢失的中断数加到jiffies里
+</li>
+<li>更新xtime变量.xtime变量是time,gettimeofday,adjtime,clock_..这些获取/设置系统时间的系统调用的依据之一
+           (另一个依据是高精度计时器的counter,gettimeofday返回的是xtime+counter自上一次时钟中断的增量,所以
+           虽然xtime只精确到毫秒,gettimeofday可以精确到微秒)
+</li>
+<li>更新内核中与时间相关的系统状态,如进程运行时间,system load等
+
+<p>
+           可见,所有在timer函数和clock函数都依赖于时钟中断,而linux的时钟中断最高精度到1ms,所以nanosleep只能到微秒.
+           但gettimeofday被高精度计时器(HPET,TSC..)修正,所以可以精确到微秒
+</p>
+</li>
+</ul>
+
+</li>
+<li>timer系统调用
+<ul>
+<li>setitimer
+<ul>
+<li>alarm
+</li>
+</ul>
+
+</li>
+<li>select &amp; poll
+</li>
+<li>sleep
+</li>
+<li>usleep
+</li>
+<li>nanosleep
+</li>
+<li>timerfd<sub>&hellip</sub>;
+</li>
+<li>posix's timer<sub>&hellip</sub>; functions
+</li>
+</ul>
+
+</li>
+<li>clock系统调用
+<ul>
+<li>time
+</li>
+<li>gettimeofday
+</li>
+<li>adjtime
+</li>
+<li>posix's clock<sub>&hellip</sub>; functions
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-7-12" class="outline-3">
+<h3 id="sec-7-12"><span class="section-number-3">7.12</span> <span class="done DONE">DONE</span> linux内存管理</h3>
+<div class="outline-text-3" id="text-7-12">
+
+<p>    <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2008-11-11 二 09:46</span></span><br/>
+</p><ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2008-11-11 二 09:46</span></span>
+</li>
+<li>State "WAIT" <span class="timestamp-wrapper"> <span class="timestamp">2008-11-06 四 20:59</span></span>
+</li>
+<li>zone的概念
+     linux将物理内存分成三个zone:
+<ul>
+<li>ZONE<sub>DMA</sub>
+       对应于0-16M这一段物理内存. 有些ISA设备有DMA操作,DMA直接使用物理地址,且只能使用0-16M这一段物理地址. 所以将这一段
+       物理内存划为ZONE<sub>DMA</sub>,除了DMA操作,其他的情况一般不会分配ZONE<sub>DMA的内存</sub>,虽然ZONE<sub>DMA的内存也可能被分配给其他任务</sub>
+</li>
+<li>ZONE<sub>NORMAL</sub>
+       16M-896M这一段物理内存,这一段内存可能被内核直接寻址(线性地址=物理地址+3G),而不用通过页表进行. 内核本身需要动态分配
+       的内存,一般从ZONE<sub>NORMAL分配</sub>,因为访问ZONE<sub>NORMAL内在的效率比ZONE</sub><sub>HIGHMEM的高</sub>,比如内核自己分配内存使用的slab分配器要
+       求不能从ZONE<sub>HIGHMEM分配page</sub> frame
+</li>
+<li>ZONE<sub>HIGHMEM</sub>
+       896M以上的物理内存.内核为了使用ZONE<sub>HIGHMEM</sub>,特意把线性地址空间的3896M-4G这128M的线性地址保留,以便用来映射ZONE<sub>HIGHMEM</sub>
+       的物理内存,ZONE<sub>HIGHMEM一般给page</sub> cache和用户进程使用
+</li>
+</ul>
+
+</li>
+<li>buddy系统
+     buddy系统解决external fragment问题,内核和用户进程请求内存最终都要通过buddy系统
+     每一个zone都有自己的buddy系统
+<ul>
+<li>alloc<sub>pages</sub> (gfp<sub>mask</sub>,order),_<sub>get</sub><sub>free</sub><sub>pages</sub> (gfp<sub>mask</sub>,order)
+       根据gfp<sub>mask的不同</sub>,_<sub>get</sub><sub>free</sub><sub>pages从不同的zone上分配2</sub><sup>order个物理上连续的page</sup> frame,并返回首地址,注意首地址是线性地址.
+       若从ZONE<sub>NORMAL</sub>,ZONE<sub>DMA分配</sub>,则返回的地址即是物理地址+3G, order的最大值是10,所以buddy系统一次最多能2<sup>10</sup>*4k=4m连续内存
+       若从ZONE<sub>HIGHMEM分配</sub>,返回的地址是通过page<sub>address</sub>(page)得到,page<sub>address所做的即是将ZONE</sub><sub>HIGHMEM的物理内存映射到3896M</sub>-4G
+       的线性地址空间上,并返回映射的线性地址,这是内核访问ZONE<sub>HIGHMEM的一种方法</sub>,称为 fixed mapping
+</li>
+<li>buddy系统根据gfp<sub>mask决定从哪个zone分配内存</sub>,比如:
+<ul>
+<li>若_<sub>GFP</sub><sub>HIGHMEM</sub> set,则内核优先从ZONE<sub>HIGH分配</sub>
+</li>
+<li>若_<sub>GFP</sub><sub>DMA</sub> set,内核必须从ZONE<sub>DMA分配</sub>
+</li>
+<li>若_<sub>GFP</sub><sub>HIGHMEM</sub> not set,内核只能从ZONE<sub>DMA</sub>,ZONE<sub>NORMAL分配</sub>
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+<li>slab分配器
+     slab解决的是internal fragment问题,slab只能给内核自己分配内存,且不能使用ZONE<sub>HIGHMEM</sub>
+     slab系统包含多个kmem<sub>cache</sub>,kmem<sub>cache分为两种</sub>:
+<ol>
+<li>generic cache
+             这些cache是系统启动时预分配的,大小有13种,分别为32,64&hellip;.131072 (128K),这类cache主要是给kmalloc使用的,当kmalloc分配n字节的内存时
+             ,它会找到与大小与n接近的generic cache,如n=65时,它会找到大小为128的那一个kmem<sub>cache</sub>,从这个cache里分配一个128字节的对象.所以
+             generic cache最多会造成 50% 的internal fragment. 而且由于generic cache最大的大小为128K,所以kmalloc最多能一种分配128K
+</li>
+<li>specific cache
+             specific cache为内核根据自己的需要动态创建的. cat /proc/slabinfo 可以发现各种大小的specific cache,它们大小并不需要是2<sup>n</sup>
+</li>
+</ol>
+
+<p>     一个kmem<sub>cache分配多个slab</sub>,并根据slab时是否有空闲的object将这些slab分配到不同的链表上.
+     每个slab管理一个或多个连续的page frame,可以包含多个object. slab可以看作是slab系统与buddy系统的接口,slab负责向buddy请求或释放page frame
+</p><ul>
+<li>kmalloc
+
+</li>
+</ul>
+
+</li>
+<li>vmalloc
+     与slab一样,vmalloc也只是给内核自己使用,但它分配的内存不需要是物理连续的
+     vmalloc分配的线性地址大约在3904M-4000M之间(剩下的到4G的线性地址留给fixed mapping),vmalloc也是调用buddy系统获得物理页,且它的_<sub>GFP</sub><sub>HIGHMEM</sub> set,所以vmalloc优先从ZONE<sub>HIGHMEM</sub>
+     分配page frame
+     vmalloc与fixed mapping一样,可以映射ZONE<sub>HIGHMEM的内存</sub>,但fixed mapping是基于简单的数组映射,它分配的page frame是连续的,
+     vmalloc使用了内核页表来映射,所以它分配的page frame是不连续的.
+</li>
+</ul>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-8" class="outline-2">
+<h2 id="sec-8"><span class="section-number-2">8</span> Protocol</h2>
+<div class="outline-text-2" id="text-8">
+
+
+</div>
+
+<div id="outline-container-8-1" class="outline-3">
+<h3 id="sec-8-1"><span class="section-number-3">8.1</span> XMPP</h3>
+<div class="outline-text-3" id="text-8-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-8-2" class="outline-3">
+<h3 id="sec-8-2"><span class="section-number-3">8.2</span> OMA</h3>
+<div class="outline-text-3" id="text-8-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-8-3" class="outline-3">
+<h3 id="sec-8-3"><span class="section-number-3">8.3</span> SYNCML</h3>
+<div class="outline-text-3" id="text-8-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-8-4" class="outline-3">
+<h3 id="sec-8-4"><span class="section-number-3">8.4</span> TCP</h3>
+<div class="outline-text-3" id="text-8-4">
+
+
+</div>
+
+<div id="outline-container-8-4-1" class="outline-4">
+<h4 id="sec-8-4-1"><span class="section-number-4">8.4.1</span> TCP 超时与长连接</h4>
+<div class="outline-text-4" id="text-8-4-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-8-4-2" class="outline-4">
+<h4 id="sec-8-4-2"><span class="section-number-4">8.4.2</span> socket OOB (Out of Band) and TCP urgent flag</h4>
+<div class="outline-text-4" id="text-8-4-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-8-4-3" class="outline-4">
+<h4 id="sec-8-4-3"><span class="section-number-4">8.4.3</span> 慢启动</h4>
+<div class="outline-text-4" id="text-8-4-3">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-8-5" class="outline-3">
+<h3 id="sec-8-5"><span class="section-number-3">8.5</span> HTTP</h3>
+<div class="outline-text-3" id="text-8-5">
+
+
+</div>
+
+<div id="outline-container-8-5-1" class="outline-4">
+<h4 id="sec-8-5-1"><span class="section-number-4">8.5.1</span> Percent Encoding (UrlEncode)</h4>
+<div class="outline-text-4" id="text-8-5-1">
+
+<ul>
+<li>Note taken on <span class="timestamp-wrapper"> <span class="timestamp">2011-02-14 Mon 15:28</span></span> <br/>
+      refer to `Percent Encoding @ Wikipedia` for details
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-HTTP_Cookie" class="outline-4">
+<h4 id="HTTP_Cookie"><a name="sec-8-5-2" id="sec-8-5-2"></a><span class="section-number-4">8.5.2</span> <span class="done DONE">DONE</span> HTTP Cookie</h4>
+<div class="outline-text-4" id="text-HTTP_Cookie">
+
+<p>     <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-03-11 Fri 13:40</span></span><br/>
+</p><ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-03-11 Fri 13:40</span></span>
+</li>
+</ul>
+
+<p>    refer HTTP<sub>cookie</sub> @ wikipedia
+    The term `cookie` was derived from `magic cookie`, which is a package a program receive and send back again unchanged. e.g. cookie in binder<sub>node</sub>
+    Terminology:
+</p><ul>
+<li>Session cookie
+        cookie without Expire data or Max-age is considered to be a `session` cookie, and will expire after user close the browser.
+</li>
+<li>Persistent cookie
+        cookie with Expire data or Max-age is considered to be `persistent`, and is stored in external storage.
+        note that: browser will delete cookies expired, and browser receives a `Set-Cookie` with the expiration data in the past, browser will delete
+        the cookie <b>right away</b>.
+</li>
+<li>Secure cookie
+        there cookies can only be used through HTTPS,
+        e.g.
+        `Set-Cookie: name=xxx; *Secure*`, the `Secure` property demonstrate that the cookie is Secure cookie
+</li>
+<li>HttpOnly cookie
+        javascript can't touch this cookie.
+        e.g.
+        `Set-Cookie: name=xxx; HttpOnly`
+</li>
+<li>Third-party cookie
+        Third-party cookie are cookies set by server to another domain.
+        e.g.
+        server in foo.com send a http response as:
+        `Set-Cookie: name=xxx; Domain=.bar.com;`
+        then the cookie is a third-party cookie.
+        usage of Third-party cookie should be well considered for privacy.
+</li>
+<li>Super cookie
+</li>
+<li>Zombie cookie
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-8-5-3" class="outline-4">
+<h4 id="sec-8-5-3"><span class="section-number-4">8.5.3</span> Http pipeline</h4>
+<div class="outline-text-4" id="text-8-5-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-8-5-4" class="outline-4">
+<h4 id="sec-8-5-4"><span class="section-number-4">8.5.4</span> Http Push</h4>
+<div class="outline-text-4" id="text-8-5-4">
+
+
+</div>
+
+<div id="outline-container-8-5-4-1" class="outline-5">
+<h5 id="sec-8-5-4-1"><span class="section-number-5">8.5.4.1</span> BOSH</h5>
+<div class="outline-text-5" id="text-8-5-4-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-8-5-4-2" class="outline-5">
+<h5 id="sec-8-5-4-2"><span class="section-number-5">8.5.4.2</span> WebSocket</h5>
+<div class="outline-text-5" id="text-8-5-4-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-8-5-4-3" class="outline-5">
+<h5 id="sec-8-5-4-3"><span class="section-number-5">8.5.4.3</span> Comet</h5>
+<div class="outline-text-5" id="text-8-5-4-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-8-5-4-4" class="outline-5">
+<h5 id="sec-8-5-4-4"><span class="section-number-5">8.5.4.4</span> chunked encoding</h5>
+<div class="outline-text-5" id="text-8-5-4-4">
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-9" class="outline-2">
+<h2 id="sec-9"><span class="section-number-2">9</span> Regexp</h2>
+<div class="outline-text-2" id="text-9">
+
+
+</div>
+
+<div id="outline-container-9-1" class="outline-3">
+<h3 id="sec-9-1"><span class="section-number-3">9.1</span> 贪婪 vs. 非贪婪</h3>
+<div class="outline-text-3" id="text-9-1">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-10" class="outline-2">
+<h2 id="sec-10"><span class="section-number-2">10</span> Network</h2>
+<div class="outline-text-2" id="text-10">
+
+
+</div>
+
+<div id="outline-container-10-1" class="outline-3">
+<h3 id="sec-10-1"><span class="section-number-3">10.1</span> FTP两种工作模式：主动模式（Active FTP）和被动模式（Passive FTP）</h3>
+<div class="outline-text-3" id="text-10-1">
+
+
+<p>
+   在主动模式下，FTP客户端随机开启一个大于1024的端口N向服务器的21号端口发起连接，
+   然后开放N+1号端口进行监听，并向服务器发出 PORT N+1命令。服务器接收到命令后，
+   会用其本地的FTP数据端口（通常是20）来连接客户端指定的端口N+1，进行数据传输。
+</p>
+<p>
+   客户端:
+</p>
+
+
+<pre class="example">+-------------- -+     send N+1/2 port to serv  +--------------+
+| control port N |----------------------------&gt; | listening 21 |
+|                |  conn to cli's data port     |              |
+| data port N+1  |&lt;---------------/-------------+ data port 20 |
+| data port N+2  | &lt;--------------              |              |
+| ...            |                              |              |
+|                |                              |              |
++----------------+                              +--------------+
+</pre>
+
+
+
+
+<p>
+   在被动模式下，FTP库户端随机开启一个大于1024的端口N向服务器的21号端口发起连
+   接，同时会开启N+1号端口。然后向服务器发送PASV命令，通知服务器自己处于被动模式。
+   服务器收到命令后，会开放一个大于1024的端口P进行监听，然后用PORT P命令通知客户
+   端，自己的数据端口是P。客户端收到命令后，会通过N+1号端口连接服务器的端口P，然
+   后在两个端口之间进行数据传输。
+</p>
+<p>
+   客户端:
+</p>
+
+
+<pre class="example">+-------------- -+ port M to tell cli           +--------------+
+| control port N |&lt;-----------------------------|  listening 21|
+|                |                              |              |
+| data port N+1  | ---------------/------------&gt;+ data port M  |
+| data port N+2  | --------------               |              |
+| ...            |                              |              |
+|                |                              |              |
++----------------+                              +--------------+
+</pre>
+
+
+
+
+<p>
+   总的来说，主动模式的FTP是指服务器主动连接客户端的数据端口，被动模式的FTP是指
+   服务器被动地等待客户端连接自己的数据端口。被动模式的FTP通常用在处于防火墙之后
+   的FTP客户访问外界FTp服务器的情况，因为在这种情况下，防火墙通常配置为不允许外
+   界访问防火墙之后主机，而只允许由防火墙之后的主机发起的连接请求通过。因此，在
+   这种情况下不能使用主动模式的FTP传输，而被动模式的FTP可以良好的工作。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-10-2" class="outline-3">
+<h3 id="sec-10-2"><span class="section-number-3">10.2</span> various tunnel</h3>
+<div class="outline-text-3" id="text-10-2">
+
+
+</div>
+
+<div id="outline-container-10-2-1" class="outline-4">
+<h4 id="sec-10-2-1"><span class="section-number-4">10.2.1</span> ipip</h4>
+<div class="outline-text-4" id="text-10-2-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-10-2-2" class="outline-4">
+<h4 id="sec-10-2-2"><span class="section-number-4">10.2.2</span> sit</h4>
+<div class="outline-text-4" id="text-10-2-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-10-2-3" class="outline-4">
+<h4 id="sec-10-2-3"><span class="section-number-4">10.2.3</span> gre</h4>
+<div class="outline-text-4" id="text-10-2-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-10-2-4" class="outline-4">
+<h4 id="sec-10-2-4"><span class="section-number-4">10.2.4</span> vtun</h4>
+<div class="outline-text-4" id="text-10-2-4">
+
+</div>
+
+</div>
+
+<div id="outline-container-10-2-5" class="outline-4">
+<h4 id="sec-10-2-5"><span class="section-number-4">10.2.5</span> openvpn</h4>
+<div class="outline-text-4" id="text-10-2-5">
+
+</div>
+
+</div>
+
+<div id="outline-container-10-2-6" class="outline-4">
+<h4 id="sec-10-2-6"><span class="section-number-4">10.2.6</span> pptp</h4>
+<div class="outline-text-4" id="text-10-2-6">
+
+</div>
+
+</div>
+
+<div id="outline-container-10-2-7" class="outline-4">
+<h4 id="sec-10-2-7"><span class="section-number-4">10.2.7</span> l2tp</h4>
+<div class="outline-text-4" id="text-10-2-7">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-10-3" class="outline-3">
+<h3 id="sec-10-3"><span class="section-number-3">10.3</span> 在Debian如何根据网线连接状况来决定是否应该启动网络并进行相关的配置呢？ &nbsp;&nbsp;&nbsp;<span class="tag"><span class="net">net</span>&nbsp;<span class="dhcp">dhcp</span></span></h3>
+<div class="outline-text-3" id="text-10-3">
+
+<p>   Debian中的网络配置信息是记录在/etc/network/interfaces中的，我们通过修改这个配
+   置文件来决定一个网络设备时如何进行设置的，决定网络设备是设置成为静态IP地址还
+   是动态IP地址。
+   一般情况下我们设置了该设备为动态IP地址，但却常常会遇到这样的一些情况。在网线
+   未连接或者网络无法访问的情况下动态IP地址的设置将会失败，且尝试获取动态IP地址
+   的行为将会一直持续下去直到获得IP地址，或者用户中断它的执行，或者超时。默认
+   Debian系统的行为只有前两种，而没有超时的设置。我们会有这样的需求，希望在网线
+   未连接的情况下就不要启动动态IP地址设置的网络设备了，直到网线连接的时候再进行
+   网络配置。
+   我们可以修改/etc/network/interfaces配置文件，在配置文件中加入对网线连接状况进
+   行判断的相关命令调用。interfaces的语法中对于每一个网络设备，都有4个参数pre-up、
+   up、down、post-down，这四个参数分别代表了一个网络设备在启动前、启动时、停机时
+   和停机后四个状态。这四个参数都可以指定调用一些命令来进行一些设备在这些状态的
+   时候所需要进行的工作。因此我们可以在pre-up中一个设备的网线连接状况进行检查，
+   如果检查到网线未连接，则可以取消掉启动设备的这个操作。
+   因此我编写了一个脚本进行这个检查：
+</p>
+
+
+
+<pre class="example">#!/bin/bash
+#file /etc/network/if-pre-up.d/check_if
+IFMSG=$(dmesg | grep"$1\:" | tail -n1| grep " Link is Up")
+if [ -z "$IFMSG" ] then
+exit 1
+else
+exit 0
+fi
+</pre>
+
+
+<p>
+   同时修改/etc/network/interfaces文件为：
+</p>
+
+
+
+<pre class="example">iface eth0 inet dhcp
+pre-up sh /etc/network/if-pre-up.d/check_if $IFACE
+</pre>
+
+
+<p>
+   这样就可以保证在启动eth0之前检查网线是否连接好了。
+   后来根据对gentoo的研究发现check<sub>if脚本可以修改为：</sub>
+</p>
+
+
+
+<pre class="example">#!/bin/sh
+IFMSG=$(mii-tool $1 | grep "link ok")
+if [ -z "$IFMSG" ] ; then
+exit 1
+else
+exit 0
+fi
+</pre>
+
+
+<p>
+   为了保证系统在网线连接良好，但是dhcp服务无法访问的时候已经能正常启动，必须修
+   改/etc/dhclient.conf配置文件。将以下内容：
+</p>
+
+
+
+<pre class="example">#timeout 60;
+#retry 60;
+修改为：
+timeout 10;
+retry 10;
+</pre>
+
+
+<p>
+   这样就可以设置10秒为dhcp超时时间。为了保证设备在网线重新插入的时候再次进行
+   dhcp的操作，则需要安装软件包ifplugd软件包。
+</p></div>
+
+</div>
+
+<div id="outline-container-10-4" class="outline-3">
+<h3 id="sec-10-4"><span class="section-number-3">10.4</span> dhclient.conf &nbsp;&nbsp;&nbsp;<span class="tag"><span class="net">net</span>&nbsp;<span class="dhcp">dhcp</span></span></h3>
+<div class="outline-text-3" id="text-10-4">
+
+
+
+
+<pre class="example">timeout 60;
+retry 60;
+reboot 10;
+select-timeout 5;
+initial-interval 2;
+reject 192.33.137.209; #拒绝这个dhcp server的回应
+
+interface "ep0" {
+ send host-name "andare.fugue.com";
+ send dhcp-client-identifier 1:0:a0:24:ab:fb:9c;
+ send dhcp-lease-time 3600;
+ supersede domain-name "fugue.com rc.vix.com home.vix.com";
+ prepend domain-name-servers 127.0.0.1; #自定义的dns
+ request subnet-mask, broadcast-address, time-offset, routers,
+ domain-name, domain-name-servers, host-name;
+ require subnet-mask, domain-name-servers;
+ script "/etc/dhclient-script";
+ media "media 10baseT/UTP", "media 10base2/BNC";
+}
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-10-5" class="outline-3">
+<h3 id="sec-10-5"><span class="section-number-3">10.5</span> ssh端口转发(隧道) &nbsp;&nbsp;&nbsp;<span class="tag"><span class="net">net</span>&nbsp;<span class="ssh">ssh</span></span></h3>
+<div class="outline-text-3" id="text-10-5">
+
+<p>-D [bind<sub>address</sub>:]port
+</p>
+<p>
+Specifies a local "dynamic" application-level port forwarding. This works by
+allocating a socket to listen to port on the local side, optionally bound to the
+specified bind<sub>address</sub>. Whenever a connection is made to this port, the
+connection is forwarded over the secure channel, and the application protocol is
+then used to determine where to connect to from the remote machine. Currently
+the SOCKS4 and SOCKS5 protocols are supported, and ssh will act as a SOCKS
+server. Only root can forward privileged ports. Dynamic port forwardings can
+also be specified in the configuration file.
+</p>
+<p>
+ssh -D 9999 foo.com
+然后在fx中把代理设为socks5: 127.0.0.1:9999就可以把foo.com做为浏览器的socks5代理了
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-10-6" class="outline-3">
+<h3 id="sec-10-6"><span class="section-number-3">10.6</span> ssh反向隧道 &nbsp;&nbsp;&nbsp;<span class="tag"><span class="net">net</span>&nbsp;<span class="ssh">ssh</span></span></h3>
+<div class="outline-text-3" id="text-10-6">
+
+<p>   与 -D 选项相反, -R选项在远端主机上打开一个tcp监听端口A,并与本机的一个端口B建立
+   一个反向隧道,对远端主机A端口的访问被转发到本机的B端口.
+   例如:
+</p>
+<p>
+   本机A: ssh -R 10000:localhost:21  far@far.com
+   主机B: lftp far@far.com 10000 会连接到主机A的ftp服务器
+</p>
+<p>
+   ssh反向隧道可以用于:
+   本机位于NAT,防火墙之后
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-10-7" class="outline-3">
+<h3 id="sec-10-7"><span class="section-number-3">10.7</span> ssh x11 forwarding &nbsp;&nbsp;&nbsp;<span class="tag"><span class="net">net</span>&nbsp;<span class="ssh">ssh</span></span></h3>
+<div class="outline-text-3" id="text-10-7">
+
+
+
+
+
+<pre class="example">|--------------------------+--------|
+| server                   | client |
+|--------------------------+--------|
+| vim /etc/ssh/sshd_config | ssh -Y |
+| X11Forwarding yes        |        |
+|--------------------------+--------|
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-10-8" class="outline-3">
+<h3 id="sec-10-8"><span class="section-number-3">10.8</span> nc &nbsp;&nbsp;&nbsp;<span class="tag"><span class="net">net</span></span></h3>
+<div class="outline-text-3" id="text-10-8">
+
+<p>nc - TCP/IP swiss army knife
+nc可以用来创建任一TCP/UDP连接
+</p><ul>
+<li>选项：
+<ul>
+<li>p 指定端口
+</li>
+<li>s 指定源地址
+</li>
+<li>u 使用udp,默认使用tcp
+</li>
+<li>w 读写和连接的超时(发送文件时很管用,因为文件读完后,EOF并不能使nc发送端关闭连接，使nc服务器端一直不返回)
+</li>
+<li>l nc做为服务器模式监听,和 &shy;p 配合使用
+</li>
+</ul>
+
+</li>
+<li>使用：
+<ul>
+<li>用nc传送文件：
+    接收端： nc -l -p 1234 &gt; dest.file
+    发送端 :   cat source.file|nc -w 2 host:1234
+</li>
+<li>用nc测试tcp或udp服务器
+    nc [-p port -s source -u] server port
+    nc -l -p port [-u]
+</li>
+</ul>
+
+</li>
+<li>与telnet的比较：
+  telnet也可以做为客户端测试网络程序，但：
+<ul>
+<li>telnet客户端不能指定端口，源地址，发送或接收到EOF并终止连接，而且只能使用TCP
+</li>
+<li>telnet不能用来传送任意二进制数据，因为有些字符被解释为telnet的命令或选项，如<sup>]</sup>
+</li>
+<li>telnet命令不能做为服务器端,而 nc &shy;l 可以做为服务器
+</li>
+</ul>
+
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-10-9" class="outline-3">
+<h3 id="sec-10-9"><span class="section-number-3">10.9</span> scp&amp;sftp &nbsp;&nbsp;&nbsp;<span class="tag"><span class="net">net</span>&nbsp;<span class="ssh">ssh</span></span></h3>
+<div class="outline-text-3" id="text-10-9">
+
+<p>scp很像cp,sftp很像lftp
+</p><ul>
+<li>scp user@host:/path/source.file dest.file
+</li>
+<li>sftp user@host:/path
+</li>
+<li>scp source.file user@host:/pathto/dest.file
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-10-10" class="outline-3">
+<h3 id="sec-10-10"><span class="section-number-3">10.10</span> openvpn &nbsp;&nbsp;&nbsp;<span class="tag"><span class="net">net</span>&nbsp;<span class="vpn">vpn</span></span></h3>
+<div class="outline-text-3" id="text-10-10">
+
+<p>最近玩的一个东西-openvpn
+</p>
+<p>
+在大运村想和同学打魔兽,想了一下,好像有几种选择:
+</p><ol>
+<li>lan game,但因为我们都用的adsl,没法直接用lan game来玩
+</li>
+<li>hf,vs 因为我用的linux,用不了
+</li>
+<li>lancraft,同样因为用的linux,也用不了
+</li>
+<li>bn,在公网好像没有能连上的bn服务器
+</li>
+<li>用vpn,然后在lan game里玩
+</li>
+</ol>
+
+
+<p>
+要想用lan game来玩魔兽,要求两个条件:(A建立游戏,B要加入A的游戏)
+</p><ol>
+<li>A建立游戏时会向局域网广播,udp源端口是6112,B要能收到这个广播才会在魔兽的lan game里看到A建的游戏
+</li>
+<li>看到A建的游戏后,B双击进入游戏会建立一个tcp连接,端口也是6112
+</li>
+</ol>
+
+
+<p>
+现在最大的问题是A建立游戏时广播不会被B收到,利用vpn可以解决这个问题. 但VPN也有许多
+种,像pptp,l2tp,ipsec等,这些都是内核中实现的技术,还有一种叫openvpn,是纯用户空间的
+vpn技术. 我先试了试pptp,设A运行linux,安装pptpd,C是同一个宿舍的另一台机器,C用
+windows的拨号连接直接可以连接到linux上,但因为pptp建立的是一个点对点的连接,怎么让
+A上的广播也通过这个接口发出去让C也收到? 因为A上向255.255.255.255广播时,究竟从
+eth0还是eth1出去并不确定,和系统有关,bsd好像规定广播只对系统启动时第一个up的支持广
+播的接口(见tcp/ip详解或unix网络编程,记不清了). 反正我的系统上对255.255.255.255的
+广播都是从eth0出去,为了让广播也从vpn那个接口出去,可以用一个叫bcrelay的程序,这个是
+随pptpd一块发布的,可以把到一个接口的广播都转发到另一个接口上. 问题到此似乎解决了,但
+有一个很关键的问题,A和B都通过ADSL上网,而且都使用了宽带路由器,所以A B只有一个
+192.168的私有地址,要想让B用拨号连接到A的pptpd,必须在A所在的宽带路由器上设NAT,但
+vpn的nat穿越现在还有很多问题,pptp的情况类似于ftp,也就是说pptp连接建立的过程中会用
+到别的随机端口,除非路由器的nat支持pptp-contrack,否则无法配置路由器的nat让B能连上
+A的pptpd,而A用的路由器恰好不支持,结果A无法连上路由器之后的A的pptpd 正在绝望时我发
+现了openvpn: openvpn是纯用户空间的vpn,只需要一个udp端口(或tcp端口,可以配置),内部
+用ssl,绝对安全,而且跨平台. 因为openvpn只使用一个udp端口,所以穿跨nat没有问题.
+</p>
+<p>
+用openvpn的大体步骤:
+</p><ol>
+<li>A写openvpn的server.conf配置,里面主要写接口的类型,分配给B的地址范围,server证
+</li>
+</ol>
+
+<p>书的路径. 接口类型里指定tap类型,B连接到A时生成的接口tap0可以被桥接到A本地的eth0,
+形成一个局域网server证书是A运行openvpn自带的一些脚本得到的,B可以通过它识别server
+</p><ol>
+<li>A用openvpn自带的脚本得到几个不同的client的证书,然后把它发给不同的client,比
+</li>
+</ol>
+
+<p>如B,C
+</p><ol>
+<li>B写vpn的client.conf配置,主要是指定从A收到的证书的路径和服务器的地址.
+</li>
+</ol>
+
+
+<p>
+然后: A用openvpn建立一个tap0接口,用brctrl把tap0和eth0桥接起来,再运行openvpn
+server.conf启动openvpn,B执行openvpn client.conf就会连接到A了,因为A事先把tap0和
+eth0桥接起来了生成br0接口,所以eth0和B已经在一起局域网里了,A往br0的广播可以同时被
+eth0所在的局域网和B收到,如果B把它那端的tap和它的eth0再桥接起来,估计A B两个局域网
+都可以互通了. 当然在这之前需要在A的路由器上做 openvpn用的那个udp端口的DNAT,还需要
+做udp和tcp 6112的DNAT,否则B看了A了也连不上A建的游戏. 如果是在校园网的环境用vpn玩
+游戏,比如学十的想和学九的连,直接用pptp就可以,用openvpn也可以,但如果A把tap0和eth0
+桥接起来,B也把tap0和eth0桥接起来会不会被封?
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-10-11" class="outline-3">
+<h3 id="sec-10-11"><span class="section-number-3">10.11</span> brctrl &nbsp;&nbsp;&nbsp;<span class="tag"><span class="net">net</span>&nbsp;<span class="bridge">bridge</span></span></h3>
+<div class="outline-text-3" id="text-10-11">
+
+
+
+
+<pre class="example">brctrl addbr br0
+brctrl addif eth0
+brctrl addif eth1
+ifconfig eth0 0.0.0.0
+ifconfig eth1 0.0.0.0
+ifconfig br0 192.168.0.102 netmask 255.255.255.0 broadcast 192.168.0.255
+ifconfig br0 down
+brctrl delbr br0
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-10-12" class="outline-3">
+<h3 id="sec-10-12"><span class="section-number-3">10.12</span> dnsmasq &nbsp;&nbsp;&nbsp;<span class="tag"><span class="net">net</span>&nbsp;<span class="dns">dns</span></span></h3>
+<div class="outline-text-3" id="text-10-12">
+
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> DEFINITION NOT FOUND: 0
+</p>
+
+<p class="footnote"><sup><a class="footnum" name="fn-.2" href="#fnr-.2">2</a></sup> DEFINITION NOT FOUND: 1
+</p>
+
+<p class="footnote"><sup><a class="footnum" name="fn-.3" href="#fnr-.3">3</a></sup> DEFINITION NOT FOUND: 2
+</p>
+
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2013-05-17T11:45+0800</p>
+<p class="author">Author: sunway</p>
+<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>

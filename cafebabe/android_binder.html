@@ -1,0 +1,1673 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Android Binder</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="Android Binder"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-05-17T11:45+0800"/>
+<meta name="author" content="sunway"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style><link rel="stylesheet" title="Standard" href="style.css" type="text/css" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Android Binder</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Android Binder</a>
+<ul>
+<li><a href="#sec-1-1">1.1 Binder driver</a></li>
+<li><a href="#sec-1-2">1.2 C++</a></li>
+<li><a href="#sec-1-3">1.3 Java/AIDL</a></li>
+<li><a href="#sec-1-4">1.4 Java Binder vs. C++ binder</a></li>
+<li><a href="#sec-1-5">1.5 misc</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Android Binder</h2>
+<div class="outline-text-2" id="text-1">
+
+<p>   <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-03-18 Fri 11:05</span></span><br/>
+</p><ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-03-18 Fri 11:05</span></span>
+</li>
+</ul>
+
+<p>  Android Binder包括三部分:
+</p><ul>
+<li>Java Binder
+</li>
+<li>C++ Binder
+</li>
+<li>Binder driver
+</li>
+</ul>
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Binder driver</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<p>Binder driver 中有四个最重要的数据结构:
+</p><ul>
+<li>binder<sub>proc</sub>
+</li>
+<li>binder<sub>node</sub>
+</li>
+<li>binder<sub>ref</sub>
+</li>
+<li>binder<sub>thread</sub>
+</li>
+</ul>
+
+
+</div>
+
+<div id="outline-container-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> binder<sub>proc</sub></h4>
+<div class="outline-text-4" id="text-1-1-1">
+
+<p>     binder<sub>proc是binder</sub> driver中处于最顶层的数据结构, 它代表了一个与binder
+     driver打交道的进程, 任意一个和binder打交道的进程, 不管是server还是client,
+     在kernel都有且只有一个binder<sub>proc结构与之对应</sub>.
+</p>
+<p>
+     binder<sub>proc主要成员包括</sub>:
+</p><ul>
+<li>files
+       与进程的task<sub>struct中的files相同</sub>, 通过binder传递fd (文件描述符)时需要使用
+       该成员
+</li>
+<li>VMA
+       与进程task<sub>struct中的mm相同</sub>, 分配/释放 binder buffer时需要使用该成员
+</li>
+<li>nodes
+       该进程"拥有"的binder<sub>node</sub>, 可以暂且把一个binder<sub>node看作进程对外提供的一</sub>
+       个service, 所以nodes相当于该进程对外提供的所有service.
+
+</li>
+<li>threads
+       进程中所有的binder<sub>thread</sub>, 这些binder<sub>thread是一些真正的worker</sub> thread,
+       binder<sub>node所代表的service就是在这些线程中执行任务的</sub>.
+
+</li>
+<li>buffers, free<sub>buffers</sub>, allocated<sub>buffers</sub>
+       每个进程有固定大小的buffer (1M-8K), 用来保存binder调用时的参数和返回值
+</li>
+<li>refs<sub>by</sub><sub>desc</sub>, refs<sub>by</sub><sub>node</sub>
+       这两个结构体是两根红黑树, 树结点的value都是binder<sub>ref</sub>, 但对于refs<sub>by</sub><sub>desc树</sub>,
+       结点的key是binder<sub>ref</sub>.desc, 对于refs<sub>by</sub><sub>node</sub>, key是binder<sub>node</sub>
+</li>
+</ul>
+
+
+
+</div>
+
+<div id="outline-container-1-1-1-1" class="outline-5">
+<h5 id="sec-1-1-1-1"><span class="section-number-5">1.1.1.1</span> binder<sub>proc结构体的初始化</sub></h5>
+<div class="outline-text-5" id="text-1-1-1-1">
+
+<p>      binder<sub>proc代表一个与binder打交道的进程</sub>, 不论binder server或是binder
+      client, 都有且仅有一个binder<sub>proc与之对应</sub>.
+<pre lang="c++" line="1">
+      binder_proc的初始化:
+      ProccessState::self()
+        new ProcessState()
+          open /dev/binder
+          ;; 以下为driver代码
+            binder_open()
+              kmalloc(proc)
+                filp->private_data=proc
+</pre>
+      filp-&gt;private<sub>data是进程私有数据</sub>, 每当进程通过系统调用进入kernel时, driver
+      代码总是可以通过task<sub>struct</sub>-&gt;filp-&gt;private<sub>data轻松找到该进程对应的</sub>
+      binder<sub>proc</sub>
+</p></div>
+
+</div>
+
+<div id="outline-container-1-1-1-2" class="outline-5">
+<h5 id="sec-1-1-1-2"><span class="section-number-5">1.1.1.2</span> binder<sub>proc的清除</sub></h5>
+<div class="outline-text-5" id="text-1-1-1-2">
+
+<p>      当进程终止时, binder<sub>proc会被driver清除</sub>.
+</p>
+<p>
+      binder<sub>proc的清除</sub>:
+      当进程终止时 (正常退出或因为信号异常退出), kernel会负责关闭该进程打开的所
+      有文件描述符, 因为进程通过打开过/dev/binder, 所以kernel会关闭该文件描述符,
+      这个动作会导致driver的binder<sub>release函数被调用</sub>:
+<pre lang="c++" line="1">
+      binder_release()
+        binder_proc proc = filp->private_data;
+        // service manager进程挂掉了...
+        if (binder_context_mgr_node->proc==proc):
+          binder_context_mgr_node=NULL;
+        // 释放该进程所有的binder_thread
+        // 释放该进程所有binder_node,同时通知使用这些 binder_node (service) 的所
+        // 有 binder_ref (client):  这个binder挂掉了 (binder.linkToDeath)
+        foreach (node: proc->nodes):
+          // 从 proc->nodes中删除该node
+          rb_erase(node, proc->nodes)
+          // 如果该node没有任何binder_ref使用它 (service没有任何client)
+          if (hlist_empty (node->refs)):
+            kfree(node);
+          else:
+            foreach (ref:node->refs):
+              // linkToDeath
+              if (ref->death):
+                // 给ref->proc->todo添加一个work(通知它node已经dead),
+                // 并唤醒 ref 所在的进程
+                list_add_tail(ref->death->...)
+                wake_up_interruptible(ref->proc->wait);
+        // 释放所有的binder_ref
+        // 释放所有的binder_buffer
+        // 最后释放binder_proc结构体本身
+        kfree(proc)
+</pre>
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> binder<sub>node</sub></h4>
+<div class="outline-text-4" id="text-1-1-2">
+
+<p>     从用户的角度看,binder<sub>node代表一个service</sub>, 它与c++ binder的BBinder对
+     象有一一对应关系.
+</p>
+<p>
+     binder<sub>node的主要成员有</sub>:
+</p><ul>
+<li>binder<sub>proc</sub> proc
+
+<p>
+       表示这个binder<sub>node属于哪个进程</sub>. 即这个service是哪个进程提供的.
+</p></li>
+<li>void * ptr
+       这个binder<sub>node对应的用户空间的c</sub>++ BBinder对象的地址
+
+</li>
+<li>refs
+       还记得前面提到的binder<sub>proc被清除时如何处理linkToDeath的么</sub>?
+</li>
+</ul>
+
+
+
+<p>
+     binder<sub>node与binder</sub><sub>proc的关系</sub>:
+</p>
+
+
+<pre class="example">           -+----------------------+
+-+----------+&gt;+  server binder_proc  +-&lt;------------+
+ |            +-----------+----------+              |
+ |                   -+---------+------------+            |
+ |                    |     rb_root nodes    |            |
+ |                   -+----------------------+            |
+ |                         --/  \--                       |
+ |                       --/          \--                 |
+ |                     --/               \--              |
+ |            -/                    \-            |
+ |    -+------------+       -+------------+       |
+ |     | rb_node 1        |          |  rb_node 2 |       | 
+ |    -+------------+       -+------------+       |
+-+-----+   proc   |          |    proc   -+-------+
+      -+------------+       -+------------+
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> binder<sub>ref</sub></h4>
+<div class="outline-text-4" id="text-1-1-3">
+
+<p>     从用户的角度看, binder<sub>ref代表一个client</sub>, 它与c++ binder的BpBinder一一对应.
+</p>
+<p>
+     binder<sub>ref的主要成员有</sub>:
+</p><ul>
+<li>binder<sub>proc</sub> * proc
+       binder<sub>ref所在的进程</sub> (使用这个client的进程)
+</li>
+<li>binder<sub>node</sub> * node
+       这个binder<sub>ref所指向的binder</sub><sub>node</sub> (client对应的service)
+</li>
+<li>uint32<sub>t</sub> desc
+
+</li>
+<li>rb<sub>node</sub><sub>desc</sub>/rb<sub>node</sub><sub>node</sub>
+       与binder<sub>proc的refs</sub><sub>by</sub><sub>desc</sub>/refs<sub>by</sub><sub>node配合</sub>, 以便binder<sub>proc可以根据</sub>
+       desc/node很快的找到desc/node对应的binder<sub>ref</sub>
+</li>
+</ul>
+
+
+<p>
+     binder<sub>ref与binder</sub><sub>node实际上指的一个东西</sub>,即所谓的"一体两面", binder<sub>node是</sub>
+     从server的角度来看, 而binder<sub>ref是从client的角度来看</sub>.
+</p>
+<p>
+     binder<sub>ref代表一个client端的proxy</sub>, binder<sub>node类似于server端的stub</sub>.
+</p>
+<p>
+     binder<sub>node与binder</sub><sub>ref是`一对多`的关系</sub>, 一个进程的某一个binder<sub>node可能有</sub>
+     多个进程的多个binder<sub>ref引用它</sub>, 即多个进程的client使用同一个进程的同一个service.
+</p>
+<p>
+     binder<sub>proc</sub>, binder<sub>node</sub>, binder<sub>ref的关系</sub>:
+</p>
+
+
+<pre class="example">          -+--------------------+          -+--------------------+                  +--------------------+
+-+--------&gt;+ server binder_proc |                 |client1 binder_proc |                  |client2 binder_proc |
+       |        -+--------------------+          -+--------------------+                  +--------------------+
+       |         |    rb_root nodes   |           |   refs_by_desc     +---+              |   refs_by_desc     +---+
+       |        -+---------+----------+          -+--------------------+   |              +--------------------+   |
+       |                   |                      |   refs_by_node     +-+ |              |   refs_by_node     +-+ |
+       | -+----------------+                     -+--------------------+ | |              +--------------------+ | |
+       |  |                                                              | |                                     | |
+       |  |                                                              | |                                     | |
+       |  |    +-----------+                       +----------------+    | |               +----------------+    | |
+       |  |    |binder_node|&lt;-----+-----+          |  binder_ref    |    | |               |  binder_ref    |    | |
+       |  |    +-----------+      |     |          +----------------+    | |               +----------------+    | |
+       | -+---&gt;+  rb_node  |      |     |          |   desc         |    | |               |   desc         |    | |
+       |       +-----------+      |     |          +----------------+    | |               +----------------+    | |
+      -+-------+   proc    |      |     |          |  rb_node_desc  |&lt;---+-+               |  rb_node_desc  |&lt;---+-+
+               +-----------+      |     |          +----------------+    |                 +----------------+    |
+                                  |     |          |  rb_node_node  |&lt;---+                 |  rb_node_node  |&lt;---+
+                                  |     |          +----------------+                      +----------------+
+                                  |     +----------+  node          |      +---------------+  node          |
+                                  |                +----------------+      |               +----------------+
+                                  +----------------------------------------+
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-4" class="outline-4">
+<h4 id="sec-1-1-4"><span class="section-number-4">1.1.4</span> 应用场景举例</h4>
+<div class="outline-text-4" id="text-1-1-4">
+
+<p>The essential concept behind binder is that: proxy &amp; stub can be
+transformed between processes, e.g. stub in the server, when transferred to
+the client , becomes a proxy, and vice-versa.
+</p>
+<p>
+As to the binder driver, it refers to the transformation between
+binder<sub>node</sub> &amp; binder<sub>ref</sub>
+</p>
+</div>
+
+<div id="outline-container-1-1-4-1" class="outline-5">
+<h5 id="sec-1-1-4-1"><span class="section-number-5">1.1.4.1</span> scenario I</h5>
+<div class="outline-text-5" id="text-1-1-4-1">
+
+<p>Server initiate one BBinder, and deliver it to the client using Intent.
+</p><ul>
+<li>Driver know nothing about BBinder until IPCThreadState.transact() is called.
+</li>
+<li>IPCThreadState.transact() call ioctl(BINDER<sub>WRITE</sub><sub>READ</sub>) to init a transaction
+</li>
+<li>driver first search binder<sub>proc</sub>-&gt;nodes to detect whether the binder<sub>node</sub>
+        corresponding to the BBinder exist, if not, init a binder<sub>node</sub> and add
+        it to the `nodes`, this is how binder<sub>node</sub> is initiated.
+</li>
+<li>find transaction's target<sub>proc</sub> (binder<sub>proc</sub>), and use
+        target<sub>proc</sub>-&gt;refs<sub>by</sub><sub>node</sub> to see whether a corresponding binder<sub>ref</sub>
+        already exist, if not, create a new binder<sub>ref</sub>, this is how binder<sub>ref</sub>
+        is initiated.
+</li>
+<li>the newly-created binder<sub>ref</sub>-&gt;desc is set to a process-uniq integer,
+        which is similar with the auto-increase <sub>id</sub> field in database.  and
+        binder<sub>ref</sub>-&gt;node is set to the binder<sub>node</sub>.
+</li>
+<li>when client get the BpBinder, BpBinder-&gt;handler is set to binder<sub>ref</sub>-&gt;desc, so that
+        BpBinder-&gt;transact() knows the corresponding binder<sub>ref</sub>
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-4-2" class="outline-5">
+<h5 id="sec-1-1-4-2"><span class="section-number-5">1.1.4.2</span> scenario II</h5>
+<div class="outline-text-5" id="text-1-1-4-2">
+
+<p>      after the client get the BpBinder, it calls BpBinder-&gt;transact()
+</p><ul>
+<li>get BpBinder-&gt;handle
+</li>
+<li>driver search the corresponding binder<sub>ref</sub> in the host binder<sub>proc</sub> according to `handle` and binder<sub>proc</sub>-&gt;refs<sub>by</sub><sub>desc</sub>
+</li>
+<li>the transaction will fail if no binder<sub>ref</sub> is found, or else get binder<sub>node</sub> from binder<sub>ref</sub>-&gt;node, and additionally,
+        get target binder<sub>proc</sub> through binder<sub>node</sub>-&gt;proc
+</li>
+<li>for now, target binder<sub>proc</sub> and binder<sub>node</sub> have been found, call (BBinder *)(binder<sub>node</sub>-&gt;cookie)-&gt;transact() in binder<sub>proc</sub>
+</li>
+</ul>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-5" class="outline-4">
+<h4 id="sec-1-1-5"><span class="section-number-4">1.1.5</span> binder<sub>thread</sub></h4>
+<div class="outline-text-4" id="text-1-1-5">
+
+<p>     Driver can't execute user-mode BBinder in kernel-mode, How does the driver execute BBinder in server process?
+</p>
+<ul>
+<li>The Binder server has several `while(1) {}` thread blocked on IOCTL, waiting for client transaction.
+</li>
+<li>when the driver need to execute BBinder, it will first put data (BBinder address, function argument) to a place server can reach, then
+       wake up the one of the server thread.
+</li>
+<li>those server thread are so-called `Binder Thread #1/#2&hellip;`
+</li>
+</ul>
+
+
+</div>
+
+<div id="outline-container-1-1-5-1" class="outline-5">
+<h5 id="sec-1-1-5-1"><span class="section-number-5">1.1.5.1</span> Binder Thread initiate</h5>
+<div class="outline-text-5" id="text-1-1-5-1">
+
+<ul>
+<li>IPCThreadState.startThreadPool() can start a binder thread.
+</li>
+<li>ProcessState.joinThreadPool() can turn the calling thread to a binder thread.
+</li>
+<li>java process have a born binder thread, because onZygoteInit() will call IPCThreadState.startThreadPool() to init a binder thread.
+</li>
+<li>native c++ service must call IPCThreadState.startThreadPool() or ProcessState.joinThreadPool() explicitly.
+</li>
+<li>if a process has no binder thread, although driver can find the binder<sub>proc</sub> and BBinder, but since there is no binder thread,
+        driver simply can't wake up any thread to perform the transaction.
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-5-2" class="outline-5">
+<h5 id="sec-1-1-5-2"><span class="section-number-5">1.1.5.2</span> Calling stack</h5>
+<div class="outline-text-5" id="text-1-1-5-2">
+
+<p>      Client:
+</p>
+
+
+<pre class="example">BpBinder::transact()
+  IPCThreadState::transact()
+    IPC~::waitForResponse()
+       IPC~::talkWithDriver()
+          ioctl(BINDER_WRITE_READ)
+            drv::binder_thread_write()
+               wake_up server thread
+            drv::binder_thread_read()
+                wait...
+       case BR_REPLY
+</pre>
+
+<p>
+      Server:
+</p>
+
+
+<pre class="example">IPC~::joinThreadPool
+  IPC~::talkWithDriver()
+     ioctl(BINDER_WRITE_READ)
+            drv::binder_thread_write()
+            drv::binder_thread_read()
+                wait for client ....
+                now have work.
+  IPC~::executeCommand(BR_TRAN.)
+     cookie::transact()
+         BnInterface::onTransact()
+     IPC~::sendReply()
+        IPC~::talkWithDriver()
+           .....
+           wake up client
+</pre>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-6" class="outline-4">
+<h4 id="sec-1-1-6"><span class="section-number-4">1.1.6</span> binder<sub>buffer</sub></h4>
+<div class="outline-text-4" id="text-1-1-6">
+
+<ul>
+<li>binder<sub>buffer</sub> is used during ONE binder transaction to save request(in the target<sub>proc's</sub>)  and reply data (in the host<sub>proc's</sub>)
+       and this buffer is mmap to user-mode directly. so that user-mode BBinder can access binder<sub>buffer</sub> directly.
+</li>
+<li>every binder<sub>proc</sub> has it's own buffer, size limited to 1M-8k, driver will allocate one binder<sub>buffer</sub> from the buffer for every transaction.
+</li>
+<li>one binder<sub>proc's</sub> bind<sub>buffers</sub> are organized in rb<sub>tree</sub>, every node control a sized buffer.
+</li>
+<li>the rb<sub>tree</sub> use `best-fit` rule to allocate binder<sub>buffer</sub>, and can `merge/split` on demand to reduce external memory fragmentation.
+
+<p>
+       all buffers are in a continuous memory block:
+</p></li>
+</ul>
+
+
+
+
+<pre class="example">0                       1K                                               1M-8K
++----------------------------------------------------------------+-------+
+|   data1: 1K,allocated |   data2: 2k, free |   data3 521k, alloc| ....  |
++----------------------------------------------------------------+-------+
+</pre>
+
+<p>
+       binder<sub>buffer</sub>(s) are organized by buffers/free<sub>buffers</sub>/allocated<sub>buffers</sub> in rb<sub>tree</sub>
+</p>
+
+
+<pre class="example">                          +-----------------+
+                          |  binder_proc    |
+                          +-----------------+
++-------------------------+  buffers        |
+|                         +-----------------+
+|  +----------------------+ free_buffers    |
+|  |                      +-----------------+
+|  |                      |allocated_buffers+------------------------+
+|  |                      +-----------------+                        |
+|  |                                                                 |
+|  |                                                                 |
+|  |   +---------------------+             +---------------------+   |
+|  |   |  binder_buffer      |             |  binder_buffer      |   |
+|  |   +---------------------+             +---------------------+   |
+|  +--&gt;+rb_node(free or not) |             |rb_node(free or not) |&lt;--+
+|      +---------------------+             +---------------------+
++-----&gt;+   list_head entry   +------------&gt;|   list_head entry   |
+       +---------------------+             +---------------------+
+       |   data_size         |             |   data_size         |
+       +---------------------+             +---------------------+
+       |   data[0]           |             |   data[0]           |
+       +---------------------+             +---------------------+
+</pre>
+
+<p>
+      client data are mmap to server's binder<sub>buffer</sub>.
+</p>
+
+
+<pre class="example"> User mode   +-----------------+                                 +-----------------+
+             |   process A     |                                 |   process B     |
+             +-----------------+      copy_from_user()           +-----------------+
+             |   Parcel data   +------------------------+        |                 |
+             +-----------------+                        |        +-------------^---+
+                                                        |                      |
+--------------------------------------------------------+----------------------+---------------
+                   binder driver                        |                      |
+ Kernel mode       +------------------------------------+----------------------+-------------+
+                   |                                    V                      |             |
+                   |     +----------------+          +--+-------------+        |             |
+                   |     | binder_proc B  |   +-----&gt;+ binder_buffer  +--------+             |
+                   |     +----------------+   |      +----------------+   mmap to B process  |
+                   |     |  allocated_buf +---+      |  parcel data   |                      |
+                   |     |                |          |  from A        |                      |
+                   |     |                |          +----------------+                      |
+                   |     +----------------+                                                  |
+                   +-------------------------------------------------------------------------+
+</pre>
+
+
+</div>
+
+<div id="outline-container-1-1-6-1" class="outline-5">
+<h5 id="sec-1-1-6-1"><span class="section-number-5">1.1.6.1</span> binder<sub>buffer</sub> de-allocation</h5>
+<div class="outline-text-5" id="text-1-1-6-1">
+
+<p>      binder<sub>buffer</sub> is de-allocated only when user called Parcel::freeData()
+      firstly, drv will remove the binder<sub>buffer</sub> from
+      curr<sub>proc</sub>-&gt;allocated<sub>buffers</sub>.  then, if the buffered's next or prev buffer
+      is also free, they will be merged to one larger binder<sub>buffer</sub>, and then
+      added to the curr<sub>proc</sub>-&gt;free<sub>buffers</sub>.
+</p><ul>
+<li id="sec-1-1-6-1-1">Parcle.freeData()<br/>
+       free Parcel object ASAP!
+       Client should free reply parcel ASAP!
+       Server should free data parcel ASAP!
+
+
+
+<pre class="example">Parcel::freeData()
+   Parecel::mOwner()
+     ioctl(BINDER_WRITE_READ) with BC_FREE_BUFFER
+      drv::binder_thread_write()
+          free buffer of the proc
+</pre>
+
+<p>
+       Parcel::mOwner is actually a callback fun, it is registered to the parcel
+       in BC<sub>TRANSACTION</sub> (server got the data parcel) or BC<sub>REPLY</sub> (client got
+       the reply parcel).  The callback will ioctl to the driver the free the
+       parcel.
+</p>
+</li>
+</ul>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-binder_transaction_data" class="outline-4">
+<h4 id="binder_transaction_data"><a name="sec-1-1-7" id="sec-1-1-7"></a><span class="section-number-4">1.1.7</span> binder<sub>transaction</sub><sub>data</sub></h4>
+<div class="outline-text-4" id="text-binder_transaction_data">
+
+<p>     binder<sub>transaction</sub><sub>data</sub> stores request/reply data, and in most time, is bitwise copied to binder<sub>buffer</sub>, but there are several exceptions:
+</p><ul>
+<li>Binder
+       The BBinder wrote in binder<sub>transaction</sub><sub>data</sub> is transformed to BpBinder and vice-versa
+</li>
+<li>file descriptor
+       new file descriptor is created in the target process, and old file descriptor is transformed to the newly created one.
+</li>
+</ul>
+
+
+
+
+<pre class="example">
+     *binder_transaction_data*
+     -+-------------+------+-----------+------+----------+-------------+---------+-----------+-----------+-----------+
+      |   target    |      |   code    |      |          |             |         |           |           |           |
+      | (handle/ptr)|cookie| (command) | flags|sender_pid| sender_euid |data_size|offset_size| buffer_ptr|offset_ptr |
+     -+-------------+------+-----------+------+----------+-------------+---------+-----------+----+------+----+------+
+                                                                                                  |           |
+      -+------------------------------------------------------------------------------------------+    -+-----+
+       | -+---------+----+--------------+--------+-----+-----+------+----------------                   v
+       |  | type    |flag| binder/handle| cookie | ....|type | flag | ...                              -+-----+--+-------+--------------
+-&gt;--+(binder, |          |              |        |     |     |      |                                   | offset1|offset2| ...        
+          | handler,|    |              |        |     |     |      |                                  -+---+----+---+---+--------------
+          | fd..)   |    |              |        |     |     |      |                                       |        |
+          ^---------+----+--------------+--------+-----^-----+------+---------------                        |        |
+          |    *flag_binder_object*                    |                                                    |        |
+         -+--------------------------------------------+----------------------------------------------------+        |
+                                                      -+-------------------------------------------------------------+
+
+
+</pre>
+
+
+</div>
+
+<div id="outline-container-1-1-7-1" class="outline-5">
+<h5 id="sec-1-1-7-1"><span class="section-number-5">1.1.7.1</span> overall calling sequence</h5>
+<div class="outline-text-5" id="text-1-1-7-1">
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">client</th><th scope="col" class="left">driver</th><th scope="col" class="left">server</th></tr>
+</thead>
+<tbody>
+<tr><td class="left">onTransact() -&gt;</td><td class="left"></td><td class="left"></td></tr>
+<tr><td class="left">create user<sub>mode</sub> tr for parcel data</td><td class="left"></td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">client:    step 1</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">binder<sub>transaction</sub><sub>data</sub> tr;</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">copy<sub>from</sub><sub>user</sub>(tr)</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">buf=binder<sub>alloc</sub><sub>buf</sub>(server,tr.data.size)</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">binder<sub>transaction</sub> t;</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">t.data=buf</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">create binder<sub>work</sub> from t</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">add binder<sub>work</sub> to server's stack</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">wake up server</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">server:    step 2</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">get binder<sub>work</sub> from stack</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">get binder<sub>transaction</sub> t</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">binder<sub>transaction</sub><sub>data</sub> tr;</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">tr.data=t.data</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">copy<sub>to</sub><sub>user</sub>(tr)</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left"></td><td class="left">get parcel data from tr</td></tr>
+<tr><td class="left"></td><td class="left"></td><td class="left">create user<sub>mode</sub> tr for parcel reply</td></tr>
+<tr><td class="left"></td><td class="left">server:</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">binder<sub>transaction</sub><sub>data</sub> tr;</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">copy<sub>from</sub><sub>user</sub>(tr)</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">buf=binder<sub>alloc</sub><sub>buf</sub>(client,tr.data.size)</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">&hellip;</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">repeat step 1 and step 2</td><td class="left"></td></tr>
+<tr><td class="left">onTransact() &lt;-</td><td class="left"></td><td class="left"></td></tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-8" class="outline-4">
+<h4 id="sec-1-1-8"><span class="section-number-4">1.1.8</span> binder<sub>transaction</sub> &amp; binder<sub>work</sub></h4>
+<div class="outline-text-4" id="text-1-1-8">
+
+<ul>
+<li>binder<sub>thread</sub><sub>write</sub>() &amp; binder<sub>thread</sub><sub>read</sub>() communicate with binder<sub>work</sub> &amp; binder<sub>transaction</sub>.
+</li>
+<li>binder<sub>work</sub> are entry added to thread-&gt;todo / proc-&gt;todo, when server/client are waken up during binder<sub>thread</sub><sub>read</sub>(), kernel code will
+</li>
+<li>check thread-&gt;todo to get a binder<sub>work</sub> to do, and extract binder<sub>transaction</sub> from binder<sub>work</sub> by container<sub>of</sub> (binder<sub>work</sub>) macro.
+</li>
+<li>binder<sub>transaction</sub> contains info about the work's caller and receiver and
+       the transaction data, then construct a binder<sub>transaction</sub><sub>data</sub> according to binder<sub>transaction's</sub> data (target binder ptr, cookie,
+       sender<sub>uid</sub>, parcel data ..), then binder<sub>thread</sub><sub>read</sub>() returns to user space code.
+</li>
+</ul>
+
+
+<p>
+     To summarize:
+</p>
+<p>
+     binder<sub>thread</sub>-&gt;transaction<sub>stack</sub> is the `transaction stack` while binder<sub>transaction</sub> is the `transaction stack frame`,
+     binder<sub>transaction</sub> mainly saves the caller's return info.
+</p>
+<p>
+     e.g. Client's binder transaction request will be encapsulated to a binder<sub>transaction</sub>, and put into target's `transaction<sub>stack`</sub>, when target need to
+     reply to client, it can get the former binder<sub>transaction</sub> from it's own `transaction<sub>stack`</sub>, to know who will be waken up for the reply.
+</p>
+<p>
+seq graph:
+</p>
+
+
+<pre class="example">|-----------------------+--------------------------------------------------------+--------------------------------------------------+--------------|
+| client                | binder_thread_write                                    | binder_thread_read                               | server       |                       |                                                        |                                                  |              |
+|-----------------------+--------------------------------------------------------+--------------------------------------------------+--------------|
+| onTransact() -&gt;       | get binder_transaction_data from user mode             |                                                  |              |
+|                       | cmd=BC_TRANSACTION                                     |                                                  |              |
+|                       | construct binder_transaction and                       |                                                  |              |
+|                       | put it to target's transaction_stack                   |                                                  |              |
+|                       | add binder_work to target thread-&gt;todo                 |                                                  |              |
+|                       | wakup target thread                                    |                                                  |              |
+|                       |                                                        | get binder_work from thread-&gt;todo                |              |
+|                       |                                                        | get binder_transaction from                      |              |
+|                       |                                                        | binder_work                                      |              |
+|                       |                                                        | construct binder_transaction_data for user mode  |              |
+|                       |                                                        | reset binder_transaction_data (reset binder,fd.. |              |
+|                       |                                                        | and set cmd=BR_TRANSACTION                       |              |
+|                       |                                                        |                                                  | onTransact() |
+|                       | get binder_transaction_data from user mode             |                                                  |              |
+|                       | cmd=BC_REPLY                                           |                                                  |              |
+|                       | get binder_transaction from it's own transaction_stack |                                                  |              |
+|                       | so as to get target_thread                             |                                                  |              |
+|                       | construct binder_transacton and add binder_work to     |                                                  |              |
+|                       | target_thread-&gt;todo, then wake up target thread        |                                                  |              |
+|                       |                                                        | get binder_work from thread-&gt;todo                |              |
+|                       |                                                        | get binder_transaction                           |              |
+|                       |                                                        | construct binder_transaction_data for user mode  |              |
+|                       |                                                        | reset binder_transaction_data                    |              |
+|                       |                                                        | and set cmd=BR_REPLY                             |              |
+| onTransact() waken up |                                                        |                                                  |              |
+|                       |                                                        |                                                  |              |
+|                       |                                                        |                                                  |              |
+|                       |                                                        |                                                  |              |
+|-----------------------+--------------------------------------------------------+--------------------------------------------------+--------------|
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-9" class="outline-4">
+<h4 id="sec-1-1-9"><span class="section-number-4">1.1.9</span> <span class="done DONE">DONE</span> binder reference count</h4>
+<div class="outline-text-4" id="text-1-1-9">
+
+<p>      <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-03-18 Fri 17:57</span></span><br/>
+</p><ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-03-18 Fri 17:57</span></span>
+</li>
+</ul>
+
+<p>    Binder reference 分为两个方法:
+    　- C++ 层面的RefBase
+    　- driver 层面 binder<sub>ref</sub> 的引用计数
+</p>
+</div>
+
+<div id="outline-container-1-1-9-1" class="outline-5">
+<h5 id="sec-1-1-9-1"><span class="section-number-5">1.1.9.1</span> When Java Binder is finalized</h5>
+<div class="outline-text-5" id="text-1-1-9-1">
+
+
+<pre lang="c++" line="1">
+      Binder.finalize() @ Binder.java
+        android_os_Binder_destroy() //jni
+          JavaBBinderHolder->decStrong();
+            c = android_atomic_dec(&refs->mStrong)
+            if (c == 1):
+              const_cast<RefBase*>(this)->onLastStrongRef(id)
+                {} // nop for BBinder
+</pre>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-9-2" class="outline-5">
+<h5 id="sec-1-1-9-2"><span class="section-number-5">1.1.9.2</span> When Java BinderProxy is finalized</h5>
+<div class="outline-text-5" id="text-1-1-9-2">
+
+
+<pre lang="c++" line="1">
+      BinderProxy.finalize() @ Binder.java
+        android_os_BinderProxy_destroy(JNIEnv* env, jobject obj)
+          BinderProxy.decStrong()
+            c = android_atomic_dec(&refs->mStrong)
+            if (c == 1):
+              const_cast<RefBase*>(this)->onLastStrongRef(id)
+                IPCThreadState->decStrongHandle(mHandle);
+                  mOut.writeInt32(BC_RELEASE)
+                    binder_thread_write()
+                      case BC_RELEASE:
+                        binder_dec_ref(ref, 1);
+                          ref->strong--;
+                          if ref->strong == 0:
+                           binder_dec_node(ref->node, strong, 1);
+                         if ref->strong == 0 && ref->weak == 0:
+                           binder_delete_ref(ref);
+</pre>
+<p>
+     What's more:
+</p><ul>
+<li>binder<sub>dec</sub><sub>ref</sub>() will also be called during binder<sub>free</sub><sub>buffer</sub>() and the buffer contains BINDER<sub>TYPE</sub><sub>HANDLE</sub>.
+</li>
+<li>binder<sub>node</sub> will be deleted when:
+       binder<sub>proc</sub> died or there is no binder<sub>ref</sub> of the binder<sub>node</sub>
+</li>
+</ul>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-10" class="outline-4">
+<h4 id="sec-1-1-10"><span class="section-number-4">1.1.10</span> <span class="done DONE">DONE</span> binder's death ( linkToDeath )</h4>
+<div class="outline-text-4" id="text-1-1-10">
+
+<p>      <span class="timestamp-wrapper"><span class="timestamp-kwd">SCHEDULED: </span> <span class="timestamp">2011-03-01 Tue</span></span>  <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-02-28 Mon 13:13</span></span><br/>
+</p><ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-02-28 Mon 13:13</span></span>
+</li>
+</ul>
+
+
+<p>
+     see <a href="#AppDeathRecipient">@AppDeathRecipient</a>
+     see also <a href="#Android-Process-Crash-and-Restart">Android Process Crash and Restart</a>
+</p>
+<p>
+     java: BinderProxy.linkToDeath(DeathRecipient)
+     c++   BpBinder.linkToDeath(DeathRecipient)
+</p>
+<ul>
+<li>binder dead
+       typically because binder fd is closed, e.g. when remote process exit, or user manually called IPCThreadState.stopProcess
+
+</li>
+<li>how DeathRecipient is called
+</li>
+</ul>
+
+
+
+
+<pre class="example">close(binder_fd)
+  driver::binder_release()
+    driver::binder_deferred_release()
+      foreach node-&gt;refs:
+        ref-&gt;death-&gt;work.type = BINDER_WORK_DEAD_BINDER;
+        list_add_tail(&amp;ref-&gt;death-&gt;work.entry, &amp;ref-&gt;proc-&gt;todo);
+        wake_up_interruptible(&amp;ref-&gt;proc-&gt;wait);
+</pre>
+
+<p>
+       when proxy side's binder<sub>thread</sub> is waken up, it will read one BR<sub>DEAD</sub><sub>BINDER</sub> command, which will execute:
+</p>
+
+
+<pre class="example">BpBinder *proxy = (BpBinder*)mIn.readInt32();
+proxy-&gt;sendObituary();
+  foreach ob in mObituaries:
+    ob.recipient.binderDead()
+</pre>
+
+<ul>
+<li>how DeathRecipient is registered
+</li>
+</ul>
+
+
+
+
+<pre class="example">BpBinder.linkToDeath
+  Obituary ob;
+  ob.recipient = recipient;
+  IPCTheadState::requestDeathNotification(mHandle, BpBinder);
+    mOut.writeInt32(BC_REQUEST_DEATH_NOTIFICATION);
+    mOut.writeInt32((int32_t)handle);
+    mOut.writeInt32((int32_t)BpBinder); ;;BpBinder's local address is written to driver as *cookie*
+      driver::BC_REQUEST_DEATH_NOTIFICATION
+        ref-&gt;death-&gt;cookie=*cookie*; ;;BpBinder's local address
+  mObituaries-&gt;add(ob);
+</pre>
+
+<ul>
+<li>If there is no binder<sub>thread</sub> running in proxy process, maybe DeathRecipient will never be notified automatically.
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-11" class="outline-4">
+<h4 id="sec-1-1-11"><span class="section-number-4">1.1.11</span> <span class="done DONE">DONE</span> binder &amp; exception</h4>
+<div class="outline-text-4" id="text-1-1-11">
+
+<p>      <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-03-10 Thu 13:50</span></span><br/>
+</p><ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-03-10 Thu 13:50</span></span>
+</li>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-02-22 Tue 19:08</span></span>
+</li>
+</ul>
+
+
+</div>
+
+<div id="outline-container-1-1-11-1" class="outline-5">
+<h5 id="sec-1-1-11-1"><span class="section-number-5">1.1.11.1</span> remote exceptions</h5>
+<div class="outline-text-5" id="text-1-1-11-1">
+
+<p>`remote exceptions` stands for `exceptions occurred during stub.onTransact()`
+</p><ul>
+<li id="sec-1-1-11-1-1">proxy side<br/>
+<ul>
+<li>binder.stub.proxy
+</li>
+</ul>
+
+
+
+
+<pre class="example">public int foo() throws android.os.RemoteException {
+     android.os.Parcel _data = android.os.Parcel.obtain();
+     android.os.Parcel _reply = android.os.Parcel.obtain();
+     int _result;
+     try {
+         _data.writeInterfaceToken(DESCRIPTOR);
+         mRemote.transact(Stub.TRANSACTION_foo, _data, _reply, 0);
+         _reply.readException();
+         _result = _reply.readInt();
+     } // note: *without `catch clause`*
+     finally {
+         _reply.recycle();
+         _data.recycle();
+     }
+     return _result;
+}
+</pre>
+
+<ul>
+<li><sub>reply</sub>.readException()
+</li>
+</ul>
+
+
+
+
+<pre class="example">return if code==0
+switch (code) {
+     case EX_SECURITY:
+         throw new SecurityException(msg);
+     case EX_BAD_PARCELABLE:
+         throw new BadParcelableException(msg);
+     case EX_ILLEGAL_ARGUMENT:
+         throw new IllegalArgumentException(msg);
+     case EX_NULL_POINTER:
+         throw new NullPointerException(msg);
+     case EX_ILLEGAL_STATE:
+         throw new IllegalStateException(msg);
+ }
+</pre>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-1-11-1-2">stub side<br/>
+<ul>
+<li>Binder.execTransact()
+</li>
+</ul>
+
+
+
+
+<pre class="example">try {
+    res = onTransact(code, data, reply, flags);
+    // if exceptions other than RemoteException and RuntimeException are thrown here,
+    // the outer JavaBBinder jni wrapper class will handle it, and output message like
+    // "Uncaught remote exception!
+    // Exceptions are not yet supported across processes"
+} catch (RemoteException e) {
+    reply.writeException(e);
+    res = true;
+} catch (RuntimeException e) {
+    reply.writeException(e);
+    res = true;
+}
+</pre>
+
+<ul>
+<li>writeException()
+</li>
+</ul>
+
+
+
+
+<pre class="example">int code = 0;
+if (e instanceof SecurityException) {
+    code = EX_SECURITY;
+} else if (e instanceof BadParcelableException) {
+    code = EX_BAD_PARCELABLE;
+} else if (e instanceof IllegalArgumentException) {
+    code = EX_ILLEGAL_ARGUMENT;
+} else if (e instanceof NullPointerException) {
+    code = EX_NULL_POINTER;
+} else if (e instanceof IllegalStateException) {
+    code = EX_ILLEGAL_STATE;
+}
+writeInt(code);
+if (code==0) throw new RuntimeException();
+</pre>
+
+<ul>
+<li>Binder.stub.onTransact()
+</li>
+</ul>
+
+
+
+
+<pre class="example">case TRANSACTION_foo:
+{
+    data.enforceInterface(DESCRIPTOR);
+    int _result = this.foo();
+    reply.writeNoException();
+    reply.writeInt(_result);
+    return true;
+}
+</pre>
+
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-11-2" class="outline-5">
+<h5 id="sec-1-1-11-2"><span class="section-number-5">1.1.11.2</span> local exceptions</h5>
+<div class="outline-text-5" id="text-1-1-11-2">
+
+<p>      `local exceptions` stands for `exceptions occurred other than stub.onTransact(), e.g. binder error`
+</p>
+
+
+<pre class="example">try {
+  _data.writeInterfaceToken(DESCRIPTOR);
+  mRemote.transact(Stub.TRANSACTION_foo, _data, _reply, 0); // binder's own exceptions may be thrown here .
+    BinderPorxy.transact()
+      android_os_BinderProxy_transact() // native here
+        err=BpBinder.transact()
+          err=IPCTheadState.transact()
+            err=waitForResponse()
+              .. talk with driver, may return err for errors like FAILED_EXCEPTION, DEAD_OBJECT, NO_MEMORY, PERMISSION_DENIED ...
+        signalExceptionForError(err);
+          switch err:
+            case EPERM: jniThrowException("java/lang/SecurityException")
+            case FAILED_TRANSACTION: LOGE("!!! FAILED BINDER TRANSACTION !!!"); // doesn't throw exceptions!
+            ...
+  _reply.readException(); // stub initiated exceptions may be thrown here
+  _result = _reply.readInt();
+}
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-11-3" class="outline-5">
+<h5 id="sec-1-1-11-3"><span class="section-number-5">1.1.11.3</span> To summarize</h5>
+<div class="outline-text-5" id="text-1-1-11-3">
+
+<ul>
+<li>binder.stub.proxy need to invoke Parcel.readException() to manually detect whether exceptions occurred in the stub side.
+</li>
+<li>only 5 RuntimeException occurred in stub.onTransact can be eventually caught by stub and send to proxy (RemoteException is caught by execTransact,
+        but not wrote to reply&hellip;weired~)
+</li>
+<li>proxy side's readException only throws 5 RuntimeException
+</li>
+<li>RemoteException happened in stub side will not be caught by proxy side.
+        RemoteException should only be thrown by proxy's own code, stub's code shouldn't throw any exceptions other than those 5 RuntimeException
+</li>
+</ul>
+
+
+
+
+<pre class="example">                            ____   ___   ___  __  __ _
+                           | __ ) / _ \ / _ \|  \/  | |
+                           |  _ \| | | | | | | |\/| | |
+                           | |_) | |_| | |_| | |  | |_|
+                           |____/ \___/ \___/|_|  |_(_)
+                                         ^
+                                         |
+                                         |     2.remote exceptions popped
+                                         |       up through binder reply
+                                         |   .................................
+                                         |   .                               .
+                                         |   .                 -+------------+-----------------+
+                               proxy     |   v                  |                    stub      |
+                              -+---------+------------+         |  -+--------------------+     |
+                     +--------&gt;|                      |         |   |                    |     |
+                     |         |   java  transact()   |         |   |   java transact()  |     |
+                     |   -+----+----------------------+---+     |   |                    |     |
+1.local exceptions   |    |   -+-------jni------------+   |     |  -+--------------------+     |
+  popped up through  |    |    |                      |   |    -+---+--------------------+-----+
+  function ret code  |    |    |   c++   transact()   |   |         |   c++ transact()   |
+                     |    |    |                      |   |         |                    |
+                    -+----+   -+-------ioctl----------+---+---------+-------ioctl--------+---+
+                          |    |                          |                                  |
+                          |    |                          |                                  |
+                          |    |                          |                                  |
+                          |    |                          |                                  |
+                          |    |                 kernel   |                                  |
+                          |   -+--------------------------+----------------------------------+
+                         -+-------------------------------+
+
+</pre>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-12" class="outline-4">
+<h4 id="sec-1-1-12"><span class="section-number-4">1.1.12</span> binder wait &amp; todo</h4>
+<div class="outline-text-4" id="text-1-1-12">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> C++</h3>
+<div class="outline-text-3" id="text-1-2">
+
+
+</div>
+
+<div id="outline-container-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> BpInterface</h4>
+<div class="outline-text-4" id="text-1-2-1">
+
+<p>12/9/2010
+BpInterface:IInterface
+BpInterface resides in the proxy part, but it't nothing but an encapsulation of the remote IBinder (actually BpBinder)
+</p>
+<p>
+it's most import method is BpInterface.asInterface(IBinder)
+, it will implement those IXX.xx functions and dispatch them to BpBinder.transact().
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> IInterface</h4>
+<div class="outline-text-4" id="text-1-2-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-3" class="outline-4">
+<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> BnInterface</h4>
+<div class="outline-text-4" id="text-1-2-3">
+
+<p>12/9/2010
+BnInterface:BBinder,IInterface
+so, BnInterface resides in the stub part, and mainly act as two parts:
+</p><ol>
+<li>it extends IInterface, so it will implement IXX.xx functions
+</li>
+<li>it extends BBinder, so it will implement onTransact(), it will be called by BBinder.transact(), and will dispatch transact code to it's own IXX.xx functions.
+</li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-4" class="outline-4">
+<h4 id="sec-1-2-4"><span class="section-number-4">1.2.4</span> BBinder</h4>
+<div class="outline-text-4" id="text-1-2-4">
+
+<p>12/9/2010
+BBinder corresponds to BpBinder, it is the real stub part.
+</p>
+<p>
+when IPCThreadState discovers an IPC, it will call BBinder.transact(), which will call deprived class's (which is usually BnInterface) onTransact()
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-2-5" class="outline-4">
+<h4 id="sec-1-2-5"><span class="section-number-4">1.2.5</span> BpBinder</h4>
+<div class="outline-text-4" id="text-1-2-5">
+
+<p>12/9/2010
+when BnInterface, as the stub part,is returned to client as IBinder through Parcel.writeStrongBinder and Parcel.readStrongBinder, the proxy part actually will get a BpBinder as IBinder (since both BpBinder and BBinder extends IBinder).
+</p>
+<p>
+To make it clear, BpInterface use BpBinder, and BnInterface extends BBinder
+</p>
+<p>
+BpBinder's most import method is transact(), which will call IPCThreadState.transact() to interact will binder driver.
+</p>
+<p>
+BpBinder's member variable `handle` could be used by the driver to distinguish it from other BpBinder and found the corresponding strub process.
+</p></div>
+
+</div>
+
+<div id="outline-container-1-2-6" class="outline-4">
+<h4 id="sec-1-2-6"><span class="section-number-4">1.2.6</span> Binder Thread</h4>
+<div class="outline-text-4" id="text-1-2-6">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-7" class="outline-4">
+<h4 id="sec-1-2-7"><span class="section-number-4">1.2.7</span> ProcessState</h4>
+<div class="outline-text-4" id="text-1-2-7">
+
+<p>12/9/2010
+both the proxy and stub process has one and only one ProcessState.
+</p><ol>
+<li>proxy part:
+</li>
+</ol>
+
+<p>BpBinder-&gt;transact()-&gt;IPCThreadState.transact()
+</p>
+<p>
+IPCThreadState need to use ProcessState to interact with binder driver
+</p>
+<ol>
+<li>stub part:
+</li>
+</ol>
+
+
+
+</div>
+
+<div id="outline-container-1-2-7-1" class="outline-5">
+<h5 id="sec-1-2-7-1"><span class="section-number-5">1.2.7.1</span> StartThreadPool</h5>
+<div class="outline-text-5" id="text-1-2-7-1">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-2-8" class="outline-4">
+<h4 id="sec-1-2-8"><span class="section-number-4">1.2.8</span> IPCThreadState</h4>
+<div class="outline-text-4" id="text-1-2-8">
+
+
+</div>
+
+<div id="outline-container-1-2-8-1" class="outline-5">
+<h5 id="sec-1-2-8-1"><span class="section-number-5">1.2.8.1</span> JoinThreadPool</h5>
+<div class="outline-text-5" id="text-1-2-8-1">
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Java/AIDL</h3>
+<div class="outline-text-3" id="text-1-3">
+
+
+</div>
+
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> IXx.stub</h4>
+<div class="outline-text-4" id="text-1-3-1">
+
+<p>     stub is essentially a binder, but it do additional two things:
+</p><ol>
+<li>Imlements some stubs side IXx funtions.
+</li>
+<li>Auto dispatching to those functions according to unmarshalling result.
+</li>
+</ol>
+
+
+
+<p>
+     stub implement both Binder and IXx.
+</p><ol>
+<li>It implements Binder, and  implements onTransact(), so it can be returned when OnBind, or addService as IBinder&hellip; as the stub.
+</li>
+<li>It implements IXx, so it will implents those stub side functions of IXx,
+        e.g.  IXx.foo.  stub.onTransact will call IXx.foo according to the
+        unmarshalling result.
+</li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> IXx.stub.proxy</h4>
+<div class="outline-text-4" id="text-1-3-2">
+
+<p>     proxy only implements IXx, and it will take an IBinder as ctor param.  It should be taken as a helper utility for the ibinder.
+     So:
+</p><ol>
+<li>It implements IXx, so it will implements IXx proxy side functions,
+        e.g. IXx.foo, those functions do nothing but marshalling the params and
+        then call remote-&gt;transact.
+</li>
+<li>It take an IBinder as ctor param(the 'remote' var), so it can use the
+        IBinder to do proxy works. e.g. Call ibinder-&gt;transact.
+</li>
+</ol>
+
+<p>     IXx.asInterface(ibinder) actually call IXx.stub.proxy(ibinder) to convert the ibinder as an proxy interface.
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Java Binder vs. C++ binder</h3>
+<div class="outline-text-3" id="text-1-4">
+
+<p>    java binder is just an encapsulation of c++ binder
+    Binder,BinderProxy vs. JavaBBinder, BpBinder
+</p>
+</div>
+
+<div id="outline-container-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> binder proxy in java</h4>
+<div class="outline-text-4" id="text-1-4-1">
+
+
+
+
+<pre class="example">IBinder.transact()   // binder proxy in java is BinderProxy
+  BinderProxy.transact() // native
+    android_os_BinderProxy_transact() // in android_util_Binder.cpp
+      IBinder* target = env-&gt;GetIntField(obj, gBinderProxyOffsets.mObject); //target is a BpBinder
+        err=BpBinder-&gt;transact()-&gt;IPCThreadState-&gt;transact()
+          ...
+        signalExceptionForError(env, obj, err);
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-4-2" class="outline-4">
+<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> binder stub in java</h4>
+<div class="outline-text-4" id="text-1-4-2">
+
+<ul>
+<li>initialization
+</li>
+</ul>
+
+
+
+
+<pre class="example">Binder() // ctor
+  init(); // native
+    android_os_Binder_init()
+      JavaBBinderHolder(env, clazz); // JavaBBinderHolder is a lazy holder for JavaBBinder
+      // lazy evaluation of JavaBBinderHolder.get() will init JavaBBinder and set to gBinderOffsets.mObject
+      env-&gt;SetIntField(clazz, gBinderOffsets.mObject, (int)jbh);
+</pre>
+
+<ul>
+<li>writeStrongBinder
+</li>
+</ul>
+
+
+
+
+<pre class="example">Parcel.writeStrongBinder() // native
+  android_os_Parcel_writeStrongBinder()
+    parcel-&gt;writeStrongBinder(ibinderForJavaObject(env, object));
+      if (env-&gt;IsInstanceOf(obj, gBinderProxyOffsets.mClass)): // binder is proxy
+        env-&gt;GetIntField(obj, gBinderProxyOffsets.mObject);
+      else if (env-&gt;IsInstanceOf(obj, gBinderOffsets.mClass)): // binder is stub
+        env-&gt;GetIntField(obj, gBinderOffsets.mObject); // binder initialization will set this field
+</pre>
+
+<ul>
+<li>onTransact
+</li>
+</ul>
+
+
+
+
+<pre class="example">JavaBBinder.onTransact() // c++
+  env-&gt;CallBooleanMethod(mObject, gBinderOffsets.mExecTransact, ...)
+    Binder.execTransact()
+      Binder.onTransact()
+  excep = env-&gt;ExceptionOccurred();
+  report_exception(env, excep,...)
+</pre>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> misc</h3>
+<div class="outline-text-3" id="text-1-5">
+
+
+</div>
+
+<div id="outline-container-1-5-1" class="outline-4">
+<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> Parcelable VS. Serializable</h4>
+<div class="outline-text-4" id="text-1-5-1">
+
+<p>     Parcelable:
+     fast and lightweight.  But there are some limitations:
+</p><ol>
+<li>all the Container class is NOT parcelable but serializable, so u can't call
+        Intent.putExtra(List..).  Although u can use intent.putParcelableArrayList(),
+        the items in the list must be Parcelable&hellip;..
+</li>
+<li>Bundle internally is a Map&lt;String,Object&gt;, and calls Parcel.writeValue(object)  recursively to write anything,  the function looks like:
+        if (obj instance of String) &hellip;
+        if (obj instance of Map) ..
+        if (obj instance of List) &hellip;
+        &hellip;.
+        if (obj instance of Parcelable)
+
+<p>
+        so u see, Parcelable is the last resort, so if you rewrite Map which
+        implements Parcleble, it will NEVER be taken as a Parcelable by Bundle,
+        since it's firstly a Map&hellip;
+</p></li>
+</ol>
+
+
+<p>
+     To summurize it: complex Containers could NOT be transmitted through parcel.
+</p>
+<p>
+     serializable is java's game. It's powerful but quite SLOOOOW.
+     u can serialize any complex class, just DECLARE it implements 'Serializable'.  Also u can optionally provid
+</p></div>
+
+</div>
+
+<div id="outline-container-1-5-2" class="outline-4">
+<h4 id="sec-1-5-2"><span class="section-number-4">1.5.2</span> IBinder as token</h4>
+<div class="outline-text-4" id="text-1-5-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-3" class="outline-4">
+<h4 id="sec-1-5-3"><span class="section-number-4">1.5.3</span> ParcelFileDescriptor</h4>
+<div class="outline-text-4" id="text-1-5-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-4" class="outline-4">
+<h4 id="sec-1-5-4"><span class="section-number-4">1.5.4</span> <span class="done DONE">DONE</span> Binder.getCallingPid() &amp; Binder.getCallingUid()</h4>
+<div class="outline-text-4" id="text-1-5-4">
+
+<p>      <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-02-22 Tue 17:23</span></span><br/>
+</p><ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-02-22 Tue 17:23</span></span>
+</li>
+</ul>
+
+<p>     see <a href="#Android-Permission">@Android Permission</a>
+     see <a href="#binder_transaction_data">@binder<sub>transaction</sub><sub>data</sub></a>
+</p><ul>
+<li>these two static functions can be used to retrieve the calling pid/uid of the binder proxy thread, but if the current thread is
+       not executing an incoming binder transaction, then it's own pid/uid is returned.
+</li>
+<li>these functions can be used by the binder<sub>stub</sub> to detect whether the binder<sub>proxy</sub> has appropriate permissions, through
+       `context.checkPermission(permission,calling<sub>pid</sub>,calling<sub>uid</sub>)`, or it's analog `context.checkSelfOrCallingPermission(permission)`
+</li>
+</ul>
+
+
+<p>
+     Binder.getCallingPid()
+       IPCThreadState.getCallPid()
+         return mCallingPid
+</p>
+<p>
+     IPCThreadState.waitForResponse()
+       ;; for binder stub, block to get transaction request
+       executeCommand();
+         ;; BR<sub>TRANSACTION</sub>
+         get `binder<sub>transaction</sub><sub>data`</sub> from binder<sub>buffer</sub>,
+         orig<sub>pid</sub>=mCallingPid        ;; save orig pid
+         mCallingPid=tr.sender<sub>pid</sub>   ;; get sender pid from binder<sub>transaction</sub><sub>data</sub>
+         (*cookie)-&gt;transact()       ;;
+         mCallingPid=orig<sub>pid</sub>        ;; restore orig pid
+</p>
+<p>
+    mCallingPid is initialized to getPid() by IPCThreadState, so that Binder.getCallPid() may return thread's own pid if not executing an incoming
+    binder transaction.
+</p></div>
+
+</div>
+
+<div id="outline-container-1-5-5" class="outline-4">
+<h4 id="sec-1-5-5"><span class="section-number-4">1.5.5</span> Binder.clearCallingIdentity() &amp; Binder.restoreCallingIdentity()</h4>
+<div class="outline-text-4" id="text-1-5-5">
+
+<p>during one binder transaction, if the binder-stub want to temporary use it's own pid/uid (instead of proxy's pid/uid) for permission-check, it
+should invoke clearCallingIdentity to temporary save proxy's pid/uid to one `long int`, then set getCallingPid to stub's own pid.
+After the permission-check, it could invoke restoreCallingIdentity(long) to restore getCallingPid to proxy's pid.
+</p></div>
+
+</div>
+
+<div id="outline-container-1-5-6" class="outline-4">
+<h4 id="sec-1-5-6"><span class="section-number-4">1.5.6</span> AsyncTask</h4>
+<div class="outline-text-4" id="text-1-5-6">
+
+</div>
+
+</div>
+
+<div id="outline-container-Messenger" class="outline-4">
+<h4 id="Messenger"><a name="sec-1-5-7" id="sec-1-5-7"></a><span class="section-number-4">1.5.7</span> Messenger</h4>
+<div class="outline-text-4" id="text-Messenger">
+
+<p>     handy class which provide a handler within a binder, so that message can be sent across processes.
+</p></div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2013-05-17T11:45+0800</p>
+<p class="author">Author: sunway</p>
+<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>

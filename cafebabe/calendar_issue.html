@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Android Calendar Sync Issue</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="Android Calendar Sync Issue"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-05-17T11:45+0800"/>
+<meta name="author" content="sunway"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style><link rel="stylesheet" title="Standard" href="style.css" type="text/css" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Android Calendar Sync Issue</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Calendar Sync Issue</a>
+<ul>
+<li><a href="#sec-1-1">1.1 一次完整的sync过程</a></li>
+<li><a href="#sec-1-2">1.2 如何支持sub calendar</a></li>
+<li><a href="#sec-1-3">1.3 (updated!) Exchange ActiveSync (EAS)</a></li>
+<li><a href="#sec-1-4">1.4 (updated!) Next Step &hellip;</a></li>
+<li><a href="#sec-1-5">1.5 Footnotes</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Calendar Sync Issue</h2>
+<div class="outline-text-2" id="text-1">
+
+<p>exchange同步calendar 涉及三个APP: exchange, email provider, calendar provider
+</p>
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> 一次完整的sync过程</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<ul>
+<li>用户request sync
+</li>
+<li>exchange的syncAdapter查找email:account.tbl, 找到对应的account_id
+</li>
+<li>exchange根据account_id查找email:mailbox.tbl, 找到所有type为65(calendar)的
+  mailbox, 例如:
+</li>
+</ul>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" /><col class="left" /><col class="left" /><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">id</th><th scope="col" class="left">displayName</th><th scope="col" class="left">serverId</th><th scope="col" class="left">syncKey</th><th scope="col" class="left">syncTime</th><th scope="col" class="left">&hellip;</th></tr>
+</thead>
+<tbody>
+<tr><td class="left">3</td><td class="left">a@gmail.com</td><td class="left">Event:DEFAULT</td><td class="left">335495973024</td><td class="left">335505382850</td><td class="left">&hellip;</td></tr>
+</tbody>
+</table>
+
+
+<p>
+其中,Event:DEFAULT应该就是指默认calendar, syncKey可能是用来同步这个calendar的
+token. 在现在的代码和数据看来, 该表只会有一条对应于Event:DEFAULT的mailbox记录<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup>
+</p>
+<ul>
+<li>exchange根据查找到的mailbox, 到calendar:calendars.tbl中查找对应于mailbox的本地
+  的calendar, 例如
+</li>
+</ul>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" /><col class="left" /><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">id</th><th scope="col" class="left">account_name</th><th scope="col" class="left">account_type</th><th scope="col" class="left">calendar_display_name</th><th scope="col" class="left">&hellip;</th></tr>
+</thead>
+<tbody>
+<tr><td class="left">2</td><td class="left">a@gmail.com</td><td class="left">com.android.exchange</td><td class="left">a@gmail.com</td><td class="left">&hellip;</td></tr>
+</tbody>
+</table>
+
+
+<p>
+如果 (mailbox.displayName==calendar.account_name),mailbox与calendar就认为是对应
+的.<sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup>
+</p>
+<ul>
+<li>找到对应的calendar记录后, 即可同步本地calendar与远程 google calendar
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 如何支持sub calendar</h3>
+<div class="outline-text-3" id="text-1-2">
+
+<ul>
+<li>需要exchange服务器能返回服务器上的sub calendar列表, 然后我们可以将其保存在
+  email:mailbox.tbl中, 例如:
+</li>
+</ul>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="right" /><col class="left" /><col class="left" /><col class="right" /><col class="right" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="right">id</th><th scope="col" class="left">displayName</th><th scope="col" class="left">serverId</th><th scope="col" class="right">syncKey</th><th scope="col" class="right">syncTime</th><th scope="col" class="left">&hellip;</th></tr>
+</thead>
+<tbody>
+<tr><td class="right">3</td><td class="left">a@gmail.com</td><td class="left">Event:DEFAULT</td><td class="right">335495973024</td><td class="right">335505382850</td><td class="left">&hellip;</td></tr>
+<tr><td class="right">4</td><td class="left">a@gmail.com</td><td class="left">Event:Test</td><td class="right">123456564556</td><td class="right">124353454355</td><td class="left">&hellip;</td></tr>
+</tbody>
+</table>
+
+
+<ul>
+<li>exchange根据mailbox查找本地calendar时, 需要使用 serverId 来查找, 相应的,
+  calendar:calendars.tbl 中也应该有对应的字段, 例如:
+</li>
+</ul>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="right" /><col class="left" /><col class="left" /><col class="left" /><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="right">id</th><th scope="col" class="left">account_name</th><th scope="col" class="left">account_type</th><th scope="col" class="left">calendar_display_name</th><th scope="col" class="left">&hellip;</th><th scope="col" class="left">cal_sync1</th></tr>
+</thead>
+<tbody>
+<tr><td class="right">2</td><td class="left">a@gmail.com</td><td class="left">com.android.exchange</td><td class="left">Default Calendar</td><td class="left">&hellip;</td><td class="left">Event:DEFAULT</td></tr>
+<tr><td class="right">3</td><td class="left">a@gmail.com</td><td class="left">com.android.exchange</td><td class="left">Test Calendar</td><td class="left">&hellip;</td><td class="left">Event:Test</td></tr>
+</tbody>
+</table>
+
+
+<ul>
+<li>&hellip;
+</li>
+<li>关键需要了解Exchange Active Sync协议
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> (updated!) Exchange ActiveSync (EAS)</h3>
+<div class="outline-text-3" id="text-1-3">
+
+<p>添加帐户时client会使用 Exchange ActiveSync 协议 (EAS) 与 server 交互
+</p>
+<p>
+EAS 是一个基于http/xml的协议
+</p>
+
+</div>
+
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> client向server发送一个 FolderSync 命令</h4>
+<div class="outline-text-4" id="text-1-3-1">
+
+
+
+
+<pre class="src src-xml">&lt;<span style="color: #268bd2;">FolderSync</span>&gt;
+  &lt;<span style="color: #268bd2;">FolderSyncKey</span>&gt;
+    0
+  &lt;/<span style="color: #268bd2;">FolderSyncKey</span>&gt;
+&lt;/<span style="color: #268bd2;">FolderSync</span>&gt;
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> server 返回所有 folder</h4>
+<div class="outline-text-4" id="text-1-3-2">
+
+
+
+
+<pre class="src src-xml">&lt;<span style="color: #268bd2;">FolderSync</span>&gt;
+  &lt;<span style="color: #268bd2;">FolderStatus</span>&gt;
+    FolderStatus: 1
+  &lt;/<span style="color: #268bd2;">FolderStatus</span>&gt;
+  &lt;<span style="color: #268bd2;">FolderSyncKey</span>&gt;
+    FolderSyncKey: 1336382844217
+  &lt;/<span style="color: #268bd2;">FolderSyncKey</span>&gt;
+
+  &lt;<span style="color: #268bd2;">Changes</span>&gt;
+    <span style="color: #586e75; font-style: italic;">&lt;!--</span><span style="color: #586e75; font-style: italic;"> there are 11 folders </span><span style="color: #586e75; font-style: italic;">--&gt;</span>
+    &lt;<span style="color: #268bd2;">Count</span>&gt;
+      Count: 11
+    &lt;/<span style="color: #268bd2;">Count</span>&gt;
+    <span style="color: #586e75; font-style: italic;">&lt;!--</span><span style="color: #586e75; font-style: italic;"> add folder: Contact:DEFAULT </span><span style="color: #586e75; font-style: italic;">--&gt;</span>
+    &lt;<span style="color: #268bd2;">FolderAdd</span>&gt;
+      &lt;<span style="color: #268bd2;">FolderServerId</span>&gt;
+        FolderServerId: Contact:DEFAULT
+      &lt;/<span style="color: #268bd2;">FolderServerId</span>&gt;
+      &lt;<span style="color: #268bd2;">FolderParentId</span>&gt;
+        FolderParentId: 0
+      &lt;/<span style="color: #268bd2;">FolderParentId</span>&gt;
+      &lt;<span style="color: #268bd2;">FolderDisplayName</span>&gt;
+        FolderDisplayName: Contacts
+      &lt;/<span style="color: #268bd2;">FolderDisplayName</span>&gt;
+      <span style="color: #586e75; font-style: italic;">&lt;!--</span><span style="color: #586e75; font-style: italic;"> 9 means folder type is CONTACT </span><span style="color: #586e75; font-style: italic;">--&gt;</span>
+      &lt;<span style="color: #268bd2;">Type</span>&gt;
+        Type: 9
+      &lt;/<span style="color: #268bd2;">Type</span>&gt;
+    &lt;/<span style="color: #268bd2;">FolderAdd</span>&gt;
+    <span style="color: #586e75; font-style: italic;">&lt;!--</span><span style="color: #586e75; font-style: italic;"> add folder for Event:DEFAULT (main calendar) </span><span style="color: #586e75; font-style: italic;">--&gt;</span>
+    &lt;<span style="color: #268bd2;">FolderAdd</span>&gt;
+      &lt;<span style="color: #268bd2;">FolderServerId</span>&gt;
+        FolderServerId: Event:DEFAULT
+      &lt;/<span style="color: #268bd2;">FolderServerId</span>&gt;
+      &lt;<span style="color: #268bd2;">FolderParentId</span>&gt;
+        FolderParentId: 0
+      &lt;/<span style="color: #268bd2;">FolderParentId</span>&gt;
+      &lt;<span style="color: #268bd2;">FolderDisplayName</span>&gt;
+        FolderDisplayName: sunwayforever@gmail.com
+      &lt;/<span style="color: #268bd2;">FolderDisplayName</span>&gt;
+      <span style="color: #586e75; font-style: italic;">&lt;!--</span><span style="color: #586e75; font-style: italic;"> 8 means folder type is CALENDAR </span><span style="color: #586e75; font-style: italic;">--&gt;</span>
+      &lt;<span style="color: #268bd2;">Type</span>&gt;
+        Type: 8
+      &lt;/<span style="color: #268bd2;">Type</span>&gt;
+    &lt;/<span style="color: #268bd2;">FolderAdd</span>&gt;
+    <span style="color: #586e75; font-style: italic;">&lt;!--</span><span style="color: #586e75; font-style: italic;"> add folder for mail </span><span style="color: #586e75; font-style: italic;">--&gt;</span>
+    &lt;<span style="color: #268bd2;">FolderAdd</span>&gt;
+      &lt;<span style="color: #268bd2;">FolderServerId</span>&gt;
+        FolderServerId: Mail:^sync_gmail_group
+      &lt;/<span style="color: #268bd2;">FolderServerId</span>&gt;
+      &lt;<span style="color: #268bd2;">FolderParentId</span>&gt;
+        FolderParentId: 0
+      &lt;/<span style="color: #268bd2;">FolderParentId</span>&gt;
+      &lt;<span style="color: #268bd2;">FolderDisplayName</span>&gt;
+        FolderDisplayName: [Gmail]
+      &lt;/<span style="color: #268bd2;">FolderDisplayName</span>&gt;
+      &lt;<span style="color: #268bd2;">Type</span>&gt;
+        Type: 12
+      &lt;/<span style="color: #268bd2;">Type</span>&gt;
+    &lt;/<span style="color: #268bd2;">FolderAdd</span>&gt;
+    <span style="color: #586e75; font-style: italic;">&lt;!--</span><span style="color: #586e75; font-style: italic;"> more folder will be added </span><span style="color: #586e75; font-style: italic;">--&gt;</span>
+    <span style="color: #586e75; font-style: italic;">&lt;!--</span><span style="color: #586e75; font-style: italic;"> .... </span><span style="color: #586e75; font-style: italic;">--&gt;</span>
+  &lt;/<span style="color: #268bd2;">Changes</span>&gt;
+&lt;/<span style="color: #268bd2;">FolderSync</span>&gt;
+</pre>
+
+<p>
+虽然 google calendar 里有多个 calendar, 但 server 只返回了一个 Event:DEFAULT
+folder, 所以我们无法获得 default calendar 之外的其他 calendar.
+</p></div>
+
+</div>
+
+<div id="outline-container-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> client 对每一个 folder 发送 sync 命令</h4>
+<div class="outline-text-4" id="text-1-3-3">
+
+<p>例如, client 对 main calendar 发送 sync 命令
+</p>
+
+
+<pre class="src src-xml">&lt;<span style="color: #268bd2;">Sync</span>&gt;
+  &lt;<span style="color: #268bd2;">Collections</span>&gt;
+    &lt;<span style="color: #268bd2;">Collection</span>&gt;
+      &lt;<span style="color: #268bd2;">SyncKey</span>&gt;
+        0
+      &lt;/<span style="color: #268bd2;">SyncKey</span>&gt;
+      &lt;<span style="color: #268bd2;">CollectionId</span>&gt;
+        Event:DEFAULT
+      &lt;/<span style="color: #268bd2;">CollectionId</span>&gt;
+      &lt;<span style="color: #268bd2;">WindowSize</span>&gt;
+        5
+      &lt;/<span style="color: #268bd2;">WindowSize</span>&gt;
+    &lt;/<span style="color: #268bd2;">Collection</span>&gt;
+  &lt;/<span style="color: #268bd2;">Collections</span>&gt;
+&lt;/<span style="color: #268bd2;">Sync</span>&gt;
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-4" class="outline-4">
+<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> server 返回calendar的信息</h4>
+<div class="outline-text-4" id="text-1-3-4">
+
+
+
+
+<pre class="src src-xml">&lt;<span style="color: #268bd2;">Sync</span>&gt;
+  &lt;<span style="color: #268bd2;">Collections</span>&gt;
+    &lt;<span style="color: #268bd2;">Collection</span>&gt;
+      &lt;<span style="color: #268bd2;">Class</span>&gt;
+        Class: Calendar
+      &lt;/<span style="color: #268bd2;">Class</span>&gt;
+      &lt;<span style="color: #268bd2;">SyncKey</span>&gt;
+        SyncKey: 1336382856462:
+      &lt;/<span style="color: #268bd2;">SyncKey</span>&gt;
+      &lt;<span style="color: #268bd2;">CollectionId</span>&gt;
+        CollectionId: Event:DEFAULT
+      &lt;/<span style="color: #268bd2;">CollectionId</span>&gt;
+      &lt;<span style="color: #268bd2;">Status</span>&gt;
+        Status: 1
+      &lt;/<span style="color: #268bd2;">Status</span>&gt;
+      &lt;<span style="color: #268bd2;">MoreAvailable</span>/&gt;
+      &lt;<span style="color: #268bd2;">Commands</span>&gt;
+        &lt;<span style="color: #268bd2;">Add</span>&gt;
+          &lt;<span style="color: #268bd2;">ServerId</span>&gt;
+            ServerId: b91f9381-2e7c-4f28-aa92-3b49b84a84cb
+          &lt;/<span style="color: #268bd2;">ServerId</span>&gt;
+          &lt;<span style="color: #268bd2;">ApplicationData</span>&gt;
+            <span style="color: #586e75; font-style: italic;">&lt;!--</span><span style="color: #586e75; font-style: italic;"> data about the event </span><span style="color: #586e75; font-style: italic;">--&gt;</span>
+          &lt;/<span style="color: #268bd2;">ApplicationData</span>&gt;
+        &lt;/<span style="color: #268bd2;">Add</span>&gt;
+        <span style="color: #586e75; font-style: italic;">&lt;!--</span><span style="color: #586e75; font-style: italic;"> more commands </span><span style="color: #586e75; font-style: italic;">--&gt;</span>
+      &lt;/<span style="color: #268bd2;">Commands</span>&gt;
+    &lt;/<span style="color: #268bd2;">Collection</span>&gt;
+  &lt;/<span style="color: #268bd2;">Collections</span>&gt;
+&lt;/<span style="color: #268bd2;">Sync</span>&gt;
+</pre>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> (updated!) Next Step &hellip;</h3>
+<div class="outline-text-3" id="text-1-4">
+
+<ol>
+<li>由于 google calendar 有专门的 RESTful api,且该 api 完全支持多个 calendar, 所以
+   有可能参考机不是使用的 EAS 协议 , 而是使用的 RESTful api. (这种可能性好像不是
+   很大&hellip;)
+</li>
+<li>参考机可能还是使用 EAS 协议, 但有可能通过特定的 http 头使 google server对它的请求
+   特殊处理? 猜测 client 特殊标识可能写在 http 头中,是因为 EAS folderSync 命令的
+   schema 中没有提到任何额外的参数
+</li>
+</ol>
+
+
+
+<p>   
+以上的猜测实际上难以在参考机验证, 因为:
+</p><ol>
+<li>没有 root 权限,无法抓包
+</li>
+<li>google calendar 使用 ssl, 即使抓到包也无法解析.
+</li>
+</ol>
+
+
+<p>   
+我只能想到一个可能的解决方法:
+</p><ol>
+<li>架设一个支持 http CONNECT 的代理
+</li>
+<li>client 通过该代理访问 google
+</li>
+<li>在代理上抓包并让 wireshark 使用代理服务器的私钥解析抓到的包 &hellip; 
+</li>
+</ol>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> Footnotes</h3>
+<div class="outline-text-3" id="text-1-5">
+
+
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+<p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> 这里表明exchange app 无法支持 sub calendar
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.2" href="#fnr-.2">2</a></sup> 进一步表明 exchange app 无法支持 sub calendar
+</p>
+
+
+
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2013-05-17T11:45+0800</p>
+<p class="author">Author: sunway</p>
+<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>

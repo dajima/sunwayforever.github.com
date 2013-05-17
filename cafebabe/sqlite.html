@@ -1,0 +1,1839 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>SQLite</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="SQLite"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-05-17T11:45+0800"/>
+<meta name="author" content="sunway"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style><link rel="stylesheet" title="Standard" href="style.css" type="text/css" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">SQLite</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 SQLite</a>
+<ul>
+<li><a href="#sec-1-1">1.1 Android API</a></li>
+<li><a href="#sec-1-2">1.2 C API</a></li>
+<li><a href="#sec-1-3">1.3 sqlite</a></li>
+<li><a href="#sec-1-4">1.4 Other</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> SQLite</h2>
+<div class="outline-text-2" id="text-1">
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Android API</h3>
+<div class="outline-text-3" id="text-1-1">
+
+
+</div>
+
+<div id="outline-container-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> SQLiteDatabase &amp; SQLiteDatabase (c)</h4>
+<div class="outline-text-4" id="text-1-1-1">
+
+
+</div>
+
+<div id="outline-container-1-1-1-1" class="outline-5">
+<h5 id="sec-1-1-1-1"><span class="section-number-5">1.1.1.1</span> addCustomFunction</h5>
+<div class="outline-text-5" id="text-1-1-1-1">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> SQLiteStatement (c)</h4>
+<div class="outline-text-4" id="text-1-1-2">
+
+<p>Note that `SQLiteStatement' has nothing to do with the native
+`prepared statement', it nothing but a `helper class' to store:
+</p><ul>
+<li>sql string
+</li>
+<li>bind args
+</li>
+<li>db connection (session)
+</li>
+</ul>
+
+
+<p>
+In fact, there is ONE class named `PreparedStatement', defined in the
+`SQLiteConnection', which corresponds to the `native prepared
+statement', and also there is `PreparedStatementCache' in
+SQLiteConnection to avoid redundant statement preparations. So, cache
+`SQLiteStatement' manually may make no sense? so I really doubt that
+`android providers should use DatabaseUtils.InsertHelper to cache
+SQLiteStatement', as mentioned in:
+</p>
+<p>
+<a href="http://www.outofwhatbox.com/blog/2010/12/android-using-databaseutils-inserthelper-for-faster-insertions-into-sqlite-database/#comment-2685">android-using-databaseutils-inserthelper-for-faster-insertions-into-sqlite-database/</a>
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> SQLiteSession</h4>
+<div class="outline-text-4" id="text-1-1-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-4" class="outline-4">
+<h4 id="sec-1-1-4"><span class="section-number-4">1.1.4</span> SQLiteConnection &amp; SQLiteConnectionPool</h4>
+<div class="outline-text-4" id="text-1-1-4">
+
+
+</div>
+
+<div id="outline-container-1-1-4-1" class="outline-5">
+<h5 id="sec-1-1-4-1"><span class="section-number-5">1.1.4.1</span> Yield</h5>
+<div class="outline-text-5" id="text-1-1-4-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-4-2" class="outline-5">
+<h5 id="sec-1-1-4-2"><span class="section-number-5">1.1.4.2</span> WAL (Write-ahead Logging)</h5>
+<div class="outline-text-5" id="text-1-1-4-2">
+
+<p><a href="http://sqlite.org/wal.html">http://sqlite.org/wal.html</a>
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-5" class="outline-4">
+<h4 id="sec-1-1-5"><span class="section-number-4">1.1.5</span> SQLiteProgram &amp; SQLiteQuery &amp; SQLiteQueryBuilder</h4>
+<div class="outline-text-4" id="text-1-1-5">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-6" class="outline-4">
+<h4 id="sec-1-1-6"><span class="section-number-4">1.1.6</span> Cursor &amp; CursorWindow</h4>
+<div class="outline-text-4" id="text-1-1-6">
+
+
+</div>
+
+<div id="outline-container-1-1-6-1" class="outline-5">
+<h5 id="sec-1-1-6-1"><span class="section-number-5">1.1.6.1</span> SQLiteCursorDriver</h5>
+<div class="outline-text-5" id="text-1-1-6-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-6-2" class="outline-5">
+<h5 id="sec-1-1-6-2"><span class="section-number-5">1.1.6.2</span> CursorFactory</h5>
+<div class="outline-text-5" id="text-1-1-6-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-6-3" class="outline-5">
+<h5 id="sec-1-1-6-3"><span class="section-number-5">1.1.6.3</span> Cursor</h5>
+<div class="outline-text-5" id="text-1-1-6-3">
+
+<ul>
+<li id="sec-1-1-6-3-1">Cursor Class Hierarchy<br/>
+
+<p>
+                                    -+-&mdash;&mdash;&mdash;+
+</p><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" />
+</colgroup>
+<tbody>
+<tr><td class="left">Cursor/I</td></tr>
+</tbody>
+</table>
+
+                                    -+-&mdash;+&ndash;&mdash;+
+                               -+&mdash;&mdash;&mdash;+&ndash;&mdash;&mdash;&mdash;+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" />
+</colgroup>
+<tbody>
+<tr><td class="left">CrossProcessCursor/I</td></tr>
+</tbody>
+</table>
+
+                               -+-&mdash;+-&mdash;+&ndash;&mdash;&mdash;&mdash;+
+                                -+&ndash;&mdash;+&ndash;+&mdash;&mdash;&mdash;+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" />
+</colgroup>
+<tbody>
+<tr><td class="left">AbstractCursor/A</td></tr>
+</tbody>
+</table>
+
+                                -+&ndash;&mdash;&mdash;+&mdash;&mdash;&mdash;+
+                      -+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;+-&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+
+          -+&ndash;&mdash;&mdash;&mdash;+&ndash;&mdash;&mdash;&mdash;&mdash;+          -+-&mdash;&mdash;+&mdash;&mdash;+       -+&mdash;&mdash;+&mdash;&mdash;+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" /><col class="left" /><col class="left" /><col class="left" />
+</colgroup>
+<tbody>
+<tr><td class="left">AbstractWindowedCursor/A</td><td class="left"></td><td class="left">MatrixCursor</td><td class="left"></td><td class="left">MergeCursor</td></tr>
+</tbody>
+</table>
+
+          -+&ndash;&mdash;&mdash;&mdash;+&ndash;&mdash;&mdash;&mdash;&mdash;+          -+&ndash;&mdash;&mdash;&mdash;&mdash;+       -+-&mdash;&mdash;&mdash;&mdash;+
+                      -+-&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+
+              -+-&mdash;&mdash;+&mdash;&mdash;+      -+-&mdash;&mdash;&mdash;&mdash;+-&mdash;&mdash;&mdash;&mdash;+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" /><col class="left" />
+</colgroup>
+<tbody>
+<tr><td class="left">SqliteCursor</td><td class="left"></td><td class="left">BulkCursorToCursorAdaptor</td></tr>
+</tbody>
+</table>
+
+              -+&ndash;&mdash;&mdash;&mdash;&mdash;+      -+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+
+<ul>
+<li id="sec-1-1-6-3-1-1">Cursor across process<br/>
+
+<p>
+When Cursor in the remote process need to be returned to local process, the
+remote Cursor will be wrapped into a binder object named
+`CursorToBulkCursorAdaptor`, which is not a cursor, but implements methods like
+`onMove`, `getWindow`, etc.
+</p>
+<p>
+When the local process received the `CursorToBulkCursorAdaptor` binder, it
+again will be wrapped into a local cursor object named
+`BulkCursorToCursorAdaptor`, which is a `AbstractWindowedCursor`
+</p>
+
+<p>
+               -+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+
+</p><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" />
+</colgroup>
+<tbody>
+<tr><td class="left">AbstractWindowedCursor</td></tr>
+</tbody>
+</table>
+
+               -+-&mdash;&mdash;&mdash;+-&mdash;&mdash;&mdash;&mdash;+
+             -+&mdash;&mdash;&mdash;&mdash;+&ndash;&mdash;&mdash;&mdash;&mdash;+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" />
+</colgroup>
+<tbody>
+<tr><td class="left">BulkCursorToCursorAdaptor</td></tr>
+</tbody>
+</table>
+
+             -+&mdash;&mdash;&mdash;&mdash;+&ndash;&mdash;&mdash;&mdash;&mdash;+
+                  -+-&mdash;&mdash;+&mdash;&mdash;+        local process (e.g. app)
+   &mdash;&mdash;&mdash;&mdash;&mdash; |  BulkCursor  | -------------------
+                  -+-&mdash;&mdash;+&mdash;&mdash;+        remote process (e.g. provider)
+             -+&mdash;&mdash;&mdash;&mdash;+&ndash;&mdash;&mdash;&mdash;&mdash;+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" />
+</colgroup>
+<tbody>
+<tr><td class="left">CursorToBulkCursorAdaptor</td></tr>
+</tbody>
+</table>
+
+             -+&mdash;&mdash;&mdash;&mdash;+&ndash;&mdash;&mdash;&mdash;&mdash;+
+                    -+-&mdash;&mdash;&mdash;+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" />
+</colgroup>
+<tbody>
+<tr><td class="left">Cursor</td></tr>
+</tbody>
+</table>
+
+                    -+-&mdash;&mdash;&mdash;+
+
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li id="sec-1-1-6-3-2">Code Snippet<br/>
+<ul>
+<li id="sec-1-1-6-3-2-1">moveToFirst<br/>
+
+
+
+<pre class="src src-text">AbstractCursor.moveToFirst
+  AbstractCursor.moveToPosition(0)
+    ret=SqliteCursor.onMove(origPos,0)
+      if mWindow==null || newPosition &lt; mWindow.getStartPosition()
+         || newPosition &gt;= mWindow.getStartPosition()+ mWindow.getNumRows():
+         SqliteCursor.fillWindow(newPosition)
+           mWindow.setStartPosition(newPosition)
+           getQuery().fillWindow(newPosition)
+             SQLiteQuery.nativeFillWindow(nHandle, nStatement, window.mWindowPtr,
+                        startPos, mOffsetIndex);
+               // Bind the offset parameter, telling the program which row to start with
+               sqlite3_bind_int(statement, offsetParam, startPos);
+               while (!windowFull):
+                 sqlite3_step(statement);
+                 window-&gt;allocRow();
+                 for (int i = 0; i &lt; numColumns; i++):
+                   int type = sqlite3_column_type(statement, i);
+                   if (type == SQLITE_TEXT):
+                     const char* text = reinterpret_cast&lt;const char*&gt;(sqlite3_column_text(statement, i));
+                     window-&gt;putString(addedRows, i, text, sizeIncludingNull);
+                   elif: // other type
+                 // end for
+               // end while
+               sqlite3_reset(statement);      
+    if ret:
+      mPos=newPos;
+</pre>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-1-6-3-2-2">getString<br/>
+
+
+
+<pre class="src src-text">Cursor.getString(pos)
+  AbstractWindowedCursor.getString(pos)
+    mWindow.getString(pos)
+      nativeGetString(pos)
+</pre>
+
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li id="sec-1-1-6-3-3">SQLiteCursor<br/>
+<ul>
+<li>SQLiteCursorDriver
+  used to create the SqliteCursor
+</li>
+<li>SQLiteQuery
+  used to invoke `nativefillWindow`
+</li>
+</ul>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-1-6-3-4">To summarize<br/>
+<ol>
+<li>Cursor by itself is not `CrossProcess`, but with the help of `BulkCursor`
+   ,`BulkCursorToCursorAdaptor` and `CursorToBulkCursorAdaptor`, Cursor can be
+   `CrossProcess`
+</li>
+<li>The most important methods of the `Cursor` object:
+<ol>
+<li>fillWindow
+
+<p>
+      `nativefillWindow` will execute the real query, and fill the result set to
+      the `CursorWindow`.  ps. `getCount` will invoke `fillWindow` implicitly.
+</p>
+</li>
+<li>onMove
+
+<p>
+      `fillWindow` is during `onMove`, e.g. `moveToFirst`, `moveToNext`, &hellip;
+</p></li>
+</ol>
+
+</li>
+</ol>
+
+
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-6-4" class="outline-5">
+<h5 id="sec-1-1-6-4"><span class="section-number-5">1.1.6.4</span> CursorWindow</h5>
+<div class="outline-text-5" id="text-1-1-6-4">
+
+<p>`CursorWindow` is parcelable, it represents a `window` of sqlite query data.
+</p>
+<p>
+The underlying data of a Java CursorWindow object is managed by CursorWindow
+c++ object, in both of the server side and the client side.
+</p><ul>
+<li id="sec-1-1-6-4-1">init<br/>
+
+
+
+<pre class="src src-text">onMove
+  fillWindow
+    clearOrCreateWindow
+      mWindow = new CursorWindow(name);
+        // sCursorWindowSize specifies the window size in kb, e.g. 2048 Kb
+        mWindowPtr = CursorWindow.nativeCreate(name, sCursorWindowSize);
+</pre>
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-1-6-4-2">how CursorWindow is passed across process<br/>
+
+<p>
+Because `CursorWindow` is only a parcelable (not a binder), so the remote
+`CursorWindow` need to be fetched by the local process again and again,
+e.g. during local `onMove`
+</p>
+
+
+
+<pre class="src src-text">BulkCursorToCursorAdaptor.onMove
+  if (mWindow == null
+      || newPosition &lt; mWindow.getStartPosition()
+      || newPosition &gt;= mWindow.getStartPosition() + mWindow.getNumRows()):
+    setWindow(mBulkCursor.getWindow(newPosition));
+      // remote process
+      CursorToBulkCursorAdaptor.getWindow(newPosition)
+        mCursor.moveToPosition(startPos)
+        return mCursor.getWindow()
+</pre>
+
+
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> C API</h3>
+<div class="outline-text-3" id="text-1-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> sqlite</h3>
+<div class="outline-text-3" id="text-1-3">
+
+
+</div>
+
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> sqlite3<sub>analyzer</sub></h4>
+<div class="outline-text-4" id="text-1-3-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> sqlite command</h4>
+<div class="outline-text-4" id="text-1-3-2">
+
+
+</div>
+
+<div id="outline-container-1-3-2-1" class="outline-5">
+<h5 id="sec-1-3-2-1"><span class="section-number-5">1.3.2.1</span> .output</h5>
+<div class="outline-text-5" id="text-1-3-2-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2-2" class="outline-5">
+<h5 id="sec-1-3-2-2"><span class="section-number-5">1.3.2.2</span> .mode</h5>
+<div class="outline-text-5" id="text-1-3-2-2">
+
+<p>list|column|insert|line|tabs|tcl|csv
+</p></div>
+
+</div>
+
+<div id="outline-container-1-3-2-3" class="outline-5">
+<h5 id="sec-1-3-2-3"><span class="section-number-5">1.3.2.3</span> .dump</h5>
+<div class="outline-text-5" id="text-1-3-2-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2-4" class="outline-5">
+<h5 id="sec-1-3-2-4"><span class="section-number-5">1.3.2.4</span> .read</h5>
+<div class="outline-text-5" id="text-1-3-2-4">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2-5" class="outline-5">
+<h5 id="sec-1-3-2-5"><span class="section-number-5">1.3.2.5</span> .tables</h5>
+<div class="outline-text-5" id="text-1-3-2-5">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2-6" class="outline-5">
+<h5 id="sec-1-3-2-6"><span class="section-number-5">1.3.2.6</span> .separator</h5>
+<div class="outline-text-5" id="text-1-3-2-6">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2-7" class="outline-5">
+<h5 id="sec-1-3-2-7"><span class="section-number-5">1.3.2.7</span> .schema</h5>
+<div class="outline-text-5" id="text-1-3-2-7">
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2-8" class="outline-5">
+<h5 id="sec-1-3-2-8"><span class="section-number-5">1.3.2.8</span> .headers [on|off]</h5>
+<div class="outline-text-5" id="text-1-3-2-8">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2-9" class="outline-5">
+<h5 id="sec-1-3-2-9"><span class="section-number-5">1.3.2.9</span> explain query plan</h5>
+<div class="outline-text-5" id="text-1-3-2-9">
+
+<p>see also <a href="http://www.sqlite.org/queryplanner.html">queryplanner</a>
+</p>
+
+
+<pre class="src src-sql">explain query plan <span style="color: #859900;">select</span> * <span style="color: #859900;">from</span> foo;
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2-10" class="outline-5">
+<h5 id="sec-1-3-2-10"><span class="section-number-5">1.3.2.10</span> vacuum</h5>
+<div class="outline-text-5" id="text-1-3-2-10">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> sqlite SQL</h4>
+<div class="outline-text-4" id="text-1-3-3">
+
+
+</div>
+
+<div id="outline-container-1-3-3-1" class="outline-5">
+<h5 id="sec-1-3-3-1"><span class="section-number-5">1.3.3.1</span> create table</h5>
+<div class="outline-text-5" id="text-1-3-3-1">
+
+<ul>
+<li id="sec-1-3-3-1-1">storage class<br/>
+<ul>
+<li>integer
+</li>
+<li>real
+</li>
+<li>text
+</li>
+<li>blob
+</li>
+</ul>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-1-2">constrains<br/>
+<ul>
+<li id="sec-1-3-3-1-2-1">column-level constrains<br/>
+<ul>
+<li>not null
+</li>
+<li>unique
+</li>
+<li>primary key
+</li>
+<li>foreign key
+</li>
+<li>check
+</li>
+</ul>
+
+
+
+
+<pre class="src src-sql"><span style="color: #859900;">create</span> temp <span style="color: #859900;">table</span> <span style="color: #268bd2;">foo</span>(
+x <span style="color: #b58900;">integer</span>,
+y <span style="color: #b58900;">integer</span> <span style="color: #859900;">check</span> (y&gt;x),
+z <span style="color: #b58900;">integer</span> <span style="color: #859900;">check</span> (z&gt;<span style="color: #859900;">abs</span>(y)),
+);
+</pre>
+
+<p>
+see also `trigger`
+</p><ul>
+<li>collate
+</li>
+<li>default
+</li>
+<li>autoincrement
+</li>
+</ul>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-1-2-2">table-level constrains<br/>
+<ul>
+<li>primary key
+</li>
+</ul>
+
+
+
+
+<pre class="src src-sql"><span style="color: #859900;">CREATE</span> <span style="color: #859900;">TABLE</span> <span style="color: #268bd2;">xxx</span> (
+data1 text,
+data2 text,
+<span style="color: #859900;">primary</span> <span style="color: #859900;">key</span> (data1, data2)
+);
+</pre>
+
+<ul>
+<li>unique
+</li>
+</ul>
+
+
+
+
+<pre class="src src-sql"><span style="color: #859900;">CREATE</span> <span style="color: #859900;">TABLE</span> <span style="color: #268bd2;">xxx</span> (
+_id <span style="color: #b58900;">integer</span> <span style="color: #859900;">primary</span> <span style="color: #859900;">key</span>,
+data1 text,
+data2 text,
+<span style="color: #859900;">unique</span> (data1, data2)
+);
+</pre>
+
+<ul>
+<li>check
+</li>
+</ul>
+
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3-2" class="outline-5">
+<h5 id="sec-1-3-3-2"><span class="section-number-5">1.3.3.2</span> trigger</h5>
+<div class="outline-text-5" id="text-1-3-3-2">
+
+
+
+
+<pre class="src src-sql"><span style="color: #859900;">create</span> [temp|<span style="color: #859900;">temporary</span>] <span style="color: #859900;">trigger</span> <span style="color: #859900;">name</span> 
+[<span style="color: #859900;">before</span>|<span style="color: #859900;">after</span>|instead <span style="color: #859900;">of</span>] [<span style="color: #859900;">insert</span>|<span style="color: #859900;">delete</span>|<span style="color: #859900;">update</span>|<span style="color: #859900;">update</span> <span style="color: #859900;">of</span> columns] <span style="color: #859900;">on</span> <span style="color: #859900;">table</span> 
+[<span style="color: #859900;">for</span> <span style="color: #859900;">each</span> <span style="color: #b58900;">row</span>] [<span style="color: #859900;">when</span> expr]
+<span style="color: #859900;">begin</span>
+<span style="color: #859900;">action</span>
+<span style="color: #859900;">end</span>;
+</pre>
+
+<ul>
+<li>using trigger to update view
+</li>
+</ul>
+
+
+
+
+<pre class="src src-sql"><span style="color: #859900;">create</span> <span style="color: #859900;">trigger</span> <span style="color: #268bd2;">on_update_foods_view</span> 
+instead <span style="color: #859900;">of</span> <span style="color: #859900;">update</span> <span style="color: #859900;">on</span> foods_view 
+<span style="color: #859900;">for</span> <span style="color: #859900;">each</span> <span style="color: #b58900;">row</span> 
+<span style="color: #859900;">begin</span> 
+   <span style="color: #859900;">update</span> foods <span style="color: #859900;">set</span> <span style="color: #859900;">name</span>=new.fname <span style="color: #859900;">where</span> id=new.fid; 
+   <span style="color: #859900;">update</span> food_types <span style="color: #859900;">set</span> <span style="color: #859900;">name</span>=new.tname <span style="color: #859900;">where</span> id=new.tid; 
+<span style="color: #859900;">end</span>; 
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3-3" class="outline-5">
+<h5 id="sec-1-3-3-3"><span class="section-number-5">1.3.3.3</span> transaction</h5>
+<div class="outline-text-5" id="text-1-3-3-3">
+
+<ul>
+<li>begin
+</li>
+<li>commit
+</li>
+<li>rollback
+</li>
+<li>savepoint
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3-4" class="outline-5">
+<h5 id="sec-1-3-3-4"><span class="section-number-5">1.3.3.4</span> confict resolution</h5>
+<div class="outline-text-5" id="text-1-3-3-4">
+
+<ul>
+<li>replace
+</li>
+<li>ignore
+</li>
+<li>fail
+</li>
+<li>abort
+</li>
+<li>rollback
+</li>
+</ul>
+
+
+<p>
+confict resolution can be specified in
+</p><ul>
+<li>table or view defination
+</li>
+</ul>
+
+
+
+
+<pre class="src src-sql"><span style="color: #859900;">create</span> temp <span style="color: #859900;">table</span> <span style="color: #859900;">cast</span>(<span style="color: #859900;">name</span> text <span style="color: #859900;">unique</span> <span style="color: #859900;">on</span> conflict <span style="color: #859900;">rollback</span>); 
+</pre>
+
+<ul>
+<li>in `insert`, `update`
+</li>
+</ul>
+
+
+
+
+<pre class="src src-sql"><span style="color: #859900;">insert</span> <span style="color: #859900;">or</span> replace <span style="color: #859900;">into</span> <span style="color: #859900;">table</span> <span style="color: #859900;">values</span> (xxx);
+</pre>
+
+<ul>
+<li>trigger
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3-5" class="outline-5">
+<h5 id="sec-1-3-3-5"><span class="section-number-5">1.3.3.5</span> join</h5>
+<div class="outline-text-5" id="text-1-3-3-5">
+
+<ul>
+<li>inner join 
+</li>
+</ul>
+
+<p>join
+</p><ul>
+<li>left outer join
+</li>
+</ul>
+
+<p>left out join
+</p><ul>
+<li>right outer join
+</li>
+</ul>
+
+<p>not supported
+</p><ul>
+<li>full outer join
+</li>
+</ul>
+
+<p>not supported
+</p><ul>
+<li>cross
+</li>
+</ul>
+
+<p>select from tbl1, tbl2
+</p></div>
+
+</div>
+
+<div id="outline-container-1-3-3-6" class="outline-5">
+<h5 id="sec-1-3-3-6"><span class="section-number-5">1.3.3.6</span> index</h5>
+<div class="outline-text-5" id="text-1-3-3-6">
+
+<p>refers <a href="#sec-1-3-2-9">explain query plan</a> to delete whether index is used for optimization
+</p><ul>
+<li>index
+</li>
+<li>unique index
+</li>
+<li>covering index
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3-7" class="outline-5">
+<h5 id="sec-1-3-3-7"><span class="section-number-5">1.3.3.7</span> view</h5>
+<div class="outline-text-5" id="text-1-3-3-7">
+
+<ul>
+<li>using trigger to update view
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3-8" class="outline-5">
+<h5 id="sec-1-3-3-8"><span class="section-number-5">1.3.3.8</span> insert</h5>
+<div class="outline-text-5" id="text-1-3-3-8">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3-9" class="outline-5">
+<h5 id="sec-1-3-3-9"><span class="section-number-5">1.3.3.9</span> update</h5>
+<div class="outline-text-5" id="text-1-3-3-9">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3-10" class="outline-5">
+<h5 id="sec-1-3-3-10"><span class="section-number-5">1.3.3.10</span> select</h5>
+<div class="outline-text-5" id="text-1-3-3-10">
+
+<ul>
+<li id="sec-1-3-3-10-1">group by<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-10-2">order by<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-10-3">having<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-10-4">limit<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-10-5">aggregation<br/>
+<ul>
+<li>avg
+</li>
+<li>sum
+</li>
+<li>max
+</li>
+<li>min
+</li>
+<li>count
+</li>
+</ul>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-10-6">sub-query<br/>
+<ul>
+<li>for `select`
+</li>
+<li>for `from`
+</li>
+<li>for `order by`
+</li>
+</ul>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-10-7">compound query<br/>
+<ul>
+<li id="sec-1-3-3-10-7-1">union [all]<br/>
+a | b
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-10-7-2">intercept<br/>
+a &amp; b
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-10-7-3">except<br/>
+a - b
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-10-8">conditional result<br/>
+used to transform column values
+
+
+
+<pre class="src src-sql"><span style="color: #859900;">case</span> <span style="color: #859900;">value</span>
+  <span style="color: #859900;">when</span> x <span style="color: #859900;">then</span> value_x
+  <span style="color: #859900;">when</span> y <span style="color: #859900;">then</span> value_y
+  <span style="color: #859900;">when</span> z <span style="color: #859900;">then</span> value_z
+  <span style="color: #859900;">else</span> default_value
+<span style="color: #859900;">end</span>
+</pre>
+
+
+<pre class="src src-sql"><span style="color: #859900;">select</span> <span style="color: #859900;">name</span>,(<span style="color: #859900;">select</span>
+              <span style="color: #859900;">case</span>
+              <span style="color: #859900;">when</span> <span style="color: #859900;">count</span>(*) &gt; 4 <span style="color: #859900;">then</span> <span style="color: #2aa198;">'Very High'</span>
+              <span style="color: #859900;">when</span> <span style="color: #859900;">count</span>(*) = 4 <span style="color: #859900;">then</span> <span style="color: #2aa198;">'High'</span>
+              <span style="color: #859900;">when</span> <span style="color: #859900;">count</span>(*) <span style="color: #859900;">in</span> (2,3) <span style="color: #859900;">then</span> <span style="color: #2aa198;">'Moderate'</span>
+              <span style="color: #859900;">else</span> <span style="color: #2aa198;">'Low'</span>
+              <span style="color: #859900;">end</span>
+              <span style="color: #859900;">from</span> foods_episodes
+              <span style="color: #859900;">where</span> food_id=f.id) <span style="color: #859900;">as</span> frequency
+<span style="color: #859900;">from</span> foods f
+<span style="color: #859900;">where</span> frequency <span style="color: #859900;">like</span> <span style="color: #2aa198;">'%High'</span>
+
+</pre>
+
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3-11" class="outline-5">
+<h5 id="sec-1-3-3-11"><span class="section-number-5">1.3.3.11</span> functions</h5>
+<div class="outline-text-5" id="text-1-3-3-11">
+
+<ul>
+<li id="sec-1-3-3-11-1">LAST<sub>INSERT</sub><sub>ROWID</sub>()<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-11-2">ifnull(x,y)<br/>
+如果 x 为 null, 返回 y
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-11-3">substr<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-11-4">quote<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-11-5">length<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-11-6">lower<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-11-7">upper<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-11-8">abs<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-11-9">max<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-11-10">min<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-11-11">random<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-11-12">round<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-11-13">date<br/>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3-12" class="outline-5">
+<h5 id="sec-1-3-3-12"><span class="section-number-5">1.3.3.12</span> fts</h5>
+<div class="outline-text-5" id="text-1-3-3-12">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3-4" class="outline-4">
+<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> sqlite internal</h4>
+<div class="outline-text-4" id="text-1-3-4">
+
+
+</div>
+
+<div id="outline-container-1-3-4-1" class="outline-5">
+<h5 id="sec-1-3-4-1"><span class="section-number-5">1.3.4.1</span> concurrent &amp; lock</h5>
+<div class="outline-text-5" id="text-1-3-4-1">
+
+<ul>
+<li id="sec-1-3-4-1-1">lock<br/>
+<ul>
+<li>shared
+</li>
+<li>reserved
+  shared 想升级为 reserved, 必须保证当前没有任何 reserved 及 exclusive lock
+</li>
+<li>exclusive
+<ul>
+<li>pending
+    reserved 升级为 exclusive 时会先暂时的升级为 pending, pending lock 会禁止任
+    何新的 lock 的获取, 包括 shared, 否则可以会因为不停的有新的 shared lock 进入
+    而导致 reserved 永远无法升级为 exclusive.
+
+</li>
+</ul>
+
+<p>  reserved要想升级为 exclusive, 必须保证当前没有任何其他的 lock, 包含 shared
+</p></li>
+</ul>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-4-1-2">dead lock example<br/>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">A connection</th><th scope="col" class="left">B connection</th></tr>
+</thead>
+<tbody>
+<tr><td class="left">BEGIN;</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left">BEGIN;</td></tr>
+<tr><td class="left"></td><td class="left"># acquiring `reserved` lock ok</td></tr>
+<tr><td class="left"></td><td class="left">INSERT INTO foo values("bar")</td></tr>
+<tr><td class="left"># acquiring `shared` lock ok</td><td class="left"></td></tr>
+<tr><td class="left">SELECT * from foo</td><td class="left"></td></tr>
+<tr><td class="left"></td><td class="left"># acquiring `exclusive` lock failed<sup><a class="footref" name="fnr-.1" href="#fn-.1">1</a></sup></td></tr>
+<tr><td class="left"></td><td class="left">COMMIT;</td></tr>
+<tr><td class="left"></td><td class="left">SQL error: database is locked</td></tr>
+<tr><td class="left"># acquiring `reserved` lock failed<sup><a class="footref" name="fnr-.2" href="#fn-.2">2</a></sup></td><td class="left"></td></tr>
+<tr><td class="left">INSERT INTO foo values ("bar")</td><td class="left"></td></tr>
+<tr><td class="left">SQL error: database is locked</td><td class="left"></td></tr>
+</tbody>
+</table>
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-4-1-3">transaction<br/>
+<ul>
+<li>begin [deferred]
+</li>
+<li>begin immediate
+</li>
+<li>begin exclusive
+</li>
+</ul>
+
+
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1-3-4-2" class="outline-5">
+<h5 id="sec-1-3-4-2"><span class="section-number-5">1.3.4.2</span> *** SQLite and Multiple Threads</h5>
+<div class="outline-text-5" id="text-1-3-4-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-4-3" class="outline-5">
+<h5 id="sec-1-3-4-3"><span class="section-number-5">1.3.4.3</span> SQLite and Multiple Threads</h5>
+<div class="outline-text-5" id="text-1-3-4-3">
+
+<p><a href="http://www.sqlite.org/threadsafe.html">http://www.sqlite.org/threadsafe.html</a>
+</p>
+<p>
+SQLite support three different threading modes:
+</p>
+<ul>
+<li>Single-thread. In this mode, all mutexes are disabled and SQLite is
+  unsafe to use in more than a single thread at once.
+
+</li>
+<li>Multi-thread. In this mode, SQLite can be safely used by multiple
+  threads provided that no single database connection is used
+  simultaneously in two or more threads.
+
+</li>
+<li>Serialized. In serialized mode, SQLite can be safely used by
+  multiple threads with no restriction.
+</li>
+</ul>
+
+
+<p>
+The threading mode can be selected at compile-time (when the SQLite
+library is being compiled from source code) or at start-time (when the
+application that intends to use SQLite is initializing) or at run-time
+(when a new SQLite database connection is being created). Generally
+speaking, run-time overrides start-time and start-time overrides
+compile-time. Except, single-thread mode cannot be overridden once
+selected.
+</p>
+<p>
+The default mode is serialized.
+</p>
+<ul>
+<li id="sec-1-3-4-3-1">Compile-time selection of threading mode<br/>
+
+<p>
+Use the SQLITE<sub>THREADSAFE</sub> compile-time parameter to selected the
+threading mode. If no SQLITE<sub>THREADSAFE</sub> compile-time parameter is
+present, then serialized mode is used. This can be made explicit with
+-DSQLITE<sub>THREADSAFE</sub>=1. With -DSQLITE<sub>THREADSAFE</sub>=0 the threading mode
+is single-thread. With -DSQLITE<sub>THREADSAFE</sub>=2 the threading mode is
+multi-thread.
+</p>
+<p>
+The return value of the sqlite3<sub>threadsafe</sub>() interface is determined
+by the compile-time threading mode selection. If single-thread mode is
+selected at compile-time, then sqlite3<sub>threadsafe</sub>() returns false. If
+either the multi-thread or serialized modes are selected, then
+sqlite3<sub>threadsafe</sub>() returns true. The sqlite3<sub>threadsafe</sub>() interface
+predates the multi-thread mode and start-time and run-time mode
+selection and so is unable to distinguish between multi-thread and
+serialized mode nor is it able to report start-time or run-time mode
+changes.
+</p>
+<p>
+If single-thread mode is selected at compile-time, then critical
+mutexing logic is omitted from the build and it is impossible to
+enable either multi-thread or serialized modes at start-time or
+run-time.
+</p>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-4-3-2">Start-time selection of threading mode<br/>
+
+<p>
+Assuming that the compile-time threading mode is not single-thread,
+then the threading mode can be changed during initialization using the
+sqlite3<sub>config</sub>() interface. The SQLITE<sub>CONFIG</sub><sub>SINGLETHREAD</sub> verb puts
+SQLite into single-thread mode, the SQLITE<sub>CONFIG</sub><sub>MULTITHREAD</sub> verb
+sets multi-thread mode, and the SQLITE<sub>CONFIG</sub><sub>SERIALIZED</sub> verb sets
+serialized mode.
+</p>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-4-3-3">Run-time selection of threading mode<br/>
+
+<p>
+If single-thread mode has not been selected at compile-time or
+start-time, then individual database connections can be created as
+either multi-thread or serialized. It is not possible to downgrade an
+individual database connection to single-thread mode. Nor is it
+possible to escalate an individual database connection if the
+compile-time or start-time mode is single-thread.
+</p>
+<p>
+The threading mode for an individual database connection is determined
+by flags given as the third argument to sqlite3<sub>open</sub><sub>v2</sub>(). The
+SQLITE<sub>OPEN</sub><sub>NOMUTEX</sub> flag causes the database connection to be in the
+multi-thread mode and the SQLITE<sub>OPEN</sub><sub>FULLMUTEX</sub> flag causes the
+connection to be in serialized mode. If neither flag is specified or
+if sqlite3<sub>open</sub>() or sqlite3<sub>open16</sub>() are used instead of
+sqlite3<sub>open</sub><sub>v2</sub>(), then the default mode determined by the
+compile-time and start-time settings is used.
+</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1-3-4-4" class="outline-5">
+<h5 id="sec-1-3-4-4"><span class="section-number-5">1.3.4.4</span> Can multiple applications or multiple instances of the same application access a single database file at the same time?</h5>
+<div class="outline-text-5" id="text-1-3-4-4">
+
+<p><a href="http://www.sqlite.org/faq.html#q5">http://www.sqlite.org/faq.html#q5</a>
+</p>
+<p>
+Multiple processes can have the same database open at the same
+time. Multiple processes can be doing a SELECT at the same time. But
+only one process can be making changes to the database at any moment
+in time, however.
+</p>
+<p>
+SQLite uses reader/writer locks to control access to the
+database. (Under Win95/98/ME which lacks support for reader/writer
+locks, a probabilistic simulation is used instead.) But use caution:
+this locking mechanism might not work correctly if the database file
+is kept on an NFS filesystem. This is because fcntl() file locking is
+broken on many NFS implementations. You should avoid putting SQLite
+database files on NFS if multiple processes might try to access the
+file at the same time. On Windows, Microsoft's documentation says that
+locking may not work under FAT filesystems if you are not running the
+Share.exe daemon. People who have a lot of experience with Windows
+tell me that file locking of network files is very buggy and is not
+dependable. If what they say is true, sharing an SQLite database
+between two or more Windows machines might cause unexpected problems.
+</p>
+<p>
+We are aware of no other embedded SQL database engine that supports as
+much concurrency as SQLite. SQLite allows multiple processes to have
+the database file open at once, and for multiple processes to read the
+database at once. When any process wants to write, it must lock the
+entire database file for the duration of its update. But that normally
+only takes a few milliseconds. Other processes just wait on the writer
+to finish then continue about their business. Other embedded SQL
+database engines typically only allow a single process to connect to
+the database at once.
+</p>
+<p>
+However, client/server database engines (such as PostgreSQL, MySQL, or
+Oracle) usually support a higher level of concurrency and allow
+multiple processes to be writing to the same database at the same
+time. This is possible in a client/server database because there is
+always a single well-controlled server process available to coordinate
+access. If your application has a need for a lot of concurrency, then
+you should consider using a client/server database. But experience
+suggests that most applications need much less concurrency than their
+designers imagine.
+</p>
+<p>
+When SQLite tries to access a file that is locked by another process,
+the default behavior is to return SQLITE<sub>BUSY</sub>. You can adjust this
+behavior from C code using the sqlite3<sub>busy</sub><sub>handler</sub>() or
+sqlite3<sub>busy</sub><sub>timeout</sub>() API functions.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-3-4-5" class="outline-5">
+<h5 id="sec-1-3-4-5"><span class="section-number-5">1.3.4.5</span> Is SQLite threadsafe?</h5>
+<div class="outline-text-5" id="text-1-3-4-5">
+
+<p><a href="http://www.sqlite.org/faq.html#q6">http://www.sqlite.org/faq.html#q6</a>
+</p>
+<p>
+Threads are evil. Avoid them.
+</p>
+<p>
+SQLite is threadsafe. We make this concession since many users choose
+to ignore the advice given in the previous paragraph. But in order to
+be thread-safe, SQLite must be compiled with the SQLITE<sub>THREADSAFE</sub>
+preprocessor macro set to 1. Both the Windows and Linux precompiled
+binaries in the distribution are compiled this way. If you are unsure
+if the SQLite library you are linking against is compiled to be
+threadsafe you can call the sqlite3<sub>threadsafe</sub>() interface to find
+out.
+</p>
+<p>
+Prior to version 3.3.1, an sqlite3 structure could only be used in the
+same thread that called sqlite3<sub>open</sub>() to create it. You could not
+open a database in one thread then pass the handle off to another
+thread for it to use. This was due to limitations (bugs?) in many
+common threading implementations such as on RedHat9. Specifically, an
+fcntl() lock created by one thread cannot be removed or modified by a
+different thread on the troublesome systems. And since SQLite uses
+fcntl() locks heavily for concurrency control, serious problems arose
+if you start moving database connections across threads.
+</p>
+<p>
+The restriction on moving database connections across threads was
+relaxed somewhat in version 3.3.1. With that and subsequent versions,
+it is safe to move a connection handle across threads as long as the
+connection is not holding any fcntl() locks. You can safely assume
+that no locks are being held if no transaction is pending and all
+statements have been finalized.
+</p>
+<p>
+Under Unix, you should not carry an open SQLite database across a
+fork() system call into the child process. Problems will result if you
+do.
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3-5" class="outline-4">
+<h4 id="sec-1-3-5"><span class="section-number-4">1.3.5</span> sqlite limitation</h4>
+<div class="outline-text-4" id="text-1-3-5">
+
+<ul>
+<li>right and full outer join
+</li>
+<li>complete ALTER TABLE support
+</li>
+<li>completing TRIGGER support
+</li>
+<li>writing to VIEWs
+</li>
+<li>GRAND and REVOKE
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-6" class="outline-4">
+<h4 id="sec-1-3-6"><span class="section-number-4">1.3.6</span> sqlite pragma</h4>
+<div class="outline-text-4" id="text-1-3-6">
+
+
+</div>
+
+<div id="outline-container-1-3-6-1" class="outline-5">
+<h5 id="sec-1-3-6-1"><span class="section-number-5">1.3.6.1</span> auto<sub>vacuum</sub> = 0/1</h5>
+<div class="outline-text-5" id="text-1-3-6-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-6-2" class="outline-5">
+<h5 id="sec-1-3-6-2"><span class="section-number-5">1.3.6.2</span> cache<sub>size</sub> = Number-of-pages</h5>
+<div class="outline-text-5" id="text-1-3-6-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-6-3" class="outline-5">
+<h5 id="sec-1-3-6-3"><span class="section-number-5">1.3.6.3</span> default<sub>cache</sub><sub>size</sub></h5>
+<div class="outline-text-5" id="text-1-3-6-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-6-4" class="outline-5">
+<h5 id="sec-1-3-6-4"><span class="section-number-5">1.3.6.4</span> case<sub>sensitive</sub><sub>like</sub> = 0/1</h5>
+<div class="outline-text-5" id="text-1-3-6-4">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-6-5" class="outline-5">
+<h5 id="sec-1-3-6-5"><span class="section-number-5">1.3.6.5</span> count<sub>change</sub> = 0/1</h5>
+<div class="outline-text-5" id="text-1-3-6-5">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-6-6" class="outline-5">
+<h5 id="sec-1-3-6-6"><span class="section-number-5">1.3.6.6</span> encoding = "UTF-8"</h5>
+<div class="outline-text-5" id="text-1-3-6-6">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-6-7" class="outline-5">
+<h5 id="sec-1-3-6-7"><span class="section-number-5">1.3.6.7</span> page<sub>size</sub> = bytes</h5>
+<div class="outline-text-5" id="text-1-3-6-7">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-6-8" class="outline-5">
+<h5 id="sec-1-3-6-8"><span class="section-number-5">1.3.6.8</span> synchronous = FULL/NORMAL/OFF</h5>
+<div class="outline-text-5" id="text-1-3-6-8">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3-7" class="outline-4">
+<h4 id="sec-1-3-7"><span class="section-number-4">1.3.7</span> references</h4>
+<div class="outline-text-4" id="text-1-3-7">
+
+<p><a href="http://www.sqlite.org/syntaxdiagrams.html">Syntax Diagrams For SQLite</a>
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Other</h3>
+<div class="outline-text-3" id="text-1-4">
+
+
+</div>
+
+<div id="outline-container-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> WAL</h4>
+<div class="outline-text-4" id="text-1-4-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-4-2" class="outline-4">
+<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> FTS</h4>
+<div class="outline-text-4" id="text-1-4-2">
+
+<p>FTS (Full Text Search), 即全文检索,主要有以下几个方面:
+</p>
+<ul>
+<li>stemming (词根)
+</li>
+<li>tokenizer &amp;  word segregation (分词)
+</li>
+<li>inverted index (倒排索引)
+</li>
+</ul>
+
+
+
+</div>
+
+<div id="outline-container-1-4-2-1" class="outline-5">
+<h5 id="sec-1-4-2-1"><span class="section-number-5">1.4.2.1</span> stemming</h5>
+<div class="outline-text-5" id="text-1-4-2-1">
+
+<p><a href="http://en.wikipedia.org/wiki/Stemming">http://en.wikipedia.org/wiki/Stemming</a>
+</p>
+<p>
+A stemmer for English, for example, should identify the string "cats" (and
+possibly "catlike", "catty" etc.) as based on the root "cat".and "stemmer",
+"stemming", "stemmed" as based on "stem". 
+</p>
+<p>
+A stemming algorithm reduces the words "fishing", "fished", "fish", and "fisher"
+to the root word, "fish". On the other hand, "argue", "argued", "argues",
+"arguing", and "argus" reduce to the stem "argu"
+</p>
+<p>
+android contacts provider 就是使用的一种叫做 porter 的 stemmer 算法, 所以用 cat
+可以查找到名为 catty 的人也是正常的.
+</p></div>
+
+</div>
+
+<div id="outline-container-1-4-2-2" class="outline-5">
+<h5 id="sec-1-4-2-2"><span class="section-number-5">1.4.2.2</span> tokenizer and word segregation (分词)</h5>
+<div class="outline-text-5" id="text-1-4-2-2">
+
+<p>全文检索是基于`关键字`匹配的检索, 与传统的 grep 等检索方法不同, 全文检索需要先建
+立索引文件, 建立索引文件的第一步就是将全文分解为一系列的关键字. 例如:
+</p>
+<p>
+"A stemmer for English, for example, should identify the string "cats" (and
+possibly "catlike", "catty" etc.) as based on the root "cat""
+</p>
+<p>
+这句话可能会被分解为以下的关键字:
+</p>
+<p>
+stem, english, example, identify, string, cat, possible, base, root
+</p>
+<p>
+tokenize 的过程主要分为三步:
+</p><ol>
+<li>分词, 对英文来说, 基本就是以空格来分词
+</li>
+<li>抛弃一些 stop words, 如 a, for, should, and ,etc, as, on 等
+</li>
+<li>对剩下的非 stop words 使用 stemming 算法, 例如 cats-&gt;cat, stemmer-&gt;stem
+</li>
+</ol>
+
+
+<ul>
+<li id="sec-1-4-2-2-1">分词<br/>
+英文分词比较简单,就是以空格来分词, 对于中文或其他一些语言就麻烦的多, 以中文为例,
+主要有以下几种分词方法:
+
+<ol>
+<li>N元分词
+   就是简单的每N个字算一个词, 
+<ul>
+<li>1元分词:
+</li>
+</ul>
+
+<p>   英/文/分/词/比/较/简/单
+</p>
+<ul>
+<li>2元交叉为例:
+</li>
+</ul>
+
+<p>   英文/文分/分词/词比/比较/较简/简单
+</p>
+</li>
+<li>基于词典匹配的分词
+<ul>
+<li>正向最大匹配
+     "市场/中国/有/企业/才能/发展"
+</li>
+<li>逆向最大匹配
+     "市场/中/国有/企业/才能/发展"
+</li>
+<li>双向最大匹配
+</li>
+</ul>
+
+</li>
+<li>基于统计的分词
+</li>
+</ol>
+
+
+
+<p>
+从目前存在的项目看, 综合N元分词与基于词典匹配的分词是主流的方法, 以 Apache
+Lucene 为例: 它包含以下几种中文分词算法:
+<a href="http://blog.csdn.net/chaocy/article/details/5938741">http://blog.csdn.net/chaocy/article/details/5938741</a>
+</p>
+<ul>
+<li>StandardAnalyzer &amp; ChineseAnalyzer (一元分词)
+</li>
+</ul>
+
+
+<p>
+2008/年/8/月/8/日/晚/举/世/瞩/目/的/北/京/第/二/十/九/届/奥/林/匹/克/运/动/会/开
+/幕/式/在/国/家/体/育/场/隆/重/举/行
+</p>
+<ul>
+<li>CJKAnalyzer (交叉二元分词)
+</li>
+</ul>
+
+
+<p>
+2008/年/8/月/8/日晚/举世/世瞩/瞩目/目的/的北/北京/京第/第二/二十/十九/九届/届奥/
+奥林/林匹/匹克/克运/运动/动会/会开/开幕/幕式/式在/在国/国家/家体/体育/育场/场隆/
+隆重/重举/举行/
+</p>
+<ul>
+<li>MIK<sub>CAnalyzer</sub>  (最大匹配+二元交叉)
+</li>
+</ul>
+
+
+<p>
+2008年/8月/8日/晚/举世瞩目/目的/北京/第二十九届/奥林匹克运动会/开
+幕式/在国/国家/体育场/隆重举行/
+</p>
+<ul>
+<li>etc
+</li>
+</ul>
+
+
+<p>  
+sqlite3 中因为支持 FTS, 所以也支持几种分词算法:
+</p><ul>
+<li>simple 
+  针对英文, 根据空格分词
+</li>
+<li>porter
+  针对英文, 使用 port stemmer
+</li>
+<li>icu
+  使用 icu 库进行简单分词, 没有看懂 fts<sub>icu</sub> 的源码, 从分词结果看类似于一元分词
+  (待确定)
+</li>
+</ul>
+
+
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1-4-2-3" class="outline-5">
+<h5 id="sec-1-4-2-3"><span class="section-number-5">1.4.2.3</span> inverted index (倒排索引)</h5>
+<div class="outline-text-5" id="text-1-4-2-3">
+
+<p>通过分词算法确定关键词后, FTS 会使用倒排索引建立索引, 例如全文有两句话:
+</p>
+<p>
+`今天天气怎么样.
+今天天气不错. `
+</p>
+<ul>
+<li>分词的结果
+
+<p>
+  今天/天气/怎么样/今天/天气/不错
+</p>
+</li>
+<li>倒排索引结果
+
+<p>
+  今天-&gt;1,0;2,0
+  天气-&gt;1,2;2,2
+  怎么样-&gt;1,4
+  不错-&gt;2,4
+</p></li>
+</ul>
+
+
+<p>
+倒排索引的结果通常会以一种高效的利于查找的形式保存到索引文件中, 例如根据关键字排
+序, 或使用 B 树
+</p></div>
+
+</div>
+
+<div id="outline-container-1-4-2-4" class="outline-5">
+<h5 id="sec-1-4-2-4"><span class="section-number-5">1.4.2.4</span> 查找过程</h5>
+<div class="outline-text-5" id="text-1-4-2-4">
+
+<p>根据索引文件格式的不同, 查找的过程有所区别, 以 B 树为例, 查找过程就是以查找字符
+串为KEY在B树中查找该关键字,查到的VALUE就是该关键字在文档中的行列位置.
+</p>
+<p>
+全文查找速度很快,但有一个明显的缺点: 检索的效果依赖于关键字的选择.
+</p>
+<p>
+例如, 
+</p><ul>
+<li>使用 "tty" 无法检索到 " hello kitty "这句话
+</li>
+<li>使用 "天天" 可能无法检索到 "今天天气不错"
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-4-2-5" class="outline-5">
+<h5 id="sec-1-4-2-5"><span class="section-number-5">1.4.2.5</span> FTS in sqlite3</h5>
+<div class="outline-text-5" id="text-1-4-2-5">
+
+<ul>
+<li>create virtual table search<sub>index</sub> using fts3(content TEXT, tokenize=porter);
+  tokenize 可以为 simple, porter, icu, 但默认情况下 icu tokenizer 功能没有被编译
+  到 sqlite3 中
+</li>
+<li>select * from search<sub>index</sub> where content match "token1 token2"
+</li>
+<li>select * from search<sub>index</sub> where content match "tok*"
+</li>
+</ul>
+
+
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+<p class="footnote"><sup><a class="footnum" name="fn-.1" href="#fnr-.1">1</a></sup> because A is holding a `shared` lock
+</p>
+
+
+<p class="footnote"><sup><a class="footnum" name="fn-.2" href="#fnr-.2">2</a></sup> because B is holding a `reserved` lock
+</p>
+
+
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2013-05-17T11:45+0800</p>
+<p class="author">Author: sunway</p>
+<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>

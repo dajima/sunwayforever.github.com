@@ -1,0 +1,2841 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Android</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="Android"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-05-17T11:45+0800"/>
+<meta name="author" content="sunway"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style><link rel="stylesheet" title="Standard" href="style.css" type="text/css" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Android</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Android</a>
+<ul>
+<li><a href="#sec-1-1">1.1 Android coredump</a></li>
+<li><a href="#sec-1-2">1.2 Android IMF</a></li>
+<li><a href="#sec-1-3">1.3 Android Testing</a></li>
+<li><a href="#sec-1-4">1.4 Animation</a></li>
+<li><a href="#sec-1-5">1.5 ANR</a></li>
+<li><a href="#sec-1-6">1.6 Ant &amp; android</a></li>
+<li><a href="#sec-1-7">1.7 ANT and android project</a></li>
+<li><a href="#sec-1-8">1.8 Application</a></li>
+<li><a href="#sec-1-9">1.9 AppWidget</a></li>
+<li><a href="#sec-1-10">1.10 ASEC</a></li>
+<li><a href="#sec-1-11">1.11 Ashmem</a></li>
+<li><a href="#sec-1-12">1.12 AsyncQueryHandler &amp;&amp; loader</a></li>
+<li><a href="#sec-1-13">1.13 Audio</a></li>
+<li><a href="#sec-1-14">1.14 Bionic libc</a></li>
+<li><a href="#sec-1-15">1.15 ClassLoader</a></li>
+<li><a href="#sec-1-16">1.16 ContentObserver</a></li>
+<li><a href="#sec-1-17">1.17 ContentProvider , ContentResover &amp; SQLite</a></li>
+<li><a href="#sec-1-18">1.18 Context</a></li>
+<li><a href="#sec-1-19">1.19 Dalvik</a></li>
+<li><a href="#sec-1-20">1.20 dbus</a></li>
+<li><a href="#sec-1-21">1.21 Debug related</a></li>
+<li><a href="#sec-1-22">1.22 FileObserver</a></li>
+<li><a href="#sec-1-23">1.23 HAL</a></li>
+<li><a href="#sec-1-24">1.24 important files</a></li>
+<li><a href="#sec-1-25">1.25 init</a></li>
+<li><a href="#sec-1-26">1.26 Input Method Framework</a></li>
+<li><a href="#IntentSender">1.27 IntentSender</a></li>
+<li><a href="#sec-1-28">1.28 Launcher</a></li>
+<li><a href="#sec-1-29">1.29 Looper &amp; Message &amp; Message Queue</a></li>
+<li><a href="#sec-1-30">1.30 LowMemoryKiller</a></li>
+<li><a href="#sec-1-31">1.31 misc</a></li>
+<li><a href="#MountService">1.32 MountService</a></li>
+<li><a href="#NativeDaemonConnector">1.33 NativeDaemonConnector</a></li>
+<li><a href="#sec-1-34">1.34 NDK</a></li>
+<li><a href="#Notification">1.35 Notification</a></li>
+<li><a href="#PendingIntent">1.36 PendingIntent</a></li>
+<li><a href="#sec-1-37">1.37 PowerManagment</a></li>
+<li><a href="#sec-1-38">1.38 Preference</a></li>
+<li><a href="#sec-1-39">1.39 ServiceManager</a></li>
+<li><a href="#sec-1-40">1.40 SharedPreference</a></li>
+<li><a href="#sec-1-41">1.41 StatusBar &amp; SystemUI</a></li>
+<li><a href="#sec-1-42">1.42 Strict Mode</a></li>
+<li><a href="#sec-1-43">1.43 Surfacing</a></li>
+<li><a href="#sec-1-44">1.44 System Property</a></li>
+<li><a href="#sec-1-45">1.45 system<sub>server</sub></a></li>
+<li><a href="#sec-1-46">1.46 Toast</a></li>
+<li><a href="#sec-1-47">1.47 Tools</a></li>
+<li><a href="#sec-1-48">1.48 Uri</a></li>
+<li><a href="#sec-1-49">1.49 Util [4/4]</a></li>
+<li><a href="#vold">1.50 vold</a></li>
+<li><a href="#sec-1-51">1.51 Widget</a></li>
+<li><a href="#sec-1-52">1.52 Zygote</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Android</h2>
+<div class="outline-text-2" id="text-1">
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Android coredump</h3>
+<div class="outline-text-3" id="text-1-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Android IMF</h3>
+<div class="outline-text-3" id="text-1-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> <span class="done DONE">DONE</span> Android Testing</h3>
+<div class="outline-text-3" id="text-1-3">
+
+<p> <span class="timestamp-wrapper"><span class="timestamp-kwd">SCHEDULED: </span> <span class="timestamp">2011-03-14 Mon</span></span><br/>
+</p><ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-03-13 Sun 18:01</span></span>
+  see <a href="#Instrumentation">@Instrumentation</a>
+  there are 3 different testing in android
+<ul>
+<li>Testing using JUnit's Test{Runner,Suite,Case}
+</li>
+<li>Testing using AndroidTest{Runner,Suite,Case}
+</li>
+<li>Testing using InstrumentationTest{Runner,Suite,Case}
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</div>
+
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> JUnit TestRunner</h4>
+<div class="outline-text-4" id="text-1-3-1">
+
+<p>there are classes such as `TestSuite` and `TestCase`, but there is no `TestRunner` in android.
+if u want to kick off a JUnit testing, there are 2 alternative ways:
+</p><ol>
+<li>write some `TestCase` and run the application as `JUnit TestCase` in eclipse or using cmd like `java -cp jnit.jar com.sunway.test`,
+    Note that: the testing will run in the PC side instead of android emulator or device.
+</li>
+<li>in the android application code, create a TestSuite instance manually, and add some TestCase to it, then invoke TestSuite.runTest() manually.
+    (similar with AndroidTestRunner)
+</li>
+</ol>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> AndroidTestRunner</h4>
+<div class="outline-text-4" id="text-1-3-2">
+
+<p>AndroidTestRunner, in contract with JUnit TestRunner, it maintain a Context instance (need to call AndroidTestRunner.setContext(context) to set it
+manually, then any underlying AndroidTestCase can call `getContext()` to get the Context instance.
+</p>
+<p>
+Q:how to kick off the testing?
+A:manually&hellip;
+</p>
+<p>
+if u use AndroidTestRunner, u must setup the testing manually, e.g. new AndroidTestRunner, new TestSuite, add AndroidTestCase to suite, and invoke
+runner.runTest() at last.
+</p></div>
+
+</div>
+
+<div id="outline-container-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> InstrumentationTestRunner</h4>
+<div class="outline-text-4" id="text-1-3-3">
+
+<p>InstrumentationTestRunner, in contract with AndroidTestRunner, it itself is a Instrumentation, and thus the Context is set automatically by
+Instrumentation.init() when AMS calls bindApplication().
+InstrumentationTestCase can call `getInstrumentation()` to get the Instrumentation instance.
+</p>
+<p>
+InstrumentationTestRunner extends <b>Instrumentation</b>, thus the testing can be kick-off by Instrumentation.onCreate(), in fact:
+</p>
+
+
+<pre class="example">InstrumentationTestRunner.onCreate()
+  mTestRunner = getAndroidTestRunner();
+  mTestRunner.setContext(getTargetContext());
+  mTestRunner.setInstrumentation(this);
+  mTestRunner.setTest(testSuiteBuilder.build());       ;;testSuiteBuilder will scan all the testCase automatically
+  mTestRunner.addTestListener();
+  start(); ;; Instrumentation.start() will start another thread and call onStart()
+    onStart();
+      mTestRunner.runTest();
+</pre>
+
+<p>
+that is , InstrumentationTestRunner actually is not a TestRunner, what it does is two things:
+</p><ol>
+<li>reply on Instrumentation.onCreate() to kick of the testing
+</li>
+<li>reply on inner AndroidTestRunner to run all the test.
+</li>
+</ol>
+
+
+
+
+
+<pre class="example">AndroidTestRunner.runTest()                                         o
+  for (TestCase testCase : mTestCases):
+    setContextIfAndroidTestCase(testCase, mContext, testContext);
+    setInstrumentationIfInstrumentationTestCase(testCase, mInstrumentation); ;; set mInstrumentation to InstrumentationTestCase so that they can make use
+                                                                             ;; of it.
+    testCase.run(mTestResult);
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-4" class="outline-4">
+<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> class hierachy graph</h4>
+<div class="outline-text-4" id="text-1-3-4">
+
+
+
+
+<pre class="example">                                         -+----------+
+                                                  | TestCase |
+                                                 -+-----+----+
+                                                        |
+for unit test           -+----------------------+---------------------+
+       -+------------------------+--------------------+                       |
+        |                -+------+--------+           |          -+-----------+-----------+
+        |                 |AndroidTestCase|           |           |InstrumentationTestCase|
+        |                -+------+--------+           |          -+-----------+-----------+
+        |                        |                    |                       |
+        |             -+---------+---------+          |          -+-----------+-----------+
+        |              |                   |          |           |                       |
+        |   -+---------+------+  -+--------+------+   | -+--------+-------+             .....
+        |    |ProviderTestCase|   |ServiceTestCase|   |  |ActivityTestCase|
+        |   -+----------------+  -+---------------+   | -+--------+-------+
+        |                                             |           |
+|                                -+-----------+-----------+----------------------+    for functional test
+        |                                 |           |           -+---------------------+---------------+
+|                    -+-----------+---------+ |            | -+------------------+-------------+ |
+        |                     |ActivityUnitTestCase | |            |  | ActivityInstrumentationTestCase| |
+        |                    -+---------------------+ |            | -+--------------------------------+ |
+       -+---------------------------------------------+           -+-------------------------------------+
+</pre>
+
+
+<ul>
+<li>AndroidTestCase
+<ul>
+<li>AndroidTesCase.setContext()/getContext()
+</li>
+<li>AndroidTestCase doesn't interact with AMS, e.g. ServiceTestCase has methods like startService(), but as against to
+       Instrumentation.startActivitySync(), ServiceTestCase.startService() only call through to mService.start(), mContext is mainly used to access
+       resource?
+</li>
+</ul>
+
+</li>
+<li>InstrumentationTestCase
+<ul>
+<li>InstrumentationTestCase can call getInstrumentation() and getContext() (mContext is set by AMS automatically)
+</li>
+<li>ActivityInstrumentationTestCase is for functional testing: the activity under test will be create using the system infrastructure
+       (by calling mInstrumentation.launchActivity) will call Instrumentation.startActivitySync to launch the activity, and perform functional testing
+</li>
+<li>ActivityUnitTestCase  is for unit testing: the activity under test will be create with minimal connection to the system infrastructure, and you can
+       invoke setActivityConetxt() to inject a mock context.
+</li>
+</ul>
+
+</li>
+</ul>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Animation</h3>
+<div class="outline-text-3" id="text-1-4">
+
+
+</div>
+
+<div id="outline-container-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> TranslateAnimation</h4>
+<div class="outline-text-4" id="text-1-4-1">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> <span class="done DONE">DONE</span> ANR</h3>
+<div class="outline-text-3" id="text-1-5">
+
+<p>    <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-06-13 Mon 10:52</span></span><br/>
+</p><ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-06-13 Mon 10:52</span></span>
+</li>
+</ul>
+
+<p>   see <a href="#sec-1-42">Strict Mode</a>
+</p>
+</div>
+
+<div id="outline-container-1-5-1" class="outline-4">
+<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> <span class="done DONE">DONE</span> Broadcast ANR &nbsp;&nbsp;&nbsp;<span class="tag"><span class="broadcast">broadcast</span></span></h4>
+<div class="outline-text-4" id="text-1-5-1">
+
+<p>     <span class="timestamp-wrapper"><span class="timestamp-kwd">SCHEDULED: </span> <span class="timestamp">2011-02-15 Tue</span></span>  <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-02-15 Tue 19:41</span></span><br/>
+</p><ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-02-15 Tue 19:41</span></span>
+</li>
+</ul>
+
+<p>    see SendBroadcast
+</p></div>
+
+</div>
+
+<div id="outline-container-1-5-2" class="outline-4">
+<h4 id="sec-1-5-2"><span class="section-number-4">1.5.2</span> KeyEvent ANR &nbsp;&nbsp;&nbsp;<span class="tag"><span class="keyevent">keyevent</span></span></h4>
+<div class="outline-text-4" id="text-1-5-2">
+
+<p>    key event is dispatched by AMS one by one, that is ,until prev key event is
+    dispatched, AMS will wait to dispatching next key event, until ANR occurs.
+</p>
+<p>
+    when key event is dispatched to ViewRoot, ViewRoot will
+    diliverToViewHierachy, then notify WMS that key is dispatched.
+</p>
+<p>
+    KeyWaiter says:
+<pre lang="java" line="1">
+    long keyDispatchingTimeout = 10 * 1000;
+</pre>
+</p></div>
+
+</div>
+
+<div id="outline-container-1-5-3" class="outline-4">
+<h4 id="sec-1-5-3"><span class="section-number-4">1.5.3</span> <span class="done DONE">DONE</span> Service ANR &nbsp;&nbsp;&nbsp;<span class="tag"><span class="service">service</span></span></h4>
+<div class="outline-text-4" id="text-1-5-3">
+
+<p>     <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-06-13 Mon 10:52</span></span><br/>
+</p><ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-06-13 Mon 10:52</span></span>
+</li>
+</ul>
+
+<p>AMS calls:
+</p>
+
+
+<pre class="example">1. sendServiceArgs()
+     bumpServiceExcuting
+       sendMessageAtTime(SERVICE_TIMEOUT) (20s)
+       after SERVICE_TIMEOUT (20s), appNotResponding() will be call, and ANR occurs
+     app.thread.scheduleServiceArgs()
+     activityThread will call service.onStart()
+     activityThread calls mWindowSession.serviceDone() to tell AMS that onStart returns. then the SERVICE_TIMEOUT msg is removed
+
+2. realStartService()
+     bumpServiceExecuting()
+        sendMessageAtTime(SERVICE_TIMEOUT) (20s)
+     app.thread.scheduleCreateService()
+     activityThread will call service.onCreate()
+     activityThread calls mWindowSession.serviceDone()
+</pre>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> Ant &amp; android</h3>
+<div class="outline-text-3" id="text-1-6">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-7" class="outline-3">
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> ANT and android project</h3>
+<div class="outline-text-3" id="text-1-7">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-8" class="outline-3">
+<h3 id="sec-1-8"><span class="section-number-3">1.8</span> Application</h3>
+<div class="outline-text-3" id="text-1-8">
+
+<p>see also <a href="#sec-1-18-6">Context.getApplicationContext()</a>
+</p>
+</div>
+
+<div id="outline-container-1-8-1" class="outline-4">
+<h4 id="sec-1-8-1"><span class="section-number-4">1.8.1</span> persistent application</h4>
+<div class="outline-text-4" id="text-1-8-1">
+
+<p>see also <a href="#Android-Process-Crash-and-Restart">Android Process Crash and Restart</a>
+</p><ol>
+<li>An application is persistent only when it is <a href="#system-application">system application</a>; 3rd application will never be taken as persistent.
+</li>
+<li>application with `manifest.xml/application/android:persistent=true' is
+   considered to be persistent.
+</li>
+<li>when the persistent application is killed (crash, killPid &hellip;), AMS will always restart it.
+</li>
+<li>persistent application will be launched during system boot, before the BOOT<sub>COMPLETED</sub> is broadcasted
+</li>
+</ol>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-9" class="outline-3">
+<h3 id="sec-1-9"><span class="section-number-3">1.9</span> AppWidget</h3>
+<div class="outline-text-3" id="text-1-9">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-10" class="outline-3">
+<h3 id="sec-1-10"><span class="section-number-3">1.10</span> ASEC</h3>
+<div class="outline-text-3" id="text-1-10">
+
+<p>Android Security Executable Cache
+</p>
+</div>
+
+<div id="outline-container-1-10-1" class="outline-4">
+<h4 id="sec-1-10-1"><span class="section-number-4">1.10.1</span> dm<sub>crypt</sub></h4>
+<div class="outline-text-4" id="text-1-10-1">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-11" class="outline-3">
+<h3 id="sec-1-11"><span class="section-number-3">1.11</span> Ashmem</h3>
+<div class="outline-text-3" id="text-1-11">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-12" class="outline-3">
+<h3 id="sec-1-12"><span class="section-number-3">1.12</span> <span class="done DONE">DONE</span> AsyncQueryHandler &amp;&amp; loader &nbsp;&nbsp;&nbsp;<span class="tag"><span class="coding">coding</span></span></h3>
+<div class="outline-text-3" id="text-1-12">
+
+<p> <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2012-09-08 周六 16:12</span></span>  <span class="timestamp-wrapper"><span class="timestamp-kwd">SCHEDULED: </span> <span class="timestamp">2012-09-03 Mon</span></span><br/>
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-13" class="outline-3">
+<h3 id="sec-1-13"><span class="section-number-3">1.13</span> Audio</h3>
+<div class="outline-text-3" id="text-1-13">
+
+
+</div>
+
+<div id="outline-container-1-13-1" class="outline-4">
+<h4 id="sec-1-13-1"><span class="section-number-4">1.13.1</span> AudioFlingerService</h4>
+<div class="outline-text-4" id="text-1-13-1">
+
+
+</div>
+
+<div id="outline-container-1-13-1-1" class="outline-5">
+<h5 id="sec-1-13-1-1"><span class="section-number-5">1.13.1.1</span> Track</h5>
+<div class="outline-text-5" id="text-1-13-1-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-13-1-2" class="outline-5">
+<h5 id="sec-1-13-1-2"><span class="section-number-5">1.13.1.2</span> PlaybackThread</h5>
+<div class="outline-text-5" id="text-1-13-1-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-13-1-3" class="outline-5">
+<h5 id="sec-1-13-1-3"><span class="section-number-5">1.13.1.3</span> MixerThread</h5>
+<div class="outline-text-5" id="text-1-13-1-3">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-13-2" class="outline-4">
+<h4 id="sec-1-13-2"><span class="section-number-4">1.13.2</span> AudioPolicyService</h4>
+<div class="outline-text-4" id="text-1-13-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-13-3" class="outline-4">
+<h4 id="sec-1-13-3"><span class="section-number-4">1.13.3</span> AudioTrack</h4>
+<div class="outline-text-4" id="text-1-13-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-13-4" class="outline-4">
+<h4 id="sec-1-13-4"><span class="section-number-4">1.13.4</span> MediaServer</h4>
+<div class="outline-text-4" id="text-1-13-4">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-13-5" class="outline-4">
+<h4 id="sec-1-13-5"><span class="section-number-4">1.13.5</span> Higher level</h4>
+<div class="outline-text-4" id="text-1-13-5">
+
+
+</div>
+
+<div id="outline-container-1-13-5-1" class="outline-5">
+<h5 id="sec-1-13-5-1"><span class="section-number-5">1.13.5.1</span> MediaPlayer</h5>
+<div class="outline-text-5" id="text-1-13-5-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-13-5-2" class="outline-5">
+<h5 id="sec-1-13-5-2"><span class="section-number-5">1.13.5.2</span> MediaRecorder</h5>
+<div class="outline-text-5" id="text-1-13-5-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-13-5-3" class="outline-5">
+<h5 id="sec-1-13-5-3"><span class="section-number-5">1.13.5.3</span> SoundPool</h5>
+<div class="outline-text-5" id="text-1-13-5-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-13-5-4" class="outline-5">
+<h5 id="sec-1-13-5-4"><span class="section-number-5">1.13.5.4</span> AudioService</h5>
+<div class="outline-text-5" id="text-1-13-5-4">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-13-5-5" class="outline-5">
+<h5 id="sec-1-13-5-5"><span class="section-number-5">1.13.5.5</span> AudioRecord</h5>
+<div class="outline-text-5" id="text-1-13-5-5">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-13-6" class="outline-4">
+<h4 id="sec-1-13-6"><span class="section-number-4">1.13.6</span> MediaPlayerService</h4>
+<div class="outline-text-4" id="text-1-13-6">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-14" class="outline-3">
+<h3 id="sec-1-14"><span class="section-number-3">1.14</span> Bionic libc</h3>
+<div class="outline-text-3" id="text-1-14">
+
+
+</div>
+
+<div id="outline-container-1-14-1" class="outline-4">
+<h4 id="sec-1-14-1"><span class="section-number-4">1.14.1</span> Prelink</h4>
+<div class="outline-text-4" id="text-1-14-1">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-15" class="outline-3">
+<h3 id="sec-1-15"><span class="section-number-3">1.15</span> ClassLoader</h3>
+<div class="outline-text-3" id="text-1-15">
+
+
+</div>
+
+<div id="outline-container-1-15-1" class="outline-4">
+<h4 id="sec-1-15-1"><span class="section-number-4">1.15.1</span> DexClassLoader</h4>
+<div class="outline-text-4" id="text-1-15-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-15-2" class="outline-4">
+<h4 id="sec-1-15-2"><span class="section-number-4">1.15.2</span> PathClassLoader</h4>
+<div class="outline-text-4" id="text-1-15-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-15-3" class="outline-4">
+<h4 id="sec-1-15-3"><span class="section-number-4">1.15.3</span> Context.getClassLoader</h4>
+<div class="outline-text-4" id="text-1-15-3">
+
+<p>    see also <a href="#sec-1-15-3">Context.getClassLoader</a>
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-1-16" class="outline-3">
+<h3 id="sec-1-16"><span class="section-number-3">1.16</span> ContentObserver</h3>
+<div class="outline-text-3" id="text-1-16">
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-17" class="outline-3">
+<h3 id="sec-1-17"><span class="section-number-3">1.17</span> ContentProvider , ContentResover &amp; SQLite</h3>
+<div class="outline-text-3" id="text-1-17">
+
+
+</div>
+
+<div id="outline-container-1-17-1" class="outline-4">
+<h4 id="sec-1-17-1"><span class="section-number-4">1.17.1</span> ContentProvider.openFile() &amp; ContentProvider.openInputStream()</h4>
+<div class="outline-text-4" id="text-1-17-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-17-2" class="outline-4">
+<h4 id="sec-1-17-2"><span class="section-number-4">1.17.2</span> <span class="done DONE">DONE</span> `withYieldAllowed` how to work? &nbsp;&nbsp;&nbsp;<span class="tag"><span class="todo">todo</span></span></h4>
+<div class="outline-text-4" id="text-1-17-2">
+
+<p> <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2013-01-14 Mon 15:57</span></span><br/>
+</p><ul>
+<li>State "DONE"       from "TODO" <span class="timestamp-wrapper"> <span class="timestamp">2013-01-14 Mon 15:57</span></span>
+</li>
+</ul>
+
+<p> <span class="timestamp-wrapper"> <span class="timestamp">2013-01-14 Mon 11:57</span></span><br/>
+<a href="http://stackoverflow.com/questions/9599809/does-yieldifcontendedsafely-lose-the-benefits-of-a-transaction">Does yieldIfContendedSafely() lose the benefits of a transaction?</a>
+</p>
+<p>
+From stackoverflow:
+</p>
+<p>
+Q:
+</p>
+<p>
+I have a long-running operation which I perform in a background thread. As it is
+important for the operation to either complete successfully or not at all, I am
+wrapping the entire operation in a transaction.
+</p>
+<p>
+Aspects of the UI need read-only access to the database during this time. To
+avoid blocking the UI, I am experimenting with inserting calls to
+db.yieldIfContendedSafely() in the main loop of the background operation.
+</p>
+<p>
+This does what I want in that the UI is no longer blocked, but it's not
+completely clear to me if this is risking a loss of data integrity.
+</p>
+<p>
+The javadoc for yieldIfContendedSafely() says:
+</p>
+<p>
+    Temporarily end the transaction to let other threads run.  The transaction
+    is assumed to be successful so far. Do not call setTransactionSuccessful
+    before calling this. When this returns a new transaction will have been
+    created but not marked as successful. This assumes that there are no nested
+    transactions (beginTransaction has only been called once) and will throw an
+    exception if that is not the case.
+</p>
+<p>
+Does this mean that my long-running operation is actually being committed to the
+database in separate chunks, or is the overall transaction maintaining enough
+state to commit the whole lot in one go at the end, thus preserving
+data-integrity?
+</p>
+<p>
+A:
+</p>
+<p>
+    Does this mean that my long-running operation is actually being committed to
+    the database in separate chunks
+</p>
+<p>
+Yes. Within yieldIfContendedSafely(), Android calls setTransactionSuccessful(),
+endTransaction(), and begins a new transaction &ndash; committing your statements in
+the process. There is no mechanism to rollback the "real" transaction after it
+ends.
+</p>
+<p>
+This behavior only occurs if there is another thread waiting on the database,
+otherwise yieldIfContendedSafely() does nothing.
+</p>
+<p>
+I checked this with the following scenario. I started two threads: one inserted
+data into a table using a transaction, another read data out of the same
+table. The transaction didn't call setTransactionSuccessful() so normally
+everything is rolled back at the end, leaving the table empty. I added a call to
+yieldIfContendedSafely(), and afterwards the table was not empty and had data
+from the transaction.
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-1-18" class="outline-3">
+<h3 id="sec-1-18"><span class="section-number-3">1.18</span> <span class="done DONE">DONE</span> Context</h3>
+<div class="outline-text-3" id="text-1-18">
+
+<p>    <span class="timestamp-wrapper"><span class="timestamp-kwd">SCHEDULED: </span> <span class="timestamp">2011-06-02 Thu</span></span>  <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-06-13 Mon 16:57</span></span><br/>
+</p><ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-06-13 Mon 16:57</span></span>
+</li>
+</ul>
+
+<p>   Context can be used to:
+</p><ul>
+<li>Access application's resource and manipulate files in /data/data/xxx (through Context.mPackageInfo)
+</li>
+<li>Context.mainThread (ActivityThread) is a interface exposed by ActivityThread to Android component, so that Context can interact with various
+     system services on behalf of ActivityThread (permission checking, IApplicationThread, &hellip;)
+</li>
+<li>call through to many system services, e.g. AMS, PMS
+</li>
+</ul>
+
+
+<p>
+   Context ( or ContextImpl ) is the facade of the running Context, it mainly represents:
+</p><ol>
+<li>mPackageInfo &ndash; the PackageInfo, represents the data, e.g. ApplicationInfo, ActivityInfo, data file (resource, asset, db &hellip;), ClassLoader, &hellip;
+</li>
+<li>mMainThread &ndash; the ActivityThread, represents the process, e.g. looper, ApplicationThread
+</li>
+</ol>
+
+
+
+</div>
+
+<div id="outline-container-1-18-1" class="outline-4">
+<h4 id="sec-1-18-1"><span class="section-number-4">1.18.1</span> Context class hierachy</h4>
+<div class="outline-text-4" id="text-1-18-1">
+
+
+
+
+<pre class="example">                                                 Context
+                                                    |
+                                 -+-----------------+---------------+
+                                  |                                 |
+                                  |                                 |
+                           ContextWrapper                      ContextImpl
+                            |                               ^                                     
+          -+------------------+---+---------+-                      |
+           |                  |             |                       |
+           |                  |             |                       | composition
+ContextThemeWrapper  Service     Application                |
+          |     |             |             |                       |
+          |    -+-------------+-------------+----------+------------+
+Activity
+
+</pre>
+
+<p>
+    Actually, Activity,Receiver,Service all use ContextImpl as the common implementation of the Context, but instead of inherit from ContextImpl,
+    they implement from the ContextWrapper, whose `attachBaseContext()` will compose the ContextImpl as mBase, to which ContextWrapper will delegates
+    all of the context functions.
+</p></div>
+
+</div>
+
+<div id="outline-container-1-18-2" class="outline-4">
+<h4 id="sec-1-18-2"><span class="section-number-4">1.18.2</span> How ContextImpl is initialized</h4>
+<div class="outline-text-4" id="text-1-18-2">
+
+<p>    Take `startActivity` for example
+</p>
+
+
+<pre class="example"> 1      AMS::startActivityMayWait()
+ 2        ActivityInfo aInfo = ActivityThread.getPackageManager().resolveIntent().activityInfo;
+ 3        startActivityLocked(...,aInfo,...)
+ 4          HistoryRecord r=new HistoryRecord(...,aInfo,...)
+ 5          startActivityUncheckedLocked(r,...)
+ 6            ...
+ 7            app.thread.scheduleLaunchActivity(...,r.info,...)
+ 8              // ActivityThread
+ 9              ActivityRecord ar=new ActivityRecord();
+10              ar.activityInfo=info;
+11              performLaunchActivity(r,...)
+12                ar.packageInfo=getPackageInfo(r.activityInfo)
+13                // classLoader is obtained from packageInfo , or aInfo
+14                Activity activity=mInstrumentation.newActivity(ar.packageInfo.getClassLoader(),intent.getComponent,...)
+15                ContextImpl context=new ContextImpl(); // GOTCHA!
+16                context.init(ar.packageInfo,r.token,this)
+17                  // mainThread=this
+18                  mPackageInfo = packageInfo;
+19                  mResources = mPackageInfo.getResources(mainThread);
+20                  mMainThread = mainThread;
+21                activity.attach(context,...)
+22                  // call ContextWrapper.attachBaseContext() to compose the ContextImpl to mBase
+23                  attachBaseContext(context);
+24                ....
+25                call onCreate, onStart ...
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-18-3" class="outline-4">
+<h4 id="sec-1-18-3"><span class="section-number-4">1.18.3</span> Context.createPackageContext()</h4>
+<div class="outline-text-4" id="text-1-18-3">
+
+<p>     Return a new Context object for the given application name.  This
+     Context is the same as what the named application gets when it is
+     launched, containing the same resources and class loader.  Each call to
+     this method returns a new instance of a Context object; Context objects
+     are not shared, however they share common state (Resources, ClassLoader,
+     etc) so the Context instance itself is fairly lightweight.
+</p>
+<p>
+     As mentioned before, Context represents both data and process. Can createPackageContext() create a Context object that we can use to run in
+     other package's process? No!
+</p>
+
+
+
+<pre class="example">1       createPackageContext():
+2          ActivityThread.PackageInfo pi =  mMainThread.getPackageInfo(packageName, flags);
+3          ContextImpl c = new ContextImpl();
+4          // notice `init` take mMainThread as the mMainThread of the created context, thus, the context still runs in the caller's process.
+5          c.init(pi, null, mMainThread, mResources);
+6          return c;
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-18-4" class="outline-4">
+<h4 id="sec-1-18-4"><span class="section-number-4">1.18.4</span> Restricted Context</h4>
+<div class="outline-text-4" id="text-1-18-4">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-18-5" class="outline-4">
+<h4 id="sec-1-18-5"><span class="section-number-4">1.18.5</span> Context.getClassLoader()</h4>
+<div class="outline-text-4" id="text-1-18-5">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-18-6" class="outline-4">
+<h4 id="sec-1-18-6"><span class="section-number-4">1.18.6</span> Context.getApplicationContext()</h4>
+<div class="outline-text-4" id="text-1-18-6">
+
+<p>    return an process global `Application` instance.
+</p><ul>
+<li>We can inherit the `Application` class and set it to the `Application` field in AndroidManifest.xml, so that getApplicationContext() can return our own `Application` instance.
+</li>
+<li>since `Application` extends ContextWrapper and has been init with a ContextImpl, it is a context of the full functionality.
+      You can use it as a `persistent` Context.
+</li>
+</ul>
+
+
+<p>    
+    <b>Note:</b>
+    getApplicationContext() return a context:
+</p><ul>
+<li>with full functionality
+</li>
+<li>with less data dependency than activty/service/receiver
+</li>
+</ul>
+
+<p>    Thus it makes it meaningful for us to use application context instead of
+    activty/service/receiver as the CONTEXT if we need to STORE the context to
+    somewhere else, e.g. in a static place, since activty/service/receiver is
+    volatile, and often has dependency with mass of data.
+</p>
+
+</div>
+
+<div id="outline-container-1-18-6-1" class="outline-5">
+<h5 id="sec-1-18-6-1"><span class="section-number-5">1.18.6.1</span> onCreate()</h5>
+<div class="outline-text-5" id="text-1-18-6-1">
+
+<p>     Called when the application is stopping.  There are no more application
+     objects running and the process will exit.  &lt;em&gt;Note: never depend on
+     this method being called; in many cases an unneeded application process
+     will simply be killed by the kernel without executing any application
+     code.
+     If you override this method, be sure to call super.onTerminate().
+</p></div>
+
+</div>
+
+<div id="outline-container-1-18-6-2" class="outline-5">
+<h5 id="sec-1-18-6-2"><span class="section-number-5">1.18.6.2</span> onTerminate()</h5>
+<div class="outline-text-5" id="text-1-18-6-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-18-6-3" class="outline-5">
+<h5 id="sec-1-18-6-3"><span class="section-number-5">1.18.6.3</span> onConfigurationChanged()</h5>
+<div class="outline-text-5" id="text-1-18-6-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-18-6-4" class="outline-5">
+<h5 id="sec-1-18-6-4"><span class="section-number-5">1.18.6.4</span> onLowMemory()</h5>
+<div class="outline-text-5" id="text-1-18-6-4">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-18-7" class="outline-4">
+<h4 id="sec-1-18-7"><span class="section-number-4">1.18.7</span> ContextImpl.getOuterContext()</h4>
+<div class="outline-text-4" id="text-1-18-7">
+
+<p>    OuterContext means ContextImple's `outer` context, e.g. activity or service
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-1-19" class="outline-3">
+<h3 id="sec-1-19"><span class="section-number-3">1.19</span> Dalvik</h3>
+<div class="outline-text-3" id="text-1-19">
+
+
+</div>
+
+<div id="outline-container-dalvik-cache" class="outline-4">
+<h4 id="dalvik-cache"><a name="sec-1-19-1" id="sec-1-19-1"></a><span class="section-number-4">1.19.1</span> dalvik-cache</h4>
+<div class="outline-text-4" id="text-dalvik-cache">
+
+<p>/data/dalvik-cache
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-1-20" class="outline-3">
+<h3 id="sec-1-20"><span class="section-number-3">1.20</span> dbus</h3>
+<div class="outline-text-3" id="text-1-20">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-21" class="outline-3">
+<h3 id="sec-1-21"><span class="section-number-3">1.21</span> Debug related</h3>
+<div class="outline-text-3" id="text-1-21">
+
+
+</div>
+
+<div id="outline-container-1-21-1" class="outline-4">
+<h4 id="sec-1-21-1"><span class="section-number-4">1.21.1</span> hprof &amp; MAT</h4>
+<div class="outline-text-4" id="text-1-21-1">
+
+<ul>
+<li>在代码中生成
+      Debug.dumpHprofData()
+</li>
+<li>使用信号on-demand生成
+</li>
+</ul>
+
+
+
+
+<pre class="example">$ chmod 777 /data/misc -R
+$ ps # 找到进程号
+$ kill -10 进程号 # 发送SIGQUIT信事信号给该进程，此时生成hprof信息
+$ ls /data/misc/*.hprof 
+</pre>
+
+<ul>
+<li>为了能让MAT识别android的hprof格式,需要用hprof-conv转换一下
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-21-2" class="outline-4">
+<h4 id="sec-1-21-2"><span class="section-number-4">1.21.2</span> traceview</h4>
+<div class="outline-text-4" id="text-1-21-2">
+
+
+</div>
+
+<div id="outline-container-1-21-2-1" class="outline-5">
+<h5 id="sec-1-21-2-1"><span class="section-number-5">1.21.2.1</span> dmtracedump</h5>
+<div class="outline-text-5" id="text-1-21-2-1">
+
+<p>     dmtracedump -g out.png -t 30% test.trace
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-1-21-3" class="outline-4">
+<h4 id="sec-1-21-3"><span class="section-number-4">1.21.3</span> hierachyviewer</h4>
+<div class="outline-text-4" id="text-1-21-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-21-4" class="outline-4">
+<h4 id="sec-1-21-4"><span class="section-number-4">1.21.4</span> Thread.dumpStack()</h4>
+<div class="outline-text-4" id="text-1-21-4">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-21-5" class="outline-4">
+<h4 id="sec-1-21-5"><span class="section-number-4">1.21.5</span> logcat</h4>
+<div class="outline-text-4" id="text-1-21-5">
+
+<p>adb shell setprop log.tag.mytag verbose
+</p></div>
+
+</div>
+
+<div id="outline-container-1-21-6" class="outline-4">
+<h4 id="sec-1-21-6"><span class="section-number-4">1.21.6</span> adb am start</h4>
+<div class="outline-text-4" id="text-1-21-6">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-21-7" class="outline-4">
+<h4 id="sec-1-21-7"><span class="section-number-4">1.21.7</span> monkey</h4>
+<div class="outline-text-4" id="text-1-21-7">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-21-8" class="outline-4">
+<h4 id="sec-1-21-8"><span class="section-number-4">1.21.8</span> tombstone</h4>
+<div class="outline-text-4" id="text-1-21-8">
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-22" class="outline-3">
+<h3 id="sec-1-22"><span class="section-number-3">1.22</span> <span class="done DONE">DONE</span> FileObserver</h3>
+<div class="outline-text-3" id="text-1-22">
+
+<p>    <span class="timestamp-wrapper"><span class="timestamp-kwd">SCHEDULED: </span> <span class="timestamp">2011-02-10 Thu</span></span>  <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-02-10 Thu 14:55</span></span><br/>
+</p><ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-02-10 Thu 14:55</span></span>
+     FileObserver relies on `inotify`
+     it mainly use jni to call inotify<sub>init</sub>() to init the inotify<sub>fd</sub>,
+     then call inotify<sub>add</sub><sub>watch</sub>(path) to add watch a file path,
+     and at last init one ObserverThread, and run
+</li>
+</ul>
+
+
+
+
+
+<pre class="example">while (true):
+  read(inotify_fd);
+  env-&gt;CallVoidMethod() ;; call ObserverThread.onEvent() to notify FileObserver
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-23" class="outline-3">
+<h3 id="sec-1-23"><span class="section-number-3">1.23</span> HAL &nbsp;&nbsp;&nbsp;<span class="tag"><span class="ARCHIVE">ARCHIVE</span></span></h3>
+<div class="outline-text-3" id="text-1-23">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-24" class="outline-3">
+<h3 id="sec-1-24"><span class="section-number-3">1.24</span> important files</h3>
+<div class="outline-text-3" id="text-1-24">
+
+
+</div>
+
+<div id="outline-container-1-24-1" class="outline-4">
+<h4 id="sec-1-24-1"><span class="section-number-4">1.24.1</span> device</h4>
+<div class="outline-text-4" id="text-1-24-1">
+
+<ol>
+<li>data/system/packages.xml
+</li>
+<li>/mnt/secure/asec
+</li>
+<li>/mnt/asec
+</li>
+<li>/system/etc/permissions/platform.xml
+</li>
+<li>/system/etc/security/cacerts.bks
+</li>
+<li>/data/dalvik-cache
+</li>
+<li>/data/property
+</li>
+<li>/system/build.prop
+</li>
+<li>/data/system/registered<sub>services</sub>/android.accounts.AccountAuthenticator.xml
+</li>
+<li>/data/system/registered<sub>services</sub>/android.content.SyncAdapter.xml
+</li>
+</ol>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-24-2" class="outline-4">
+<h4 id="sec-1-24-2"><span class="section-number-4">1.24.2</span> src</h4>
+<div class="outline-text-4" id="text-1-24-2">
+
+<ol>
+<li>framework/base/core/res
+</li>
+<li>framework/base/core/jni
+</li>
+<li>system/core/init
+</li>
+<li>system/core/include/private/android<sub>filesystem</sub><sub>config</sub>.h
+</li>
+<li>build/target/product/security/
+</li>
+</ol>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-25" class="outline-3">
+<h3 id="sec-1-25"><span class="section-number-3">1.25</span> init</h3>
+<div class="outline-text-3" id="text-1-25">
+
+
+</div>
+
+<div id="outline-container-1-25-1" class="outline-4">
+<h4 id="sec-1-25-1"><span class="section-number-4">1.25.1</span> init.rc</h4>
+<div class="outline-text-4" id="text-1-25-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-25-2" class="outline-4">
+<h4 id="sec-1-25-2"><span class="section-number-4">1.25.2</span> System init</h4>
+<div class="outline-text-4" id="text-1-25-2">
+
+<p>init will start some daemon, service<sub>manager</sub>, media<sub>service</sub>. Then call
+app<sub>process</sub> to call zygoteInit.java to start zygote. ZygoteInit.java,
+first will fork and start system<sub>server</sub>, then listen on one local
+socket through runSelectLoopMode(). SystemServer.java's main() will
+firstly load 'android<sub>server'</sub>.so and call it's init1() to start
+binderThreadPool and call SystemServer's init2(), which will init an
+ServerThread and start some java service like AMS, WMS.
+</p>
+<p>
+system<sub>server</sub> is setuid to `system` uid.
+</p>
+<p>
+Note: 
+zygote will keep running with `root` uid, so that zygote can
+setuid/gid/groups on newly forked progress, so that new java progress
+will run with proper uid/gid/groups
+</p></div>
+
+</div>
+
+<div id="outline-container-1-25-3" class="outline-4">
+<h4 id="sec-1-25-3"><span class="section-number-4">1.25.3</span> Zygote init</h4>
+<div class="outline-text-4" id="text-1-25-3">
+
+<p>    app<sub>process</sub> &ndash;&gt; app<sub>main</sub>.cpp: framework/base/cads/app<sub>process</sub>
+    ZygoteInit.java: framework/base/core/java/com/android/internal/os
+</p>
+
+
+<pre class="example">app_process::main()
+  runtime.start("com.android.internal.os.ZygoteInit", startSystemServer);
+   ZygoteInit.main()
+     registerZygoteSocket();
+     startSystemServer();
+       pid = Zygote.forkSystemServer();
+       if (pid == 0):
+         handleSystemServerProcess(parsedArgs);
+           closeServerSocket(); // for newly forked system_server process, close zygote socket inherited from parent
+           RuntimeInit.zygoteInit(parsedArgs.remainingArgs);
+             zygoteInitNative();
+               proc-&gt;startThreadPool();
+               invokeStaticMain(startClass, startArgs); // startClass is "com.android.server.SystemServer"
+                 SystemServer.java:main()
+                   System.loadLibrary("android_servers");
+                   init1(args); // init1 is native method in android_servers.so
+                     android_server_SystemServer_init1(JNIEnv* env, jobject clazz)
+                       system_init();
+                         runtime-&gt;callStatic("com/android/server/SystemServer", "init2");
+                           SystemServer.java:init2()
+                             Thread thr = new ServerThread();
+                               // start any system service, e.g. ams, wms..
+                               // prepare the looper and loop in it.
+                               // the looper is TAKEN as the `main` looper  of the `system` process
+                             thr.start();
+                         ProcessState::self()-&gt;startThreadPool();
+                         IPCThreadState::self()-&gt;joinThreadPool();
+     runSelectLoopMode();
+</pre>
+
+<p>
+    Q: Why SystemServer.java will call android<sub>server</sub>.so:init1(), which will call SystemServer.java:init2()? instead of call init2() directly?
+    A: android<sub>server</sub>.so:init1() is needed because it will call `joinThreadPool` to put the process into ThreadPool. There is no java correspondent of
+       joinThreadPool()
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-26" class="outline-3">
+<h3 id="sec-1-26"><span class="section-number-3">1.26</span> Input Method Framework</h3>
+<div class="outline-text-3" id="text-1-26">
+
+</div>
+
+</div>
+
+<div id="outline-container-IntentSender" class="outline-3">
+<h3 id="IntentSender"><a name="sec-1-27" id="sec-1-27"></a><span class="section-number-3">1.27</span> IntentSender</h3>
+<div class="outline-text-3" id="text-IntentSender">
+
+<p>   see <a href="#PendingIntent">@PendingIntent</a>
+</p></div>
+
+</div>
+
+<div id="outline-container-1-28" class="outline-3">
+<h3 id="sec-1-28"><span class="section-number-3">1.28</span> Launcher &nbsp;&nbsp;&nbsp;<span class="tag"><span class="ARCHIVE">ARCHIVE</span></span></h3>
+<div class="outline-text-3" id="text-1-28">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-29" class="outline-3">
+<h3 id="sec-1-29"><span class="section-number-3">1.29</span> Looper &amp; Message &amp; Message Queue</h3>
+<div class="outline-text-3" id="text-1-29">
+
+<p>   see <a href="#ActivityThread">@ActivityThread</a>
+</p>
+</div>
+
+<div id="outline-container-1-29-1" class="outline-5">
+<h5 id="sec-1-29-1"><span class="section-number-5">1.29.1</span> Message Queue</h5>
+<div class="outline-text-5" id="text-1-29-1">
+
+<ul>
+<li id="sec-1-29-1-1"><span class="done DONE">DONE</span> Idle Handler<br/>
+        <span class="timestamp-wrapper"><span class="timestamp-kwd">SCHEDULED: </span> <span class="timestamp">2011-02-09 Wed</span></span>  <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-02-09 Wed 17:57</span></span><br/>
+<ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-02-09 Wed 17:57</span></span>
+</li>
+</ul>
+
+
+
+
+<pre class="example">MessageQueue.next()
+  while true:
+    msg=pullNextLocked(now)
+      foreach msg:
+        if now&gt;msg.when:
+          return msg
+    if msg==null:
+      return msg
+    else:
+      idlers = mIdleHandlers.toArray();
+    foreach idler in idlers:
+      keep=idler.queueIdle();
+      if !keep:
+        mIdleHandlers.remove(idler);
+    if (mMessages != null):
+      this.wait(mMessages.when-now); // if there is a message, but it's not up to date, wait until it is up to date
+    else:
+      this.wait();  // no message, wait until new message arrives
+    // MessageQueue.enqueueMessage() will call this.notify()
+</pre>
+
+<ul>
+<li id="sec-1-29-1-1-1"><span class="target">Idler</span><br/>
+        <a href="#sec-1-29-1-1-1">Idler</a> class is used by ActivityThread when resumeActivity. when resumeActivity returns, ActivityThread will put one <a href="#sec-1-29-1-1-1">Idler</a> in the MessageQueue,
+        when the queue is idle (activity is ready), <a href="#sec-1-29-1-1-1">Idler</a>.queueIdle() will be called, which will notify AMS to finish activities registered before.
+
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1-29-2" class="outline-5">
+<h5 id="sec-1-29-2"><span class="section-number-5">1.29.2</span> <span class="done DONE">DONE</span> Message.obtain() &amp; Message.recycle()</h5>
+<div class="outline-text-5" id="text-1-29-2">
+
+<p>      <span class="timestamp-wrapper"><span class="timestamp-kwd">SCHEDULED: </span> <span class="timestamp">2011-05-28 Sat</span></span>  <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-05-27 Fri 14:55</span></span><br/>
+</p><ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-05-27 Fri 14:55</span></span>
+</li>
+<li>Message.obtain():
+</li>
+</ul>
+
+
+
+
+<pre class="example">synchronized (mPoolSync) {
+    if (mPool != null) {
+        Message m = mPool;
+        mPool = m.next;
+        m.next = null;
+        return m;
+    }
+}
+return new Message();
+</pre>
+
+<ul>
+<li>Message.recycle():
+</li>
+</ul>
+
+
+
+
+<pre class="example">synchronized (mPoolSync) {
+    if (mPoolSize &lt; MAX_POOL_SIZE) {
+        clearForRecycle();
+          what = 0;
+          obj = null;
+          when = 0;
+          target = null;
+          callback = null;
+          ...
+        next = mPool;
+        mPool = this;
+    }
+}
+</pre>
+
+<ul>
+<li>sendMessage():
+</li>
+</ul>
+
+
+
+
+<pre class="example">sendMessageDelayed(msg,delayMillis)
+  sendMessageAtTime(msg, uptimeMillis)
+    queue.enqueueMessage(msg, uptimeMillis);
+      if (msg.when != 0):
+        throw new AndroidRuntimeException(msg + " This message is already in use.");
+        msg.when = uptimeMillis;  // important
+        if (p == null || when == 0 || when &lt; p.when): // reorder messages in queue according to msg.when
+          msg.next = p;
+          mMessages = msg;
+          this.notify(); // notify waiting
+        else:
+          Message prev = null;
+          while (p != null &amp;&amp; p.when &lt;= when) {
+            prev = p;
+            p = p.next;
+          }
+          msg.next = prev.next;
+          prev.next = msg;
+          this.notify();
+</pre>
+
+<ul>
+<li>Looper.loop():
+</li>
+</ul>
+
+
+
+
+<pre class="example">while true:
+  Message msg=queue.next(); // might block
+  msg.target.dispatchMessage(msg);
+  msg.recycle()
+</pre>
+
+<p>
+       Note:
+       Looper.loop() will recycle message automatically, thus <b>NEVER</b> invoke Message.recycle() manually!  Or else `message is already in use` exception
+       will be thrown. Because: when u call recycle() manually, the message will finally be recycled twice, after the 2nd recycle(), the message list will
+       have circular reference, and the succeeding obtainMessage() will definitly obtain the <b>same</b> message <b>again and again</b>
+</p>
+<p>
+     To summarize:
+</p><ul>
+<li>Generally, message can't be re-used, except for the situation that `Message is firstly recycled by Message.recycle() and then reused by
+       Message.obtain()`, or else any other form of Message re-use will cause exception.
+</li>
+<li>Loop will invoke Message.recycle() automatically, thus never call it manually.
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-29-3" class="outline-5">
+<h5 id="sec-1-29-3"><span class="section-number-5">1.29.3</span> misc</h5>
+<div class="outline-text-5" id="text-1-29-3">
+
+<ul>
+<li id="sec-1-29-3-1">Looper.setMessageLogging()<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-29-3-2"><span class="done DONE">DONE</span> <span class="target">HandlerThread</span><br/>
+       <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-02-24 Thu 15:00</span></span><br/>
+<ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-02-24 Thu 15:00</span></span>
+</li>
+</ul>
+
+<p>      Handy class that starting a thread with a looper, u can call <a href="#sec-1-29-3-2">HandlerThread</a>.getLooper() to get the looper.
+      note that getLooper() will block until the looper is ready.
+</p>
+</li>
+</ul>
+<ul>
+<li id="sec-1-29-3-3">Messenger<br/>
+      see <a href="#Messenger">@Messenger</a>
+</li>
+</ul>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-30" class="outline-3">
+<h3 id="sec-1-30"><span class="section-number-3">1.30</span> LowMemoryKiller</h3>
+<div class="outline-text-3" id="text-1-30">
+
+
+</div>
+
+<div id="outline-container-1-30-1" class="outline-4">
+<h4 id="sec-1-30-1"><span class="section-number-4">1.30.1</span> oom adj</h4>
+<div class="outline-text-4" id="text-1-30-1">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-31" class="outline-3">
+<h3 id="sec-1-31"><span class="section-number-3">1.31</span> misc</h3>
+<div class="outline-text-3" id="text-1-31">
+
+
+</div>
+
+<div id="outline-container-1-31-1" class="outline-4">
+<h4 id="sec-1-31-1"><span class="section-number-4">1.31.1</span> <span class="done DONE">DONE</span> bitmap recycle</h4>
+<div class="outline-text-4" id="text-1-31-1">
+
+<p>     <span class="timestamp-wrapper"><span class="timestamp-kwd">SCHEDULED: </span> <span class="timestamp">2011-02-10 Thu</span></span>  <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-02-10 Thu 11:46</span></span><br/>
+</p><ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-02-10 Thu 11:46</span></span>
+</li>
+</ul>
+
+<p>    Bitmap.recycle() will call nativeRecycle() to release native memory used by Skia. But, we don't need call it directly, since Bitmap.finalize()
+    will call it.
+</p></div>
+
+</div>
+
+<div id="outline-container-1-31-2" class="outline-4">
+<h4 id="sec-1-31-2"><span class="section-number-4">1.31.2</span> android 尺寸单位 (px,pt,dp,sp..)</h4>
+<div class="outline-text-4" id="text-1-31-2">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-MountService" class="outline-3">
+<h3 id="MountService"><a name="sec-1-32" id="sec-1-32"></a><span class="section-number-3">1.32</span> MountService</h3>
+<div class="outline-text-3" id="text-MountService">
+
+<p>   see <a href="#NativeDaemonConnector">@NativeDaemonConnector</a>
+   see <a href="#vold">@vold</a>
+</p>
+
+
+<pre class="example">                    -+------socket-------+
+                     |                   |
+                     |                   V
+MountService-----connector              vold &lt;-----netlink-----&gt; kernel
+                     ^                   |
+                     |                   |
+                    -+------binder-------+
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-NativeDaemonConnector" class="outline-3">
+<h3 id="NativeDaemonConnector"><a name="sec-1-33" id="sec-1-33"></a><span class="section-number-3">1.33</span> NativeDaemonConnector</h3>
+<div class="outline-text-3" id="text-NativeDaemonConnector">
+
+<p>   see <a href="#MountService">@MountService</a>
+   android use NativeDaemonConnector to interactive native daemons, including
+</p><ul>
+<li>vold
+</li>
+<li>netd
+</li>
+<li>installd
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-34" class="outline-3">
+<h3 id="sec-1-34"><span class="section-number-3">1.34</span> NDK &nbsp;&nbsp;&nbsp;<span class="tag"><span class="ARCHIVE">ARCHIVE</span></span></h3>
+<div class="outline-text-3" id="text-1-34">
+
+</div>
+
+</div>
+
+<div id="outline-container-Notification" class="outline-3">
+<h3 id="Notification"><a name="sec-1-35" id="sec-1-35"></a><span class="section-number-3">1.35</span> Notification</h3>
+<div class="outline-text-3" id="text-Notification">
+
+<p>   Notification intent will use FLAG<sub>NEW</sub><sub>TASK</sub> implicitly, and the target activity <b>should</b> use blank string ("") as affinity, to reduce the risk that
+   startActivity from notification falls into an existing task;
+</p>
+
+</div>
+
+<div id="outline-container-1-35-1" class="outline-4">
+<h4 id="sec-1-35-1"><span class="section-number-4">1.35.1</span> "" as taskAffinity</h4>
+<div class="outline-text-4" id="text-1-35-1">
+
+<p>    see `startActivityUnchecked`
+</p>
+<p>
+    activity with "" as taskAffinity will have it taskAffinity set to null; So that `findTaskLocked` in `startActivityUnchecked` will not try to find
+    any existing task according to taskAffinity, instead, it will try to find the target task by the condition
+</p>
+<p>
+                        <b>the target task's starting intent must be identical with the calling intent</b>
+</p>
+<p>
+    which impose a stronger restriction on the target task searing, and thus reduce conflict.
+</p>
+<p>
+    Different activities with the same "" taskAffinity will not be placed in the same task when start activty with NEW<sub>TASK</sub>, since their starting intent is
+    different.
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-PendingIntent" class="outline-3">
+<h3 id="PendingIntent"><a name="sec-1-36" id="sec-1-36"></a><span class="section-number-3">1.36</span> <span class="done DONE">DONE</span> PendingIntent</h3>
+<div class="outline-text-3" id="text-PendingIntent">
+
+<p>    <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-03-07 Mon 15:58</span></span><br/>
+</p><ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-03-07 Mon 15:58</span></span>
+</li>
+</ul>
+
+<p>   see <a href="#PendingIntent-Permission">Permission</a>
+   see <a href="#IntentSender">@IntentSender</a>
+   A description of an Intent and target action to perform with
+   it. Instances of this class are created with getActivity(Context, int,
+   Intent, int), getBroadcast(Context, int, Intent, int), getService(Context,
+   int, Intent, int); the returned object can be handed to other applications so
+   that they can perform the action you described on your behalf at a later
+   time.
+</p>
+<p>
+   By giving a PendingIntent to another application, you are granting it the
+   right to perform the operation you have specified as if the other application
+   was yourself (with the same permissions and identity (<b>uid</b>) ). As such, you
+   should be careful about how you build the PendingIntent: often, for example,
+   the base Intent you supply will have the component name explicitly set to one
+   of your own components, to ensure it is ultimately sent there and nowhere
+   else.
+</p>
+<p>
+   A PendingIntent itself is simply a reference to a token maintained by the
+   system describing the original data used to retrieve it. This means that,
+   even if its owning application's process is killed, the PendingIntent itself
+   will remain usable from other processes that have been given it. If the
+   creating application later re-retrieves <b>the same kind of PendingIntent</b> (same
+   operation, same Intent action, data, categories, and components, and same
+   flags), it will receive a PendingIntent representing the same token if that
+   is still valid, and can thus call cancel() to remove it.
+</p>
+<p>
+   <b>Note</b>:
+   if u want to generate different PendingIntent for different intents, make
+   sure the PendingIntent's request<sub>code</sub> is different, or intents are different.
+</p>
+<p>
+   Intent equality:
+   That is, if intents' action, data, type, class, and categories are the same.
+   This does <b>not</b> compare any extra data included in the intents.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-37" class="outline-3">
+<h3 id="sec-1-37"><span class="section-number-3">1.37</span> PowerManagment</h3>
+<div class="outline-text-3" id="text-1-37">
+
+
+</div>
+
+<div id="outline-container-1-37-1" class="outline-4">
+<h4 id="sec-1-37-1"><span class="section-number-4">1.37.1</span> WakeLock</h4>
+<div class="outline-text-4" id="text-1-37-1">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-38" class="outline-3">
+<h3 id="sec-1-38"><span class="section-number-3">1.38</span> Preference</h3>
+<div class="outline-text-3" id="text-1-38">
+
+<ul>
+<li>State "CANCELED"   from "DOING" <span class="timestamp-wrapper"> <span class="timestamp">2011-07-26 Tue 16:25</span></span>
+</li>
+</ul>
+
+
+</div>
+
+<div id="outline-container-1-38-1" class="outline-4">
+<h4 id="sec-1-38-1"><span class="section-number-4">1.38.1</span> PreferenceActivity</h4>
+<div class="outline-text-4" id="text-1-38-1">
+
+<ul>
+<li>PreferenceActivity extends ListActivity
+</li>
+<li>Basic usage:
+<ol>
+<li>setContentView(resId)
+         optional, if called, resId must contain a ListView with id="@+android/List"
+</li>
+<li>PreferenceActivity.addPreferencesFromResource()
+</li>
+</ol>
+
+</li>
+<li>Basically, PreferenceActivity is an Activity contains a ListView, and it delegate anything about the ListView to a inner member: PreferenceManager
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-38-2" class="outline-4">
+<h4 id="sec-1-38-2"><span class="section-number-4">1.38.2</span> PreferenceManager</h4>
+<div class="outline-text-4" id="text-1-38-2">
+
+<p>    PreferenceManager is a utility functional object
+</p><ul>
+<li>PreferenceManager extends NULL
+</li>
+<li>PreferenceManager mainly does two things:
+<ol>
+<li>maintain the underlying SharedPreference
+</li>
+<li>maintain the PreferenceScreen (inflate PreferenceScreen from xml)
+</li>
+</ol>
+
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-38-3" class="outline-4">
+<h4 id="sec-1-38-3"><span class="section-number-4">1.38.3</span> PreferenceScreen</h4>
+<div class="outline-text-4" id="text-1-38-3">
+
+<p>    PreferenceScreen is one of the two core concepts of Preference  (another is Preference)
+    <b>NOTE</b>: PreferenceScreen vs. ListAdapter
+</p>
+<ul>
+<li>PreferenceScreen extends PreferenceGroup
+</li>
+<li>it maintains a PreferenceGroupAdapter (extends ListAdapter), which is shown in the ListView
+      The adapter will map the Preference to ListView item.
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-38-4" class="outline-4">
+<h4 id="sec-1-38-4"><span class="section-number-4">1.38.4</span> Preference</h4>
+<div class="outline-text-4" id="text-1-38-4">
+
+<p>    <b>NOTE</b>: Preference vs. ListView item
+</p><ul>
+<li>when Preference is changed (through Preference.notifyChanged()), it will eventually
+      invoke PreferenceScreen.PreferenceGroupAdapter.notifyDatasetChanged(), thus update the ListView.
+</li>
+<li>when PreferenceGroupAdapter decides to getView(), it will eventually call through to Preference.getView()-&gt;Preference.onBindView()
+</li>
+<li>Preference's builtin setTitle()/setSummary() will call notifyChanged() automatically, thus cause onBindView()
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-38-5" class="outline-4">
+<h4 id="sec-1-38-5"><span class="section-number-4">1.38.5</span> KeyEvent dispatch</h4>
+<div class="outline-text-4" id="text-1-38-5">
+
+
+
+
+<pre class="example">ListView.onItemClicked
+  Preference.performClick
+    Preference.mOnClickListener
+    if not intercepted:
+      PreferenceActivity.OnPreferenceTreeClickListener
+    if not intercepted &amp;&amp; mIntent != null:
+      startActivity(mIntent)
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-38-6" class="outline-4">
+<h4 id="sec-1-38-6"><span class="section-number-4">1.38.6</span> To summurize:</h4>
+<div class="outline-text-4" id="text-1-38-6">
+
+<p>    PreferenceScreen vs. ListAdapter
+    Preference vs. ListItem
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-1-39" class="outline-3">
+<h3 id="sec-1-39"><span class="section-number-3">1.39</span> ServiceManager</h3>
+<div class="outline-text-3" id="text-1-39">
+
+<p>see also <a href="#binder">binder</a>
+</p></div>
+
+</div>
+
+<div id="outline-container-1-40" class="outline-3">
+<h3 id="sec-1-40"><span class="section-number-3">1.40</span> SharedPreference</h3>
+<div class="outline-text-3" id="text-1-40">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-41" class="outline-3">
+<h3 id="sec-1-41"><span class="section-number-3">1.41</span> StatusBar &amp; SystemUI</h3>
+<div class="outline-text-3" id="text-1-41">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-42" class="outline-3">
+<h3 id="sec-1-42"><span class="section-number-3">1.42</span> <span class="done DONE">DONE</span> Strict Mode</h3>
+<div class="outline-text-3" id="text-1-42">
+
+<p> <span class="timestamp-wrapper"><span class="timestamp-kwd">SCHEDULED: </span> <span class="timestamp">2011-06-13 Mon</span></span>  <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-06-13 Mon 15:24</span></span><br/>
+</p><ul>
+<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-06-13 Mon 15:24</span></span>
+  see <a href="#sec-1-5">ANR</a>
+</li>
+<li>use BlockGuard (StrictMode) to detect possible ANR caused by file/network IO in mainThread
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-43" class="outline-3">
+<h3 id="sec-1-43"><span class="section-number-3">1.43</span> Surfacing &nbsp;&nbsp;&nbsp;<span class="tag"><span class="ARCHIVE">ARCHIVE</span></span></h3>
+<div class="outline-text-3" id="text-1-43">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-44" class="outline-3">
+<h3 id="sec-1-44"><span class="section-number-3">1.44</span> System Property</h3>
+<div class="outline-text-3" id="text-1-44">
+
+<ol>
+<li>android property is by no means related to java property.
+</li>
+<li>android SDK doesn't provide public java API to access android property; However, internal java API is available
+</li>
+<li>android SDK provide java API to manipulate java property.
+</li>
+</ol>
+
+
+</div>
+
+<div id="outline-container-1-44-1" class="outline-4">
+<h4 id="sec-1-44-1"><span class="section-number-4">1.44.1</span> android property</h4>
+<div class="outline-text-4" id="text-1-44-1">
+
+<ul>
+<li>adb shell getprop / adb shell setprop
+</li>
+<li>there is NO java api to set/get android property
+</li>
+<li>only root can set android property
+</li>
+</ul>
+
+
+</div>
+
+<div id="outline-container-1-44-1-1" class="outline-5">
+<h5 id="sec-1-44-1-1"><span class="section-number-5">1.44.1.1</span> internal</h5>
+<div class="outline-text-5" id="text-1-44-1-1">
+
+<p>main() @ init.c  // in system/core/init
+property<sub>init</sub>()
+property<sub>set</sub>("ro.hardware", hardware);
+property<sub>set</sub>(&hellip;)
+</p></div>
+
+</div>
+
+<div id="outline-container-1-44-1-2" class="outline-5">
+<h5 id="sec-1-44-1-2"><span class="section-number-5">1.44.1.2</span> reference</h5>
+<div class="outline-text-5" id="text-1-44-1-2">
+
+<blockquote>
+
+<p>Every property has a name and value. Both name and value are text
+strings. Property is heavily used in Android to record system setting
+or exchange information between processes. The property is globally
+visible in the whole system. Every process can get/set a property. On
+system initialization, Android will allocates a block of shared memory
+for storing the properties. This is done in “init” daemon whose source
+code is at: device/system/init. The “init” daemon will start a
+Property Service. The Property Service is running in the process of
+“init” daemon. Every client that wants to SET property needs to
+connect to the Property Service and send message to Property
+Service. Property Service will update/create the property in shared
+memory. Any client that wants to GET property can read the property
+from the shared memory directly. This promotes the read
+performance. The client application can invoke the API function
+exposed from libcutils to GET/SET a property. The source code of
+libcutils locates at: device/libs/cutils.
+</p>
+<p>
+The API function is:
+int property<sub>get</sub>(const char *key, char *value, const char *default<sub>value</sub>);
+int property<sub>set</sub>(const char *key, const char *value);
+</p>
+<p>
+The libcutils is in turn calling the _<sub>system</sub><sub>property</sub><sub>xxx</sub> function in
+libc to get a property from the shared memory. The source code of libc
+is at: device/system/bionic. The Property Service is also in turn
+calling the _<sub>system</sub><sub>property</sub><sub>init</sub> function in libc to initiate the
+shared memory for properties. When starting the Property Service will
+load the default properties from below files:
+</p>
+<p>
+/default.prop
+/system/build.prop
+/system/default.prop
+/data/local.prop
+</p>
+<p>
+The properties are loaded in the above order. Later loaded properties
+will override the previous values. After those properties are loaded,
+the last loaded is the persistent properties which is persisted in
+/data/property. Special Properties
+</p>
+<p>
+If a property’s name begins with “ro.”, then this property is treated
+as a read-only property. Once set, the value of the property can’t be
+changed.
+</p>
+<p>
+If a property’s name begins with “persist.”, then when setting this
+property, the value will be written to /data/property, too.
+</p>
+<p>
+If a property’s name begins with “net.”, when when setting this
+property, the “net.change” property will be set automatically to
+contain the name of the last updated property. (It’s tricky. The
+netresolve module uses this property to track if there is any change
+on the net.* properties.)
+</p>
+<p>
+The property “ctrl.start” and “ctrl.stop” is used to start and stop a
+service. Every service must be defined in /init.rc. On system startup,
+the init daemon will parse the init.rc and start the Property
+Service. Once received a request to set the property of “ctrl.start”,
+the Property Service will use the property value as the service name
+to find the service and then start the service. The service starting
+result is then put to the property “init.svc.&lt;service name&gt;”. The
+client application can poll the value of that property to determine
+the result. Android toolbox
+</p>
+<p>
+The Android toolbox provides two applets: setprop and getprop to get
+and set properties. The usage is:
+</p>
+<p>
+getprop &lt;property name&gt;
+setprop &lt;property name&gt; &lt;property value&gt; 
+</p>
+<p>
+Java
+The java application can use the System.getProperty() and System.setProperty() function to Get and Set the property.
+</p>
+<p>
+Action
+</p>
+<p>
+By default the set property will only cause "init" daemon to write to
+shared memory, it won't execute any script or binary. But you can add
+your actions to correspond to property change in init.rc. For example,
+in the default init.rc, you can find.
+</p>
+<p>
+on property:ro.kernel.qemu=1
+</p>
+<p>
+start adbd
+on property:persist.service.adb.enable=1
+</p>
+<p>
+start adbd
+on property:persist.service.adb.enable=0
+</p>
+<p>
+stop adbd
+</p>
+<p>
+So if you set persist.service.adb.enable to 1, the "init" daemon knows
+it has actions to do, then it will start adbd service.
+</p>
+</blockquote>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-44-2" class="outline-4">
+<h4 id="sec-1-44-2"><span class="section-number-4">1.44.2</span> java property</h4>
+<div class="outline-text-4" id="text-1-44-2">
+
+<p>System.getProperty() / System.setProperty()
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-1-45" class="outline-3">
+<h3 id="sec-1-45"><span class="section-number-3">1.45</span> system<sub>server</sub></h3>
+<div class="outline-text-3" id="text-1-45">
+
+
+</div>
+
+<div id="outline-container-1-45-1" class="outline-4">
+<h4 id="sec-1-45-1"><span class="section-number-4">1.45.1</span> ServerThread</h4>
+<div class="outline-text-4" id="text-1-45-1">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-46" class="outline-3">
+<h3 id="sec-1-46"><span class="section-number-3">1.46</span> Toast</h3>
+<div class="outline-text-3" id="text-1-46">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-47" class="outline-3">
+<h3 id="sec-1-47"><span class="section-number-3">1.47</span> Tools</h3>
+<div class="outline-text-3" id="text-1-47">
+
+
+</div>
+
+<div id="outline-container-1-47-1" class="outline-4">
+<h4 id="sec-1-47-1"><span class="section-number-4">1.47.1</span> aapt</h4>
+<div class="outline-text-4" id="text-1-47-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-47-2" class="outline-4">
+<h4 id="sec-1-47-2"><span class="section-number-4">1.47.2</span> adb</h4>
+<div class="outline-text-4" id="text-1-47-2">
+
+
+</div>
+
+<div id="outline-container-1-47-2-1" class="outline-5">
+<h5 id="sec-1-47-2-1"><span class="section-number-5">1.47.2.1</span> dumpsys</h5>
+<div class="outline-text-5" id="text-1-47-2-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-47-2-2" class="outline-5">
+<h5 id="sec-1-47-2-2"><span class="section-number-5">1.47.2.2</span> am</h5>
+<div class="outline-text-5" id="text-1-47-2-2">
+
+<p>     am start
+     am startservice
+     am broadcast
+     am instrument
+     am monitor
+</p></div>
+
+</div>
+
+<div id="outline-container-1-47-2-3" class="outline-5">
+<h5 id="sec-1-47-2-3"><span class="section-number-5">1.47.2.3</span> pm</h5>
+<div class="outline-text-5" id="text-1-47-2-3">
+
+<p>     pm list instrumentation
+     pm setInstallLocation
+     pm getInstallLocation
+</p></div>
+
+</div>
+
+<div id="outline-container-1-47-2-4" class="outline-5">
+<h5 id="sec-1-47-2-4"><span class="section-number-5">1.47.2.4</span> sendevent</h5>
+<div class="outline-text-5" id="text-1-47-2-4">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-47-3" class="outline-4">
+<h4 id="sec-1-47-3"><span class="section-number-4">1.47.3</span> aidl</h4>
+<div class="outline-text-4" id="text-1-47-3">
+
+
+</div>
+
+<div id="outline-container-1-47-3-1" class="outline-5">
+<h5 id="sec-1-47-3-1"><span class="section-number-5">1.47.3.1</span> in,out</h5>
+<div class="outline-text-5" id="text-1-47-3-1">
+
+<ul>
+<li>void foo(in Foo foo,out Bar bar)
+</li>
+<li>void foo(String s) // s is `in` implicitly, since String is immutable
+</li>
+<li>void foo(Integer i) // i in `in` implicitly, since Integer is also immutable
+</li>
+<li>void foo(Foo foo) // compile error, must specify in/out/inout for foo
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-47-3-2" class="outline-5">
+<h5 id="sec-1-47-3-2"><span class="section-number-5">1.47.3.2</span> oneway</h5>
+<div class="outline-text-5" id="text-1-47-3-2">
+
+<ul>
+<li>oneway int foo();
+</li>
+</ul>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-47-4" class="outline-4">
+<h4 id="sec-1-47-4"><span class="section-number-4">1.47.4</span> android</h4>
+<div class="outline-text-4" id="text-1-47-4">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-47-5" class="outline-4">
+<h4 id="sec-1-47-5"><span class="section-number-4">1.47.5</span> ddms</h4>
+<div class="outline-text-4" id="text-1-47-5">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-47-6" class="outline-4">
+<h4 id="sec-1-47-6"><span class="section-number-4">1.47.6</span> decompile</h4>
+<div class="outline-text-4" id="text-1-47-6">
+
+
+</div>
+
+<div id="outline-container-1-47-6-1" class="outline-5">
+<h5 id="sec-1-47-6-1"><span class="section-number-5">1.47.6.1</span> dex2jar</h5>
+<div class="outline-text-5" id="text-1-47-6-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-47-6-2" class="outline-5">
+<h5 id="sec-1-47-6-2"><span class="section-number-5">1.47.6.2</span> jd-gui</h5>
+<div class="outline-text-5" id="text-1-47-6-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-47-6-3" class="outline-5">
+<h5 id="sec-1-47-6-3"><span class="section-number-5">1.47.6.3</span> apktool</h5>
+<div class="outline-text-5" id="text-1-47-6-3">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-47-7" class="outline-4">
+<h4 id="sec-1-47-7"><span class="section-number-4">1.47.7</span> hierachyviewer</h4>
+<div class="outline-text-4" id="text-1-47-7">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-47-8" class="outline-4">
+<h4 id="sec-1-47-8"><span class="section-number-4">1.47.8</span> layouopt</h4>
+<div class="outline-text-4" id="text-1-47-8">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-47-9" class="outline-4">
+<h4 id="sec-1-47-9"><span class="section-number-4">1.47.9</span> sign</h4>
+<div class="outline-text-4" id="text-1-47-9">
+
+
+</div>
+
+<div id="outline-container-1-47-9-1" class="outline-5">
+<h5 id="sec-1-47-9-1"><span class="section-number-5">1.47.9.1</span> jarsigner</h5>
+<div class="outline-text-5" id="text-1-47-9-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-47-9-2" class="outline-5">
+<h5 id="sec-1-47-9-2"><span class="section-number-5">1.47.9.2</span> signapk.jar</h5>
+<div class="outline-text-5" id="text-1-47-9-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-47-9-3" class="outline-5">
+<h5 id="sec-1-47-9-3"><span class="section-number-5">1.47.9.3</span> keytool</h5>
+<div class="outline-text-5" id="text-1-47-9-3">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-47-10" class="outline-4">
+<h4 id="sec-1-47-10"><span class="section-number-4">1.47.10</span> traceview</h4>
+<div class="outline-text-4" id="text-1-47-10">
+
+
+</div>
+
+<div id="outline-container-1-47-10-1" class="outline-5">
+<h5 id="sec-1-47-10-1"><span class="section-number-5">1.47.10.1</span> set traceview buffer size in ddms</h5>
+<div class="outline-text-5" id="text-1-47-10-1">
+
+<p>     .android/ddms.cfg:
+       profilerBufferSizeMb=100
+</p></div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-48" class="outline-3">
+<h3 id="sec-1-48"><span class="section-number-3">1.48</span> Uri</h3>
+<div class="outline-text-3" id="text-1-48">
+
+
+</div>
+
+<div id="outline-container-1-48-1" class="outline-4">
+<h4 id="sec-1-48-1"><span class="section-number-4">1.48.1</span> uri encoding</h4>
+<div class="outline-text-4" id="text-1-48-1">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-49" class="outline-3">
+<h3 id="sec-1-49"><span class="section-number-3">1.49</span> <span class="done DONE">DONE</span> Util [4/4] &nbsp;&nbsp;&nbsp;<span class="tag"><span class="coding">coding</span></span></h3>
+<div class="outline-text-3" id="text-1-49">
+
+<p> <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2012-09-14 Fri 10:37</span></span><br/>
+</p><ul>
+<li><code>[X]</code> LruCache
+</li>
+<li><code>[X]</code> Pair
+</li>
+<li><code>[X]</code> SparseArray
+</li>
+<li><code>[X]</code> TimingLogger
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-vold" class="outline-3">
+<h3 id="vold"><a name="sec-1-50" id="sec-1-50"></a><span class="section-number-3">1.50</span> vold</h3>
+<div class="outline-text-3" id="text-vold">
+
+<p>   <b>android's alternative to linux udev</b>
+   src location: /system/vold
+</p></div>
+
+</div>
+
+<div id="outline-container-1-51" class="outline-3">
+<h3 id="sec-1-51"><span class="section-number-3">1.51</span> Widget</h3>
+<div class="outline-text-3" id="text-1-51">
+
+
+</div>
+
+<div id="outline-container-1-51-1" class="outline-4">
+<h4 id="sec-1-51-1"><span class="section-number-4">1.51.1</span> ActivityGroup</h4>
+<div class="outline-text-4" id="text-1-51-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-51-2" class="outline-4">
+<h4 id="sec-1-51-2"><span class="section-number-4">1.51.2</span> AdapterView</h4>
+<div class="outline-text-4" id="text-1-51-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-51-3" class="outline-4">
+<h4 id="sec-1-51-3"><span class="section-number-4">1.51.3</span> Layout</h4>
+<div class="outline-text-4" id="text-1-51-3">
+
+
+</div>
+
+<div id="outline-container-1-51-3-1" class="outline-5">
+<h5 id="sec-1-51-3-1"><span class="section-number-5">1.51.3.1</span> LinearLayout</h5>
+<div class="outline-text-5" id="text-1-51-3-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-51-3-2" class="outline-5">
+<h5 id="sec-1-51-3-2"><span class="section-number-5">1.51.3.2</span> FrameLayout</h5>
+<div class="outline-text-5" id="text-1-51-3-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-51-3-3" class="outline-5">
+<h5 id="sec-1-51-3-3"><span class="section-number-5">1.51.3.3</span> GridLayout</h5>
+<div class="outline-text-5" id="text-1-51-3-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-51-3-4" class="outline-5">
+<h5 id="sec-1-51-3-4"><span class="section-number-5">1.51.3.4</span> CANCELED RelativeLayout</h5>
+<div class="outline-text-5" id="text-1-51-3-4">
+
+<ul>
+<li>State "CANCELED"   from "DOING" <span class="timestamp-wrapper"> <span class="timestamp">2011-07-18 Mon 17:43</span></span>
+</li>
+</ul>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-51-4" class="outline-4">
+<h4 id="sec-1-51-4"><span class="section-number-4">1.51.4</span> ListView</h4>
+<div class="outline-text-4" id="text-1-51-4">
+
+
+</div>
+
+<div id="outline-container-1-51-4-1" class="outline-5">
+<h5 id="sec-1-51-4-1"><span class="section-number-5">1.51.4.1</span> convertView</h5>
+<div class="outline-text-5" id="text-1-51-4-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-51-4-2" class="outline-5">
+<h5 id="sec-1-51-4-2"><span class="section-number-5">1.51.4.2</span> Adapter</h5>
+<div class="outline-text-5" id="text-1-51-4-2">
+
+<ul>
+<li id="sec-1-51-4-2-1">getView<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-51-4-2-2">ViewBinder<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-51-4-2-3">ViewHolder<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-51-4-2-4"><span class="done DONE">DONE</span> NotifyDatasetChanged()<br/>
+       <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-02-24 Thu 13:33</span></span><br/>
+
+
+
+<pre class="example"> 1        BaseAdapter.NotifyDatasetChanged()
+ 2          AdapterView.AdapterDataSetObserver.onChanged()
+ 3            mDataChanged=true;
+ 4            AbsList.requestLayout()
+ 5              if !mBlockLayoutRequests &amp;&amp; !mInLayout: // mInLayout makes sure that NotifyDatasetChanged() in getView() will not cause infinite loop
+ 6                super.requestLayout();
+ 7                ...
+ 8                ViewRoot.requestLayout()
+ 9                  ViewRoot.performTraversals()
+10                    deco.measure()
+11                    deco.layout()
+12                      ListView.onLayout()
+13                        mInLayout=true;
+14                        ListView.layoutChildren()
+15                          remove_all_children
+16                          makeAndAddView()
+17                            if !mDataChanged:
+18                              reuse_previous_views
+19                            else:
+20                              obtainView()
+21                                Adapter.getView()
+22                          mDataChanged=false;
+23                    deco.draw();
+</pre>
+
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1-51-4-3" class="outline-5">
+<h5 id="sec-1-51-4-3"><span class="section-number-5">1.51.4.3</span> cacheColorHint</h5>
+<div class="outline-text-5" id="text-1-51-4-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-51-4-4" class="outline-5">
+<h5 id="sec-1-51-4-4"><span class="section-number-5">1.51.4.4</span> FastScroller</h5>
+<div class="outline-text-5" id="text-1-51-4-4">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-51-4-5" class="outline-5">
+<h5 id="sec-1-51-4-5"><span class="section-number-5">1.51.4.5</span> Android BUG: NotifyDatasetChanged() when scrolling</h5>
+<div class="outline-text-5" id="text-1-51-4-5">
+
+<ul>
+<li>BUG表现: 在 getView() 中调用 NotifyDatasetChanged(), 当滑动 ListView 时, onItemClick 无法响应
+</li>
+<li>原因:
+<ol>
+<li>NotifyDatasetChanged: see also  <a href="#NotifyDatasetChanged">NotifyDatasetChanged</a>
+     其中最重要的三点:
+<ol>
+<li>NotifyDatasetChanged 会在开始时将 mDataChanged 置位, 然后调用 AbsListView.requestLayout
+</li>
+<li>AbsListView.requestLayout 在 <b>mBlockLayoutRequests</b> 时什么也不做! ( 重要 )
+</li>
+<li>ListView layoutChildren 完成后会将 mDataChanged 复位
+</li>
+</ol>
+
+</li>
+<li>AbsListView TouchEvent dispatch
+     当 mDataChanged 置位时, touch up 事件不会被处理, 因为 mDataChanged 置位, 表示 数据已改变, 而该 ListView 还没有被重新 layout, 这
+     时应该阻止 itemClick 事件, 因为用户点击时看到的数据很可能并不是真正的数据
+</li>
+<li>ListView scroll
+     上面提到的一重要的数据是 mBlockLayoutRequests, 这个值表示 ListView 当前禁止 requestLayout.
+     当发生 scroll 事件时, ListView 调用 trackMotionScroll(incrementalDeltaY, incrementalDeltaY); 处理滚动,
+     该函数大致是:
+</li>
+</ol>
+
+</li>
+</ul>
+
+
+
+
+<pre class="src src-java">trackMotionScroll()
+  mRecycler.addScrapView(start,count); <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">cache &#28369;&#21160;&#20986;&#21435;&#30340; view</span>
+    mRecyclerListener.onMovedToScrapHeap(scrap);
+  detachViewsFromParent(start, count); <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">detach &#28369;&#21160;&#20986;&#21435;&#30340; view from ViewGroup</span>
+  mBlockLayoutRequests = true;
+    fillGap() --&gt; makeAndAddView() --&gt; obtainView() --&gt; getView() &#33719;&#24471;&#26032;&#30340; view &#20197;&#22635;&#20805;&#28369;&#21160;&#26102;&#20135;&#29983;&#30340; gap
+  mBlockLayoutRequests = false;
+  invokeOnItemScrollListener();
+  awakenScrollBars();
+</pre>
+
+<p>
+最重要的一点是: 在 scroll 时, mBlockLayoutRequests 会被置位,以禁止 scroll 时 requestLayout
+</p>
+<ul>
+<li id="sec-1-51-4-5-1">在 Preference 中出现该 BUG<br/>
+Preference 作为 经过包装的 ListView ,相对来说比较容易出现该 BUG:
+see also <a href="#sec-1-38">Preference</a>
+<ul>
+<li>Preference.onBindView() 实际是经过包装的 getView()
+</li>
+<li>Preference 自带的 setTitle(), setSummary() 的写法:
+</li>
+</ul>
+
+
+
+
+
+<pre class="example">Preference.setTitle(title):
+  if (title == null &amp;&amp; mTitle != null || title != null &amp;&amp; !title.equals(mTitle)):
+    mTitle = title;
+    notifyChanged();
+</pre>
+
+
+<p>
+如果调用者在 onBinderView 中调用了 setXXX() 方法, 则会出现该 BUG.
+</p>
+</li>
+</ul>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-51-5" class="outline-4">
+<h4 id="sec-1-51-5"><span class="section-number-4">1.51.5</span> view overlay</h4>
+<div class="outline-text-4" id="text-1-51-5">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-51-6" class="outline-4">
+<h4 id="sec-1-51-6"><span class="section-number-4">1.51.6</span> GestureOverlayView</h4>
+<div class="outline-text-4" id="text-1-51-6">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-51-7" class="outline-4">
+<h4 id="sec-1-51-7"><span class="section-number-4">1.51.7</span> SurfaceView</h4>
+<div class="outline-text-4" id="text-1-51-7">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-51-8" class="outline-4">
+<h4 id="sec-1-51-8"><span class="section-number-4">1.51.8</span> TabActivity</h4>
+<div class="outline-text-4" id="text-1-51-8">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-51-9" class="outline-4">
+<h4 id="sec-1-51-9"><span class="section-number-4">1.51.9</span> TabHost</h4>
+<div class="outline-text-4" id="text-1-51-9">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-51-10" class="outline-4">
+<h4 id="sec-1-51-10"><span class="section-number-4">1.51.10</span> ViewAnimator</h4>
+<div class="outline-text-4" id="text-1-51-10">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-51-11" class="outline-4">
+<h4 id="sec-1-51-11"><span class="section-number-4">1.51.11</span> WebView</h4>
+<div class="outline-text-4" id="text-1-51-11">
+
+
+</div>
+
+<div id="outline-container-1-51-11-1" class="outline-5">
+<h5 id="sec-1-51-11-1"><span class="section-number-5">1.51.11.1</span> Cookie</h5>
+<div class="outline-text-5" id="text-1-51-11-1">
+
+<p>     see <a href="#HTTP_Cookie">@HTTP<sub>Cookie</sub></a>
+</p><ul>
+<li id="sec-1-51-11-1-1">CookieManager<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-51-11-1-2">CookieSyncManager<br/>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-52" class="outline-3">
+<h3 id="sec-1-52"><span class="section-number-3">1.52</span> Zygote</h3>
+<div class="outline-text-3" id="text-1-52">
+
+
+</div>
+
+<div id="outline-container-1-52-1" class="outline-4">
+<h4 id="sec-1-52-1"><span class="section-number-4">1.52.1</span> Java Process Creation</h4>
+<div class="outline-text-4" id="text-1-52-1">
+
+
+
+
+<pre class="src src-text">AMS::startSpecificActivity()
+  Process::start(className,uid..)
+    Process::startViaZygote()
+      Pro::zygoteSendArgAndGetPid()
+        for zygote socket read pid
+</pre>
+
+
+<p>
+zygote socket:
+</p>
+
+
+<pre class="src src-text">runSelectLoopMode()
+  got request form socket
+     runOnce()
+       forkAndSpecialize(int uid, int gid, int[] gids..)
+         - uid: the UNIX uid that the new process should setuid() to after fork()ing and and before spawning any threads.
+         - gid: the UNIX gid that the new process should setgid() to after fork()ing and and before spawning any threads.
+         - gids: null-ok; a list of UNIX gids that the new process should setgroups() to after fork and before spawning any threads.
+           because zygote runs with root uid, it can setuid/gid/groups freely
+         // in child process
+         handleChildProc()
+           closeSocket();
+           RuntimeInit.zygoteInit(parsedArgs.remainingArgs);
+             commonInit()
+               Thread.setDefaultUncaughtExceptionHandler(new UncaughtHandler()); // NOTE: the UncaughtHandler does nothing but crash the app
+             zygoteInitNative()
+               gCurRuntime-&gt;onZygoteInit()
+                 proc-&gt;startThreadPool();
+             invokeStaticMain();
+        in parent process
+            return child pid
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-52-2" class="outline-4">
+<h4 id="sec-1-52-2"><span class="section-number-4">1.52.2</span> Zygote init</h4>
+<div class="outline-text-4" id="text-1-52-2">
+
+<p>see also <a href="#sec-1-25-2">System init</a>
+</p></div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2013-05-17T11:45+0800</p>
+<p class="author">Author: sunway</p>
+<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>
