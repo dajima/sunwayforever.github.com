@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Android Drawable</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="Android Drawable"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-05-17T16:40+0800"/>
+<meta name="author" content="sunway"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>    <link rel="stylesheet" type="text/css" href="stylesheet.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Android Drawable</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Android Drawable</a>
+<ul>
+<li><a href="#sec-1-1">1.1 BitmapDrawable</a></li>
+<li><a href="#sec-1-2">1.2 LayerDrawable</a></li>
+<li><a href="#sec-1-3">1.3 StateListDrawable</a></li>
+<li><a href="#sec-1-4">1.4 LevelListDrawable</a></li>
+<li><a href="#sec-1-5">1.5 ScaleDrawable</a></li>
+<li><a href="#sec-1-6">1.6 GradientDrawable</a></li>
+<li><a href="#sec-1-7">1.7 AnimationDrawable</a></li>
+<li><a href="#sec-1-8">1.8 TransitionDrawable</a></li>
+<li><a href="#sec-1-9">1.9 ClipDrawable</a></li>
+<li><a href="#sec-1-10">1.10 Misc</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Android Drawable</h2>
+<div class="outline-text-2" id="text-1">
+
+<p><a href="#android-sdk-docs-guide-topics-resources-drawable-resource.htm">android-sdk/docs/guide/topics/resources/drawable-resource.htm</a>
+</p>
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> BitmapDrawable</h3>
+<div class="outline-text-3" id="text-1-1">
+
+
+</div>
+
+<div id="outline-container-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> Bitmap File</h4>
+<div class="outline-text-4" id="text-1-1-1">
+
+
+</div>
+
+<div id="outline-container-1-1-1-1" class="outline-5">
+<h5 id="sec-1-1-1-1"><span class="section-number-5">1.1.1.1</span> Nine-Patch File</h5>
+<div class="outline-text-5" id="text-1-1-1-1">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> XML Bitmap</h4>
+<div class="outline-text-4" id="text-1-1-2">
+
+
+</div>
+
+<div id="outline-container-1-1-2-1" class="outline-5">
+<h5 id="sec-1-1-2-1"><span class="section-number-5">1.1.2.1</span> dither</h5>
+<div class="outline-text-5" id="text-1-1-2-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2-2" class="outline-5">
+<h5 id="sec-1-1-2-2"><span class="section-number-5">1.1.2.2</span> tileMode</h5>
+<div class="outline-text-5" id="text-1-1-2-2">
+
+<p>XML Nine-Patch File doesn't support `tileMode` attr
+</p></div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> LayerDrawable</h3>
+<div class="outline-text-3" id="text-1-2">
+
+<p>A LayerDrawable is a drawable object that manages an array of other
+drawables. Each drawable in the list is drawn in the order of the list—the last
+drawable in the list is drawn on top.
+</p>
+
+
+
+<pre class="src src-xml">&lt;<span style="color: #268bd2;">layer-list</span> <span style="color: #859900;">xmlns</span>:<span style="color: #268bd2;">android</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">http://schemas.android.com/apk/res/android</span><span style="color: #2aa198;">"</span>&gt;
+    &lt;<span style="color: #268bd2;">item</span>&gt;
+      &lt;<span style="color: #268bd2;">bitmap</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">src</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/android_red</span><span style="color: #2aa198;">"</span>
+        <span style="color: #859900;">android</span>:<span style="color: #268bd2;">gravity</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">center</span><span style="color: #2aa198;">"</span> /&gt;
+    &lt;/<span style="color: #268bd2;">item</span>&gt;
+    &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">top</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">10dp</span><span style="color: #2aa198;">"</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">left</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">10dp</span><span style="color: #2aa198;">"</span>&gt;
+      &lt;<span style="color: #268bd2;">bitmap</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">src</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/android_green</span><span style="color: #2aa198;">"</span>
+        <span style="color: #859900;">android</span>:<span style="color: #268bd2;">gravity</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">center</span><span style="color: #2aa198;">"</span> /&gt;
+    &lt;/<span style="color: #268bd2;">item</span>&gt;
+    &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">top</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">20dp</span><span style="color: #2aa198;">"</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">left</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">20dp</span><span style="color: #2aa198;">"</span>&gt;
+      &lt;<span style="color: #268bd2;">bitmap</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">src</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/android_blue</span><span style="color: #2aa198;">"</span>
+        <span style="color: #859900;">android</span>:<span style="color: #268bd2;">gravity</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">center</span><span style="color: #2aa198;">"</span> /&gt;
+    &lt;/<span style="color: #268bd2;">item</span>&gt;
+&lt;/<span style="color: #268bd2;">layer-list</span>&gt;
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> StateListDrawable</h3>
+<div class="outline-text-3" id="text-1-3">
+
+
+
+
+<pre class="src src-xml">&lt;<span style="color: #268bd2;">selector</span> <span style="color: #859900;">xmlns</span>:<span style="color: #268bd2;">android</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">http://schemas.android.com/apk/res/android</span><span style="color: #2aa198;">"</span>&gt;
+    &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">state_pressed</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">true</span><span style="color: #2aa198;">"</span>
+          <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/button_pressed</span><span style="color: #2aa198;">"</span> /&gt; <span style="color: #586e75; font-style: italic;">&lt;!--</span><span style="color: #586e75; font-style: italic;"> pressed </span><span style="color: #586e75; font-style: italic;">--&gt;</span>
+    &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">state_focused</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">true</span><span style="color: #2aa198;">"</span>
+          <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/button_focused</span><span style="color: #2aa198;">"</span> /&gt; <span style="color: #586e75; font-style: italic;">&lt;!--</span><span style="color: #586e75; font-style: italic;"> focused </span><span style="color: #586e75; font-style: italic;">--&gt;</span>
+    &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">state_hovered</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">true</span><span style="color: #2aa198;">"</span>
+          <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/button_focused</span><span style="color: #2aa198;">"</span> /&gt; <span style="color: #586e75; font-style: italic;">&lt;!--</span><span style="color: #586e75; font-style: italic;"> hovered </span><span style="color: #586e75; font-style: italic;">--&gt;</span>
+    &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/button_normal</span><span style="color: #2aa198;">"</span> /&gt; <span style="color: #586e75; font-style: italic;">&lt;!--</span><span style="color: #586e75; font-style: italic;"> default </span><span style="color: #586e75; font-style: italic;">--&gt;</span>
+&lt;/<span style="color: #268bd2;">selector</span>&gt;
+</pre>
+
+
+</div>
+
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> state-changing event</h4>
+<div class="outline-text-4" id="text-1-3-1">
+
+<p>StateListDrawable is seriously coupled with `View`, because state-changing
+event is defined by `View` and is mostly generated from `View`, e.g.:
+</p>
+<ul>
+<li>View.setEnabled()
+</li>
+<li>View.onTouchEvent()
+</li>
+<li>View.setPressed()
+</li>
+<li>View.onWindowFocusChanged()
+</li>
+<li>&hellip;
+</li>
+</ul>
+
+
+
+</div>
+
+<div id="outline-container-1-3-1-1" class="outline-5">
+<h5 id="sec-1-3-1-1"><span class="section-number-5">1.3.1.1</span> StateListDrawable.onStateChange</h5>
+<div class="outline-text-5" id="text-1-3-1-1">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> state-matching algorithm</h4>
+<div class="outline-text-4" id="text-1-3-2">
+
+<p>During each state change, the state list is traversed top to bottom and the
+first item that matches the current state is used—the selection is not based on
+the "best match," but simply the first item that meets the minimum criteria of
+the state.
+</p>
+<p>
+if onStateChange(int [] state) is invoked, state[] may contains several
+stats, e.g.:
+</p><ul>
+<li>button<sub>pressed</sub> = true
+</li>
+<li>button<sub>focused</sub> = true
+</li>
+</ul>
+
+
+<p>
+When traversing top down the `selector`, the first item with
+`state<sub>pressed</sub>=true` will match and the item is selected, leave alone the
+`state<sub>focused</sub>=true` item.
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> LevelListDrawable</h3>
+<div class="outline-text-3" id="text-1-4">
+
+
+
+
+<pre class="src src-xml">&lt;<span style="color: #268bd2;">level-list</span> <span style="color: #859900;">xmlns</span>:<span style="color: #268bd2;">android</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">http://schemas.android.com/apk/res/android</span><span style="color: #2aa198;">"</span> &gt;
+    &lt;<span style="color: #268bd2;">item</span>
+        <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/status_off</span><span style="color: #2aa198;">"</span>
+        <span style="color: #859900;">android</span>:<span style="color: #268bd2;">maxLevel</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">0</span><span style="color: #2aa198;">"</span> /&gt;
+    &lt;<span style="color: #268bd2;">item</span>
+        <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/status_on</span><span style="color: #2aa198;">"</span>
+        <span style="color: #859900;">android</span>:<span style="color: #268bd2;">maxLevel</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">1</span><span style="color: #2aa198;">"</span> /&gt;
+&lt;/<span style="color: #268bd2;">level-list</span>&gt;
+</pre>
+
+
+
+<pre class="src src-xml">&lt;<span style="color: #268bd2;">level-list</span> <span style="color: #859900;">xmlns</span>:<span style="color: #268bd2;">android</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">http://schemas.android.com/apk/res/android</span><span style="color: #2aa198;">"</span>&gt;
+    &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">maxLevel</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">4</span><span style="color: #2aa198;">"</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@android:drawable/stat_sys_battery_0</span><span style="color: #2aa198;">"</span> /&gt;
+    &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">maxLevel</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">15</span><span style="color: #2aa198;">"</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@android:drawable/stat_sys_battery_15</span><span style="color: #2aa198;">"</span> /&gt;
+    &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">maxLevel</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">35</span><span style="color: #2aa198;">"</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@android:drawable/stat_sys_battery_28</span><span style="color: #2aa198;">"</span> /&gt;
+    &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">maxLevel</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">49</span><span style="color: #2aa198;">"</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@android:drawable/stat_sys_battery_43</span><span style="color: #2aa198;">"</span> /&gt;
+    &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">maxLevel</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">60</span><span style="color: #2aa198;">"</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@android:drawable/stat_sys_battery_57</span><span style="color: #2aa198;">"</span> /&gt;
+    &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">maxLevel</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">75</span><span style="color: #2aa198;">"</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@android:drawable/stat_sys_battery_71</span><span style="color: #2aa198;">"</span> /&gt;
+    &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">maxLevel</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">90</span><span style="color: #2aa198;">"</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@android:drawable/stat_sys_battery_85</span><span style="color: #2aa198;">"</span> /&gt;
+    &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">maxLevel</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">100</span><span style="color: #2aa198;">"</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@android:drawable/stat_sys_battery_100</span><span style="color: #2aa198;">"</span> /&gt;
+&lt;/<span style="color: #268bd2;">level-list</span>&gt;
+</pre>
+
+
+<p>
+LevelListDrawable seems like a more generic StateListDrawable: we can specify
+different `state` thought `level`
+</p>
+
+</div>
+
+<div id="outline-container-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> setLevel()</h4>
+<div class="outline-text-4" id="text-1-4-1">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> ScaleDrawable</h3>
+<div class="outline-text-3" id="text-1-5">
+
+<p>A drawable defined in XML that changes the size of another drawable based on its
+current level.
+</p>
+
+
+<pre class="src src-xml">&lt;?<span style="color: #859900;">xml</span> <span style="color: #268bd2;">version</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">1.0</span><span style="color: #2aa198;">"</span> <span style="color: #268bd2;">encoding</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">utf-8</span><span style="color: #2aa198;">"</span>?&gt;
+&lt;<span style="color: #268bd2;">scale</span> <span style="color: #859900;">xmlns</span>:<span style="color: #268bd2;">android</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">http://schemas.android.com/apk/res/android</span><span style="color: #2aa198;">"</span>
+    <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/logo</span><span style="color: #2aa198;">"</span>
+    <span style="color: #859900;">android</span>:<span style="color: #268bd2;">scaleGravity</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">center_vertical|center_horizontal</span><span style="color: #2aa198;">"</span>
+    <span style="color: #859900;">android</span>:<span style="color: #268bd2;">scaleHeight</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">80%</span><span style="color: #2aa198;">"</span>
+    <span style="color: #859900;">android</span>:<span style="color: #268bd2;">scaleWidth</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">80%</span><span style="color: #2aa198;">"</span> /&gt;
+</pre>
+
+
+</div>
+
+<div id="outline-container-1-5-1" class="outline-4">
+<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> setLevel()</h4>
+<div class="outline-text-4" id="text-1-5-1">
+
+<p>通过 setLevel, 可以调整 scale, MAX<sub>LEVEL</sub> 为 10000, MIN<sub>LEVEL</sub> 为 0
+</p></div>
+
+</div>
+
+<div id="outline-container-1-5-2" class="outline-4">
+<h4 id="sec-1-5-2"><span class="section-number-4">1.5.2</span> ProgressBar make use of ScaleDrawable</h4>
+<div class="outline-text-4" id="text-1-5-2">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> GradientDrawable</h3>
+<div class="outline-text-3" id="text-1-6">
+
+<p>draw image thought XML &hellip;
+</p>
+
+
+<pre class="src src-xml">&lt;<span style="color: #268bd2;">shape</span> <span style="color: #859900;">xmlns</span>:<span style="color: #268bd2;">android</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">http://schemas.android.com/apk/res/android</span><span style="color: #2aa198;">"</span>
+    <span style="color: #859900;">android</span>:<span style="color: #268bd2;">shape</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">rectangle</span><span style="color: #2aa198;">"</span>&gt;
+    &lt;<span style="color: #268bd2;">gradient</span>
+        <span style="color: #859900;">android</span>:<span style="color: #268bd2;">startColor</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">#FFFF0000</span><span style="color: #2aa198;">"</span>
+        <span style="color: #859900;">android</span>:<span style="color: #268bd2;">endColor</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">#80FF00FF</span><span style="color: #2aa198;">"</span>
+        <span style="color: #859900;">android</span>:<span style="color: #268bd2;">angle</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">45</span><span style="color: #2aa198;">"</span>/&gt;
+    &lt;<span style="color: #268bd2;">padding</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">left</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">7dp</span><span style="color: #2aa198;">"</span>
+        <span style="color: #859900;">android</span>:<span style="color: #268bd2;">top</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">7dp</span><span style="color: #2aa198;">"</span>
+        <span style="color: #859900;">android</span>:<span style="color: #268bd2;">right</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">7dp</span><span style="color: #2aa198;">"</span>
+        <span style="color: #859900;">android</span>:<span style="color: #268bd2;">bottom</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">7dp</span><span style="color: #2aa198;">"</span> /&gt;
+    &lt;<span style="color: #268bd2;">corners</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">radius</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">8dp</span><span style="color: #2aa198;">"</span> /&gt;
+&lt;/<span style="color: #268bd2;">shape</span>&gt;
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-7" class="outline-3">
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> AnimationDrawable</h3>
+<div class="outline-text-3" id="text-1-7">
+
+
+
+
+<pre class="src src-xml">&lt;<span style="color: #268bd2;">animation-list</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">id</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">selected</span><span style="color: #2aa198;">"</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">oneshot</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">false</span><span style="color: #2aa198;">"</span>&gt;
+   &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/wheel0</span><span style="color: #2aa198;">"</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">duration</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">50</span><span style="color: #2aa198;">"</span> /&gt;
+   &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/wheel1</span><span style="color: #2aa198;">"</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">duration</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">50</span><span style="color: #2aa198;">"</span> /&gt;
+   &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/wheel2</span><span style="color: #2aa198;">"</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">duration</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">50</span><span style="color: #2aa198;">"</span> /&gt;
+   &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/wheel3</span><span style="color: #2aa198;">"</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">duration</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">50</span><span style="color: #2aa198;">"</span> /&gt;
+   &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/wheel4</span><span style="color: #2aa198;">"</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">duration</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">50</span><span style="color: #2aa198;">"</span> /&gt;
+   &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/wheel5</span><span style="color: #2aa198;">"</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">duration</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">50</span><span style="color: #2aa198;">"</span> /&gt;
+&lt;/<span style="color: #268bd2;">animation-list</span>&gt;
+</pre>
+
+
+</div>
+
+<div id="outline-container-1-7-1" class="outline-4">
+<h4 id="sec-1-7-1"><span class="section-number-4">1.7.1</span> start() &amp; stop()</h4>
+<div class="outline-text-4" id="text-1-7-1">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-8" class="outline-3">
+<h3 id="sec-1-8"><span class="section-number-3">1.8</span> TransitionDrawable</h3>
+<div class="outline-text-3" id="text-1-8">
+
+<p>Pool man's AnimationDrawable
+A TransitionDrawable is a drawable object that can cross-fade between the two
+drawable resources. Only `TWO` items are supported. &hellip; kinds of simple
+animations.
+</p>
+
+
+<pre class="src src-xml">&lt;?<span style="color: #859900;">xml</span> <span style="color: #268bd2;">version</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">1.0</span><span style="color: #2aa198;">"</span> <span style="color: #268bd2;">encoding</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">utf-8</span><span style="color: #2aa198;">"</span>?&gt;
+&lt;<span style="color: #268bd2;">transition</span> <span style="color: #859900;">xmlns</span>:<span style="color: #268bd2;">android</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">http://schemas.android.com/apk/res/android</span><span style="color: #2aa198;">"</span>&gt;
+    &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/on</span><span style="color: #2aa198;">"</span> /&gt;
+    &lt;<span style="color: #268bd2;">item</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">drawable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/off</span><span style="color: #2aa198;">"</span> /&gt;
+&lt;/<span style="color: #268bd2;">transition</span>&gt;
+</pre>
+
+
+</div>
+
+<div id="outline-container-1-8-1" class="outline-4">
+<h4 id="sec-1-8-1"><span class="section-number-4">1.8.1</span> startTransition() &amp; reverseTransition()</h4>
+<div class="outline-text-4" id="text-1-8-1">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-9" class="outline-3">
+<h3 id="sec-1-9"><span class="section-number-3">1.9</span> ClipDrawable</h3>
+<div class="outline-text-3" id="text-1-9">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-10" class="outline-3">
+<h3 id="sec-1-10"><span class="section-number-3">1.10</span> Misc</h3>
+<div class="outline-text-3" id="text-1-10">
+
+
+</div>
+
+<div id="outline-container-1-10-1" class="outline-4">
+<h4 id="sec-1-10-1"><span class="section-number-4">1.10.1</span> Drawable Cascading</h4>
+<div class="outline-text-4" id="text-1-10-1">
+
+<p>Drawables like `LevelListDrawable`, `ScaleDrawable`, `StateListDrawable` can
+hold a inner `src` drawable, thus form drawable cascading.
+</p></div>
+
+</div>
+
+<div id="outline-container-1-10-2" class="outline-4">
+<h4 id="sec-1-10-2"><span class="section-number-4">1.10.2</span> why `setLevel()` is implemented in `Drawable`?</h4>
+<div class="outline-text-4" id="text-1-10-2">
+
+<p>Since setLevel() is only meaningful for `LevelListDrawable` and
+`ScaleDrawable`?  
+</p>
+<p>
+The same question arises for `setState()` &hellip; em, maybe
+`Drawable Cascading` answers.
+</p></div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2013-05-17T16:40+0800</p>
+<p class="author">Author: sunway</p>
+<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>

@@ -3,9 +3,9 @@
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Sitemap for project cafebabe</title>
+<title>Android Save State</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="Sitemap for project cafebabe"/>
+<meta name="title" content="Android Save State"/>
 <meta name="generator" content="Org-mode"/>
 <meta name="generated" content="2013-05-17T16:40+0800"/>
 <meta name="author" content="sunway"/>
@@ -115,137 +115,160 @@ for the JavaScript code in this tag.
 </div>
 
 <div id="content">
-<h1 class="title">Sitemap for project cafebabe</h1>
+<h1 class="title">Android Save State</h1>
 
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
 <ul>
-<li><a href="calendar_issue.html">Android Calendar Sync Issue</a>
-</li>
-<li><a href="ime_cr_cant_input.html">Android IME Bug</a>
-</li>
-<li><a href="book_shelf.html">Book Shelf</a>
-</li>
-<li><a href="emacs.html">Emacs</a>
-</li>
-<li><a href="git.html">Git</a>
-</li>
-<li><a href="ics_contact.html">ICS Contact</a>
-</li>
-<li><a href="joke.html">Joke</a>
-</li>
-<li><a href="on_lisp.html">Lisp</a>
-</li>
-<li><a href="memory_mgmt.html">Memory Management</a>
-</li>
-<li><a href="orgmode.html">Org Mode</a>
-</li>
-<li><a href="push.html">Push Technology</a>
-</li>
-<li><a href="ror.html">RoR</a>
-</li>
-<li><a href="sqlite.html">SQLite</a>
-</li>
-<li><a href="sed_tips.html">Sed Tips</a>
-</li>
-<li><a href="unicode.html">Unicode</a>
-</li>
-<li>android
+<li><a href="#sec-1">1 Android Save State howto</a>
 <ul>
-<li><a href="android/android_ams.html">ActivityManagerService</a>
+<li><a href="#sec-1-1">1.1 Activity.onSaveInstanceState</a></li>
+<li><a href="#sec-1-2">1.2 To summarizes</a></li>
+</ul>
 </li>
-<li><a href="android/android.html">Android</a>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Android Save State howto</h2>
+<div class="outline-text-2" id="text-1">
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Activity.onSaveInstanceState</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<p>When system thinks that an activity need to be `saved` before destroying it,
+`onSaveInstanceState` will be invoked. But, when should the activity be
+`saved`?  It depends &hellip; but in one word, if the activity may be destroyed
+without the users notification, it's state will be `saved`, e.g.:
+</p><ul>
+<li>orientation change
 </li>
-<li><a href="android/android_app.html">Android Applications</a>
+<li>background activity is killed to reserve resource
 </li>
-<li><a href="android/android_binder.html">Android Binder</a>
+<li>&hellip;
 </li>
-<li><a href="android/connectivity.html">Android Connectivity</a>
+</ul>
+
+
+<p>
+Activity's `instance state` mainly matters 3 aspects:
+</p><ol>
+<li>view hierarchy
 </li>
-<li><a href="android/android_drawable.html">Android Drawable</a>
+<li>managed dialog
 </li>
-<li><a href="android/android_instrumentation.html">Android Instrumentation</a>
+<li>fragments
 </li>
-<li><a href="android/android_linear_layout.html">Android LinearLayout</a>
+</ol>
+
+
+<p>
+Note that: there is another kind of `instance state`: NonConfigurationInstances
+state, these states are maintained by `onRetainNonConfigurationInstance` and
+only matters about configurationChange
+</p>
+
+
+
+<pre class="src src-fundamental">ActivityThread.performStopActivity
+  mInstrumentation.callActivityOnSaveInstanceState(r.activity, state);
+    activity.performSaveInstanceState(outState);
+      onSaveInstanceState(outState);
+      saveManagedDialogs(outState);
+
+Activity.onSaveInstanceState(outState);
+  // 1. save view hierarchy
+  outState.putBundle(WINDOW_HIERARCHY_TAG, mWindow.saveHierarchyState());
+  // 2. save fragment
+  outState.putParcelable(FRAGMENTS_TAG, mFragments.saveAllState(););
+
+// View hierarchy is made up of 4 elements:
+// 1. view hierarchy
+// 2. focused view
+// 3. panels
+// 4. action bar
+PhoneWindow.saveHierarchyState()
+  SparseArray&lt;Parcelable&gt; states = new SparseArray&lt;Parcelable&gt;();
+  // the view root
+  mContentParent.saveHierarchyState(states);
+    View.dispatchSaveInstanceState(container);
+      if (mID != NO_ID &amp;&amp; (mViewFlags &amp; SAVE_DISABLED_MASK) == 0):
+        Parcelable state = onSaveInstanceState();
+        container.put(mID, state);
+  outState.putSparseParcelableArray(VIEWS_TAG, states);
+  // save the focused view id
+  View focusedView = mContentParent.findFocus();
+  outState.putInt(FOCUSED_ID_TAG, focusedView.getId());
+  // save the panels state
+  ...
+  // save action bar state
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> To summarizes</h3>
+<div class="outline-text-3" id="text-1-2">
+
+<ol>
+<li>When Activity.onSaveInstanceState is invoked? It depends &hellip;
 </li>
-<li><a href="android/android_loader.html">Android Loader</a>
+<li>What is saved during Activity.onSaveInstanceState:
+<ul>
+<li>managed dialog
 </li>
-<li><a href="android/android_measure.html">Android Measure</a>
+<li>fragments state
 </li>
-<li><a href="android/android_memory.html">Android Memory</a>
-</li>
-<li><a href="android/android_menu.html">Android Menu</a>
-</li>
-<li><a href="android/android_package_manager.html">Android PackageManager</a>
-</li>
-<li><a href="android/android_resource.html">Android Resource</a>
-</li>
-<li><a href="android/android_root.html">Android Root</a>
-</li>
-<li><a href="android/android_save_state.html">Android Save State</a>
-</li>
-<li><a href="android/android_security.html">Android Security</a>
-</li>
-<li><a href="android/android_wms.html">Android WindowManager</a>
-</li>
-<li><a href="android/android_crash.html">How Android Is Crashed</a>
+<li>view hierarchy
 </li>
 </ul>
 
 </li>
-<li><a href="c.html">c</a>
-</li>
-<li><a href="cypher.html">cypher</a>
-</li>
-<li>java
+<li>when saving view hierarchy, `only a few` views have implemented the
+   `onSaveInstanceState`, e.g:
+
 <ul>
-<li><a href="java/jvm.html">JVM</a>
+<li>TextView
+     to save the text
 </li>
-<li><a href="java/hash_code.html">Java Hashcode</a>
+<li>Spinner
 </li>
-<li><a href="java/lightweight_lock.html">Java Lightweight Lock</a>
+<li>ListView
 </li>
-<li><a href="java/java_quiz.html">Java Quiz</a>
+<li>ProgressBar
 </li>
-<li><a href="java/java.html">Jave</a>
-</li>
-<li><a href="java/java_interface.html">Jave Interface</a>
-</li>
-<li><a href="java/visitor_pattern.html">Visitor Pattern</a>
-</li>
-<li>java<sub>puzzle</sub>
-<ul>
-<li><a href="java/java_puzzle/java_puzzle_local_slot.html">Java Puzzle:Local Variable Slot</a>
-</li>
-<li><a href="java/java_puzzle/java_puzzle_class_init_hang.html">Java Puzzle:class initialization hangs</a>
-</li>
-<li><a href="java/java_puzzle/java_puzzle_clinit.html">Java Puzzle:class not initialized?</a>
-</li>
-<li><a href="java/java_puzzle/java_puzzle_any_deadlock.html">Java Puzzle:deadlock?</a>
-</li>
-<li><a href="java/java_puzzle/java_puzzle_thread_join.html">Java Puzzle:thread join</a>
-</li>
-<li><a href="java/java_puzzle/java_puzzle_value_not_initialized.html">Java Puzzle:value not changed?</a>
-</li>
-</ul>
+<li>&hellip;
 
 </li>
 </ul>
 
+<p>   Note that: LayoutParams is never saved by default.
+</p>
 </li>
-<li>linux
-<ul>
-<li><a href="linux/linux_app.html">Linux Applications</a>
+<li>The view hierarchy will not be saved properly if two views share the save
+   `mID`, because `container.put(mID, state);`, this problem is especially
+   important for ViewGroup like ListView (ListView items always have items with
+   the same mID), so these ViewGroup must override the
+   `dispatchSaveInstanceState` method.
 </li>
-<li><a href="linux/linux_cheatsheet.html">Linux Cheat Sheet</a>
+<li>view with mID==NO<sub>ID</sub>, or with view flag: SAVE<sub>DISABLED</sub><sub>MASK</sub> will not be saved
 </li>
-<li><a href="linux/linux_dev.html">Linux Development</a>
-</li>
-</ul>
+</ol>
 
-</li>
-<li><a href="other.html">other</a>
-</li>
-</ul>
 
+
+</div>
+</div>
+</div>
 </div>
 
 <div id="postamble">

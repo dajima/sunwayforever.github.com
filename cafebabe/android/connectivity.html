@@ -1,0 +1,685 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Android Connectivity</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="Android Connectivity"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-05-17T16:40+0800"/>
+<meta name="author" content="sunway"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>    <link rel="stylesheet" type="text/css" href="stylesheet.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Android Connectivity</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Android Connectivity</a>
+<ul>
+<li><a href="#sec-1-1">1.1 Overview</a></li>
+<li><a href="#sec-1-2">1.2 ConnectivityService</a></li>
+<li><a href="#sec-1-3">1.3 NetworkManagementService</a></li>
+<li><a href="#sec-1-4">1.4 NetworkPolicyManagerService</a></li>
+<li><a href="#sec-1-5">1.5 WifiService</a></li>
+<li><a href="#sec-1-6">1.6 netd</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Android Connectivity</h2>
+<div class="outline-text-2" id="text-1">
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Overview</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<p>                                                                                                                 -+-&mdash;&mdash;&mdash;&mdash;+
+  -+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+                         -+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+     -+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+          | WifiService |
+</p><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" /><col class="left" /><col class="left" /><col class="left" /><col class="left" />
+</colgroup>
+<tbody>
+<tr><td class="left">ActivityManagerService</td><td class="left"></td><td class="left">ConnectivityService</td><td class="left">&lt;&ndash;+&ndash;</td><td class="left">WifiStateTracker</td><td class="left">&lt;&mdash;&mdash;&mdash;+</td></tr>
+</tbody>
+</table>
+
+  -+&mdash;+&ndash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+                         -+-&mdash;&mdash;&mdash;&mdash;+-&mdash;&mdash;+   | -+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+         -+-&mdash;&mdash;&mdash;&mdash;&gt;
+       ^  for `backgroud` uid detection                              |           | -+&ndash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+       -+&mdash;&mdash;&mdash;&mdash;+
+      -+&ndash;&mdash;&mdash;&mdash;&mdash;&mdash;                                            |          -+&ndash;+ MobileDataStateTracker|&lt;-&mdash;&mdash;+ Telephony  |
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<tbody>
+<tr><td class="left">-+----------------------------------------------------------+</td><td class="left">-+-----------------------+       -+------------+</td></tr>
+<tr><td class="left"></td><td class="left">for quota and uid<sub>rule</sub>        for route and dns</td><td class="left"></td><td class="left">-+&ndash;&mdash;&mdash;+</td></tr>
+<tr><td class="left"></td><td class="left">&ndash;&mdash;&mdash;&mdash;&mdash;&mdash;+        -+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+          -+&ndash;+ &hellip;</td></tr>
+<tr><td class="left">v</td><td class="left">v                                   -+o-&mdash;&mdash;+</td></tr>
+</tbody>
+</table>
+
+   -+&ndash;+&ndash;+&ndash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+  |   -+-&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<tbody>
+<tr><td class="left">NetworkPolicyManagerService-+&ndash;+&mdash;&gt;</td><td class="left">NetworkManagementService</td></tr>
+</tbody>
+</table>
+
+   -+&ndash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+      -+&mdash;&mdash;&mdash;&mdash;+-&mdash;&mdash;&mdash;&mdash;+
+                                                   -+&ndash;+&mdash;+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" />
+</colgroup>
+<tbody>
+<tr><td class="left">netd</td></tr>
+</tbody>
+</table>
+
+                                                   -+&mdash;&mdash;+
+
+
+<p>
+ConnectivityService generally will:
+</p><ul>
+<li>handle connectivity change
+<ul>
+<li>supply connectivity info and send notification
+</li>
+<li>check whether the connectivity could be established (priority, &hellip;)
+</li>
+<li>connectivity fail-over
+</li>
+</ul>
+
+</li>
+<li>after connectivity changes, change dns and route
+</li>
+<li>manage the `global` proxy
+</li>
+<li>supply policy info (quota and uid<sub>rule</sub>)
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> ConnectivityService</h3>
+<div class="outline-text-3" id="text-1-2">
+
+
+</div>
+
+<div id="outline-container-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> Component</h4>
+<div class="outline-text-4" id="text-1-2-1">
+
+
+</div>
+
+<div id="outline-container-1-2-1-1" class="outline-5">
+<h5 id="sec-1-2-1-1"><span class="section-number-5">1.2.1.1</span> NetworkStateTracker</h5>
+<div class="outline-text-5" id="text-1-2-1-1">
+
+<ul>
+<li>WifiStateTracker
+</li>
+<li>MobileDataStateTracker
+</li>
+<li>DummyDataStateTracker
+</li>
+<li>EthernetDataTracker
+</li>
+<li>BluetoothTetheringDataTracker
+</li>
+<li>&hellip;
+</li>
+</ul>
+
+
+<p>
+NetworkStateTracker is the `very beginning` of ConnectivityService, it feed the
+connectivity events to ConnectivityService, e.g.
+</p><ul>
+<li>NetworkStateTracker.EVENT<sub>STATE</sub><sub>CHANGED</sub>
+</li>
+<li>..
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-1-2" class="outline-5">
+<h5 id="sec-1-2-1-2"><span class="section-number-5">1.2.1.2</span> NetworkInfo</h5>
+<div class="outline-text-5" id="text-1-2-1-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-1-3" class="outline-5">
+<h5 id="sec-1-2-1-3"><span class="section-number-5">1.2.1.3</span> LinkProperties</h5>
+<div class="outline-text-5" id="text-1-2-1-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-1-4" class="outline-5">
+<h5 id="sec-1-2-1-4"><span class="section-number-5">1.2.1.4</span> NetworkConfig</h5>
+<div class="outline-text-5" id="text-1-2-1-4">
+
+<p>NetworkConfig is generated from : frameworks/base/core/res/res/values/config.xml
+</p>
+
+
+<pre class="src src-xml">&lt;<span style="color: #268bd2;">string-array</span> <span style="color: #268bd2;">translatable</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">false</span><span style="color: #2aa198;">"</span> <span style="color: #268bd2;">name</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">networkAttributes</span><span style="color: #2aa198;">"</span>&gt;
+  &lt;<span style="color: #268bd2;">item</span>&gt;"wifi,1,1,2,-1,true"&lt;/<span style="color: #268bd2;">item</span>&gt;
+  &lt;<span style="color: #268bd2;">item</span>&gt;"mobile,0,0,1,-1,false"&lt;/<span style="color: #268bd2;">item</span>&gt;
+  &lt;<span style="color: #268bd2;">item</span>&gt;"mobile_mms,2,0,2,60000,false"&lt;/<span style="color: #268bd2;">item</span>&gt;
+  &lt;<span style="color: #268bd2;">item</span>&gt;"mobile_supl,3,0,2,60000,false"&lt;/<span style="color: #268bd2;">item</span>&gt;
+  &lt;<span style="color: #268bd2;">item</span>&gt;"mobile_dun,4,0,5,60000,false"&lt;/<span style="color: #268bd2;">item</span>&gt;
+  &lt;<span style="color: #268bd2;">item</span>&gt;"mobile_hipri,5,0,3,60000,false"&lt;/<span style="color: #268bd2;">item</span>&gt;
+  &lt;<span style="color: #268bd2;">item</span>&gt;"bluetooth,7,7,0,-1,true"&lt;/<span style="color: #268bd2;">item</span>&gt;
+  &lt;<span style="color: #268bd2;">item</span>&gt;"mobile_fota,10,0,2,60000,true"&lt;/<span style="color: #268bd2;">item</span>&gt;
+  &lt;<span style="color: #268bd2;">item</span>&gt;"mobile_ims,11,0,2,-1,true"&lt;/<span style="color: #268bd2;">item</span>&gt;
+  &lt;<span style="color: #268bd2;">item</span>&gt;"mobile_cbs,12,0,2,60000,false"&lt;/<span style="color: #268bd2;">item</span>&gt;
+  &lt;<span style="color: #268bd2;">item</span>&gt;"wifi_p2p,13,1,0,-1,true"&lt;/<span style="color: #268bd2;">item</span>&gt;
+&lt;/<span style="color: #268bd2;">string-array</span>&gt;
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-1-5" class="outline-5">
+<h5 id="sec-1-2-1-5"><span class="section-number-5">1.2.1.5</span> FeatureUser / FeatureMana</h5>
+<div class="outline-text-5" id="text-1-2-1-5">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-1-6" class="outline-5">
+<h5 id="sec-1-2-1-6"><span class="section-number-5">1.2.1.6</span> RouteInfo</h5>
+<div class="outline-text-5" id="text-1-2-1-6">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-1-7" class="outline-5">
+<h5 id="sec-1-2-1-7"><span class="section-number-5">1.2.1.7</span> ProxyProperties</h5>
+<div class="outline-text-5" id="text-1-2-1-7">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> Source code analysis</h4>
+<div class="outline-text-4" id="text-1-2-2">
+
+
+</div>
+
+<div id="outline-container-1-2-2-1" class="outline-5">
+<h5 id="sec-1-2-2-1"><span class="section-number-5">1.2.2.1</span> NetworkStateTracker</h5>
+<div class="outline-text-5" id="text-1-2-2-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-2-2" class="outline-5">
+<h5 id="sec-1-2-2-2"><span class="section-number-5">1.2.2.2</span> ConnectivityService</h5>
+<div class="outline-text-5" id="text-1-2-2-2">
+
+<ul>
+<li id="sec-1-2-2-2-1">handleConnect<br/>
+
+
+
+<pre class="src src-fundamental">handleConnect(NetworkInfo info)
+  int type=info.type;
+  // wifi, mobile, bluetooth, wimax, ethernet ...
+  NetworkStateTracker thisNet = mNetTrackers[type];
+  // since handleConnect is triggered by NetworkStateTracker, it is assured
+  // that mNetTrackers has the tracker
+  if mNetConfigs[type].isDefault():
+  // the new network is default? means it should be default routeable, and only one
+  // default network could be established. for example, wifi and mobile are default
+  // networks. but mobile_mms, mobile_wap ... is not default, thus, they can
+  // co-exist with default network
+    if mActiveDefaultNetwork != type:
+      // try tear down this net
+      // mNetworkPreference, typically, is wifi
+      if type!= mNetworkPreference
+         &amp;&amp; mNetConfigs[mActiveDefaultNetwork].priority &gt; mNetConfigs[type].priority
+         || mNetworkPreference == mActiveDefaultNetwork
+         tearDown(thisNet); return;
+      else:
+      // try tear down mActiveDefaultNetwork
+        NetworkStateTracker otherNet = mNetTrackers[mActiveDefaultNetwork];
+        tearDown(otherNet); return;
+      // `type!= mNetworkPreference` ends here
+    // `mActiveDefaultNetwork` ends here
+    mActiveDefaultNetwork = type;
+  // `isDefault()` ends here
+  updateNetworkSettings(thisNet);
+  /**
+     * Reads the network specific TCP buffer sizes from SystemProperties
+     * net.tcp.buffersize.[default|wifi|umts|edge|gprs] and set them for system
+     * wide use by put the value into `/sys/kernel/ipv4/tcp_xxx`
+  */
+  handleConnectivityChange(thisNet);
+  sendConnectedBroadcastDelayed(info, getConnectivityChangeDelay());
+</pre>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-2-2-2">handleConnectivityChange<br/>
+/**
+<ul>
+<li>After a change in the connectivity state of a network. We're mainly
+</li>
+<li>concerned with making sure that the list of DNS servers is set up
+</li>
+<li>according to which networks are connected, and ensuring that the
+</li>
+<li>right routing table entries exist.
+</li>
+</ul>
+
+<p> */
+</p>
+
+
+<pre class="src src-fundamental">handleConnectivityChange(netType)
+  handleDnsConfigurationChange(netType);
+    NetworkStateTracker nt = mNetTrackers[netType];
+    if nt.getNetworkInfo().isConnected():
+      LinkProperties lp = nt.getLinkProperties();
+      Collection&lt;InetAddress&gt; dnses = lp.getDnses();
+      if mNetConfigs[netType].isDefault():
+      // if the netType is default, set the global dns
+        changed=updateDns(network, lp.getInterfaceName(), dnses, <span style="color: #2aa198;">""</span>);
+        // dns is updated globally by setting the `net.dns.xxx` prop
+      else:
+      // not default network? set the dns to individual interface and pid
+        mNetd.setDnsServersForInterface(p.getInterfaceName(),
+          NetworkUtils.makeStrings(dnses));
+        List pids = mNetRequestersPids[netType];
+        foreach pid in pids:
+          changed = writePidDns(dnses, pid.intValue());
+    // `isConnected` ends here
+    if changed:
+      bumpDns();
+      // notify name resolver lib by set `net.dnschange` sys prop
+      // and notify vms by sending `Intent.ACTION_CLEAR_DNS_CACHE`
+      // to clear dns cache
+  // DNS is set
+  if mNetTrackers[netType].getNetworkInfo().isConnected():
+    newLp = mNetTrackers[netType].getLinkProperties();
+    curLp = mCurrentLinkProperties[netType];
+    // if the interface name is changed, or some addr is removed by newLp,
+    // set `resetMask` which is used later to reset the connection
+    if mNetConfigs[netType].isDefault():
+      handleApplyDefaultProxy(newLp.getHttpProxy());
+      // send the global proxy changed broadcast
+  // `isConnected` ends here
+  mCurrentLinkProperties[netType] = newLp;
+  updateRoutes(newLp, curLp, mNetConfigs[netType].isDefault());
+    routeDiff = curLp.compareRoutes(newLp);
+    dnsDiff = curLp.compareDnses(newLp);
+    linkDiff = curLp.compareAddresses(newLp);
+    // for route removed by the newLp from oldLp:
+    //
+    for (RouteInfo r : routeDiff.removed):
+      if (isLinkDefault || ! r.isDefaultRoute()):
+      // if new link is default, remove the old route in default table
+        removeRoute(curLp, r, TO_DEFAULT_TABLE);
+      if (isLinkDefault == false):
+      // if new link is not default, remove old route in secondary table,
+      // since route for the new link will be queried using the secondary table.
+        removeRoute(curLp, r, TO_SECONDARY_TABLE);
+    for (RouteInfo r :  routeDiff.added) {
+      if isLinkDefault || ! r.isDefaultRoute():
+        addRoute(newLp, r, TO_DEFAULT_TABLE);
+      else:
+        addRoute(newLp, r, TO_SECONDARY_TABLE);
+    if !isLinkDefault:
+    // add/remove specificial route for dns, since they are not default route-able
+    // is link is default, there is a default route entry for link, so there is
+    // not need to add dns entry, but if the link is not default, e.g. mobile_mms,
+    // since there is no route info for the mms gateway or mms recipient
+    // in the default route table, the MMS app must first query it's own dns
+    // to determine the ip address, and then it could using `requestRouteToHost`
+    // to manually add a route entry to the default route table.
+      for (InetAddress oldDns : dnsDiff.removed):
+        removeRouteToAddress(curLp, oldDns);
+      for (InetAddress newDns : dnsDiff.added):
+        addRouteToAddress(newLp, newDns);
+  // `updateRoutes` ends here
+</pre>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-2-2-3">handleApplyDefaultProxy<br/>
+
+
+
+<pre class="src src-text">handleApplyDefaultProxy
+  sendproxybroadcast(proxy)
+    sendStickyBroadcast(new Intent(Proxy.PROXY_CHANGE_ACTION))
+    // &#25509;&#25910;&#35813; broadcast &#30340;&#21482;&#26377; AMS &#21644; webview, &#20026;&#19981;&#21516;&#32593;&#32476;&#24211;&#35774;&#32622;&#20195;&#29702;:
+    // 1. &#36890;&#36807; AMS &#32473; UrlConnection &#37197;&#32622;&#20195;&#29702;
+    // 2. &#36890;&#36807; webview &#32473; android webkit &#20351;&#29992;&#30340; chromium &#37197;&#32622;&#20195;&#29702;
+    // &#26174;&#28982;, apache HttpClient &#27809;&#26377;&#32771;&#34385;. &#25152;&#20197;, &#20351;&#29992; UrlConnection &#30340;
+    // android &#24212;&#29992;&#21644;&#20351;&#29992; webview &#30340;&#24212;&#29992;&#22914; browser &#19981;&#38656;&#35201;&#24212;&#29992;&#33258;&#24049;&#37197;&#32622;
+    // &#20195;&#29702;, &#20294;&#20351;&#29992; HttpClient &#30340;&#24212;&#29992;&#38656;&#35201;&#33258;&#24049;&#37197;&#32622;&#20195;&#29702;.
+
+AMS::UPDATE_HTTP_PROXY
+  r.thread.setHttpProxy(host, port, exclList);
+    Proxy.setHttpProxySystemProperty(host, port, exclList);
+      System.setProperty("http.proxyHost", host);
+      System.setProperty("http.proxyPort", port);
+</pre>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-2-2-4">handleDisconnect<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-2-2-5">startUsingNetworkFeature / stopUsingNetworkFeature<br/>
+`startUsingNetworkFeature` is a request from the client of connecting to a
+`non-default` network, e.g. mobile<sub>mms</sub>, but in addition to setting up the
+connection:
+<ul>
+<li>the requested pid is also recorded to the `mNetRequestersPids`, for per-pid dns manipulation.
+</li>
+<li>there is DeathRecipient parameter for death notification. e.g. when the
+  requesting client died, the connection should be tear-down.
+</li>
+</ul>
+
+<ul>
+<li id="sec-1-2-2-2-5-1">startUsingNetworkFeature<br/>
+
+
+
+<pre class="src src-fundamental"></pre>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-2-2-5-2">stopUsingNetworkFeature<br/>
+
+
+
+<pre class="src src-fundamental"></pre>
+
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-2-2-6">requestRouteToHostAddress<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-2-2-7">To summaries:<br/>
+<ul>
+<li id="sec-1-2-2-2-7-1">handleConnect<br/>
+<ul>
+<li>`handleConnect` will first check:
+<ol>
+<li>whether the connecting network is default;
+</li>
+<li>whether it's preferred and it's property
+</li>
+</ol>
+
+<p>  if there is more than one default network, `thisNet` or `thatNet` will be
+  tear down, according to previous check.
+</p></li>
+<li>then invoke `handleConnectivityChange` to change route, dns, and maybe proxy
+</li>
+<li>send broadcast
+</li>
+</ul>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-2-2-7-2">handleConnectivityChange<br/>
+<ul>
+<li>updateDns
+<ol>
+<li>if the networking is default, dns is updated by setting the
+     `net.dns1{2}.xxx` sysprop
+</li>
+<li>if it is not default, set the pid dns by setting the `net.dns-pid.xxx` sysprop,
+     bionic libc will take care of using the sysprop
+</li>
+</ol>
+
+</li>
+<li>updateRoute
+<ol>
+<li>if the networking is default, the `default` (or `main`) route table is updated
+</li>
+<li>if not, the `secondary` route table is updated (the `secondary` table is
+     identified by a table number, e.g. 60, which is relevant with the iface)
+</li>
+<li>if the networking is not default, it's dns will also be added to the
+     `default` route map. (see also `Mms.ensureRouteToHost`)
+</li>
+</ol>
+
+</li>
+<li>update route
+  if the networking is default, the global proxy is also set the `newLp.getHttpProxy`
+</li>
+</ul>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-2-2-7-3">handleDisconnect<br/>
+per-pid dns is cleared
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-2-2-7-4">What's more:<br/>
+<ul>
+<li>isDefault, priority, preferred networking.
+</li>
+<li>per-pid dns, `net.dns1.xxx`
+</li>
+<li>global proxy
+</li>
+<li>addition route of dns for `non-default` network
+</li>
+<li>startUsingNetworkFeature
+</li>
+</ul>
+
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> NetworkManagementService</h3>
+<div class="outline-text-3" id="text-1-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> NetworkPolicyManagerService</h3>
+<div class="outline-text-3" id="text-1-4">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> WifiService</h3>
+<div class="outline-text-3" id="text-1-5">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> netd</h3>
+<div class="outline-text-3" id="text-1-6">
+
+
+
+</div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2013-05-17T16:40+0800</p>
+<p class="author">Author: sunway</p>
+<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>

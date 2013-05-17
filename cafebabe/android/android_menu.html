@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Android Menu</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="Android Menu"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-05-17T16:40+0800"/>
+<meta name="author" content="sunway"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>    <link rel="stylesheet" type="text/css" href="stylesheet.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Android Menu</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Android Menu</a>
+<ul>
+<li><a href="#sec-1-1">1.1 Options Menu</a></li>
+<li><a href="#sec-1-2">1.2 Context Menu</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Android Menu</h2>
+<div class="outline-text-2" id="text-1">
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Options Menu</h3>
+<div class="outline-text-3" id="text-1-1">
+
+
+</div>
+
+<div id="outline-container-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> Overflow Menu</h4>
+<div class="outline-text-4" id="text-1-1-1">
+
+
+
+
+<pre class="example">: java.lang.Throwable: stack dump
+:       at java.lang.Thread.dumpStack(Thread.java:496)
+:       at com.android.internal.view.menu.ActionMenuPresenter.showOverflowMenu(ActionMenuPresenter.java:281)
+:       at com.android.internal.widget.AbsActionBarView.showOverflowMenu(AbsActionBarView.java:177)
+:       at com.android.internal.policy.impl.PhoneWindow.onKeyUpPanel(PhoneWindow.java:789)
+:       at com.android.internal.policy.impl.PhoneWindow.onKeyUp(PhoneWindow.java:1488)
+:       at com.android.internal.policy.impl.PhoneWindow$DecorView.dispatchKeyEvent(PhoneWindow.java:1815)
+:       at android.view.ViewRootImpl.deliverKeyEventPostIme(ViewRootImpl.java:3330)
+:       at android.view.ViewRootImpl.handleFinishedEvent(ViewRootImpl.java:3303)
+:       at android.view.ViewRootImpl.handleMessage(ViewRootImpl.java:2463)
+:       at android.os.Handler.dispatchMessage(Handler.java:99)
+:       at android.os.Looper.loop(Looper.java:137)
+:       at android.app.ActivityThread.main(ActivityThread.java:4496)
+:       at java.lang.reflect.Method.invokeNative(Native Method)
+:       at java.lang.reflect.Method.invoke(Method.java:511)
+:       at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:797)
+:       at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:564)
+:       at dalvik.system.NativeStart.main(Native Method)
+----
+: java.lang.Throwable: stack dump
+:       at java.lang.Thread.dumpStack(Thread.java:496)
+:       at com.android.contacts.activities.PeopleActivity.onPrepareOptionsMenu(PeopleActivity.java:1411)
+:       at android.app.Activity.onPreparePanel(Activity.java:2467)
+:       at com.android.internal.policy.impl.PhoneWindow.reopenMenu(PhoneWindow.java:968)
+:       at com.android.internal.policy.impl.PhoneWindow.onMenuModeChange(PhoneWindow.java:959)
+:       at com.android.internal.view.menu.MenuBuilder.changeMenuMode(MenuBuilder.java:743)
+:       at com.android.internal.view.menu.ActionMenuPresenter$OpenOverflowRunnable.run(ActionMenuPresenter.java:659)
+:       at android.os.Handler.handleCallback(Handler.java:605)
+:       at android.os.Handler.dispatchMessage(Handler.java:92)
+:       at android.os.Looper.loop(Looper.java:137)
+:       at android.app.ActivityThread.main(ActivityThread.java:4496)
+:       at java.lang.reflect.Method.invokeNative(Native Method)
+:       at java.lang.reflect.Method.invoke(Method.java:511)
+:       at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:797)
+:       at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:564)
+:       at dalvik.system.NativeStart.main(Native Method)
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> Panel</h4>
+<div class="outline-text-4" id="text-1-1-2">
+
+
+</div>
+
+<div id="outline-container-1-1-2-1" class="outline-5">
+<h5 id="sec-1-1-2-1"><span class="section-number-5">1.1.2.1</span> Activity Start up</h5>
+<div class="outline-text-5" id="text-1-1-2-1">
+
+
+
+
+<pre class="src src-text">Activity.setContentView
+  PhoneWindow.installDecor()
+    ...
+    mDecor.post(new Runnable() {
+            public void run() {
+                // Invalidate if the panel menu hasn't been created before this.
+                // PanelFeatureState st = getPanelState(FEATURE_OPTIONS_PANEL, false);
+                invalidatePanelMenu(FEATURE_ACTION_BAR);
+            }
+    });
+</pre>
+
+
+
+<pre class="src src-text">PhoneWindow.invalidatePanelMenu(featureId)
+  PanelFeatureState st = getPanelState(featureId,true)
+  st.refreshMenuContent = true;
+  st.refreshDecorView = true;
+  if (hasActionBar):
+    preparePanel(st)
+      if st.isPrepared:
+        // st.isPrepared is be set to false when: invalidatePanelMenu, closePanel
+        return true;
+      st.createdPanelView = cb.onCreatePanelView(featureId)
+      if st.createdPanelView!=null:
+        // a user-defined view is returned, use it
+        return;
+      // st.createdPanelView is null, create the menu used by the menu view
+      // 1.CREATE!
+      if st.refreshMenuContent:
+        // menu is invalidated,  that is, `invalidateOptionsMenu` will cause
+        // `onCreateOptionsMenu` be invoked again, or else, when preparePanel
+        // onCreateOptionsMenu is not invoked for optimization.
+        initializePanelMenu()
+          menu = new MenuBuilder()
+          st.setMenu(menu)
+        mActionBar.setMenu(st.menu)
+        cb.onCreatePanelMenu(st.menu)
+          Activity.onCreateOptionsMenu(menu) // GOT YA
+        st.refreshMenuContent = false;
+      // if st.refreshMenuContent ends here
+      // 2.PREPARE!
+      cb.onPreparePanel(st.menu)
+        Activity.onPrepareOptionsMenu(menu)
+      // now `menu` is prepared, but `view` is still not ready:
+      // `openPanel` will do the work later
+</pre>
+
+
+<p>
+that is: `onCreateOptionsMenu` is invoked during `setContentView`
+</p><ul>
+<li id="sec-1-1-2-1-1">To summaries<br/>
+during Activity `setContentView`:
+<ul>
+<li>invalidateOptionsMenu
+</li>
+<li>st.refreshMenuContent &amp; st.refreshDecorView
+</li>
+<li>preparePanel
+
+</li>
+<li>if there is no action bar
+  both of the panel view and the panel menu need not be initialized, because
+  they could be postponed until user pressed the MENU key. so, only some flags
+  are set for later use, e.g. st.refreshMenuContent, st.refreshDecorView &hellip;,
+  later when MENU key is pressed, `openPanel` will notice these flags, and
+  `prepare` 
+
+</li>
+<li>if there is action bar
+  in addition of setting those flags, the menu is also `prepared`, because
+  action bar need to show some menu even when MENU key is not pressed though.
+</li>
+</ul>
+
+
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2-2" class="outline-5">
+<h5 id="sec-1-1-2-2"><span class="section-number-5">1.1.2.2</span> On Key</h5>
+<div class="outline-text-5" id="text-1-1-2-2">
+
+<ul>
+<li id="sec-1-1-2-2-1">onKeyDown<br/>
+
+
+
+<pre class="src src-text">PhoneWindow.onKeyDownPanel
+  preparePanel()
+</pre>
+
+
+<p>
+that is, just when `onKeyDown`, the panel is `prepared`, `onCreateOptionsMenu`
+and `onPrepareOptionsMenu` is invoked accordingly.
+</p>
+</li>
+</ul>
+<ul>
+<li id="sec-1-1-2-2-2">onKeyUp<br/>
+
+
+
+<pre class="src src-text">PhoneWindow.onKeyUp()
+  PhoneWindow.onKeyUpPanel()
+    openPanel()
+      if !cb.onMenuOpened():
+        closePanel()
+        return
+      if st.decorView == null || st.refreshDecorView:
+        // 1. populate decor
+        // panel is opened for the 1st time, or menu is invalidated
+        if st.decorView == null:
+          initializePanelDecor()
+            st.decorView = new DecorView(getContext(), st.featureId);
+            // menu is shown as `CENTER|BOTTOM`       
+            st.gravity = Gravity.CENTER | Gravity.BOTTOM;
+        else if st.refreshDecorView
+          st.decorView.removeAllViews()
+        // 2. populate shownPanelView (the listview)
+        initializePanelContent()
+          if st.createdPanelView != null:
+            // activity has set the st.createdPanelView through onCreatePanelView
+            // thus override the list view.
+            st.shownPanelView=st.createdPanelView
+            return true;
+          else:
+            // inflate a list view through MenuPresenter
+      // decorView and shownPanelView is ready
+      WindowManager.LayoutParams lp = new WindowManager.LayoutParams(...,WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG,...)
+      lp.gravity = st.gravity; // Gravity.CENTER | Gravity.BOTTOM;
+      wm.addView(st.decorView, lp);
+</pre>
+
+
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2-3" class="outline-5">
+<h5 id="sec-1-1-2-3"><span class="section-number-5">1.1.2.3</span> To summaries:</h5>
+<div class="outline-text-5" id="text-1-1-2-3">
+
+<ul>
+<li id="sec-1-1-2-3-1">Activity Callback<br/>
+Activity has several callbacks to interact with PopupWindow for menu:
+<ol>
+<li>onCreatePanelMenu &amp;&amp; onCreateOptionsMenu
+</li>
+<li>onPreparePanel &amp;&amp; onPrepareOptionsMenu
+</li>
+<li><b>onCreatePanelView</b>
+</li>
+<li>onMenuOpened
+</li>
+<li>&hellip;
+</li>
+</ol>
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-1-2-3-2">preparePanel &amp;&amp; openPanel<br/>
+<ul>
+<li>preparePanel for the menu DATA
+<ul>
+<li>createOptionsMenu
+</li>
+<li>prepareOptionsMenu
+</li>
+</ul>
+
+</li>
+<li>openPanel for the menu VIEW
+</li>
+<li>any time when MENU key is pressed, menu is `prepared`: `prepareOptionsMenu` and
+  if invalidated, `createOptionsMenu`
+</li>
+<li>if there is action bar, menu is `prepared` on activity start up.
+</li>
+</ul>
+
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Context Menu</h3>
+<div class="outline-text-3" id="text-1-2">
+
+
+
+
+<pre class="src src-text">View.performLongClick()
+  if mOnLongClickListener.onLongClick(view.this):
+    return;
+  showContextMenu()
+    getParent().showContextMenuForChild(this);
+      // &gt; ListView
+      if mOnItemLongClickListener.onItemLongClick(AbsListView.this, originalView,...):
+        return;
+      super.showContextMenuForChild(originalView)
+      // &gt; ViewGroup
+      mParent.showContextMenuForChild(originalView);
+        // DecorView
+        PhoneWindow.showContextMenuForChild(originalView)
+          new ContextMenuBuilder(getContext()).show(originalView);
+            // I. prepare the menu
+            originalView.createContextMenu(this);
+              // 1. View can override `onCreateContextMenu` to add addition menu items
+              View.onCreateContextMenu(menu);
+              // 2. call activity.onCreateContextMenu()
+              mOnCreateContextMenuListener.onCreateContextMenu(menu, this, menuInfo);
+              // 3. call parent's createContextMenu
+              mParent.createContextMenu(menu);
+            // II. show it
+            new MenuDialogHelper(menu).show();
+              // show an AlertDialog
+              AlertDialog.Builder builder = new AlertDialog.Builder(menu.getContext());
+              mPresenter = new ListMenuPresenter(builder.getContext(), com.android.internal.R.layout.list_menu_item_layout);
+              mMenu.addMenuPresenter(mPresenter);
+              builder.setAdapter(mPresenter.getAdapter(), this);
+              mDialog = builder.create();
+              mDialog.show();
+</pre>
+
+</div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2013-05-17T16:40+0800</p>
+<p class="author">Author: sunway</p>
+<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Visitor Pattern</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="Visitor Pattern"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-05-17T16:40+0800"/>
+<meta name="author" content="sunway"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>    <link rel="stylesheet" type="text/css" href="stylesheet.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Visitor Pattern</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Single/Double/Multiple Dispatching</a>
+<ul>
+<li><a href="#sec-1-1">1.1 Single Dispatching</a></li>
+<li><a href="#sec-1-2">1.2 Double Dispatching / Multiple Dispatching</a></li>
+<li><a href="#sec-1-3">1.3 使用运行时类型识别模拟Double Dispatching</a></li>
+<li><a href="#sec-1-4">1.4 使用Single Dispatching来模拟Double Dispatching</a></li>
+</ul>
+</li>
+<li><a href="#sec-2">2 Visitor Pattern</a>
+<ul>
+<li><a href="#sec-2-1">2.1 使用Visitor Pattern模拟Double Dispatching</a></li>
+<li><a href="#sec-2-2">2.2 Visitor Pattern</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3 Visitor Pattern的具体应用</a>
+<ul>
+<li><a href="#sec-3-1">3.1 ASM</a></li>
+<li><a href="#sec-3-2">3.2 MultiJava</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Single/Double/Multiple Dispatching</h2>
+<div class="outline-text-2" id="text-1">
+
+<p>  Dispatching, 指的是调用一个函数时, 因为存在多个同名的函数,仅仅靠函数的名字无法
+  确定究竟要调用哪个, 这时函数参数的个数和类型就需要被考虑; Dispatching就是指: 根
+  据函数的参数的个数和类型选择具体要执行的函数.
+</p>
+<p>
+  看起来 Dispatching 和 Overloading 很像, 实际上从我个人的理解来看, 这里讨论的
+  Dispatching属于 <b>运行时行为</b>, 则 Overloading 属于 <b>编译时行为</b> , 所以两者并没有关系.
+</p>
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Single Dispatching</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<p>   Single Dispatching, 即只能根据函数的某一个参数进行dispatch, 多态就是一个
+   single Dispatching, 因为每一个虚函数都隐含着一个this参数, 程序在运行时可以根据
+   this具体类型的不同, 选择不同的函数.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Double Dispatching / Multiple Dispatching</h3>
+<div class="outline-text-3" id="text-1-2">
+
+<p>   Double Dispatching 和 Multiple Dispatching, 顾名思义, 就是根据函数的两个或多个
+   参数的运行时类型进行dispatch.大部分编译型的面向对象的语言,如C++,Java, 都不支持
+   Multiple/Double Dispatching, 例如:
+<pre lang="java" line="1">
+    public class Test {
+        static void foo (Throwable e) {
+
+        }
+        static void foo (Error e) {
+            
+        }
+        public static void main(String[] args) {
+            Throwable e=new Error ();
+            foo (e);
+        }
+    }
+</pre>
+
+对应的byte code:
+</p>
+
+
+<pre lang="java" line="1">
+  public static void main(java.lang.String[]);
+  Code:
+   Stack=2, Locals=2, Args_size=1
+   0:   new     #2; //class java/lang/Error
+   3:   dup
+   4:   invokespecial   #3; //Method java/lang/Error."<init>":()V
+   7:   astore_1
+   8:   aload_1
+        // 编译时就确定为使用 Method foo:(Ljava/lang/Throwable;)V  
+   9:   invokestatic    #4; //Method foo:(Ljava/lang/Throwable;)V  
+   12:  return
+}
+</pre>
+
+<p>
+   在编译时 foo(e)就已经被确定为 foo(Throwable e) 这个函数, 而不会在运行时根据e的
+   具体类型选择 foo(Error). 所以函数重载不是Multiple Dispatching
+</p>
+<p>
+   虽然C++,Java等不支持Multiple/Double Dispatching, 但可以使用其他方法来模拟,因为
+   C++和Java都支持Single Dispatching和运行时类型识别 (C++的RTTI和Java的Reflection)
+</p></div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 使用运行时类型识别模拟Double Dispatching</h3>
+<div class="outline-text-3" id="text-1-3">
+
+
+<pre lang="java" line="1">
+   public class Test {
+      static void foo (Throwable e) {
+        if (e instanceof Exception) {
+
+        } else if (e instanceof Error) {
+
+        }
+      }
+      public static void main(String[] args) {
+        Throwable e=new Error ();
+        foo (e);
+      }
+   }
+</pre>
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> 使用Single Dispatching来模拟Double Dispatching</h3>
+<div class="outline-text-3" id="text-1-4">
+
+<p>   见 Visitor Pattern
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Visitor Pattern</h2>
+<div class="outline-text-2" id="text-2">
+
+
+</div>
+
+<div id="outline-container-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> 使用Visitor Pattern模拟Double Dispatching</h3>
+<div class="outline-text-3" id="text-2-1">
+
+<p>  Visitor Pattern定义了两类对象: Element和Visitor, 其中Element需要定义一个accept方法, 而
+  visitor需要定义一个visit方法. 
+</p>
+<p>
+  一个简单的Visitor Pattern的例子:
+<pre lang="java" line="1">
+interface Element {
+    void accept (Visitor v);
+}
+
+class AElement implements Element {
+    public void accept (Visitor v) {
+        v.visit (this);
+    }
+}
+
+class BElement implements Element {
+    public void accept (Visitor v) {
+        v.visit (this);
+    }
+}
+
+interface Visitor {
+    void visit (AElement e);
+    void visit (BElement e);
+}
+
+class AVisitor implements Visitor {
+    public void visit (AElement ae) {
+        System.out.println("AVisitor visit AElement");
+    }
+    public void visit (BElement ae) {
+        System.out.println("AVisitor visit BElement");
+    }
+}
+
+class BVisitor implements Visitor {
+    public void visit (AElement ae) {
+        System.out.println("BVisitor visit AElement");
+    }
+    public void visit (BElement ae) {
+        System.out.println("BVisitor visit BElement");
+    }
+}
+
+public class Test {
+    public static void main(String[] args) {
+        Element ae=new BElement ();
+        Visitor av=new AVisitor ();
+        ae.accept (av);
+    }
+}
+</pre>
+
+这个例子模拟了Double Dispatching, 因为对于Visitor来说, 首先, 根据Visitor的具体类
+型 (AVisitor) 找到Avisitor的方法, 然后AVisitor又根据Element的具体类型(BElement)找
+到了最终的AVisitor.visit(BElement)方法. 
+</p>
+<p>
+这里的关键有两点:
+</p><ol>
+<li>借助了Element类对自己的accept方法的Single Dispatching.
+</li>
+<li>借助了Overloading 
+</li>
+</ol>
+
+<p>其中第一点是主要的,第二点可有可无, 大不了将程序改成这样:
+</p>
+
+
+<pre lang="java" line="1">
+class AElement implements Element {
+    public void accept (Visitor v) {
+        v.visitAElement (this);
+    }
+}
+
+class BElement implements Element {
+    public void accept (Visitor v) {
+        v.visitBElement (this);
+    }
+}
+
+interface Visitor {
+    void visitAElement (AElement e);
+    void visitBElement (BElement e);
+}
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Visitor Pattern</h3>
+<div class="outline-text-3" id="text-2-2">
+
+<p>   Visitor Pattern的目的是将数据结构与算法分离, 当需要对对象添加新的方法时, 不需要修改对象, 只需要修改算法. 
+   在上面的例子中, Element指数据结构, Visitor指算法. 
+</p>
+<p>
+   举例来说, 动物这类对象做为Element, 其子类包括阿猫阿狗之类；动物能做的具体的动
+   作做为Visitor, 例如叫,跑,被人吃掉&hellip;
+</p>
+<p>
+   最传统的实现方法是:
+<pre lang="java" line="1">
+interface Animal {
+    void run () 
+}
+
+class Dog implements Animal {
+    void run () {
+        // concrete implmentation
+    }
+}
+</pre>
+
+但这种实现方法带来的问题是: 具体的算法 (如run) 和对象是绑定在一起的, 而且如果要添
+加一个新的 bark 方法,必须修改接口类和实现类, 而修改接口类是不可接受的.
+</p>
+<p>
+若使用Visitor Pattern, 则可以把run方法封装到的一个RunVisitor类中, 然后调用
+Animal.accept(runVisitor())即可, 所有的算法都只包含在各个Visitor中.
+</p>
+<p>
+如果要添加一个bark方法,只需要实现一个BarkVisitor即可.  
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Visitor Pattern的具体应用</h2>
+<div class="outline-text-2" id="text-3">
+
+
+</div>
+
+<div id="outline-container-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> ASM</h3>
+<div class="outline-text-3" id="text-3-1">
+
+<p>   <a href="http://asm.ow2.org">ASM Homepage</a>
+</p>
+<p>
+   ASM (一个动态生成或修改java class的库) 使用 Visitor Pattern 来实现
+   其基于事件的模型.
+</p>
+<p>
+   它在解析class时会触发一系列事件, 如解析到一个class, 解析到一个method等, 这些事
+   件被做为Element; 对这些事件的处理, 如打印log, 保存到目标class等被做为
+   Visitor.在ASM中, Element被看作是事件的提供者, 而Visitor被看作事件的处理者.
+</p></div>
+
+</div>
+
+<div id="outline-container-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> MultiJava</h3>
+<div class="outline-text-3" id="text-3-2">
+
+<p>   <a href="http://multijava.sf.net">MultiJava Homepage</a>
+</p><blockquote>
+
+<p>MultiJava is an extension to the Java programming language that adds open classes
+and symmetric multiple dispatch. Multiple dispatch allows the code invoked by a 
+method call to depend on the run-time type of all the arguments, instead of just
+the receiver, this is useful for event handlers and for binary methods, like
+equals in Java.
+</p>
+<p>
+The MultiJava project provides `mjc`, a MultiJava compiler, that translate MultiJava
+programs to regular Java bytecode. 
+</p>
+</blockquote>
+
+
+<p>
+使用MultiJava进行event dispatching的例子:
+</p>
+
+
+<pre lang="java" line="1">
+  public abstract class AbstractHandler {
+      public abstract void handleEvent (Event e);
+  }
+  
+  public class MyJavaHandler extends AbstractHandler {
+      public void handleEvent (Event@Event1 e) {
+          // handle Event1
+      }
+      public void handleEvent (Event@Event2 e) {
+          // handle Event2
+      }
+  }
+</pre>
+
+
+<p>
+因为`Event@Event1`不是合法的Java语法,所以MultiJava需要使用`mjc`工具对源码进来转换,
+转换的过程实际就是解析这种`Event@Event1`, 然后使用Visitor Pattern生成相应的Element和
+Visitor
+</p></div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2013-05-17T16:40+0800</p>
+<p class="author">Author: sunway</p>
+<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>

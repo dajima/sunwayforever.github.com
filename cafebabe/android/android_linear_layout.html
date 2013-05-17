@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Android LinearLayout</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="Android LinearLayout"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-05-17T16:40+0800"/>
+<meta name="author" content="sunway"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>    <link rel="stylesheet" type="text/css" href="stylesheet.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Android LinearLayout</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 LinearLayout</a>
+<ul>
+<li><a href="#sec-1-1">1.1 onMeasure</a></li>
+<li><a href="#sec-1-2">1.2 onLayout</a></li>
+<li><a href="#sec-1-3">1.3 onDraw</a></li>
+<li><a href="#sec-1-4">1.4 To summarize</a></li>
+<li><a href="#sec-1-5">1.5 Q&amp;A</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> LinearLayout</h2>
+<div class="outline-text-2" id="text-1">
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> onMeasure</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<p>LinearLayout 的 measure 过程用于确定整个 LinearLayout 及其 child view 的大小,
+</p>
+
+
+
+<pre class="src src-java"><span style="color: #859900;">if</span> mOrientation == VERTICAL:
+    measureVertical(widthMeasureSpec, heightMeasureSpec);
+<span style="color: #859900;">else</span>
+    measureHorizontal(widthMeasureSpec, heightMeasureSpec);
+</pre>
+
+
+<p>
+measureVertical 相对 measureHorizontal 简单一些, 因为它不涉及 baseline
+alignment.
+</p>
+
+</div>
+
+<div id="outline-container-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> measureVertical:</h4>
+<div class="outline-text-4" id="text-1-1-1">
+
+
+
+
+
+<pre class="example">int largestChildHeight = Integer.MIN_VALUE;
+int mTotalLength;
+// mTotalLenght 为第一次 measure 时总的高度(不考虑 weight)
+// 包含各个 child view 的高度的和, 加上 padding, divider,这个值
+// 是第二次 measure 时计算`空闲空间`的依据.                                o
+int totalWeight;
+// totalWeight 为第一次 measure 时计算的各个 child view 的 layout_weight 的总和
+
+for (int i = 0; i &lt; child_view_count; ++i):
+  if child.getVisibility() == View.GONE:
+     // visibility 为 GONE 的 child view 的高度不会被计算
+     // 显然, INVISIBLE 的 child view 高度是会被计算的
+     // 这就是 INVISIBLE 与 GONE 的区别
+     continue;
+  if hasDividerBeforeChildAt(i):
+       // LinearLayout 可以通过 setShowDividers(int how) 来影响 hasDividerBeforeChildAt 的结果:
+       hasDividerBeforeChildAt:
+         if (childIndex == 0):
+            return (mShowDividers &amp; SHOW_DIVIDER_BEGINNING) != 0;
+         else if childIndex == getChildCount():
+            return (mShowDividers &amp; SHOW_DIVIDER_END) != 0;
+         else if (mShowDividers &amp; SHOW_DIVIDER_MIDDLE) != 0:
+            ...
+       mTotalLength += mDividerHeight;
+
+   LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) child.getLayoutParams();
+   totalWeight += lp.weight;
+   if heightMode == MeasureSpec.EXACTLY &amp;&amp; lp.height == 0 &amp;&amp; lp.weight &gt; 0:
+     // 这是一个优化, 即:
+     // 若某个 child view 的 layout_height 为 0, 并且其 layout_weight 不为0,
+     // 表示该 child view 并不知道自己需要多高, 只是希望 LinearLayout 在第二次 measure
+     // 时能根据 child view 指定的 layout_weight 值分配一点剩余空间给它. 这时 LinearLayout
+     // 在第一次 measure 时没有必要去 measure 它.
+
+     // 为什么不直接写成:
+     // mTotalLength = totalLength + lp.topMargin + lp.bottomMargin; ?
+     // 因为 child view 的 top, bottom margin 可能为负值 ...
+     mTotalLength = Math.max(totalLength, totalLength + lp.topMargin + lp.bottomMargin);
+   else:
+     // 进行第一次 measure
+     measureChildBeforeLayout(child, i, widthMeasureSpec, 0, heightMeasureSpec,
+                   totalWeight == 0 ? mTotalLength : 0);
+       // 注意上面的 totalWeight == 0 的条件: 若 totalWeight 不为0, 则说明至少有一个 child view 指定了 layout_weight 值, 然后下面的函数的 totalHeight 会为 0
+       measureChildWithMargins(child, widthMeasureSpec, totalWidth,
+                                      heightMeasureSpec, totalHeight);
+       // totalHeight 是 当前measure过的其他 child view 已经占用的 height, 所以当前 child view
+       // 可用的 height 基本相当于 heightMeasureSpec.getHeight-totolHeight. 但若 totalHeight为0, 说明在measure这个child view 时, 其他 child view
+       // 已经占用的 height 根据没有考虑!
+       // android orig comment like this:
+       //         "when determine how big next child would like to be, If this or previous children have given a weight, then we allow it to
+       //   use all available space (and we will shrink things later if needed)."
+
+         childHeightMeasureSpec = getChildMeasureSpec(parentHeightMeasureSpec,mPaddingTop + mPaddingBottom + lp.topMargin + lp.bottomMargin+ heightUsed,
+                                lp.height);
+         // 第一个参数是 spec 是 LinearLayout 的 measurespec, child view 不可能突破 parent view 的 mearsure spec, 比如请求一个比 parent view 更大的高度
+         // 第二个参数是 padding, 即 需要在 parent view 上需要预留这部分空间,不能分配给 child view
+         // 第三个参数是 childDimension, child view 期望分配的高度
+         // layout_height 的 FILL_PARENT, MATCH_PARENT 这些属性主要在 getChildMeasureSpec 中处理.
+           if spec==EXACTLY:
+           // Parent has imposed an exact size on us
+             if childDimension&gt;=0:
+               resultSize=childDimension;
+               resultMode=EXACTLY;
+             elif childDimension==MATCH_PARENT:
+               resultSize=spec-padding;
+               resultMode=EXACTLY;
+             elif childDimension==WRAP_CONTENT:
+               resultSize=spec-padding;
+               resultMode=AT_MOST;
+           elif ..
+             ..
+         child.measure(..,childHeightMeasureSpec);
+     int childHeight = child.getMeasuredHeight();
+     mTotalLength  += childHeight + lp.topMargin + lp.bottomMargin;
+     // if heightMode.. ends here
+     mTotalLength += mPaddingTop + mPaddingBottom;
+     // for ... ends here
+
+int heightSize = mTotalLength;
+// considure android:minHeight
+heightSize = Math.max(heightSize, getSuggestedMinimumHeight());
+int heightSizeAndState = resolveSizeAndState(heightSize, heightMeasureSpec, 0);
+heightSize = heightSizeAndState &amp; MEASURED_SIZE_MASK;
+// heightSize 取决于 measure spec 及 mTotalLength, 例如, 若 spec mode 为AT_MOST, 则 heightSize 有可能和 mTotalLength 相同, 导致后面的代码不起作用
+int delta = heightSize - mTotalLength;
+// heightSize 是总的高度, mTotoalLength 是经常第一次 measure 后各个 child view 加上 margin, padding 后要求的高度的总和
+// 注意, 由于 weight 的存在, 在第一次 measure 后, 经常导致 mTotalLength &gt; heightSize
+if (delta != 0 &amp;&amp; totalWeight &gt; 0.0f):
+// 第二次 measure 开始
+  float weightSum = mWeightSum &gt; 0.0f ? mWeightSum : totalWeight;
+  mTotalLength = 0;
+  // 参考android:weightSum属性
+  for (int i = 0; i &lt; count; ++i):
+    if (child.getVisibility() == View.GONE):
+      continue;
+    weight = lp.weight;
+    if weight &gt; 0:
+      share = (int) (weight * delta / weightSum);
+      weightSum -= weight;
+      delta -= share;
+      if (lp.height != 0) || (heightMode != MeasureSpec.EXACTLY):
+        childHeight = child.getMeasuredHeight() + share;
+        child.measure(childWidthMeasureSpec,MeasureSpec.makeMeasureSpec(childHeight, MeasureSpec.EXACTLY));
+      else:
+        child.measure(childWidthMeasureSpec, MeasureSpec.makeMeasureSpec(share,MeasureSpec.EXACTLY));
+    mTotalLength +=  child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin + getNextLocationOffset(child));
+  // for .. ends here
+  mTotalLength += mPaddingTop + mPaddingBottom;
+else:
+  // We have no limit, so make all weighted views as tall as the largest child.
+  // Children will have already been measured once.
+setMeasuredDimension(...,heightSize);
+// 向LinearLayout parent view 通告自己的大小.
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> measureHorizontal</h4>
+<div class="outline-text-4" id="text-1-1-2">
+
+<p>measureHorizontal 与 measureVertical 类似, 不同的是多了对 baseline alignment 的
+考虑.
+</p>
+
+<div class="figure">
+<p><img src="file:///home/apuser/.elisp/dotemacs/org/attachment/baseline.png"  alt="file:///home/apuser/.elisp/dotemacs/org/attachment/baseline.png" /></p>
+<p>baseline</p>
+</div>
+
+<p>
+当 horienzontal LinearLayout 包含多个 textview, button 等控件时, 若这些控件的高
+度大小不一, baseline alignment 可以使这些控件按 baseline 对齐, 前提是每个控件提
+供了一个 getBaseline 方法告诉 LinearLayout 它的 baseline 离控件的顶端有多远. 
+TextView, Button 都实现了 getBaseline 方法. 
+</p>
+<p>
+而现在又有一个问题:若 LinearLayout 是 baseline alignment, 而各个 child view 指定
+了不同的 layout gravity 怎么办? 根本不可能对的齐&hellip; android 的做法是:
+属于同一个 layout gravity 的 child view 是 baseline aligned 就可以了. 
+</p>
+<p>
+由于 baseline alignment 属于 layout 的范畴, 所以在 measure 阶段系统需要做的只是
+顺便将各个 child view 的 getBaseline 的返回值保存在一个名为 mMaxAscent 的
+int[VERTICAL_GRAVITY_COUNT] 数组中, 其意义为:
+若 mMaxAscent[GRAVITY_CENTER_VERTICAL] 为 10, 则表示在 center_vertical gravity
+的位置 baseline 最大的一个控件的 baseline 为10, 其它的小控件需要与其 baseline alignment
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> onLayout</h3>
+<div class="outline-text-3" id="text-1-2">
+
+<p>onMeasure 结束后, LinearLayout 及其 child view 的大小就确定了, 对 LinearLayout
+来说, 下面需要做的是确定各个 child view 的位置, 这个过程就是 layout 的过程.
+</p>
+<p>
+总的来说, LinearLayout 对 child view 的 layout 过程比 RelativeLayout 简单的多,因
+为它的名字就决定了 layout 的过程基本上就是从上到下,从左到右顺序摆放. 但比起
+FrameLayout 和 AbsoluteLayout 还是要复杂一些.
+</p>
+<p>
+还是先以 vertical LinearLayout 为例:
+</p>
+</div>
+
+<div id="outline-container-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> layoutVertical</h4>
+<div class="outline-text-4" id="text-1-2-1">
+
+
+
+
+<pre class="example">int childTop;
+// child view 的 top, 通常这个值是 LinearLayout 最上面的位置加上 LinearLayout 的 padding,
+// 但 LinearLayout 的 gravity 属性会让一切有所变化
+
+majorGravity = mGravity &amp; Gravity.VERTICAL_GRAVITY_MASK;
+minorGravity = mGravity &amp; Gravity.RELATIVE_HORIZONTAL_GRAVITY_MASK;
+
+// Q: majorGravity vs. minorGravity?
+// A: 对 vertical LinearLayout 来说, 和 vertical 有关的 gravity 是 majorGravity, 和 horienzontal
+//    有关的 gravity 是 minorGravity
+
+if majorGravity==BOTTOM:
+  childTop = mPaddingTop + mBottom - mTop - mTotalLength;
+  // childTop 此时离 bottom 的距离为 mTotalLength..效果就是所有 child view 整体下移了
+elif majorGravity==CENTER_VERTICAL:
+  childTop = mPaddingTop + (mBottom - mTop - mTotalLength) / 2;
+else:
+  childTop = mPaddingTop;
+for (int i = 0; i &lt; count; i++):
+  if child.getVisibility==GONE:
+    continue;
+  gravity = lp.gravity;
+  // 获取 child view 的 layout_gravity 属性, 若没有设置, 则使 LinearLayout 的 gravity 对应的
+  // minorGravity
+
+  if gravity==CENTER_HORIZONTAL:
+    childLeft = paddingLeft + ((childSpace - childWidth) / 2)
+                                + lp.leftMargin - lp.rightMargin;
+  elif gravity==RIGHT:
+    childLeft = childRight - childWidth - lp.rightMargin;
+  else:
+    childLeft = paddingLeft + lp.leftMargin;
+  childTop += lp.topMargin;
+  setChildFrame(child, childLeft, childTop + getLocationOffset(child),childWidth, childHeight);
+  // setChildFrame 会真正确定 child view 的上下左右位置. 这个 frame 会和后面的 key event dispatching
+  // 直接相关
+  childTop += childHeight + lp.bottomMargin + getNextLocationOffset(child);
+// for ... ends here
+</pre>
+
+<p>
+可见, LinearLayout 的 layout 过程是相关简单的, 对于 vertical LinearLayout, 只需
+要考虑 LinearLayout 的 gravity 属性和 child view 的 layout_gravity 属性. 
+</p></div>
+
+</div>
+
+<div id="outline-container-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> layoutHorizontal</h4>
+<div class="outline-text-4" id="text-1-2-2">
+
+<p>layoutHorizontal 与 layoutVertical 类似, 唯一不同的就是需要根据 child view 的
+gravity 获得 mMaxAscent 里对应的 baseline 的值, layout 时考虑这个值就可以了. 
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> onDraw</h3>
+<div class="outline-text-3" id="text-1-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> To summarize</h3>
+<div class="outline-text-3" id="text-1-4">
+
+<ul>
+<li>measure 过程
+<ul>
+<li><b>ViewGroup.getChildMeasureSpec 非常重要</b>
+
+<p>
+    WRAP_CONTENT, FILL_PARENT 如何转换为 AT_MOST 或 EXACTLY 的? 大小如何确定的?
+</p></li>
+<li>layout_weight
+<ol>
+<li>LinearLayout 会 measure 两次
+</li>
+<li>第一次 measure 时会有些优化和特殊处理, 例如: 
+<ol>
+<li>layout_height 为 0 时可能会省略一次 measure;
+</li>
+<li>若 measure 某个 child view 时, 这个 child view 或之前的 child view 有
+          layout_weight 属性, 则 LinearLayout 尝试给该 child view 更大的空间.
+</li>
+</ol>
+
+</li>
+<li>第二次 measure 时会通过第一次 measure 计算的 mTotalHeight 与 heightSize 计
+       算一个 delta 值 (可正可负), 然后按 weight 做权值分配到各个 child view 上.
+</li>
+</ol>
+
+</li>
+<li>由于 measure 的过程只是一个 for 循环, 没有回溯的过程, 所以在没有 weight 的情
+    况下, fill_parent 是极具杀伤力的&hellip;
+
+</li>
+</ul>
+
+</li>
+<li>layout 过程
+<ul>
+<li>graivty &amp;&amp; layout_gravity
+</li>
+<li>baselineAlligned 
+</li>
+</ul>
+
+</li>
+<li>区分 layout_xxx 与 xxx 属性, 例如: 
+<ul>
+<li>layout_gravity 与 gravity
+</li>
+<li>layout_height 与 height
+</li>
+<li>margin 与 padding
+</li>
+</ul>
+
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> Q&amp;A</h3>
+<div class="outline-text-3" id="text-1-5">
+
+
+</div>
+
+<div id="outline-container-1-5-1" class="outline-4">
+<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> MeasureSpec.UNSPECIFIED 何时被用到?</h4>
+<div class="outline-text-4" id="text-1-5-1">
+
+
+<p>
+UNSPECIFIED 相当于没有 AT<sub>MOST</sub> 限制的 WRAP<sub>CONTENT</sub>.当 parent view 完全无法确定
+child view 的 measure spec 时, 会使用这个 mode, 表示没有任何限制.
+</p>
+<p>
+UNSPECIFIED 很少被用到, 因为大部分 layout 都会用 EXACTLY, AT<sub>MOST</sub> 确保其 child
+view 不会超过固定的大小. 但 ListView, ScrollView 这种高度不限的 Layout 除外.
+</p>
+
+<p>
+ListView 在 measure 它的 child view 时会使用这个 mode, 因为 ListView 没有高度的限
+制, 所以它没有必要给 child view 强加一个 AT<sub>MOST</sub> 的measure spec, 换句话说: child
+view, 你想多高就多高吧!
+</p>
+<p>
+ListView.measureScrapChild():
+</p>
+
+
+
+<pre class="example">if (lpHeight &gt; 0) {
+    childHeightSpec = MeasureSpec.makeMeasureSpec(lpHeight, MeasureSpec.EXACTLY);
+} else {
+    childHeightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
+}
+</pre>
+
+
+<p>
+由此可见, 在 List item 的 layout 中声明 layout<sub>height</sub> 时, 除了明确的数值, 如 10dp, 其它的值
+是没有区别的.
+</p></div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2013-05-17T16:40+0800</p>
+<p class="author">Author: sunway</p>
+<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>
