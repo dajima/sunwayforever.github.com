@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="SQLite"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-17T12:29+0800"/>
+<meta name="generated" content="2013-05-17T12:37+0800"/>
 <meta name="author" content="sunway"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -267,59 +267,36 @@ SQLiteStatement', as mentioned in:
 <ul>
 <li id="sec-1-1-6-3-1">Cursor Class Hierarchy<br/>
 
-<p>
-                                    -+-&mdash;&mdash;&mdash;+
-</p><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-<colgroup><col class="left" />
-</colgroup>
-<tbody>
-<tr><td class="left">Cursor/I</td></tr>
-</tbody>
-</table>
 
-                                    -+-&mdash;+&ndash;&mdash;+
-                               -+&mdash;&mdash;&mdash;+&ndash;&mdash;&mdash;&mdash;+
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-<colgroup><col class="left" />
-</colgroup>
-<tbody>
-<tr><td class="left">CrossProcessCursor/I</td></tr>
-</tbody>
-</table>
 
-                               -+-&mdash;+-&mdash;+&ndash;&mdash;&mdash;&mdash;+
-                                -+&ndash;&mdash;+&ndash;+&mdash;&mdash;&mdash;+
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-<colgroup><col class="left" />
-</colgroup>
-<tbody>
-<tr><td class="left">AbstractCursor/A</td></tr>
-</tbody>
-</table>
 
-                                -+&ndash;&mdash;&mdash;+&mdash;&mdash;&mdash;+
-                      -+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+&mdash;&mdash;&mdash;&mdash;&mdash;+-&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+
-          -+&ndash;&mdash;&mdash;&mdash;+&ndash;&mdash;&mdash;&mdash;&mdash;+          -+-&mdash;&mdash;+&mdash;&mdash;+       -+&mdash;&mdash;+&mdash;&mdash;+
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-<colgroup><col class="left" /><col class="left" /><col class="left" /><col class="left" /><col class="left" />
-</colgroup>
-<tbody>
-<tr><td class="left">AbstractWindowedCursor/A</td><td class="left"></td><td class="left">MatrixCursor</td><td class="left"></td><td class="left">MergeCursor</td></tr>
-</tbody>
-</table>
+<pre class="example">                          -+----------+
+                           | Cursor/I |
+                          -+----+-----+
+                                |
+                                |
+                     -+---------+-----------+
+                      | CrossProcessCursor/I|
+                     -+----+----+-----------+
+                                |
+                                |
+                      -+-----+--+---------+
+                       | AbstractCursor/A |
+                      -+--------+---------+
+                                |
+            -+------------------+---------------+----------------------+
+             |                                  |                      |
+-+-----------+--------------+          -+-------+------+       -+------+------+
+ | AbstractWindowedCursor/A |           | MatrixCursor |        | MergeCursor |
+-+-----------+--------------+          -+--------------+       -+-------------+
+             |
+            -+----------------------------+
+             |                            |
+    -+-------+------+      -+-------------+-------------+
+     | SqliteCursor |       | BulkCursorToCursorAdaptor |
+    -+--------------+      -+---------------------------+
+</pre>
 
-          -+&ndash;&mdash;&mdash;&mdash;+&ndash;&mdash;&mdash;&mdash;&mdash;+          -+&ndash;&mdash;&mdash;&mdash;&mdash;+       -+-&mdash;&mdash;&mdash;&mdash;+
-                      -+-&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+
-              -+-&mdash;&mdash;+&mdash;&mdash;+      -+-&mdash;&mdash;&mdash;&mdash;+-&mdash;&mdash;&mdash;&mdash;+
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-<colgroup><col class="left" /><col class="left" /><col class="left" />
-</colgroup>
-<tbody>
-<tr><td class="left">SqliteCursor</td><td class="left"></td><td class="left">BulkCursorToCursorAdaptor</td></tr>
-</tbody>
-</table>
-
-              -+&ndash;&mdash;&mdash;&mdash;&mdash;+      -+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+
 <ul>
 <li id="sec-1-1-6-3-1-1">Cursor across process<br/>
 
@@ -335,50 +312,34 @@ again will be wrapped into a local cursor object named
 `BulkCursorToCursorAdaptor`, which is a `AbstractWindowedCursor`
 </p>
 
-<p>
-               -+&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;+
-</p><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-<colgroup><col class="left" />
-</colgroup>
-<tbody>
-<tr><td class="left">AbstractWindowedCursor</td></tr>
-</tbody>
-</table>
 
-               -+-&mdash;&mdash;&mdash;+-&mdash;&mdash;&mdash;&mdash;+
-             -+&mdash;&mdash;&mdash;&mdash;+&ndash;&mdash;&mdash;&mdash;&mdash;+
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-<colgroup><col class="left" />
-</colgroup>
-<tbody>
-<tr><td class="left">BulkCursorToCursorAdaptor</td></tr>
-</tbody>
-</table>
 
-             -+&mdash;&mdash;&mdash;&mdash;+&ndash;&mdash;&mdash;&mdash;&mdash;+
-                  -+-&mdash;&mdash;+&mdash;&mdash;+        local process (e.g. app)
-   &mdash;&mdash;&mdash;&mdash;&mdash; |  BulkCursor  | -------------------
-                  -+-&mdash;&mdash;+&mdash;&mdash;+        remote process (e.g. provider)
-             -+&mdash;&mdash;&mdash;&mdash;+&ndash;&mdash;&mdash;&mdash;&mdash;+
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-<colgroup><col class="left" />
-</colgroup>
-<tbody>
-<tr><td class="left">CursorToBulkCursorAdaptor</td></tr>
-</tbody>
-</table>
 
-             -+&mdash;&mdash;&mdash;&mdash;+&ndash;&mdash;&mdash;&mdash;&mdash;+
-                    -+-&mdash;&mdash;&mdash;+
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-<colgroup><col class="left" />
-</colgroup>
-<tbody>
-<tr><td class="left">Cursor</td></tr>
-</tbody>
-</table>
+<pre class="example">            -+------------------------+
+             | AbstractWindowedCursor |
+            -+----------+-------------+
+                        |
+                        |
+          -+------------+--------------+
+           | BulkCursorToCursorAdaptor |
+          -+------------+--------------+
+                        |
+                        |
+               -+-------+------+        local process (e.g. app)
+--------------- |  BulkCursor  | -------------------
+               -+-------+------+        remote process (e.g. provider)
+                        |
+                        |
+          -+------------+--------------+
+           | CursorToBulkCursorAdaptor |
+          -+------------+--------------+
+                        |
+                        |
+                 -+----------+
+                  |  Cursor  |
+                 -+----------+
+</pre>
 
-                    -+-&mdash;&mdash;&mdash;+
 
 </li>
 </ul>
@@ -1829,7 +1790,7 @@ sqlite3 中因为支持 FTS, 所以也支持几种分词算法:
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-05-17T12:29+0800</p>
+<p class="date">Date: 2013-05-17T12:37+0800</p>
 <p class="author">Author: sunway</p>
 <p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
