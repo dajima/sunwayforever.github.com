@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Android ContentProvider</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="Android ContentProvider"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-05-20T22:10+0800"/>
+<meta name="author" content="sunway"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Android ContentProvider</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 ContentProvider</a>
+<ul>
+<li><a href="#sec-1-1">1.1 Registration</a></li>
+<li><a href="#sec-1-2">1.2 Initialization</a></li>
+<li><a href="#sec-1-3">1.3 Usage</a></li>
+<li><a href="#sec-1-4">1.4 Others</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> ContentProvider</h2>
+<div class="outline-text-2" id="text-1">
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Registration</h3>
+<div class="outline-text-3" id="text-1-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Initialization</h3>
+<div class="outline-text-3" id="text-1-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Usage</h3>
+<div class="outline-text-3" id="text-1-3">
+
+
+</div>
+
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> ContentProvider.openFile() &amp; ContentProvider.openInputStream()</h4>
+<div class="outline-text-4" id="text-1-3-1">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Others</h3>
+<div class="outline-text-3" id="text-1-4">
+
+
+</div>
+
+<div id="outline-container-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> `withYieldAllowed` how to work?</h4>
+<div class="outline-text-4" id="text-1-4-1">
+
+
+<p>
+<a href="http://stackoverflow.com/questions/9599809/does-yieldifcontendedsafely-lose-the-benefits-of-a-transaction">Does yieldIfContendedSafely() lose the benefits of a transaction?</a>
+</p>
+<p>
+From stackoverflow:
+</p>
+<p>
+Q:
+</p>
+<p>
+I have a long-running operation which I perform in a background thread. As it is
+important for the operation to either complete successfully or not at all, I am
+wrapping the entire operation in a transaction.
+</p>
+<p>
+Aspects of the UI need read-only access to the database during this time. To
+avoid blocking the UI, I am experimenting with inserting calls to
+db.yieldIfContendedSafely() in the main loop of the background operation.
+</p>
+<p>
+This does what I want in that the UI is no longer blocked, but it's not
+completely clear to me if this is risking a loss of data integrity.
+</p>
+<p>
+The javadoc for yieldIfContendedSafely() says:
+</p>
+<p>
+    Temporarily end the transaction to let other threads run.  The transaction
+    is assumed to be successful so far. Do not call setTransactionSuccessful
+    before calling this. When this returns a new transaction will have been
+    created but not marked as successful. This assumes that there are no nested
+    transactions (beginTransaction has only been called once) and will throw an
+    exception if that is not the case.
+</p>
+<p>
+Does this mean that my long-running operation is actually being committed to the
+database in separate chunks, or is the overall transaction maintaining enough
+state to commit the whole lot in one go at the end, thus preserving
+data-integrity?
+</p>
+<p>
+A:
+</p>
+<p>
+    Does this mean that my long-running operation is actually being committed to
+    the database in separate chunks
+</p>
+<p>
+Yes. Within yieldIfContendedSafely(), Android calls setTransactionSuccessful(),
+endTransaction(), and begins a new transaction &ndash; committing your statements in
+the process. There is no mechanism to rollback the "real" transaction after it
+ends.
+</p>
+<p>
+This behavior only occurs if there is another thread waiting on the database,
+otherwise yieldIfContendedSafely() does nothing.
+</p>
+<p>
+I checked this with the following scenario. I started two threads: one inserted
+data into a table using a transaction, another read data out of the same
+table. The transaction didn't call setTransactionSuccessful() so normally
+everything is rolled back at the end, leaving the table empty. I added a call to
+yieldIfContendedSafely(), and afterwards the table was not empty and had data
+from the transaction.
+</p></div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2013-05-20T22:10+0800</p>
+<p class="author">Author: sunway</p>
+<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>
