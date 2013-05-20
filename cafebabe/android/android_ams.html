@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="ActivityManagerService"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-17T17:03+0800"/>
+<meta name="generated" content="2013-05-20T21:16+0800"/>
 <meta name="author" content="sunway"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -400,13 +400,14 @@ for the JavaScript code in this tag.
          11/17/10 6:37 pm
          To prevent if activity.onPause doesn't return in a period of time(500ms), AMS will call sendMessageDelayed() in startPausingLocked() to send itself one PAUSE<sub>TIMEOUT</sub> msg to force itself call activityPaused().
 </p>
-<p>
+<p>         
          That is, although activity.onPause() may block, AMS is assured to resume       next activity in 500ms.
 </p>
-<p>
-         11/17/10 5:47 pm
-</p><ol>
-<li>activity.finish() will call AMS's finishActivity() through AIDL, providing activity's IBinder as parameter so that AMS can recognize the corresponding HistoryRecord in AMS.
+
+<ol>
+<li>activity.finish() will call AMS's finishActivity() through
+         AIDL, providing activity's IBinder as parameter so that AMS
+         can recognize the corresponding HistoryRecord in AMS.
 
 </li>
 <li>AMS calls
@@ -415,7 +416,9 @@ for the JavaScript code in this tag.
          thread.schedulePauseActivity()
 
 </li>
-<li>thread.schedulePauseActivity() will call activity.onPause(), then notify AMS that activity is paused through AMS.activityPaused()
+<li>thread.schedulePauseActivity() will call activity.onPause(),
+         then notify AMS that activity is paused through
+         AMS.activityPaused()
 
 </li>
 <li>activityPaused()
@@ -424,6 +427,7 @@ for the JavaScript code in this tag.
          resumeTopActivity()
 </li>
 </ol>
+
 
 </div>
 
@@ -435,8 +439,14 @@ for the JavaScript code in this tag.
 
 
 <p>
-attachApplication is the 3rd step to start a new activity. (1. startPausing, 2. activityPaused.)
-When one new activityThread is created, after calling onCreate, activityThread will invoke AMS.attachApplication to notify AMS that process is OK, then AMS can call realStartActivity to launch the activity.
+attachApplication is the 3rd step to start a new
+activity. (1. startPausing, 2. activityPaused.)
+</p>
+<p>
+When one new activityThread is created, after calling onCreate,
+activityThread will invoke AMS.attachApplication to notify AMS that
+process is OK, then AMS can call realStartActivity to launch the
+activity.
 </p>
 </div>
 
@@ -446,8 +456,16 @@ When one new activityThread is created, after calling onCreate, activityThread w
 <h5 id="sec-1-2-1-3"><span class="section-number-5">1.2.1.3</span> activityPaused</h5>
 <div class="outline-text-5" id="text-1-2-1-3">
 
-<p>activityPaused is called by ActivityThread to notity AMS that the mResumed activity is paused(or onPause is timeout)
-after that, if prev should be finished (when finish activity), it will call finishCurrentActivity to finish prev activity. Then resumeTopActivity will be called again to really resume another activity.
+
+<p>
+activityPaused is called by ActivityThread to notity AMS that the
+mResumed activity is paused(or onPause is timeout)
+</p>
+<p>
+after that, if prev should be finished (when finish activity), it will
+call finishCurrentActivity to finish prev activity. Then
+resumeTopActivity will be called again to really resume another
+activity.
 </p>
 </div>
 
@@ -502,7 +520,10 @@ startSpecificActivityLocked,
 
 
 <p>
-for the 2nd scenero, when activityThread is started in startProcessLocked, it will call AMS.attachApplication to notify AMS that the process is ready, attachApplication will then call realStartActivity again to real kaunch the activity.
+for the 2nd scenero, when activityThread is started in
+startProcessLocked, it will call AMS.attachApplication to notify AMS
+that the process is ready, attachApplication will then call
+realStartActivity again to real kaunch the activity.
 </p>
 </div>
 
@@ -610,7 +631,10 @@ This is called in 2 scen:
 </p><ol>
 <li>startSpecificActivity in resumeTopActivity
 </li>
-<li>attachApplication, since when attachApplication, the process definitly exist and activity is surely not started yet. resumeTopActivity is redunctant, calling realStartActivity is enough.
+<li>attachApplication, since when attachApplication, the process
+   definitly exist and activity is surely not started
+   yet. resumeTopActivity is redunctant, calling realStartActivity is
+   enough.
 </li>
 </ol>
 
@@ -632,11 +656,18 @@ This is called in 2 scen:
 <h5 id="sec-1-2-2-1"><span class="section-number-5">1.2.2.1</span> ActivityRecord</h5>
 <div class="outline-text-5" id="text-1-2-2-1">
 
-<p>      12/28/10 7:50 pm
-      ActivityRecord will save the real Activity instance and some other info.  It corresponds to AMS::HistoryRecord.
-      ActivityRecord use one Map&lt;IBinder,ActivityRecord&gt; to save process's all activities.
-      Evey ActivityThread.scheduleXxx ()  takes  an 'Token' (an IBinder)  as para so that ActivityThread can get the corres ActivityRecord from the map.
-</p></div>
+
+<p>
+ActivityRecord will save the real Activity instance and some other
+info.  It corresponds to AMS::HistoryRecord. ActivityRecord use one
+Map&lt;IBinder,ActivityRecord&gt; to save process's all activities.
+</p>
+<p>
+Evey ActivityThread.scheduleXxx () takes an 'Token' (an IBinder) as
+para so that ActivityThread can get the corres ActivityRecord from the
+map.
+</p>
+</div>
 
 </div>
 
@@ -646,23 +677,23 @@ This is called in 2 scen:
 
 <ul>
 <li id="sec-1-2-2-2-1">schedulePausingActivity<br/>
-       schedulePausingActivity will firstly call activity.onPaused, and wait for
-       return, then it will notify AMS through AMS.activityPaused that the
-       activity is paused.
+schedulePausingActivity will firstly call activity.onPaused, and wait for
+return, then it will notify AMS through AMS.activityPaused that the
+activity is paused.
 </li>
 </ul>
 <ul>
 <li id="sec-1-2-2-2-2">scheduleResumeActivity<br/>
-       it will call onResume, when onResume returns, it will add one Idler to
-       AMS's queue, to make sure AMS will be norified when queue is idle to stop
-       and destroy pending need-to-finish act ivies
+it will call onResume, when onResume returns, it will add one Idler to
+AMS's queue, to make sure AMS will be norified when queue is idle to stop
+and destroy pending need-to-finish act ivies
 </li>
 </ul>
 <ul>
 <li id="sec-1-2-2-2-3">scheduleLaunchActivity<br/>
-       when called by AMS.realStartActivity, scheduleLaunchActivity will
-       sequencially call onCreate, onStart,
-       onRestoreInstanceState,onPostCreate,onResume.
+when called by AMS.realStartActivity, scheduleLaunchActivity will
+sequencially call onCreate, onStart,
+onRestoreInstanceState,onPostCreate,onResume.
 </li>
 </ul>
 </div>
@@ -675,11 +706,16 @@ This is called in 2 scen:
 <div class="outline-text-4" id="text-1-2-3">
 
 <ul>
-<li>onStop, onRestart is only related to activity visibility. they are invoked by mWindowManager.setAppVisibility() due to visibility change.
+<li>onStop, onRestart is only related to activity visibility. they
+       are invoked by mWindowManager.setAppVisibility() due to
+       visibility change.
 </li>
-<li>onStart may be called due to visibility change or life cycle change.
+<li>onStart may be called due to visibility change or life cycle
+       change.
 </li>
-<li>onPause, onDestroy, onResume is the core concept related to activity life cycle, they are called only when life cycle is changed.
+<li>onPause, onDestroy, onResume is the core concept related to
+       activity life cycle, they are called only when life cycle is
+       changed.
 </li>
 </ul>
 
@@ -2281,10 +2317,10 @@ startActivity
 
 <pre class="example">New process:
   ActivityThread::attach()
-     AMS::attachApplication()
-        foreach mPendingServices:
-           realStartService()
-                thread.scheduleCreate..
+    AMS::attachApplication()
+      foreach mPendingServices:
+        realStartService()
+          thread.scheduleCreate..
 </pre>
 
 </div>
@@ -2397,7 +2433,7 @@ if ((c.flags&amp;Context.BIND_AUTO_CREATE) != 0):
 </div>
 
 <div id="outline-container-1-3-3" class="outline-4">
-<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> ServiceRecor</h4>
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> ServiceRecord</h4>
 <div class="outline-text-4" id="text-1-3-3">
 
 <p>d12/28/10 8:12 pm
@@ -2407,17 +2443,11 @@ similar with AMS::HistoryRecord. mainly save the r.ap and r.app.thread so as to 
 </div>
 
 <div id="outline-container-1-3-4" class="outline-4">
-<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> <span class="done DONE">DONE</span> STICKY service</h4>
+<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> STICKY service</h4>
 <div class="outline-text-4" id="text-1-3-4">
 
-<p>      <span class="timestamp-wrapper"><span class="timestamp-kwd">SCHEDULED: </span> <span class="timestamp">2011-06-01 Wed</span></span>  <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-07-18 Mon 17:21</span></span><br/>
-</p><ul>
-<li>State "DONE"       from "DOING" <span class="timestamp-wrapper"> <span class="timestamp">2011-07-18 Mon 17:21</span></span>
-</li>
-</ul>
-
-<p>     STICKY mainly make sense when process has crashed due to uncaught exception.
-     see also <a href="#Android-Process-Crash-and-Restart">Android Process Crash and Restart</a>
+<p>STICKY mainly make sense when process has crashed due to uncaught exception.
+see also <a href="#Android-Process-Crash-and-Restart">Android Process Crash and Restart</a>
 </p></div>
 </div>
 
@@ -2457,7 +2487,7 @@ similar with AMS::HistoryRecord. mainly save the r.ap and r.app.thread so as to 
 <h5 id="sec-1-4-1-3"><span class="section-number-5">1.4.1.3</span> priority</h5>
 <div class="outline-text-5" id="text-1-4-1-3">
 
-<p>      broadcast receiver's intent filter's `priority` will be used to by the AMS to determine the order in which the broadcast is send to
+<p>broadcast receiver's intent filter's `priority` will be used to by the AMS to determine the order in which the broadcast is send to
 </p></div>
 
 </div>
@@ -2503,14 +2533,7 @@ be sent by SYSTEM,PHONE,SHELL or root`
 <h4 id="sec-1-4-3"><span class="section-number-4">1.4.3</span> SendBroadcast</h4>
 <div class="outline-text-4" id="text-1-4-3">
 
-<p>      <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-02-15 Tue 19:37</span></span><br/>
-</p><ul>
-<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-02-15 Tue 19:37</span></span>
-</li>
-</ul>
-
-<p>     12/28/10 8:11 pm
-     every call to sendBroadcast will init a new receiver instance.
+<p>every call to sendBroadcast will init a new receiver instance.
 </p>
 
 
@@ -2586,7 +2609,7 @@ be sent by SYSTEM,PHONE,SHELL or root`
 </pre>
 
 <p>
-   To summarize:
+To summarize:
 </p><ol>
 <li>dynamic registered receiver
       <b>the same BroadcastReceiver instance is used for Multi-broadcast</b>
@@ -2711,7 +2734,7 @@ Looper.loop();
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-05-17T17:03+0800</p>
+<p class="date">Date: 2013-05-20T21:16+0800</p>
 <p class="author">Author: sunway</p>
 <p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
