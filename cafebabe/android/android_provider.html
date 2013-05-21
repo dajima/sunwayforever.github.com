@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Android ContentProvider"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-20T22:10+0800"/>
+<meta name="generated" content="2013-05-21T14:34+0800"/>
 <meta name="author" content="sunway"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -124,10 +124,9 @@ for the JavaScript code in this tag.
 <ul>
 <li><a href="#sec-1">1 ContentProvider</a>
 <ul>
-<li><a href="#sec-1-1">1.1 Registration</a></li>
-<li><a href="#sec-1-2">1.2 Initialization</a></li>
-<li><a href="#sec-1-3">1.3 Usage</a></li>
-<li><a href="#sec-1-4">1.4 Others</a></li>
+<li><a href="#sec-1-1">1.1 Publish &amp; Install</a></li>
+<li><a href="#sec-1-2">1.2 Usage</a></li>
+<li><a href="#sec-1-3">1.3 Others</a></li>
 </ul>
 </li>
 </ul>
@@ -142,47 +141,115 @@ for the JavaScript code in this tag.
 </div>
 
 <div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Registration</h3>
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Publish &amp; Install</h3>
 <div class="outline-text-3" id="text-1-1">
 
+
+</div>
+
+<div id="outline-container-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> install on app bring up</h4>
+<div class="outline-text-4" id="text-1-1-1">
+
+
+
+
+<pre class="src src-text">ActivityThread.main
+  thread.attach
+    AMS.attachApplication(thread)
+      AMS.attachApplicationLocked(thread)
+        List providers = generateApplicationProvidersLocked(app)
+          providers = getPackageManager().queryContentProviders()
+          foreach (providers):
+            mProvidersByClass.put(comp, new ContentProviderRecord());
+          return providers;
+        // generateApplicationProvidersLocked
+        thread.bindApplication(..., providers,...)
+          handleBindApplication()
+            installContentProviders(providers)
+              foreach (providers):
+                installProvider(provider)
+              AMS.publishContentProviders(providers)
+                foreach (providers):
+                  mProvidersByName.put(authority, provider);
+          // handleBindApplication
+      // attachApplicationLocked        
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> install for double confirm</h4>
+<div class="outline-text-4" id="text-1-1-2">
+
+
+
+
+<pre class="src src-text">ContentResover.query()
+  ContentResover.acquireProvider()
+    ContextImpl.ApplicationContentResolver.acquireProvider()
+      thread.acquireProvider()
+        IContentProvider provider = acquireExistingProvider(c, name);
+        if provider!=null:
+           return provider
+        holder = ActivityManagerNative.getDefault().getContentProvider(name);
+          AMS.getContentProviderImpl()
+            // if provider is running, return it
+            // or else, start the process, and WAIT FOR IT
+            // TODO
+          // getContentProviderImpl
+        provider = installProvider(c, holder.provider, holder.info,..)
+          if (holder.provider == null):
+            // the provider is not installed yet, create it
+            // localProvider...LOCAL?
+            localProvider = (ContentProvider)cl.loadClass(info.name).newInstance();
+            localProvider.attachInfo(c, info);
+              ContentProvider.this.onCreate(); // A-HA, onCreate
+      // thread.acquireProvider
+</pre>
+
+</div>
 </div>
 
 </div>
 
 <div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Initialization</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Usage</h3>
 <div class="outline-text-3" id="text-1-2">
 
+
+</div>
+
+<div id="outline-container-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> query</h4>
+<div class="outline-text-4" id="text-1-2-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> openFile</h4>
+<div class="outline-text-4" id="text-1-2-2">
+
+</div>
 </div>
 
 </div>
 
 <div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Usage</h3>
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Others</h3>
 <div class="outline-text-3" id="text-1-3">
 
 
 </div>
 
 <div id="outline-container-1-3-1" class="outline-4">
-<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> ContentProvider.openFile() &amp; ContentProvider.openInputStream()</h4>
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> `withYieldAllowed` how to work?</h4>
 <div class="outline-text-4" id="text-1-3-1">
-
-</div>
-</div>
-
-</div>
-
-<div id="outline-container-1-4" class="outline-3">
-<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Others</h3>
-<div class="outline-text-3" id="text-1-4">
-
-
-</div>
-
-<div id="outline-container-1-4-1" class="outline-4">
-<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> `withYieldAllowed` how to work?</h4>
-<div class="outline-text-4" id="text-1-4-1">
 
 
 <p>
@@ -256,7 +323,7 @@ from the transaction.
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-05-20T22:10+0800</p>
+<p class="date">Date: 2013-05-21T14:34+0800</p>
 <p class="author">Author: sunway</p>
 <p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
