@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Android ContentProvider"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-21T14:37+0800"/>
+<meta name="generated" content="2013-05-21T16:23+0800"/>
 <meta name="author" content="sunway"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -148,7 +148,7 @@ for the JavaScript code in this tag.
 </div>
 
 <div id="outline-container-1-1-1" class="outline-4">
-<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> install on app bring up</h4>
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> single-process providers are installed during app bring up</h4>
 <div class="outline-text-4" id="text-1-1-1">
 
 
@@ -169,6 +169,13 @@ for the JavaScript code in this tag.
             installContentProviders(providers)
               foreach (providers):
                 installProvider(provider)
+                  <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">during app bring up, the holder.provider must be null</span>
+                  <span style="color: #859900;">if</span> (holder.provider == null):
+                    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">the provider is not installed yet, create it</span>
+                    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">localProvider...LOCAL?</span>
+                    localProvider = (<span style="color: #b58900;">ContentProvider</span>)cl.loadClass(info.name).newInstance();
+                    localProvider.attachInfo(c, info);
+                      ContentProvider.<span style="color: #859900;">this</span>.onCreate(); <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">A-HA, onCreate</span>
               AMS.publishContentProviders(providers)
                 foreach (providers):
                   mProvidersByName.put(authority, provider);
@@ -182,35 +189,84 @@ for the JavaScript code in this tag.
 </div>
 
 <div id="outline-container-1-1-2" class="outline-4">
-<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> install for double confirm</h4>
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> multi-process providers are installed on demand</h4>
 <div class="outline-text-4" id="text-1-1-2">
 
 
 
 
-<pre class="src src-java">ContentResover.query()
-  ContentResover.acquireProvider()
-    <span style="color: #2aa198;">ContextImpl</span>.ApplicationContentResolver.acquireProvider()
-      thread.acquireProvider()
-        IContentProvider provider = acquireExistingProvider(c, name);
-        <span style="color: #859900;">if</span> provider!=null:
-           <span style="color: #859900;">return</span> provider
-        holder = ActivityManagerNative.getDefault().getContentProvider(name);
-          AMS.getContentProviderImpl()
-            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">if provider is running, return it</span>
-            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">or else, start the process, and WAIT FOR IT</span>
-            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">TODO</span>
-          <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">getContentProviderImpl</span>
-        provider = installProvider(c, holder.provider, holder.info,..)
-          <span style="color: #859900;">if</span> (holder.provider == null):
-            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">the provider is not installed yet, create it</span>
-            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">localProvider...LOCAL?</span>
-            localProvider = (<span style="color: #b58900;">ContentProvider</span>)cl.loadClass(info.name).newInstance();
-            localProvider.attachInfo(c, info);
-              ContentProvider.<span style="color: #859900;">this</span>.onCreate(); <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">A-HA, onCreate</span>
-      <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">thread.acquireProvider</span>
+<pre class="src src-java">ContentResolver.query()
+  ContentResolver.acquireProvider(uri);
+    ContentResolver.acquireProvider(uri.getAuthority());
+      <span style="color: #2aa198;">ContextImpl</span>.ApplicationContentResolver.acquireProvider(name);
+        thread.acquireProvider()
+          IContentProvider provider = acquireExistingProvider(c, name);
+            <span style="color: #b58900;">ProviderClientRecord</span> <span style="color: #268bd2;">pr</span> = mProviderMap.get(name);
+            <span style="color: #859900;">if</span> pr.mProvider != null:
+              <span style="color: #859900;">return</span> pr.mProvider;
+          holder = ActivityManagerNative.getDefault().getContentProvider(name);
+            AMS.getContentProviderImpl()
+              <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">if provider is running, return it</span>
+              <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">or else, start the process, and WAIT FOR IT</span>
+              <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">TODO</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">getContentProviderImpl</span>
+          <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">if holder.provider is null, then the provider is not</span>
+          <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">installed during app bring up .. so it is a multi-process</span>
+          <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">provider, install it locally</span>
+          provider = installProvider(c, holder.provider, holder.info,..)
+            <span style="color: #859900;">if</span> (holder.provider == null):
+              <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">the provider is not installed yet, create it</span>
+              <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">localProvider...LOCAL?</span>
+              localProvider = (<span style="color: #b58900;">ContentProvider</span>)cl.loadClass(info.name).newInstance();
+              localProvider.attachInfo(c, info);
+                ContentProvider.<span style="color: #859900;">this</span>.onCreate(); <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">A-HA, onCreate</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">whether the provider is a local provider or a remote provider, it is cached in the mProviderMap. </span>
+            mProviderMap.put(names, provider);
+        <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">thread.acquireProvider</span>
 </pre>
 
+</div>
+
+</div>
+
+<div id="outline-container-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> To summaries</h4>
+<div class="outline-text-4" id="text-1-1-3">
+
+
+<p>
+ContentProvider is maintained both in AMS and in ActivityThread for
+different purpose. 
+</p>
+<ul>
+<li>AMS
+</li>
+</ul>
+
+
+<p>
+it maintains the `HashMap&lt;String, ContentProviderRecord&gt;
+mProvidersByName`, which caches all the ContentProvider published by
+apps.  The ContentProvider.provider is a IContentProvider
+(ContentProvider.Transport) for IPC. 
+</p>
+<p>
+That is, AMS is a central IContentProvider cache
+</p>
+<ul>
+<li>ActivityThread
+</li>
+</ul>
+
+
+<p>
+ActivityThread maintains a `HashMap&lt;String, ProviderClientRecord&gt;
+mProviderMap' for cache purpose. 
+</p>
+<p>
+ActivityThread need to maintains the cache because of `multi-process'
+provider , since they can not be cached by AMS because they are process-local. 
+</p>
 </div>
 </div>
 
@@ -323,7 +379,7 @@ from the transaction.
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-05-21T14:37+0800</p>
+<p class="date">Date: 2013-05-21T16:23+0800</p>
 <p class="author">Author: sunway</p>
 <p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
