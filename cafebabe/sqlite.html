@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="SQLite"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-22T10:03+0800"/>
+<meta name="generated" content="2013-05-29T13:02+0800"/>
 <meta name="author" content="sunway"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -375,7 +375,7 @@ again will be wrapped into a local cursor object named
                    elif: // other type
                  // end for
                // end while
-               sqlite3_reset(statement);      
+               sqlite3_reset(statement);
     if ret:
       mPos=newPos;
 </pre>
@@ -738,8 +738,8 @@ data2 text,
 
 
 
-<pre class="src src-sql"><span style="color: #859900;">create</span> [temp|<span style="color: #859900;">temporary</span>] <span style="color: #859900;">trigger</span> <span style="color: #859900;">name</span> 
-[<span style="color: #859900;">before</span>|<span style="color: #859900;">after</span>|instead <span style="color: #859900;">of</span>] [<span style="color: #859900;">insert</span>|<span style="color: #859900;">delete</span>|<span style="color: #859900;">update</span>|<span style="color: #859900;">update</span> <span style="color: #859900;">of</span> columns] <span style="color: #859900;">on</span> <span style="color: #859900;">table</span> 
+<pre class="src src-sql"><span style="color: #859900;">create</span> [temp|<span style="color: #859900;">temporary</span>] <span style="color: #859900;">trigger</span> <span style="color: #859900;">name</span>
+[<span style="color: #859900;">before</span>|<span style="color: #859900;">after</span>|instead <span style="color: #859900;">of</span>] [<span style="color: #859900;">insert</span>|<span style="color: #859900;">delete</span>|<span style="color: #859900;">update</span>|<span style="color: #859900;">update</span> <span style="color: #859900;">of</span> columns] <span style="color: #859900;">on</span> <span style="color: #859900;">table</span>
 [<span style="color: #859900;">for</span> <span style="color: #859900;">each</span> <span style="color: #b58900;">row</span>] [<span style="color: #859900;">when</span> expr]
 <span style="color: #859900;">begin</span>
 <span style="color: #859900;">action</span>
@@ -754,13 +754,13 @@ data2 text,
 
 
 
-<pre class="src src-sql"><span style="color: #859900;">create</span> <span style="color: #859900;">trigger</span> <span style="color: #268bd2;">on_update_foods_view</span> 
-instead <span style="color: #859900;">of</span> <span style="color: #859900;">update</span> <span style="color: #859900;">on</span> foods_view 
-<span style="color: #859900;">for</span> <span style="color: #859900;">each</span> <span style="color: #b58900;">row</span> 
-<span style="color: #859900;">begin</span> 
-   <span style="color: #859900;">update</span> foods <span style="color: #859900;">set</span> <span style="color: #859900;">name</span>=new.fname <span style="color: #859900;">where</span> id=new.fid; 
-   <span style="color: #859900;">update</span> food_types <span style="color: #859900;">set</span> <span style="color: #859900;">name</span>=new.tname <span style="color: #859900;">where</span> id=new.tid; 
-<span style="color: #859900;">end</span>; 
+<pre class="src src-sql"><span style="color: #859900;">create</span> <span style="color: #859900;">trigger</span> <span style="color: #268bd2;">on_update_foods_view</span>
+instead <span style="color: #859900;">of</span> <span style="color: #859900;">update</span> <span style="color: #859900;">on</span> foods_view
+<span style="color: #859900;">for</span> <span style="color: #859900;">each</span> <span style="color: #b58900;">row</span>
+<span style="color: #859900;">begin</span>
+   <span style="color: #859900;">update</span> foods <span style="color: #859900;">set</span> <span style="color: #859900;">name</span>=new.fname <span style="color: #859900;">where</span> id=new.fid;
+   <span style="color: #859900;">update</span> food_types <span style="color: #859900;">set</span> <span style="color: #859900;">name</span>=new.tname <span style="color: #859900;">where</span> id=new.tid;
+<span style="color: #859900;">end</span>;
 </pre>
 
 </div>
@@ -814,7 +814,7 @@ confict resolution can be specified in
 
 
 
-<pre class="src src-sql"><span style="color: #859900;">create</span> temp <span style="color: #859900;">table</span> <span style="color: #859900;">cast</span>(<span style="color: #859900;">name</span> text <span style="color: #859900;">unique</span> <span style="color: #859900;">on</span> conflict <span style="color: #859900;">rollback</span>); 
+<pre class="src src-sql"><span style="color: #859900;">create</span> temp <span style="color: #859900;">table</span> <span style="color: #859900;">cast</span>(<span style="color: #859900;">name</span> text <span style="color: #859900;">unique</span> <span style="color: #859900;">on</span> conflict <span style="color: #859900;">rollback</span>);
 </pre>
 
 <ul>
@@ -842,7 +842,7 @@ confict resolution can be specified in
 <div class="outline-text-5" id="text-1-3-3-5">
 
 <ul>
-<li>inner join 
+<li>inner join
 </li>
 </ul>
 
@@ -926,24 +926,48 @@ confict resolution can be specified in
 <h5 id="sec-1-3-3-10"><span class="section-number-5">1.3.3.10</span> select</h5>
 <div class="outline-text-5" id="text-1-3-3-10">
 
+
+
+
+
+<pre class="example">
+          -+-------------------------------------------------------------------------------------+
+           |       -+-----------------------------------------------------------+                |        result
+           |        |                        -+---------------+                 |                |          ^
+           |        |                         |               |                 |                |          |
+SELECT DISTINCT heading FROM tables WHERE predicate GROUP BY columns HAVING predicate ORDER BY columns LIMIT init,int;
+           | 6      | 5         | 1           | 2             | 3               | 4              | 7        | 8
+           |        |           |             |               |                 |                |          |
+          -+--------+          -+-------------+              -+-----------------+               -+----------+
+
+</pre>
+
 <ul>
-<li id="sec-1-3-3-10-1">group by<br/>
+<li id="sec-1-3-3-10-1">distinct<br/>
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-2">order by<br/>
+<li id="sec-1-3-3-10-2">where<br/>
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-3">having<br/>
+<li id="sec-1-3-3-10-3">group by<br/>
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-4">limit<br/>
+<li id="sec-1-3-3-10-4">having<br/>
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-5">aggregation<br/>
+<li id="sec-1-3-3-10-5">order by<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-10-6">limit<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-10-7">aggregation<br/>
 <ul>
 <li>avg
 </li>
@@ -960,7 +984,7 @@ confict resolution can be specified in
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-6">sub-query<br/>
+<li id="sec-1-3-3-10-8">sub-query<br/>
 <ul>
 <li>for `select`
 </li>
@@ -973,26 +997,26 @@ confict resolution can be specified in
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-7">compound query<br/>
+<li id="sec-1-3-3-10-9">compound query<br/>
 <ul>
-<li id="sec-1-3-3-10-7-1">union [all]<br/>
+<li id="sec-1-3-3-10-9-1">union [all]<br/>
 a | b
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-7-2">intercept<br/>
+<li id="sec-1-3-3-10-9-2">intercept<br/>
 a &amp; b
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-7-3">except<br/>
+<li id="sec-1-3-3-10-9-3">except<br/>
 a - b
 </li>
 </ul>
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-8">conditional result<br/>
+<li id="sec-1-3-3-10-10">conditional result<br/>
 used to transform column values
 
 
@@ -1544,7 +1568,7 @@ do.
 <p>
 A stemmer for English, for example, should identify the string "cats" (and
 possibly "catlike", "catty" etc.) as based on the root "cat".and "stemmer",
-"stemming", "stemmed" as based on "stem". 
+"stemming", "stemmed" as based on "stem".
 </p>
 <p>
 A stemming algorithm reduces the words "fishing", "fished", "fish", and "fisher"
@@ -1594,7 +1618,7 @@ tokenize 的过程主要分为三步:
 
 <ol>
 <li>N元分词
-   就是简单的每N个字算一个词, 
+   就是简单的每N个字算一个词,
 <ul>
 <li>1元分词:
 </li>
@@ -1671,10 +1695,10 @@ Lucene 为例: 它包含以下几种中文分词算法:
 </ul>
 
 
-<p>  
+<p>
 sqlite3 中因为支持 FTS, 所以也支持几种分词算法:
 </p><ul>
-<li>simple 
+<li>simple
   针对英文, 根据空格分词
 </li>
 <li>porter
@@ -1739,7 +1763,7 @@ sqlite3 中因为支持 FTS, 所以也支持几种分词算法:
 全文查找速度很快,但有一个明显的缺点: 检索的效果依赖于关键字的选择.
 </p>
 <p>
-例如, 
+例如,
 </p><ul>
 <li>使用 "tty" 无法检索到 " hello kitty "这句话
 </li>
@@ -1802,7 +1826,7 @@ sqlite3 中因为支持 FTS, 所以也支持几种分词算法:
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-05-22T10:03+0800</p>
+<p class="date">Date: 2013-05-29T13:02+0800</p>
 <p class="author">Author: sunway</p>
 <p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
