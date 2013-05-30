@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="SQLite"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-29T13:02+0800"/>
+<meta name="generated" content="2013-05-30T15:42+0800"/>
 <meta name="author" content="sunway"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -944,7 +944,16 @@ SELECT DISTINCT heading FROM tables WHERE predicate GROUP BY columns HAVING pred
 
 <ul>
 <li id="sec-1-3-3-10-1">distinct<br/>
-</li>
+distinct 可以同时修饰多个字段
+
+
+
+<pre class="src src-sql"><span style="color: #859900;">select</span> <span style="color: #859900;">distinct</span> id, <span style="color: #859900;">name</span> <span style="color: #859900;">from</span> xxx; 
+</pre>
+
+<p>
+表示只有 (id,name) 都相同时才算相同
+</p></li>
 </ul>
 <ul>
 <li id="sec-1-3-3-10-2">where<br/>
@@ -967,56 +976,91 @@ SELECT DISTINCT heading FROM tables WHERE predicate GROUP BY columns HAVING pred
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-7">aggregation<br/>
-<ul>
-<li>avg
-</li>
-<li>sum
-</li>
-<li>max
-</li>
-<li>min
-</li>
-<li>count
-</li>
-</ul>
-
-</li>
-</ul>
-<ul>
-<li id="sec-1-3-3-10-8">sub-query<br/>
+<li id="sec-1-3-3-10-7">sub-query<br/>
 <ul>
 <li>for `select`
 </li>
+</ul>
+
+
+
+
+<pre class="src src-sql"><span style="color: #859900;">select</span> _id, (<span style="color: #859900;">select</span> <span style="color: #859900;">name</span> <span style="color: #859900;">from</span> xx <span style="color: #859900;">where</span> _id=f._id ) <span style="color: #859900;">from</span> xx <span style="color: #859900;">as</span> f;
+</pre>
+
+<ul>
 <li>for `from`
 </li>
+</ul>
+
+
+
+
+<pre class="src src-sql"><span style="color: #859900;">select</span> _id <span style="color: #859900;">from</span> (<span style="color: #859900;">select</span> _id,<span style="color: #859900;">name</span> <span style="color: #859900;">from</span> xxx);
+</pre>
+
+<ul>
 <li>for `order by`
 </li>
 </ul>
 
+
+
+
+<pre class="src src-sql"><span style="color: #859900;">select</span> _id <span style="color: #859900;">from</span> xxx <span style="color: #859900;">as</span> f <span style="color: #859900;">order</span> <span style="color: #859900;">by</span> (<span style="color: #859900;">select</span> score <span style="color: #859900;">from</span> xxx <span style="color: #859900;">where</span> _id=f._id);
+</pre>
+
+<ul>
+<li>for `where'
+</li>
+</ul>
+
+
+
+
+<pre class="src src-sql"><span style="color: #859900;">select</span> _id <span style="color: #859900;">from</span> xxx <span style="color: #859900;">where</span> _id <span style="color: #859900;">in</span> (<span style="color: #859900;">select</span> _id <span style="color: #859900;">from</span> xxx);
+</pre>
+
+
+<p>
+Note:
+</p><ul>
+<li>sub-query 几乎可以用在任何地方
+</li>
+<li>sub-query 通常需要设置别名
+</li>
+<li>sub-query 只能返回一列.
+</li>
+<li>sub-query 有时需要返回一行 (例如在 order by 的场合), 这时若返回多行,
+  则系统只会使用第一行. 
+</li>
+</ul>
+
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-9">compound query<br/>
+<li id="sec-1-3-3-10-8">compound query<br/>
+compound query 要求各个查询返回相同的例, 且只能在 compound query 最后
+有一个 order by 
 <ul>
-<li id="sec-1-3-3-10-9-1">union [all]<br/>
+<li id="sec-1-3-3-10-8-1">union [all]<br/>
 a | b
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-9-2">intercept<br/>
+<li id="sec-1-3-3-10-8-2">intercept<br/>
 a &amp; b
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-9-3">except<br/>
+<li id="sec-1-3-3-10-8-3">except<br/>
 a - b
 </li>
 </ul>
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-10">conditional result<br/>
+<li id="sec-1-3-3-10-9">conditional result<br/>
 used to transform column values
 
 
@@ -1055,56 +1099,83 @@ used to transform column values
 <div class="outline-text-5" id="text-1-3-3-11">
 
 <ul>
-<li id="sec-1-3-3-11-1">LAST<sub>INSERT</sub><sub>ROWID</sub>()<br/>
+<li id="sec-1-3-3-11-1">core functions<br/>
+<ul>
+<li>LAST<sub>INSERT</sub><sub>ROWID</sub>()
+</li>
+<li>coalesce (x, y, z, &hellip;)
+  return the first not null value, or null
+
+<p>
+  e.g. coalesce (null, 1, 2, null) returns 1
+</p></li>
+<li>ifnull (x, y) 
+  ifnull (x, y) &lt;==&gt; coalesce(x, y)
+</li>
+<li>nullif (x, y)
+  若 x,y 相同返回 null, 否则返回 x.
+</li>
+<li>glob
+</li>
+<li>like
+</li>
+<li>substr
+</li>
+<li>trim
+</li>
+<li>ltrim
+</li>
+<li>rtrim
+</li>
+<li>instr
+</li>
+<li>quote
+</li>
+<li>length
+</li>
+<li>lower
+</li>
+<li>upper
+</li>
+<li>abs
+</li>
+<li>max
+</li>
+<li>min
+</li>
+<li>random
+</li>
+<li>replace
+</li>
+<li>hex
+</li>
+<li>round
+</li>
+<li>date
+</li>
+</ul>
+
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-11-2">ifnull(x,y)<br/>
-如果 x 为 null, 返回 y
+<li id="sec-1-3-3-11-2">aggregation function<br/>
+<ul>
+<li>avg
+</li>
+<li>sum
+</li>
+<li>total
+</li>
+<li>max
+</li>
+<li>min
+</li>
+<li>count (x)
+</li>
+<li>count (*)
 </li>
 </ul>
-<ul>
-<li id="sec-1-3-3-11-3">substr<br/>
-</li>
-</ul>
-<ul>
-<li id="sec-1-3-3-11-4">quote<br/>
-</li>
-</ul>
-<ul>
-<li id="sec-1-3-3-11-5">length<br/>
-</li>
-</ul>
-<ul>
-<li id="sec-1-3-3-11-6">lower<br/>
-</li>
-</ul>
-<ul>
-<li id="sec-1-3-3-11-7">upper<br/>
-</li>
-</ul>
-<ul>
-<li id="sec-1-3-3-11-8">abs<br/>
-</li>
-</ul>
-<ul>
-<li id="sec-1-3-3-11-9">max<br/>
-</li>
-</ul>
-<ul>
-<li id="sec-1-3-3-11-10">min<br/>
-</li>
-</ul>
-<ul>
-<li id="sec-1-3-3-11-11">random<br/>
-</li>
-</ul>
-<ul>
-<li id="sec-1-3-3-11-12">round<br/>
-</li>
-</ul>
-<ul>
-<li id="sec-1-3-3-11-13">date<br/>
+
 </li>
 </ul>
 </div>
@@ -1115,6 +1186,46 @@ used to transform column values
 <h5 id="sec-1-3-3-12"><span class="section-number-5">1.3.3.12</span> fts</h5>
 <div class="outline-text-5" id="text-1-3-3-12">
 
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3-13" class="outline-5">
+<h5 id="sec-1-3-3-13"><span class="section-number-5">1.3.3.13</span> Summary</h5>
+<div class="outline-text-5" id="text-1-3-3-13">
+
+<ul>
+<li id="sec-1-3-3-13-1">cross-join != full-outer-join<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-13-2">having 与 where 的区别<br/>
+<ul>
+<li>haveing 发生在 group by 之后, 而 where 发生在 group by 之前;  
+</li>
+<li>可以使用 aggregation 函数
+</li>
+</ul>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-13-3">aggregation 函数只可以使用在 select 之后和 having 之后<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-13-4">使用两个 left-outer-join 模拟 full-outer-join<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-13-5">distinct 可以使用 group by 来模拟<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-13-6">sqlite 允许在有 group by 中查询中 select group-by 之外的字段, 只是结果是不可靠的. 例如:<br/>
+select name, id from xxx group by id;
+</li>
+</ul>
 </div>
 </div>
 
@@ -1826,7 +1937,7 @@ sqlite3 中因为支持 FTS, 所以也支持几种分词算法:
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-05-29T13:02+0800</p>
+<p class="date">Date: 2013-05-30T15:42+0800</p>
 <p class="author">Author: sunway</p>
 <p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
