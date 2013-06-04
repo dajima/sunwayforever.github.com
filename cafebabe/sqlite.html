@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="SQLite"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-30T15:42+0800"/>
+<meta name="generated" content="2013-06-04T13:23+0800"/>
 <meta name="author" content="sunway"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -503,6 +503,120 @@ e.g. during local `onMove`
 <h3 id="sec-1-2"><span class="section-number-3">1.2</span> C API</h3>
 <div class="outline-text-3" id="text-1-2">
 
+
+</div>
+
+<div id="outline-container-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> sqlite3<sub>open</sub></h4>
+<div class="outline-text-4" id="text-1-2-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> sqltie3<sub>prepare</sub><sub>v2</sub></h4>
+<div class="outline-text-4" id="text-1-2-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-3" class="outline-4">
+<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> sqlite3<sub>step</sub></h4>
+<div class="outline-text-4" id="text-1-2-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-4" class="outline-4">
+<h4 id="sec-1-2-4"><span class="section-number-4">1.2.4</span> sqlite3<sub>reset</sub></h4>
+<div class="outline-text-4" id="text-1-2-4">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-5" class="outline-4">
+<h4 id="sec-1-2-5"><span class="section-number-4">1.2.5</span> sqlite3<sub>bind</sub></h4>
+<div class="outline-text-4" id="text-1-2-5">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-6" class="outline-4">
+<h4 id="sec-1-2-6"><span class="section-number-4">1.2.6</span> sqlite3<sub>exec</sub></h4>
+<div class="outline-text-4" id="text-1-2-6">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-7" class="outline-4">
+<h4 id="sec-1-2-7"><span class="section-number-4">1.2.7</span> sqlite3<sub>get</sub><sub>tables</sub></h4>
+<div class="outline-text-4" id="text-1-2-7">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-8" class="outline-4">
+<h4 id="sec-1-2-8"><span class="section-number-4">1.2.8</span> sqlite3<sub>mprintf</sub></h4>
+<div class="outline-text-4" id="text-1-2-8">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-9" class="outline-4">
+<h4 id="sec-1-2-9"><span class="section-number-4">1.2.9</span> sqlite3<sub>commit</sub><sub>hook</sub></h4>
+<div class="outline-text-4" id="text-1-2-9">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-10" class="outline-4">
+<h4 id="sec-1-2-10"><span class="section-number-4">1.2.10</span> sqlite3<sub>rollback</sub><sub>hook</sub></h4>
+<div class="outline-text-4" id="text-1-2-10">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-11" class="outline-4">
+<h4 id="sec-1-2-11"><span class="section-number-4">1.2.11</span> extension api</h4>
+<div class="outline-text-4" id="text-1-2-11">
+
+
+</div>
+
+<div id="outline-container-1-2-11-1" class="outline-5">
+<h5 id="sec-1-2-11-1"><span class="section-number-5">1.2.11.1</span> user defined functions</h5>
+<div class="outline-text-5" id="text-1-2-11-1">
+
+<p>sqlite3<sub>create</sub><sub>funtion</sub>
+</p></div>
+
+</div>
+
+<div id="outline-container-1-2-11-2" class="outline-5">
+<h5 id="sec-1-2-11-2"><span class="section-number-5">1.2.11.2</span> user defined aggregates</h5>
+<div class="outline-text-5" id="text-1-2-11-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-11-3" class="outline-5">
+<h5 id="sec-1-2-11-3"><span class="section-number-5">1.2.11.3</span> user define collations</h5>
+<div class="outline-text-5" id="text-1-2-11-3">
+
+<p>sqlite3<sub>create</sub><sub>collation</sub>
+</p></div>
+</div>
 </div>
 
 </div>
@@ -627,28 +741,55 @@ e.g. during local `onMove`
 </div>
 
 <div id="outline-container-1-3-3-1" class="outline-5">
-<h5 id="sec-1-3-3-1"><span class="section-number-5">1.3.3.1</span> create table</h5>
+<h5 id="sec-1-3-3-1"><span class="section-number-5">1.3.3.1</span> attach database</h5>
 <div class="outline-text-5" id="text-1-3-3-1">
 
+<p>attach database "foo.db" as db2;
+select * from db2.tbl<sub>1</sub>;
+detach database db2;
+</p></div>
+
+</div>
+
+<div id="outline-container-1-3-3-2" class="outline-5">
+<h5 id="sec-1-3-3-2"><span class="section-number-5">1.3.3.2</span> create table</h5>
+<div class="outline-text-5" id="text-1-3-3-2">
+
 <ul>
-<li id="sec-1-3-3-1-1">storage class<br/>
+<li id="sec-1-3-3-2-1">storage class<br/>
+使用 select typeof (xx) 来查看 storage class
+
 <ul>
 <li>integer
 </li>
+</ul>
+
+<p>61
+</p><ul>
 <li>real
 </li>
+</ul>
+
+<p>61.0
+</p><ul>
 <li>text
 </li>
+</ul>
+
+<p>"a"
+</p><ul>
 <li>blob
 </li>
 </ul>
 
+<p>x'61'
+</p>
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-1-2">constrains<br/>
+<li id="sec-1-3-3-2-2">constrains<br/>
 <ul>
-<li id="sec-1-3-3-1-2-1">column-level constrains<br/>
+<li id="sec-1-3-3-2-2-1">column-level constrains<br/>
 <ul>
 <li>not null
 </li>
@@ -676,6 +817,13 @@ z <span style="color: #b58900;">integer</span> <span style="color: #859900;">che
 see also `trigger`
 </p><ul>
 <li>collate
+<ul>
+<li>binary
+</li>
+<li>nocase
+</li>
+</ul>
+
 </li>
 <li>default
 </li>
@@ -686,7 +834,7 @@ see also `trigger`
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-1-2-2">table-level constrains<br/>
+<li id="sec-1-3-3-2-2-2">table-level constrains<br/>
 <ul>
 <li>primary key
 </li>
@@ -731,9 +879,9 @@ data2 text,
 
 </div>
 
-<div id="outline-container-1-3-3-2" class="outline-5">
-<h5 id="sec-1-3-3-2"><span class="section-number-5">1.3.3.2</span> trigger</h5>
-<div class="outline-text-5" id="text-1-3-3-2">
+<div id="outline-container-1-3-3-3" class="outline-5">
+<h5 id="sec-1-3-3-3"><span class="section-number-5">1.3.3.3</span> trigger</h5>
+<div class="outline-text-5" id="text-1-3-3-3">
 
 
 
@@ -767,9 +915,9 @@ instead <span style="color: #859900;">of</span> <span style="color: #859900;">up
 
 </div>
 
-<div id="outline-container-1-3-3-3" class="outline-5">
-<h5 id="sec-1-3-3-3"><span class="section-number-5">1.3.3.3</span> transaction</h5>
-<div class="outline-text-5" id="text-1-3-3-3">
+<div id="outline-container-1-3-3-4" class="outline-5">
+<h5 id="sec-1-3-3-4"><span class="section-number-5">1.3.3.4</span> transaction</h5>
+<div class="outline-text-5" id="text-1-3-3-4">
 
 <ul>
 <li>begin
@@ -782,24 +930,45 @@ instead <span style="color: #859900;">of</span> <span style="color: #859900;">up
 </li>
 </ul>
 
-</div>
+
+
+
+<pre class="src src-sql"><span style="color: #859900;">begin</span> <span style="color: #859900;">transaction</span>;
+<span style="color: #859900;">insert</span> <span style="color: #859900;">into</span> xxx;
+...
+<span style="color: #859900;">savepoint</span> test
+...
+<span style="color: #859900;">rollback</span> <span style="color: #859900;">to</span> test
+...
+<span style="color: #859900;">commit</span>
+</pre>
+
+<p>
+  insert into xxx;
+  save
+</p></div>
 
 </div>
 
-<div id="outline-container-1-3-3-4" class="outline-5">
-<h5 id="sec-1-3-3-4"><span class="section-number-5">1.3.3.4</span> confict resolution</h5>
-<div class="outline-text-5" id="text-1-3-3-4">
+<div id="outline-container-1-3-3-5" class="outline-5">
+<h5 id="sec-1-3-3-5"><span class="section-number-5">1.3.3.5</span> confict resolution</h5>
+<div class="outline-text-5" id="text-1-3-3-5">
 
 <ul>
 <li>replace
 </li>
 <li>ignore
+  忽略本次错误, 继续执行
 </li>
 <li>fail
+  结束, 但不回滚
 </li>
 <li>abort
+  default
+  回滚, 然后结束
 </li>
 <li>rollback
+  回滚, 但不结束
 </li>
 </ul>
 
@@ -837,9 +1006,9 @@ confict resolution can be specified in
 
 </div>
 
-<div id="outline-container-1-3-3-5" class="outline-5">
-<h5 id="sec-1-3-3-5"><span class="section-number-5">1.3.3.5</span> join</h5>
-<div class="outline-text-5" id="text-1-3-3-5">
+<div id="outline-container-1-3-3-6" class="outline-5">
+<h5 id="sec-1-3-3-6"><span class="section-number-5">1.3.3.6</span> join</h5>
+<div class="outline-text-5" id="text-1-3-3-6">
 
 <ul>
 <li>inner join
@@ -875,27 +1044,51 @@ confict resolution can be specified in
 
 </div>
 
-<div id="outline-container-1-3-3-6" class="outline-5">
-<h5 id="sec-1-3-3-6"><span class="section-number-5">1.3.3.6</span> index</h5>
-<div class="outline-text-5" id="text-1-3-3-6">
+<div id="outline-container-1-3-3-7" class="outline-5">
+<h5 id="sec-1-3-3-7"><span class="section-number-5">1.3.3.7</span> index</h5>
+<div class="outline-text-5" id="text-1-3-3-7">
 
 <p>refers <a href="#sec-1-3-2-9">explain query plan</a> to delete whether index is used for optimization
-</p><ul>
+</p>
+<ul>
 <li>index
 </li>
 <li>unique index
 </li>
 <li>covering index
+  covering index 是指同一个 index 中有多个字段, 查找时直接从 index 中
+  取得了数据, 而不是从 index 取得主键, 再到主表获取数据. 例如:
+
+<p>
+  create index m3<sub>index</sub> on foo(x,y);
+  explain query plan select y from foo where x="a";
+</p></li>
+</ul>
+
+
+<p>
+0|0|0|SEARCH TABLE foo USING COVERING INDEX m3<sub>index</sub> (x=?) (~10 rows)
+</p>
+<p>
+Note:
+</p><ul>
+<li>collate 会影响 index, 例如若 select 时或建表时使用的 collate 与建立
+  index 时指定的 collate 不一致时, index 无法起作用.
+</li>
+<li>create index 可以指定多个字段 (以利于形成 covering index), 但多个字
+  段是联合在一起索引的, 例如 (x,y,z), 则使用 x, x and y, x and y and
+  z 时索引起作用, 但使用 y and z, z 时不起作用. 
 </li>
 </ul>
 
-</div>
 
 </div>
 
-<div id="outline-container-1-3-3-7" class="outline-5">
-<h5 id="sec-1-3-3-7"><span class="section-number-5">1.3.3.7</span> view</h5>
-<div class="outline-text-5" id="text-1-3-3-7">
+</div>
+
+<div id="outline-container-1-3-3-8" class="outline-5">
+<h5 id="sec-1-3-3-8"><span class="section-number-5">1.3.3.8</span> view</h5>
+<div class="outline-text-5" id="text-1-3-3-8">
 
 <ul>
 <li>using trigger to update view
@@ -906,16 +1099,8 @@ confict resolution can be specified in
 
 </div>
 
-<div id="outline-container-1-3-3-8" class="outline-5">
-<h5 id="sec-1-3-3-8"><span class="section-number-5">1.3.3.8</span> insert</h5>
-<div class="outline-text-5" id="text-1-3-3-8">
-
-</div>
-
-</div>
-
 <div id="outline-container-1-3-3-9" class="outline-5">
-<h5 id="sec-1-3-3-9"><span class="section-number-5">1.3.3.9</span> update</h5>
+<h5 id="sec-1-3-3-9"><span class="section-number-5">1.3.3.9</span> insert</h5>
 <div class="outline-text-5" id="text-1-3-3-9">
 
 </div>
@@ -923,8 +1108,16 @@ confict resolution can be specified in
 </div>
 
 <div id="outline-container-1-3-3-10" class="outline-5">
-<h5 id="sec-1-3-3-10"><span class="section-number-5">1.3.3.10</span> select</h5>
+<h5 id="sec-1-3-3-10"><span class="section-number-5">1.3.3.10</span> update</h5>
 <div class="outline-text-5" id="text-1-3-3-10">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3-11" class="outline-5">
+<h5 id="sec-1-3-3-11"><span class="section-number-5">1.3.3.11</span> select</h5>
+<div class="outline-text-5" id="text-1-3-3-11">
 
 
 
@@ -943,7 +1136,7 @@ SELECT DISTINCT heading FROM tables WHERE predicate GROUP BY columns HAVING pred
 </pre>
 
 <ul>
-<li id="sec-1-3-3-10-1">distinct<br/>
+<li id="sec-1-3-3-11-1">distinct<br/>
 distinct 可以同时修饰多个字段
 
 
@@ -956,27 +1149,27 @@ distinct 可以同时修饰多个字段
 </p></li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-2">where<br/>
+<li id="sec-1-3-3-11-2">where<br/>
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-3">group by<br/>
+<li id="sec-1-3-3-11-3">group by<br/>
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-4">having<br/>
+<li id="sec-1-3-3-11-4">having<br/>
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-5">order by<br/>
+<li id="sec-1-3-3-11-5">order by<br/>
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-6">limit<br/>
+<li id="sec-1-3-3-11-6">limit<br/>
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-7">sub-query<br/>
+<li id="sec-1-3-3-11-7">sub-query<br/>
 <ul>
 <li>for `select`
 </li>
@@ -1039,28 +1232,28 @@ Note:
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-8">compound query<br/>
+<li id="sec-1-3-3-11-8">compound query<br/>
 compound query 要求各个查询返回相同的例, 且只能在 compound query 最后
 有一个 order by 
 <ul>
-<li id="sec-1-3-3-10-8-1">union [all]<br/>
+<li id="sec-1-3-3-11-8-1">union [all]<br/>
 a | b
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-8-2">intercept<br/>
+<li id="sec-1-3-3-11-8-2">intercept<br/>
 a &amp; b
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-8-3">except<br/>
+<li id="sec-1-3-3-11-8-3">except<br/>
 a - b
 </li>
 </ul>
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-10-9">conditional result<br/>
+<li id="sec-1-3-3-11-9">conditional result<br/>
 used to transform column values
 
 
@@ -1094,12 +1287,12 @@ used to transform column values
 
 </div>
 
-<div id="outline-container-1-3-3-11" class="outline-5">
-<h5 id="sec-1-3-3-11"><span class="section-number-5">1.3.3.11</span> functions</h5>
-<div class="outline-text-5" id="text-1-3-3-11">
+<div id="outline-container-1-3-3-12" class="outline-5">
+<h5 id="sec-1-3-3-12"><span class="section-number-5">1.3.3.12</span> functions</h5>
+<div class="outline-text-5" id="text-1-3-3-12">
 
 <ul>
-<li id="sec-1-3-3-11-1">core functions<br/>
+<li id="sec-1-3-3-12-1">core functions<br/>
 <ul>
 <li>LAST<sub>INSERT</sub><sub>ROWID</sub>()
 </li>
@@ -1158,7 +1351,7 @@ used to transform column values
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-11-2">aggregation function<br/>
+<li id="sec-1-3-3-12-2">aggregation function<br/>
 <ul>
 <li>avg
 </li>
@@ -1182,24 +1375,24 @@ used to transform column values
 
 </div>
 
-<div id="outline-container-1-3-3-12" class="outline-5">
-<h5 id="sec-1-3-3-12"><span class="section-number-5">1.3.3.12</span> fts</h5>
-<div class="outline-text-5" id="text-1-3-3-12">
-
-</div>
-
-</div>
-
 <div id="outline-container-1-3-3-13" class="outline-5">
-<h5 id="sec-1-3-3-13"><span class="section-number-5">1.3.3.13</span> Summary</h5>
+<h5 id="sec-1-3-3-13"><span class="section-number-5">1.3.3.13</span> fts</h5>
 <div class="outline-text-5" id="text-1-3-3-13">
 
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3-14" class="outline-5">
+<h5 id="sec-1-3-3-14"><span class="section-number-5">1.3.3.14</span> Summary</h5>
+<div class="outline-text-5" id="text-1-3-3-14">
+
 <ul>
-<li id="sec-1-3-3-13-1">cross-join != full-outer-join<br/>
+<li id="sec-1-3-3-14-1">cross-join != full-outer-join<br/>
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-13-2">having 与 where 的区别<br/>
+<li id="sec-1-3-3-14-2">having 与 where 的区别<br/>
 <ul>
 <li>haveing 发生在 group by 之后, 而 where 发生在 group by 之前;  
 </li>
@@ -1210,20 +1403,122 @@ used to transform column values
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-13-3">aggregation 函数只可以使用在 select 之后和 having 之后<br/>
+<li id="sec-1-3-3-14-3">aggregation 函数只可以使用在 select 之后和 having 之后<br/>
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-13-4">使用两个 left-outer-join 模拟 full-outer-join<br/>
+<li id="sec-1-3-3-14-4">使用两个 left-outer-join 模拟 full-outer-join<br/>
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-13-5">distinct 可以使用 group by 来模拟<br/>
+<li id="sec-1-3-3-14-5">distinct 可以使用 group by 来模拟<br/>
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-3-13-6">sqlite 允许在有 group by 中查询中 select group-by 之外的字段, 只是结果是不可靠的. 例如:<br/>
-select name, id from xxx group by id;
+<li id="sec-1-3-3-14-6">compound query 只允许在最后使用一个 order-by, 不过可以用 sub-query 来跳过这一限制<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-14-7">sub-query 几乎可以使用在任何地方, 不过只允许返回一列, 但可以返回多行 (虽然有时只有第一行有效)<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-14-8">sqlite 允许在有 group by 中查询中 select group-by 之外的字段, 只是结果是不可靠的. 例如:<br/>
+
+
+
+
+<pre class="src src-sql"><span style="color: #859900;">select</span> <span style="color: #859900;">name</span>, id <span style="color: #859900;">from</span> xxx <span style="color: #859900;">group</span> <span style="color: #859900;">by</span> id;
+</pre>
+
+
+<p>
+同理适用于 aggregation functions, 例如:
+</p>
+
+
+
+<pre class="src src-sql"><span style="color: #859900;">select</span> *, <span style="color: #859900;">count</span>(*) <span style="color: #859900;">from</span> xxx;
+</pre>
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-14-9">integer primary key =&gt; autoincrement (but with filling-gaps)<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-14-10">autoincrement 会导致后续的值一定比之前的大 (不会有 filling-gaps 效果), 当到达最大值后, 返回 data is full error<br/>
+这一点需要与 integer primary key 区别
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-14-11">autoincrement 必须在 integer primary key 后使用<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-14-12">storage class vs. sort<br/>
+storage class 与列的定义无关, 它取决了输入的数据的格式:
+61, 61,0, "a", x'61', null 的 storage class 分别为 integer, real,
+text, blob, null
+
+<p>
+不同的 storage class 的排序规则:
+null &lt; integer = real &lt; text &lt; blob
+</p>
+<p>
+see also <a href="#type-affinity">type affinity</a>
+</p></li>
+</ul>
+<ul>
+<li id="sec-1-3-3-14-13">sqlite 的 view 是不可修改的, 但可以用 trigger 来模拟实现可修改的 view<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-14-14">index 可以同时指定多个字段, 以便使用 covering index, 但要注意查询条件, 例如<br/>
+(x,y,z)三个字段的索引,使用 x, x and y, x and y and z 会使用索引, 但
+y, y and z, z 不会.
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-14-15">一次查询可能会使用多个索引, 例如使用 or 的情况下:<br/>
+create index m1<sub>index</sub> on foo(x);
+create index m1<sub>index</sub> on foo(y);
+select x from foo where x="a" or y="a";
+0|0|0|SEARCH TABLE foo USING INDEX m1<sub>index</sub> (x=?) (~10 rows)
+0|0|0|SEARCH TABLE foo USING INDEX m2<sub>index</sub> (y=?) (~10 rows)
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-14-16">unique index<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-14-17">有些情况下 index 无法使用, 例如<br/>
+<ul>
+<li>glob "a*"
+</li>
+<li>like (测试了下似乎 sqlite 并不会对 like 进行优化, 可能和版本有关?)
+</li>
+<li>多列索引时有些情况
+</li>
+<li>select xx from xx where length(x)=5, 等
+</li>
+</ul>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-14-18">savepoint &amp; rollback to<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-14-19">conflict resolution<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-14-20">attach database<br/>
 </li>
 </ul>
 </div>
@@ -1245,18 +1540,32 @@ select name, id from xxx group by id;
 <ul>
 <li id="sec-1-3-4-1-1">lock<br/>
 <ul>
+<li>unlocked
+</li>
 <li>shared
 </li>
+</ul>
+
+<p>执行任何语句前要进行 shared 状态
+</p><ul>
 <li>reserved
+  执行任何写语句前需要进入 reserved 状态
+
+<p>
   shared 想升级为 reserved, 必须保证当前没有任何 reserved 及 exclusive lock
-</li>
+</p></li>
 <li>exclusive
 <ul>
 <li>pending
+
+<p>    
+    commit 前需要进行 pending 状态
+</p>
+<p>
     reserved 升级为 exclusive 时会先暂时的升级为 pending, pending lock 会禁止任
     何新的 lock 的获取, 包括 shared, 否则可以会因为不停的有新的 shared lock 进入
     而导致 reserved 永远无法升级为 exclusive.
-
+</p>
 </li>
 </ul>
 
@@ -1312,38 +1621,57 @@ select name, id from xxx group by id;
 </div>
 
 <div id="outline-container-1-3-4-2" class="outline-5">
-<h5 id="sec-1-3-4-2"><span class="section-number-5">1.3.4.2</span> *** SQLite and Multiple Threads</h5>
+<h5 id="sec-1-3-4-2"><span class="section-number-5">1.3.4.2</span> threads</h5>
 <div class="outline-text-5" id="text-1-3-4-2">
 
-</div>
+<ul>
+<li id="sec-1-3-4-2-1">Shared Cache Mode<br/>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-4-2-2">threading modes<br/>
+<a href="http://www.sqlite.org/threadsafe.html">http://www.sqlite.org/threadsafe.html</a>
 
-</div>
-
-<div id="outline-container-1-3-4-3" class="outline-5">
-<h5 id="sec-1-3-4-3"><span class="section-number-5">1.3.4.3</span> SQLite and Multiple Threads</h5>
-<div class="outline-text-5" id="text-1-3-4-3">
-
-<p><a href="http://www.sqlite.org/threadsafe.html">http://www.sqlite.org/threadsafe.html</a>
-</p>
 <p>
 SQLite support three different threading modes:
 </p>
 <ul>
-<li>Single-thread. In this mode, all mutexes are disabled and SQLite is
-  unsafe to use in more than a single thread at once.
-
-</li>
-<li>Multi-thread. In this mode, SQLite can be safely used by multiple
-  threads provided that no single database connection is used
-  simultaneously in two or more threads.
-
-</li>
-<li>Serialized. In serialized mode, SQLite can be safely used by
-  multiple threads with no restriction.
+<li>Single-thread. 
 </li>
 </ul>
 
 
+<p>
+In this mode, all mutexes are disabled and SQLite is unsafe to use in
+more than a single thread at once.
+</p>
+<p>
+同时只能有一个线程在使用 connection (相同或不同的), 否则出现段错误.
+</p>
+<ul>
+<li>Multi-thread. 
+</li>
+</ul>
+
+
+<p>
+In this mode, SQLite can be safely used by multiple threads provided
+that no single database connection is used simultaneously in two or
+more threads.
+</p>
+<p>
+同时可以有多个线程使用 connection (不同的), 否则段错误.
+</p>
+<ul>
+<li>Serialized. 
+</li>
+</ul>
+
+
+<p>
+In serialized mode, SQLite can be safely used by multiple threads with
+no restriction.
+</p>
 <p>
 The threading mode can be selected at compile-time (when the SQLite
 library is being compiled from source code) or at start-time (when the
@@ -1356,8 +1684,60 @@ selected.
 <p>
 The default mode is serialized.
 </p>
+<p>
+同时可以有多个线程使用 connection (相同或不同的)
+</p>
 <ul>
-<li id="sec-1-3-4-3-1">Compile-time selection of threading mode<br/>
+<li id="sec-1-3-4-2-2-1">Benchmark<br/>
+查询 1600 W 条记录所耗的时间的比较
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="right" /><col class="right" /><col class="right" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">查询类型</th><th scope="col" class="right">real</th><th scope="col" class="right">user</th><th scope="col" class="right">sys</th></tr>
+</thead>
+<tbody>
+<tr><td class="left">使用 SINGLETHREAD 查询一次</td><td class="right">3.5</td><td class="right">3.5</td><td class="right">0.4</td></tr>
+<tr><td class="left">使用 MULTITHREAD 查询一次</td><td class="right">3.5</td><td class="right">3.5</td><td class="right">0.4</td></tr>
+<tr><td class="left">使用 SERIALZIED 查询一次</td><td class="right">3.8</td><td class="right">3.8</td><td class="right">0.4</td></tr>
+<tr><td class="left">使用 MULTITHREAD 在两个线程使用不同的 connection 查询</td><td class="right">7.3</td><td class="right">4</td><td class="right">0.4</td></tr>
+<tr><td class="left">使用 MULTITHREAD 在两个线程使用不同的 connection 查询</td><td class="right">7.8</td><td class="right">4.2</td><td class="right">0.4</td></tr>
+<tr><td class="left">使用 MULTITHREAD 在两个线程使用相同的 connection 查询</td><td class="right">27</td><td class="right">28</td><td class="right">9</td></tr>
+</tbody>
+</table>
+
+
+<p>
+可见, 
+</p>
+<ul>
+<li>不使用多线程的情况下, SINGLETHREAD 和 MULTITHREAD 差不多,SERIALZIED
+  变慢
+</li>
+<li>使用多线程的情况下, 
+<ul>
+<li>SINGLETHREAD 无法使用
+</li>
+<li>MULTITHREAD 可以利用多线程显著的降低 real time
+</li>
+<li>SERIALZIED 使用不同的线程时也比 MULTITHREAD 稍慢
+</li>
+<li>SERIALZIED 使用相同的线程时速度无法接受
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+<p>
+综上, 使用 MULTITHREAD 多线程使用不同的 connection 是最好的选择. 
+</p>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-4-2-2-2">Compile-time selection of threading mode<br/>
 
 <p>
 Use the SQLITE<sub>THREADSAFE</sub> compile-time parameter to selected the
@@ -1387,7 +1767,7 @@ run-time.
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-4-3-2">Start-time selection of threading mode<br/>
+<li id="sec-1-3-4-2-2-3">Start-time selection of threading mode<br/>
 
 <p>
 Assuming that the compile-time threading mode is not single-thread,
@@ -1400,7 +1780,7 @@ serialized mode.
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-4-3-3">Run-time selection of threading mode<br/>
+<li id="sec-1-3-4-2-2-4">Run-time selection of threading mode<br/>
 
 <p>
 If single-thread mode has not been selected at compile-time or
@@ -1422,13 +1802,15 @@ compile-time and start-time settings is used.
 </p>
 </li>
 </ul>
+</li>
+</ul>
 </div>
 
 </div>
 
-<div id="outline-container-1-3-4-4" class="outline-5">
-<h5 id="sec-1-3-4-4"><span class="section-number-5">1.3.4.4</span> Can multiple applications or multiple instances of the same application access a single database file at the same time?</h5>
-<div class="outline-text-5" id="text-1-3-4-4">
+<div id="outline-container-1-3-4-3" class="outline-5">
+<h5 id="sec-1-3-4-3"><span class="section-number-5">1.3.4.3</span> Can multiple applications or multiple instances of the same application access a single database file at the same time?</h5>
+<div class="outline-text-5" id="text-1-3-4-3">
 
 <p><a href="http://www.sqlite.org/faq.html#q5">http://www.sqlite.org/faq.html#q5</a>
 </p>
@@ -1485,9 +1867,9 @@ sqlite3<sub>busy</sub><sub>timeout</sub>() API functions.
 
 </div>
 
-<div id="outline-container-1-3-4-5" class="outline-5">
-<h5 id="sec-1-3-4-5"><span class="section-number-5">1.3.4.5</span> Is SQLite threadsafe?</h5>
-<div class="outline-text-5" id="text-1-3-4-5">
+<div id="outline-container-1-3-4-4" class="outline-5">
+<h5 id="sec-1-3-4-4"><span class="section-number-5">1.3.4.4</span> Is SQLite threadsafe?</h5>
+<div class="outline-text-5" id="text-1-3-4-4">
 
 <p><a href="http://www.sqlite.org/faq.html#q6">http://www.sqlite.org/faq.html#q6</a>
 </p>
@@ -1570,7 +1952,7 @@ do.
 </div>
 
 <div id="outline-container-1-3-6-2" class="outline-5">
-<h5 id="sec-1-3-6-2"><span class="section-number-5">1.3.6.2</span> cache<sub>size</sub> = Number-of-pages</h5>
+<h5 id="sec-1-3-6-2"><span class="section-number-5">1.3.6.2</span> cache<sub>size</sub></h5>
 <div class="outline-text-5" id="text-1-3-6-2">
 
 </div>
@@ -1937,7 +2319,7 @@ sqlite3 中因为支持 FTS, 所以也支持几种分词算法:
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-05-30T15:42+0800</p>
+<p class="date">Date: 2013-06-04T13:23+0800</p>
 <p class="author">Author: sunway</p>
 <p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>

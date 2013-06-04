@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="JVM"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-21T14:34+0800"/>
+<meta name="generated" content="2013-06-04T13:23+0800"/>
 <meta name="author" content="sunway"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -145,28 +145,22 @@ for the JavaScript code in this tag.
 <h3 id="sec-1-1"><span class="section-number-3">1.1</span> String.intern()</h3>
 <div class="outline-text-3" id="text-1-1">
 
-<p>     <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-08-01 Mon 15:22</span></span><br/>
-</p><ul>
-<li>State "DONE"       from "DOING" <span class="timestamp-wrapper"> <span class="timestamp">2011-08-01 Mon 15:22</span></span>
-</li>
-</ul>
-
-<p>    see also <a href="#constant-pool">constant pool</a>
+<p>see also <a href="#constant-pool">constant pool</a>
 </p>
 <p>
-    String.intern()与constant pool的关系?
-    VM 运行后, VM 本身会维护一个 internedStrings&lt;char *, String&gt; 的 HashMap, String.intern() 的作用是:
+String.intern()与constant pool的关系?
+VM 运行后, VM 本身会维护一个 internedStrings&lt;char *, String&gt; 的 HashMap, String.intern() 的作用是:
 </p><ul>
 <li>从 internedStrings 中查找是否已存在, 若不存在, 向 map 中插入一条记录, 最后返回 map的value,
 </li>
 <li>所以 assert(new String("abc").intern() == new String("abc").intern());
-</li>
+
+<p>
+  String.intern() 使用的 internedStrings 本身和 constant pool 并没有直接关系, 但:
+</p></li>
 </ul>
 
 
-<p>
-    String.intern() 使用的 internedStrings 本身和 constant pool 并没有直接关系, 但:
-</p>
 
 
 <pre class="example">String s1="abc";
@@ -175,24 +169,28 @@ assert(s1==s2.intern());
 </pre>
 
 <p>
-    有两种可能:
+有两种可能:
 </p><ol>
-<li>VM 在 resolve class (resolve constant pool) 时, 一次性的将所有 CONSTANT<sub>String</sub><sub>info</sub> 全通过 intern() 放到 internedStrings 中, 然后 CONSTANT<sub>String</sub><sub>info</sub>
-         的 data 为 生成的 String 对象
-</li>
-<li>LAZY initialization: 如 <a href="#constant-pool">constant pool</a> 所述, 访问 CONSTANT<sub>String</sub><sub>info</sub> 使用 `ldc` 指令, 而 `ldc` 指令可以隐式的调用 String.intern(), 并返回 intern() 的结果
-</li>
-</ol>
+<li>VM 在 resolve class (resolve constant pool) 时, 一次性的将所有
+     CONSTANT<sub>String</sub><sub>info</sub> 全通过 intern() 放到 internedStrings 中, 然后
+     CONSTANT<sub>String</sub><sub>info的</sub> data 为 生成的 String 对象
 
+</li>
+<li>LAZY initialization: 如 <a href="#constant-pool">constant pool</a> 所述, 访问
+     CONSTANT<sub>String</sub><sub>info</sub> 使用 `ldc` 指令, 而 `ldc` 指令可以隐式的调用
+     String.intern(), 并返回 intern() 的结果
 
 <p>
-    To summarize:
+   To summarize:
 </p><ul>
 <li>对于 string literal, 再显式调用 intern() 没有意义
 </li>
 <li>对于 运行时 string, 若 string 经常重复, 可以通过 intern() 做 cache
 </li>
 </ul>
+
+</li>
+</ol>
 
 </div>
 
@@ -202,14 +200,9 @@ assert(s1==s2.intern());
 <h3 id="sec-1-2"><span class="section-number-3">1.2</span> Constant Pool</h3>
 <div class="outline-text-3" id="text-1-2">
 
-<ul>
-<li>State "DONE"       from "DOING" <span class="timestamp-wrapper"> <span class="timestamp">2011-08-01 Mon 15:11</span></span>
-</li>
-</ul>
-
-<p>    see also <a href="#sec-1-1">String.intern()</a>
-    see also <a href="#autoboxing">autoboxing</a>
-    see also <a href="#valueOf">valueOf</a>
+<p>see also <a href="#sec-1-1">String.intern()</a>
+see also <a href="#autoboxing">autoboxing</a>
+see also <a href="#valueOf">valueOf</a>
 </p>
 
 
@@ -242,7 +235,9 @@ assert(i3!=i4);  // see autoboxing &amp; valueOf
 </li>
 </ul>
 
-<p>    Constant pool can contain the following variety entries:
+
+<p>
+    Constant pool can contain the following variety entries:
 </p><ul>
 <li>CONSTANT<sub>Utf8</sub>
 </li>
@@ -286,7 +281,7 @@ assert(i3!=i4);  // see autoboxing &amp; valueOf
 <h5 id="sec-1-2-1"><span class="section-number-5">1.2.1</span> class, method, field..</h5>
 <div class="outline-text-5" id="text-1-2-1">
 
-<p>   java code:
+<p>java code:
 </p>
 
 
@@ -304,7 +299,7 @@ assert(i3!=i4);  // see autoboxing &amp; valueOf
 </pre>
 
 <p>
-   byte code:
+byte code:
 </p>
 
 
@@ -562,15 +557,9 @@ line 5: 3
 
 </div>
 
-<div id="outline-container-1-3-1" class="outline-5">
-<h5 id="sec-1-3-1"><span class="section-number-5">1.3.1</span> <span class="done DONE">DONE</span> class unloading</h5>
-<div class="outline-text-5" id="text-1-3-1">
-
-<p>      <span class="timestamp-wrapper"><span class="timestamp-kwd">SCHEDULED: </span> <span class="timestamp">2011-08-03 Wed</span></span>  <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-08-03 Wed 17:56</span></span><br/>
-</p><ul>
-<li>State "DONE"       from "DOING" <span class="timestamp-wrapper"> <span class="timestamp">2011-08-03 Wed 17:56</span></span>
-</li>
-</ul>
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> class unloading</h4>
+<div class="outline-text-4" id="text-1-3-1">
 
 </div>
 </div>
@@ -584,29 +573,29 @@ line 5: 3
 
 </div>
 
-<div id="outline-container-1-4-1" class="outline-5">
-<h5 id="sec-1-4-1"><span class="section-number-5">1.4.1</span> invokevirtual vs. invokespecial</h5>
-<div class="outline-text-5" id="text-1-4-1">
+<div id="outline-container-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> invokevirtual vs. invokespecial</h4>
+<div class="outline-text-4" id="text-1-4-1">
 
-<p>     similar with c++'s call-by-reference and call-by-value; that is, `invokespecial` will prohibit polymorphism.
+<p>similar with c++'s call-by-reference and call-by-value; that is, `invokespecial` will prohibit polymorphism.
 </p></div>
 
 </div>
 
-<div id="outline-container-1-4-2" class="outline-5">
-<h5 id="sec-1-4-2"><span class="section-number-5">1.4.2</span> invokestatic</h5>
-<div class="outline-text-5" id="text-1-4-2">
+<div id="outline-container-1-4-2" class="outline-4">
+<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> invokestatic</h4>
+<div class="outline-text-4" id="text-1-4-2">
 
-<p>     direct addressing
+<p>direct addressing
 </p></div>
 
 </div>
 
-<div id="outline-container-1-4-3" class="outline-5">
-<h5 id="sec-1-4-3"><span class="section-number-5">1.4.3</span> invokeinterface</h5>
-<div class="outline-text-5" id="text-1-4-3">
+<div id="outline-container-1-4-3" class="outline-4">
+<h4 id="sec-1-4-3"><span class="section-number-4">1.4.3</span> invokeinterface</h4>
+<div class="outline-text-4" id="text-1-4-3">
 
-<p>     contant-pool would be iterated to find the interface method, since an object can inhereit multiply interface;
+<p>contant-pool would be iterated to find the interface method, since an object can inhereit multiply interface;
 </p></div>
 </div>
 </div>
@@ -614,7 +603,7 @@ line 5: 3
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-05-21T14:34+0800</p>
+<p class="date">Date: 2013-06-04T13:23+0800</p>
 <p class="author">Author: sunway</p>
 <p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
