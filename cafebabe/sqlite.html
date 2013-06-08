@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="SQLite"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-06-04T13:23+0800"/>
+<meta name="generated" content="2013-06-08T19:02+0800"/>
 <meta name="author" content="sunway"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -126,8 +126,9 @@ for the JavaScript code in this tag.
 <ul>
 <li><a href="#sec-1-1">1.1 Android API</a></li>
 <li><a href="#sec-1-2">1.2 C API</a></li>
-<li><a href="#sec-1-3">1.3 sqlite</a></li>
-<li><a href="#sec-1-4">1.4 Other</a></li>
+<li><a href="#sec-1-3">1.3 SQLite</a></li>
+<li><a href="#sec-1-4">1.4 Benchmark</a></li>
+<li><a href="#sec-1-5">1.5 Other</a></li>
 </ul>
 </li>
 </ul>
@@ -144,6 +145,31 @@ for the JavaScript code in this tag.
 <div id="outline-container-1-1" class="outline-3">
 <h3 id="sec-1-1"><span class="section-number-3">1.1</span> Android API</h3>
 <div class="outline-text-3" id="text-1-1">
+
+
+
+
+
+<pre class="example">
+                                 +----------------+
+                                 | SQLiteDatabase |                         +------------------+
+                                 +-+----------+---+                  +-----&gt;+ SQLiteConnection-+-&lt;---+
+                                   |          |                      |      +------------------+     |
+                                   |          v                      |      +------------------+     |
+     +--------------------+--------+     +----+------------------+   +-----&gt;+ SQLiteConnection |     |
+     |                    |              | SQLiteConnection Pool-+---+      +-----+-----+------+     |
+     v thread_1           v thread_2     +-------+---------------+                |     ^            |
++----+----------+    +----+----------+           ^                                |     |            |
+| SQLiteSession |    | SQLiteSession-+-----------+      +----------------------+  |     |            |
++----+-------+--+    +------+--+-----+           |      |PreparedStatementCache+&lt;-+     |            |
+     |       |              |                    |      +----------------------+        |            |
+     |       +--------------+--------------------+                                      |            |
+     |                      |                                                           |            |
+     |                      +-----------------------------------------------------------+            |
+     |                                                                                               |
+     +-----------------------------------------------------------------------------------------------+
+</pre>
+
 
 
 </div>
@@ -447,12 +473,12 @@ again will be wrapped into a local cursor object named
 <h5 id="sec-1-1-6-4"><span class="section-number-5">1.1.6.4</span> CursorWindow</h5>
 <div class="outline-text-5" id="text-1-1-6-4">
 
-<p>`CursorWindow` is parcelable, it represents a `window` of sqlite query data.
+<p>`CursorWindow` is parcelable, it represents a `window` of sqlite query
+data. The underlying data of a Java CursorWindow object is managed by
+CursorWindow c++ object, in both of the server side and the client
+side.
 </p>
-<p>
-The underlying data of a Java CursorWindow object is managed by CursorWindow
-c++ object, in both of the server side and the client side.
-</p><ul>
+<ul>
 <li id="sec-1-1-6-4-1">init<br/>
 
 
@@ -488,6 +514,108 @@ e.g. during local `onMove`
       CursorToBulkCursorAdaptor.getWindow(newPosition)
         mCursor.moveToPosition(startPos)
         return mCursor.getWindow()
+          // SQLiteCursor
+          mCursor.fillWindow(position, window);  
+            mQuery.fillWindow(position,window);
+              getSession().executeForCursorWindow();
+                SQLiteConnection.nativeExecuteForCursorWindow(start, requiredRow)  
+                // native
+                  while (window not full):
+                    sqlite3_step(stmt);
+                    copy_row(window)
+                  sqlite3_reset(stmt)
+                nativeFinalizeStatement(stmt);
+</pre>
+
+
+<ul>
+<li id="sec-1-1-6-4-2-1">关于 CursorWindow 的一个 bug (or feature)<br/>
+
+<p>
+每次 onMove (包括 cursor.moveToPosition 等) 都会导致底层的 statement 实
+际上会重新查询 &hellip;. 所以这种设计会导致这个 bug (or feature?)
+</p>
+
+
+
+<pre class="src src-java"><span style="color: #859900;">private</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">query</span>() {
+    <span style="color: #b58900;">SQLiteDatabase</span> <span style="color: #268bd2;">db</span> = SQLiteDatabase.openDatabase(<span style="color: #2aa198;">"/storage/sdcard1/test.db"</span>, null,<span style="color: #2aa198;">SQLiteDatabase</span>.OPEN_READWRITE, null);
+    <span style="color: #b58900;">Cursor</span> <span style="color: #268bd2;">cursor</span>=db.query(<span style="color: #2aa198;">"test"</span>, <span style="color: #859900;">new</span> <span style="color: #b58900;">String</span>[] {<span style="color: #2aa198;">"name"</span>,<span style="color: #2aa198;">"count"</span>}, null,null, null, null, <span style="color: #2aa198;">"name"</span>);
+    Log.e(<span style="color: #2aa198;">"sunway"</span>,<span style="color: #2aa198;">"query:get count:"</span>+cursor.getCount());
+    cursor.moveToFirst();
+    Log.e(<span style="color: #2aa198;">"sunway"</span>,<span style="color: #2aa198;">"moveToFirst: data:"</span>+cursor.getString(0));
+    cursor.moveToLast();
+    Log.e(<span style="color: #2aa198;">"sunway"</span>,<span style="color: #2aa198;">"moved to last"</span>);
+    Log.e(<span style="color: #2aa198;">"sunway"</span>,<span style="color: #2aa198;">"insert a row"</span>);
+
+    db.beginTransaction();
+    db.execSQL(<span style="color: #2aa198;">"INSERT INTO test VALUES (\"aaa\",1)"</span>);
+    Log.e(<span style="color: #2aa198;">"sunway"</span>,<span style="color: #2aa198;">"done"</span>);
+    db.setTransactionSuccessful();
+    db.endTransaction();
+
+    cursor.moveToFirst();
+    Log.e(<span style="color: #2aa198;">"sunway"</span>,<span style="color: #2aa198;">"moveToFirst again: data:"</span>+cursor.getString(0));
+    cursor.close();
+}
+</pre>
+
+
+<p>
+当原有数据足够多时 (保证 moveToLast 会调用 fillWindow 替换掉当前
+window), 对同一 cursor 调用两次 moveToFirst 查询的结果不同 &hellip;. 若要避
+免这个情况, 要么底层的 cursor window 足够大, 能容纳所有的内容, 要么
+cursor 查询返回后不 finalized statement, 这样可以保证 read transaction
+持有 shared lock, 那么其他 write transaction 会因为无法获得 exclusive
+lock 而无法修改数据库.
+</p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li id="sec-1-1-6-4-3">CursorWindow and `ashmem'<br/>
+
+<p>
+The underlying data of a Java CursorWindow is managed by CursorWindow
+c++ object, and is stored using `ashmem'
+</p>
+
+
+
+<pre class="src src-c++">  <span style="color: #b58900;">status_t</span> <span style="color: #2aa198;">CursorWindow</span>::<span style="color: #268bd2;">writeToParcel</span>(<span style="color: #b58900;">Parcel</span>* <span style="color: #268bd2;">parcel</span>) {
+      <span style="color: #b58900;">status_t</span> <span style="color: #268bd2;">status</span> = parcel-&gt;writeString8(mName);
+      <span style="color: #859900;">if</span> (<span style="color: #dc322f;">!</span>status) {
+          status = parcel-&gt;writeDupFileDescriptor(mAshmemFd);
+      }
+      <span style="color: #859900;">return</span> status;
+  }
+
+<span style="color: #b58900;">status_t</span> <span style="color: #2aa198;">CursorWindow</span>::<span style="color: #268bd2;">createFromParcel</span>(<span style="color: #b58900;">Parcel</span>* <span style="color: #268bd2;">parcel</span>, <span style="color: #b58900;">CursorWindow</span>** <span style="color: #268bd2;">outCursorWindow</span>) {
+    <span style="color: #b58900;">String8</span> <span style="color: #268bd2;">name</span> = parcel-&gt;readString8();
+
+    <span style="color: #b58900;">status_t</span> <span style="color: #268bd2;">result</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">ashmemFd</span> = parcel-&gt;readFileDescriptor();
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">...</span>
+}
+</pre>
+
+
+<p>
+So, CursorWindow parceling is quite efficient using `ashmem', and
+that why CursorWindow could deliver more than 1MB data using binder.
+</p>
+
+
+
+<pre class="example">
+~@sunway-x230&gt; adb shell procmem 642|grep "CursorWindow"
+     0K       0K       0K       0K       0K       0K       0K       0K  /dev/ashmem/CursorWindow:
+     0K       0K       0K       0K       0K       0K       0K       0K  /dev/ashmem/CursorWindow:
+     4K       4K       2K       0K       0K       4K       0K       0K  /dev/ashmem/CursorWindow:
+     0K       0K       0K       0K       0K       0K       0K       0K  /dev/ashmem/CursorWindow:
+     4K       4K       4K       4K       0K       0K       4K       0K  /dev/ashmem/CursorWindow:
+
 </pre>
 
 
@@ -587,42 +715,150 @@ e.g. during local `onMove`
 </div>
 
 <div id="outline-container-1-2-11" class="outline-4">
-<h4 id="sec-1-2-11"><span class="section-number-4">1.2.11</span> extension api</h4>
+<h4 id="sec-1-2-11"><span class="section-number-4">1.2.11</span> sqlite3<sub>busy</sub><sub>handler</sub></h4>
 <div class="outline-text-4" id="text-1-2-11">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-12" class="outline-4">
+<h4 id="sec-1-2-12"><span class="section-number-4">1.2.12</span> sqlite3<sub>busy</sub><sub>timeout</sub></h4>
+<div class="outline-text-4" id="text-1-2-12">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-13" class="outline-4">
+<h4 id="sec-1-2-13"><span class="section-number-4">1.2.13</span> sqlite3<sub>trace</sub></h4>
+<div class="outline-text-4" id="text-1-2-13">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-14" class="outline-4">
+<h4 id="sec-1-2-14"><span class="section-number-4">1.2.14</span> sqlite3<sub>finalize</sub></h4>
+<div class="outline-text-4" id="text-1-2-14">
+
+<p>在 auto-commit 模式下, sqlite3<sub>finalize</sub> 相当于 commit 的作用:
+</p><ul>
+<li>释放锁
+</li>
+<li>sync 日志与数据库
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-15" class="outline-4">
+<h4 id="sec-1-2-15"><span class="section-number-4">1.2.15</span> extension api</h4>
+<div class="outline-text-4" id="text-1-2-15">
 
 
 </div>
 
-<div id="outline-container-1-2-11-1" class="outline-5">
-<h5 id="sec-1-2-11-1"><span class="section-number-5">1.2.11.1</span> user defined functions</h5>
-<div class="outline-text-5" id="text-1-2-11-1">
+<div id="outline-container-1-2-15-1" class="outline-5">
+<h5 id="sec-1-2-15-1"><span class="section-number-5">1.2.15.1</span> user defined functions</h5>
+<div class="outline-text-5" id="text-1-2-15-1">
 
 <p>sqlite3<sub>create</sub><sub>funtion</sub>
 </p></div>
 
 </div>
 
-<div id="outline-container-1-2-11-2" class="outline-5">
-<h5 id="sec-1-2-11-2"><span class="section-number-5">1.2.11.2</span> user defined aggregates</h5>
-<div class="outline-text-5" id="text-1-2-11-2">
+<div id="outline-container-1-2-15-2" class="outline-5">
+<h5 id="sec-1-2-15-2"><span class="section-number-5">1.2.15.2</span> user defined aggregates</h5>
+<div class="outline-text-5" id="text-1-2-15-2">
 
 </div>
 
 </div>
 
-<div id="outline-container-1-2-11-3" class="outline-5">
-<h5 id="sec-1-2-11-3"><span class="section-number-5">1.2.11.3</span> user define collations</h5>
-<div class="outline-text-5" id="text-1-2-11-3">
+<div id="outline-container-1-2-15-3" class="outline-5">
+<h5 id="sec-1-2-15-3"><span class="section-number-5">1.2.15.3</span> user define collations</h5>
+<div class="outline-text-5" id="text-1-2-15-3">
 
 <p>sqlite3<sub>create</sub><sub>collation</sub>
 </p></div>
+</div>
+
+</div>
+
+<div id="outline-container-1-2-16" class="outline-4">
+<h4 id="sec-1-2-16"><span class="section-number-4">1.2.16</span> sample code</h4>
+<div class="outline-text-4" id="text-1-2-16">
+
+
+
+
+<pre class="src src-c"><span style="color: #cb4b16;">#include</span> <span style="color: #2aa198;">&lt;sqlite3.h&gt;</span>
+<span style="color: #cb4b16;">#include</span> <span style="color: #2aa198;">&lt;pthread.h&gt;</span>
+
+<span style="color: #b58900;">void</span> <span style="color: #268bd2;">query</span>(<span style="color: #b58900;">sqlite3</span> * <span style="color: #268bd2;">db</span>) {
+    <span style="color: #b58900;">sqlite3_stmt</span> *<span style="color: #268bd2;">stmt</span>;
+    <span style="color: #859900;">const</span> <span style="color: #b58900;">char</span> * <span style="color: #268bd2;">tail</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">rc</span>=sqlite3_prepare_v2(db,<span style="color: #2aa198;">"select * from test"</span>, -1, &amp;stmt, &amp;tail);
+    <span style="color: #859900;">if</span> (rc!=SQLITE_OK) {
+        fprintf(<span style="color: #2aa198;">"error prepare stmt: %s"</span>, sqlite3_errmsg(db));
+        exit (1);
+    }
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">count</span>=0;
+    rc=sqlite3_step(stmt);
+    <span style="color: #859900;">while</span> (rc==SQLITE_ROW) {
+        count++;
+        rc=sqlite3_step(stmt);
+    }
+    sqlite3_finalize(stmt);
+    printf(<span style="color: #2aa198;">"query returns %d\n"</span>,count);
+}
+
+<span style="color: #b58900;">void</span> * <span style="color: #268bd2;">fun</span>(<span style="color: #b58900;">void</span> * <span style="color: #268bd2;">args</span>) {
+    query((<span style="color: #b58900;">sqlite3</span> *)args);
+}
+
+
+<span style="color: #b58900;">int</span> <span style="color: #268bd2;">main</span>(<span style="color: #b58900;">int</span> <span style="color: #268bd2;">argc</span>, <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">argv</span>[]) {
+    sqlite3_config(SQLITE_CONFIG_SERIALIZED);
+    <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">sqlite3_enable_shared_cache(SQLITE_OPEN_SHAREDCACHE); </span><span style="color: #586e75; font-style: italic;">*/</span>
+    <span style="color: #b58900;">sqlite3</span> *<span style="color: #268bd2;">db</span>;
+    <span style="color: #b58900;">sqlite3</span> *<span style="color: #268bd2;">db2</span>;
+
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">rc</span>=sqlite3_open_v2(<span style="color: #2aa198;">"/home/sunway/test.db"</span>, &amp;db, SQLITE_OPEN_READWRITE, 0);
+
+    <span style="color: #859900;">if</span> (rc) {
+        printf(<span style="color: #2aa198;">"can't open db: %s"</span>,sqlite3_errmsg(db));
+        sqlite3_close(db);
+        exit(1);
+    }
+
+    <span style="color: #b58900;">pthread_t</span> <span style="color: #268bd2;">tid</span>;
+    pthread_create(&amp;tid, <span style="color: #2aa198;">NULL</span>, fun, db);
+
+    query(db);
+    pthread_join(tid, <span style="color: #2aa198;">NULL</span>);
+    <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">char * sql="insert into test values (\"test\",1)"; </span><span style="color: #586e75; font-style: italic;">*/</span>
+    <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">char * zerr; </span><span style="color: #586e75; font-style: italic;">*/</span>
+    <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">rc=sqlite3_exec(db,sql,0,0,&amp;zerr); </span><span style="color: #586e75; font-style: italic;">*/</span>
+    <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">if (rc!=SQLITE_OK) { </span><span style="color: #586e75; font-style: italic;">*/</span>
+    <span style="color: #586e75; font-style: italic;">/*  </span><span style="color: #586e75; font-style: italic;">printf("error when insert: %s", zerr); </span><span style="color: #586e75; font-style: italic;">*/</span>
+    <span style="color: #586e75; font-style: italic;">/*  </span><span style="color: #586e75; font-style: italic;">exit (1); </span><span style="color: #586e75; font-style: italic;">*/</span>
+    <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">} </span><span style="color: #586e75; font-style: italic;">*/</span>
+    <span style="color: #859900;">return</span> 0;
+}
+
+</pre>
+
 </div>
 </div>
 
 </div>
 
 <div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> sqlite</h3>
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> SQLite</h3>
 <div class="outline-text-3" id="text-1-3">
 
 
@@ -1077,7 +1313,7 @@ Note:
 </li>
 <li>create index 可以指定多个字段 (以利于形成 covering index), 但多个字
   段是联合在一起索引的, 例如 (x,y,z), 则使用 x, x and y, x and y and
-  z 时索引起作用, 但使用 y and z, z 时不起作用. 
+  z 时索引起作用, 但使用 y and z, z 时不起作用.
 </li>
 </ul>
 
@@ -1141,7 +1377,7 @@ distinct 可以同时修饰多个字段
 
 
 
-<pre class="src src-sql"><span style="color: #859900;">select</span> <span style="color: #859900;">distinct</span> id, <span style="color: #859900;">name</span> <span style="color: #859900;">from</span> xxx; 
+<pre class="src src-sql"><span style="color: #859900;">select</span> <span style="color: #859900;">distinct</span> id, <span style="color: #859900;">name</span> <span style="color: #859900;">from</span> xxx;
 </pre>
 
 <p>
@@ -1225,7 +1461,7 @@ Note:
 <li>sub-query 只能返回一列.
 </li>
 <li>sub-query 有时需要返回一行 (例如在 order by 的场合), 这时若返回多行,
-  则系统只会使用第一行. 
+  则系统只会使用第一行.
 </li>
 </ul>
 
@@ -1234,7 +1470,7 @@ Note:
 <ul>
 <li id="sec-1-3-3-11-8">compound query<br/>
 compound query 要求各个查询返回相同的例, 且只能在 compound query 最后
-有一个 order by 
+有一个 order by
 <ul>
 <li id="sec-1-3-3-11-8-1">union [all]<br/>
 a | b
@@ -1302,7 +1538,7 @@ used to transform column values
 <p>
   e.g. coalesce (null, 1, 2, null) returns 1
 </p></li>
-<li>ifnull (x, y) 
+<li>ifnull (x, y)
   ifnull (x, y) &lt;==&gt; coalesce(x, y)
 </li>
 <li>nullif (x, y)
@@ -1394,7 +1630,7 @@ used to transform column values
 <ul>
 <li id="sec-1-3-3-14-2">having 与 where 的区别<br/>
 <ul>
-<li>haveing 发生在 group by 之后, 而 where 发生在 group by 之前;  
+<li>haveing 发生在 group by 之后, 而 where 发生在 group by 之前;
 </li>
 <li>可以使用 aggregation 函数
 </li>
@@ -1537,9 +1773,50 @@ select x from foo where x="a" or y="a";
 <h5 id="sec-1-3-4-1"><span class="section-number-5">1.3.4.1</span> concurrent &amp; lock</h5>
 <div class="outline-text-5" id="text-1-3-4-1">
 
+<p>sqlite 在不同的层次上定义了三种锁
+</p><ul>
+<li id="sec-1-3-4-1-1">thread lock<br/>
 <ul>
-<li id="sec-1-3-4-1-1">lock<br/>
+<li>shared cache mode lock
 <ul>
+<li>threading modes lock
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-4-1-2">db file lock<br/>
+<ul>
+<li id="sec-1-3-4-1-2-1">lock<br/>
+
+<p>
+这里的 lock 是指数据库级别的文件锁.
+实际上, 为了实现这种多状态的锁, sqlite 针对 sqlite db 文件的三块区域定
+义了三个读写锁, 通过对不同的区域的锁定实现不同的状态.
+</p>
+
+
+
+<pre class="example">                         read
+                 -+------------------------------------+
+                  |                exclusive           |
+                  |          -+------------------------+--------+
+ -+---+        -+-+-+  write  | -+---+---+---+---+---+-v-+----+ |
+  |  -+--------&gt;+  -+--------&gt;+  +   |   |   |   |   |   |    | |
+ -+-+-+        -+---+         | -+---+---+---+---+---+-+-+----+ |
+rese|rved       pending       |          shared        |        |
+    ^         (starting)     -+------------------------+--------+
+   -+--------------------------------------------------+
+</pre>
+
+
+<ul>
+<li>pending
+</li>
 <li>unlocked
 </li>
 <li>shared
@@ -1549,7 +1826,7 @@ select x from foo where x="a" or y="a";
 <p>执行任何语句前要进行 shared 状态
 </p><ul>
 <li>reserved
-  执行任何写语句前需要进入 reserved 状态
+  执行任何写语句前需要首先进入 reserved 状态
 
 <p>
   shared 想升级为 reserved, 必须保证当前没有任何 reserved 及 exclusive lock
@@ -1558,7 +1835,7 @@ select x from foo where x="a" or y="a";
 <ul>
 <li>pending
 
-<p>    
+<p>
     commit 前需要进行 pending 状态
 </p>
 <p>
@@ -1576,7 +1853,8 @@ select x from foo where x="a" or y="a";
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-4-1-2">dead lock example<br/>
+<li id="sec-1-3-4-1-2-2">dead lock example<br/>
+
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <colgroup><col class="left" /><col class="left" />
 </colgroup>
@@ -1603,7 +1881,7 @@ select x from foo where x="a" or y="a";
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-4-1-3">transaction<br/>
+<li id="sec-1-3-4-1-2-3">transaction<br/>
 <ul>
 <li>begin [deferred]
 </li>
@@ -1616,6 +1894,8 @@ select x from foo where x="a" or y="a";
 
 </li>
 </ul>
+</li>
+</ul>
 </div>
 
 </div>
@@ -1626,6 +1906,33 @@ select x from foo where x="a" or y="a";
 
 <ul>
 <li id="sec-1-3-4-2-1">Shared Cache Mode<br/>
+
+<p>
+shared cache mode 主要应用在嵌入式系统中, 可以使同一个进程的多个
+connection 共享 page cache, 以显著的降低内存和 io 的消耗. 但这需要引入
+额外的锁机制, 导致多个线程同时查询时速度非常慢
+</p>
+<p>
+shared cache mode 的比较:
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">MULTITHREAD, 三个线程同时查询</th><th scope="col" class="left">每个线程的 rss</th></tr>
+</thead>
+<tbody>
+<tr><td class="left">未使用 shared cache mode</td><td class="left">8M</td></tr>
+<tr><td class="left">使用 shared cache mode</td><td class="left">3.3M</td></tr>
+</tbody>
+</table>
+
+
+
+<ul>
+<li id="sec-1-3-4-2-1-1">Read Uncommitted Isolation Level<br/>
+</li>
+</ul>
 </li>
 </ul>
 <ul>
@@ -1636,7 +1943,7 @@ select x from foo where x="a" or y="a";
 SQLite support three different threading modes:
 </p>
 <ul>
-<li>Single-thread. 
+<li>SINGLETHREAD
 </li>
 </ul>
 
@@ -1649,7 +1956,7 @@ more than a single thread at once.
 同时只能有一个线程在使用 connection (相同或不同的), 否则出现段错误.
 </p>
 <ul>
-<li>Multi-thread. 
+<li>MULTITHREAD
 </li>
 </ul>
 
@@ -1663,7 +1970,7 @@ more threads.
 同时可以有多个线程使用 connection (不同的), 否则段错误.
 </p>
 <ul>
-<li>Serialized. 
+<li>SERIALIZED
 </li>
 </ul>
 
@@ -1685,6 +1992,9 @@ selected.
 The default mode is serialized.
 </p>
 <p>
+在 android 4.0 上, 该配置在编译时设为 SERIALIZED, 在 android 4.1 变为 MULTITHREAD
+</p>
+<p>
 同时可以有多个线程使用 connection (相同或不同的)
 </p>
 <ul>
@@ -1704,18 +2014,19 @@ The default mode is serialized.
 <tr><td class="left">使用 MULTITHREAD 在两个线程使用不同的 connection 查询</td><td class="right">7.3</td><td class="right">4</td><td class="right">0.4</td></tr>
 <tr><td class="left">使用 MULTITHREAD 在两个线程使用不同的 connection 查询</td><td class="right">7.8</td><td class="right">4.2</td><td class="right">0.4</td></tr>
 <tr><td class="left">使用 MULTITHREAD 在两个线程使用相同的 connection 查询</td><td class="right">27</td><td class="right">28</td><td class="right">9</td></tr>
+<tr><td class="left">使用 SHARED CACHE MODE 在两个线程中使用不同的 connection 查询</td><td class="right">31</td><td class="right">31</td><td class="right">11</td></tr>
 </tbody>
 </table>
 
 
 <p>
-可见, 
+可见,
 </p>
 <ul>
 <li>不使用多线程的情况下, SINGLETHREAD 和 MULTITHREAD 差不多,SERIALZIED
   变慢
 </li>
-<li>使用多线程的情况下, 
+<li>使用多线程的情况下,
 <ul>
 <li>SINGLETHREAD 无法使用
 </li>
@@ -1732,7 +2043,7 @@ The default mode is serialized.
 
 
 <p>
-综上, 使用 MULTITHREAD 多线程使用不同的 connection 是最好的选择. 
+综上, 使用 MULTITHREAD 多线程使用不同的 connection 是最好的选择.
 </p>
 </li>
 </ul>
@@ -1955,6 +2266,9 @@ do.
 <h5 id="sec-1-3-6-2"><span class="section-number-5">1.3.6.2</span> cache<sub>size</sub></h5>
 <div class="outline-text-5" id="text-1-3-6-2">
 
+<p>cache<sub>size</sub> 表示 writer 在真正 flush 日志文件和 page cache 之前, 最多
+能 cache 多少修改.
+</p>
 </div>
 
 </div>
@@ -2003,6 +2317,12 @@ do.
 <h5 id="sec-1-3-6-8"><span class="section-number-5">1.3.6.8</span> synchronous = FULL/NORMAL/OFF</h5>
 <div class="outline-text-5" id="text-1-3-6-8">
 
+<p>synchronous 表示 write 在 commit 或 cache 满后如何 flush 日志文件.
+</p>
+<p>
+特别的,在 WAL 模式下, synchronous 为 NORMAL 时 commit 也不再写数据库,
+只有checkout 时才刷新.
+</p>
 </div>
 </div>
 
@@ -2013,29 +2333,340 @@ do.
 <div class="outline-text-4" id="text-1-3-7">
 
 <p><a href="http://www.sqlite.org/syntaxdiagrams.html">Syntax Diagrams For SQLite</a>
-</p></div>
+</p>
+</div>
 </div>
 
 </div>
 
 <div id="outline-container-1-4" class="outline-3">
-<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Other</h3>
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Benchmark</h3>
 <div class="outline-text-3" id="text-1-4">
 
+<p>分别使用c,java 程序插入10w条记录, 设置 synchronous 为 full 或 off, 保
+存数据库文件到 sdcard 或 mtd 设备. java 程序使用 execSQL 或
+InsertHelper.
+</p>
+<ul>
+<li>java 测试程序
+</li>
+</ul>
+
+
+
+
+<pre class="src src-java"><span style="color: #859900;">private</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">writeDatabase</span>() {
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">mtd test: use /data/test.db to  mtd</span>
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">sd test: use  /storage/sdcard1/test.db</span>
+    <span style="color: #b58900;">SQLiteDatabase</span> <span style="color: #268bd2;">db</span> = SQLiteDatabase.openDatabase(<span style="color: #2aa198;">"/data/test.db"</span>, null,<span style="color: #2aa198;">SQLiteDatabase</span>.OPEN_READWRITE, null);
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">synchronous = full</span>
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">synchronous = off</span>
+    db.execSQL(<span style="color: #2aa198;">"pragma synchronous=full"</span>);
+    <span style="color: #b58900;">long</span> <span style="color: #268bd2;">startTime</span>=System.currentTimeMillis();
+    <span style="color: #b58900;">InsertHelper</span> <span style="color: #268bd2;">helper</span>=<span style="color: #859900;">new</span> <span style="color: #b58900;">InsertHelper</span>(db, <span style="color: #2aa198;">"test"</span>);
+    <span style="color: #b58900;">ContentValues</span> <span style="color: #268bd2;">values</span>=<span style="color: #859900;">new</span> <span style="color: #b58900;">ContentValues</span>();
+    values.put(<span style="color: #2aa198;">"name"</span>, <span style="color: #2aa198;">"test"</span>);
+    values.put(<span style="color: #2aa198;">"count"</span>, 3);
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">commit_time</span>=0;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">exec_time</span>=0;
+    <span style="color: #859900;">for</span> (<span style="color: #b58900;">int</span> <span style="color: #268bd2;">i</span> = 0; i &lt; 10; i++) {
+        <span style="color: #b58900;">long</span> <span style="color: #268bd2;">time1</span>=System.currentTimeMillis();
+        db.beginTransaction();
+        <span style="color: #859900;">for</span> (<span style="color: #b58900;">int</span> <span style="color: #268bd2;">j</span> = 0; j &lt; 10000; j++) {
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">execSQL test</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">db.execSQL("insert into test values (\"test\",2)");</span>
+
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">InsertHelper</span>
+            helper.insert(values);
+        }
+        db.setTransactionSuccessful();
+        <span style="color: #b58900;">long</span> <span style="color: #268bd2;">time2</span>=System.currentTimeMillis();
+        db.endTransaction();
+        <span style="color: #b58900;">long</span> <span style="color: #268bd2;">time3</span>=System.currentTimeMillis();
+
+        exec_time+=(time2-time1);
+        commit_time+=(time3-time2);
+    }
+    <span style="color: #b58900;">long</span> <span style="color: #268bd2;">endTime</span>=System.currentTimeMillis();
+    Log.e(<span style="color: #2aa198;">"sunway"</span>,<span style="color: #2aa198;">"done: all_time: "</span>+(endTime-startTime)+<span style="color: #2aa198;">"mss avg_exec_time: "</span>+exec_time/10 +<span style="color: #2aa198;">"ms "</span>+<span style="color: #2aa198;">" avg_commit_time: "</span>+commit_time/10+<span style="color: #2aa198;">"ms"</span>);
+
+}
+
+
+</pre>
+
+
+<ul>
+<li>c 测试程序
+</li>
+</ul>
+
+
+
+
+<pre class="src src-c"><span style="color: #cb4b16;">#include</span> <span style="color: #2aa198;">"sqlite3.h"</span>
+<span style="color: #cb4b16;">#include</span> <span style="color: #2aa198;">&lt;pthread.h&gt;</span>
+
+<span style="color: #b58900;">void</span> <span style="color: #268bd2;">insert</span>(<span style="color: #b58900;">sqlite3</span> * <span style="color: #268bd2;">db</span>) {
+    <span style="color: #b58900;">char</span> * <span style="color: #268bd2;">zerr</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">rc</span>=0;
+    rc=sqlite3_exec(db,<span style="color: #2aa198;">"pragma synchronous=full;"</span>,0,0,&amp;zerr);
+
+    <span style="color: #859900;">struct</span> <span style="color: #b58900;">timeval</span> <span style="color: #268bd2;">tv</span>;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">begin</span>=0;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">end</span>=0;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">exec_time</span>=0;
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">commit_time</span>=0;
+
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">j</span>=0;
+
+    gettimeofday(&amp;tv,<span style="color: #2aa198;">NULL</span>);
+    begin=tv.tv_sec*1000+tv.tv_usec/1000;
+
+    <span style="color: #859900;">for</span> (j=0; j&lt;10; j++) {
+        gettimeofday(&amp;tv,<span style="color: #2aa198;">NULL</span>);
+        <span style="color: #b58900;">int</span> <span style="color: #268bd2;">time1</span>=tv.tv_sec*1000+tv.tv_usec/1000;
+
+        rc=sqlite3_exec(db,<span style="color: #2aa198;">"begin transaction"</span>,0,0,&amp;zerr);
+        <span style="color: #b58900;">char</span> * <span style="color: #268bd2;">sql</span>=<span style="color: #2aa198;">"insert into test values (?1, ?2)"</span>;
+        <span style="color: #b58900;">sqlite3_stmt</span> *<span style="color: #268bd2;">stmt</span>;
+        <span style="color: #859900;">const</span> <span style="color: #b58900;">char</span> * <span style="color: #268bd2;">tail</span>;
+        rc=sqlite3_prepare_v2(db, sql, strlen(sql), &amp;stmt,&amp;tail);
+        <span style="color: #b58900;">int</span> <span style="color: #268bd2;">i</span>=0;
+        <span style="color: #859900;">for</span> (i = 0; i &lt; 10000; ++i) {
+            sqlite3_bind_text(stmt, 1, <span style="color: #2aa198;">"test"</span>, strlen(<span style="color: #2aa198;">"text"</span>), SQLITE_TRANSIENT);
+            sqlite3_bind_int(stmt, 2,1);
+            sqlite3_step(stmt);
+            sqlite3_reset(stmt);
+        }
+        gettimeofday(&amp;tv,<span style="color: #2aa198;">NULL</span>);
+        <span style="color: #b58900;">int</span> <span style="color: #268bd2;">time2</span>=tv.tv_sec*1000+tv.tv_usec/1000;
+
+        rc=sqlite3_exec(db,<span style="color: #2aa198;">"end transaction"</span>,0,0,&amp;zerr);
+
+        gettimeofday(&amp;tv,<span style="color: #2aa198;">NULL</span>);
+        <span style="color: #b58900;">int</span> <span style="color: #268bd2;">time3</span>=tv.tv_sec*1000+tv.tv_usec/1000;
+        sqlite3_finalize(stmt);
+        exec_time+=(time2-time1);
+        commit_time+=(time3-time2);
+    }
+    gettimeofday(&amp;tv,<span style="color: #2aa198;">NULL</span>);
+    end=tv.tv_sec*1000+tv.tv_usec/1000;
+
+    printf(<span style="color: #2aa198;">"done: total_time: %d ms, avg_exec_time: %d ms, avg_commit_time: %d ms\n"</span>, end-begin, exec_time/10, commit_time/10);
+}
+
+
+<span style="color: #b58900;">int</span> <span style="color: #268bd2;">main</span>(<span style="color: #b58900;">int</span> <span style="color: #268bd2;">argc</span>, <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">argv</span>[]) {
+    <span style="color: #b58900;">sqlite3</span> *<span style="color: #268bd2;">db</span>;
+    sqlite3_open_v2(<span style="color: #2aa198;">"/data/test.db"</span>, &amp;db, SQLITE_OPEN_READWRITE, 0);
+
+    <span style="color: #b58900;">pthread_t</span> <span style="color: #268bd2;">tid</span>;
+    pthread_create(&amp;tid, <span style="color: #2aa198;">NULL</span>, insert, db);
+    pthread_join(tid, <span style="color: #2aa198;">NULL</span>);
+
+    <span style="color: #859900;">return</span> 0;
+}
+
+</pre>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<colgroup><col class="left" /><col class="left" /><col class="left" /><col class="right" /><col class="right" /><col class="right" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">synchronous</th><th scope="col" class="left">storage</th><th scope="col" class="left">method</th><th scope="col" class="right">total<sub>time</sub> (ms)</th><th scope="col" class="right">avg<sub>exec</sub><sub>time</sub> (ms)</th><th scope="col" class="right">avg<sub>commit</sub><sub>time</sub> (ms)</th></tr>
+</thead>
+<tbody>
+<tr><td class="left">off</td><td class="left">sd</td><td class="left">c</td><td class="right">2002</td><td class="right">172</td><td class="right">27</td></tr>
+<tr><td class="left">off</td><td class="left">mtd</td><td class="left">c</td><td class="right">1888</td><td class="right">163</td><td class="right">25</td></tr>
+</tbody>
+<tbody>
+<tr><td class="left">full</td><td class="left">sd</td><td class="left">c</td><td class="right">3641</td><td class="right">165</td><td class="right">198</td></tr>
+<tr><td class="left">full</td><td class="left">mtd</td><td class="left">c</td><td class="right">1913</td><td class="right">158</td><td class="right">31</td></tr>
+</tbody>
+<tbody>
+<tr><td class="left">full</td><td class="left">ssd</td><td class="left">c</td><td class="right">450</td><td class="right">19</td><td class="right">25</td></tr>
+</tbody>
+<tbody>
+<tr><td class="left">off</td><td class="left">sd</td><td class="left">execSQL</td><td class="right">12996</td><td class="right">1269</td><td class="right">29</td></tr>
+<tr><td class="left">off</td><td class="left">sd</td><td class="left">insertHelper</td><td class="right">10458</td><td class="right">1029</td><td class="right">16</td></tr>
+<tr><td class="left">off</td><td class="left">mtd</td><td class="left">insertHelper</td><td class="right">10067</td><td class="right">977</td><td class="right">29</td></tr>
+</tbody>
+<tbody>
+<tr><td class="left">full</td><td class="left">sd</td><td class="left">execSQL</td><td class="right">15385</td><td class="right">1252</td><td class="right">285</td></tr>
+<tr><td class="left">full</td><td class="left">sd</td><td class="left">insertHelper</td><td class="right">11874</td><td class="right">987</td><td class="right">199</td></tr>
+<tr><td class="left">full</td><td class="left">mtd</td><td class="left">insertHelper</td><td class="right">9948</td><td class="right">963</td><td class="right">31</td></tr>
+</tbody>
+</table>
+
+
+<ul>
+<li>总结
+<ul>
+<li>使用 java  api 测试时, 执行 sql 语句的速度
+    比 c 程序慢 7 倍左右
+</li>
+<li>insertHelper 比普通的 execSQL 有 20% 的提升
+</li>
+<li>java api 和 c api 在 commit 时间上没有差别
+</li>
+<li>在 sd 卡上, synchronous off 有近10倍的性能提长<sup><a class="footref" name="fnr-.3" href="#fn-.3">3</a></sup>
+</li>
+<li>在 mtd 上, synchronous 似乎没有差别.
+</li>
+</ul>
+
+</li>
+</ul>
+
 
 </div>
 
-<div id="outline-container-1-4-1" class="outline-4">
-<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> WAL</h4>
-<div class="outline-text-4" id="text-1-4-1">
+</div>
 
+<div id="outline-container-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> Other</h3>
+<div class="outline-text-3" id="text-1-5">
+
+
+</div>
+
+<div id="outline-container-1-5-1" class="outline-4">
+<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> WAL</h4>
+<div class="outline-text-4" id="text-1-5-1">
+
+<p>Write Ahead Logging (WAL) 是与 sqlite 默认的 rollback journal (或
+delete journal, shadow paging) 完全不同的一种 journal mode. 通过 WAL,
+数据库可以做到读和写互相完全不干扰, 并且减少 IO 操作.
+</p>
+
+</div>
+
+<div id="outline-container-1-5-1-1" class="outline-5">
+<h5 id="sec-1-5-1-1"><span class="section-number-5">1.5.1.1</span> How WAL works</h5>
+<div class="outline-text-5" id="text-1-5-1-1">
+
+<p>当 commit 一个 write transaction 时, rollback journal 的作法是先刷新所
+有修改到 journal, 然后再刷新 cache 到数据库. 而 WAL 的作法是只将修
+改刷新到 wal journal 中, 而不修改数据库. 只有当用户调用 pragma
+wal<sub>checkpoint</sub> 或 超过 1000 页被修改时, wal journal 中的修改才会
+被写回到数据库.
+</p>
+<p>
+为了使 read transaction 能读到最新的数据, 每个 read transaction 开始时
+会扫描 wal journal, 并在 wal file 中记下一个 mark point, 在读数据库时,
+根据一个 wal index shm 判断要读的 page 是否在 wal journal 中, 若存在,
+并且不超过 mark point, 则使用 wal journal 中的数据, 否则使用数据库中的
+数据. 这样可以使得读写不用互相等待. (但这样有一点问题, 就是无法保证读到
+最新的数据, 因为有可能在读的过程中, 又有新的数据追加到 wal journal
+file 中 makr point 之后)
+</p>
+<ul>
+<li id="sec-1-5-1-1-1">WAL 的优点<br/>
+
+<ul>
+<li>读写互不影响
+</li>
+<li>降低了IO的使用
+
+<p>
+  commit 只需要写 wal journal file, 不需要写数据库. 特别的, 若 WAL 模式
+  下设置 pragma synchronous 为 NORMAL 的话,则 commit 根本不会导致 IO 操
+  作,只有 checkpoint 才会.  因此, 在 wal 模式下, commit 不进行 IO 可能
+  会导致异常重启后数据丢失, 但不会造成数据库崩溃.
+</p>
+<p>
+  checkpoint 进行的 IO 操作包括:
+</p><ol>
+<li>写 wal 到磁盘
+</li>
+<li>写 wal 到数据库
+</li>
+<li>重置 wal
+</li>
+</ol>
+
+</li>
+</ul>
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-5-1-1-2">WAL 的缺点<br/>
+
+<ul>
+<li>可能无法读到"最新"的数据, 因为 read transaction 无法 block write
+  transaction
+</li>
+<li>过大的 read transaction 会阻止 checkpoint (当 read transaction 正在进
+  行时, 虽然允许 write transaction 追加数据到 wal journal, 但不允许清空,
+  因为 read transaction 已经在journal 中标记了 mark point), 进而导致
+  wal journal 过大, 从而使 read transaction 变慢
+</li>
+</ul>
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-5-1-1-3">WAL 的配置<br/>
+<ul>
+<li>pragma journal<sub>mode</sub>=wal 开启 wal 模式
+</li>
+<li>pragma journal<sub>mode</sub>=delete 关闭 wal 模式
+</li>
+<li>wal 模式的配置是 persistent 的
+</li>
+<li>pragma wal<sub>autocheckpoint</sub>=1000 设置 autocheckpoint 的 thresh-hold
+  特别的, 这个值越大, 则写的性能越高, 这个值越小, 则读的性能越好.
+</li>
+</ul>
+
+
+</li>
+</ul>
 </div>
 
 </div>
 
-<div id="outline-container-1-4-2" class="outline-4">
-<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> FTS</h4>
-<div class="outline-text-4" id="text-1-4-2">
+<div id="outline-container-1-5-1-2" class="outline-5">
+<h5 id="sec-1-5-1-2"><span class="section-number-5">1.5.1.2</span> 关于 WAL journal file 的一个实验</h5>
+<div class="outline-text-5" id="text-1-5-1-2">
+
+
+
+
+<pre class="src src-sql"><span style="color: #586e75; font-style: italic;">-- these are auto-committed</span>
+<span style="color: #859900;">insert</span> <span style="color: #859900;">into</span> test <span style="color: #859900;">values</span> ("a", 1);
+<span style="color: #859900;">insert</span> <span style="color: #859900;">into</span> test <span style="color: #859900;">values</span> ("a", 1);
+<span style="color: #859900;">insert</span> <span style="color: #859900;">into</span> test <span style="color: #859900;">values</span> ("a", 1);
+<span style="color: #586e75; font-style: italic;">-- &#29616;&#22312;, &#35760;&#24405;&#24212;&#35813;&#23384;&#22312; test.db-wal &#20013;, &#20294;&#36824;&#27809;&#26377;&#20889;&#21040;&#25968;&#25454;&#24211;&#20013;</span>
+<span style="color: #586e75; font-style: italic;">-- case A: &#19981;&#35843;&#29992; pragma wal_checkpoint</span>
+  <span style="color: #586e75; font-style: italic;">-- kill sqlite3_process</span>
+  <span style="color: #586e75; font-style: italic;">-- case A1: &#20808;&#21024;&#38500; test.db-wal, &#20877;&#25171;&#24320; test.db</span>
+    <span style="color: #859900;">select</span> <span style="color: #859900;">count</span>(*) <span style="color: #859900;">from</span> test <span style="color: #859900;">where</span> <span style="color: #859900;">name</span>="a";
+    0
+  <span style="color: #586e75; font-style: italic;">-- case A2: &#19981;&#21024;&#38500; test.db-wal, &#25214;&#24320; test.db</span>
+    <span style="color: #859900;">select</span> <span style="color: #859900;">count</span>(*) <span style="color: #859900;">from</span> test <span style="color: #859900;">where</span> <span style="color: #859900;">name</span>="a";
+    3
+<span style="color: #586e75; font-style: italic;">-- case B: &#35843;&#29992; pragma wal_checkpoint</span>
+  <span style="color: #586e75; font-style: italic;">-- kill sqlite3_process</span>
+  <span style="color: #586e75; font-style: italic;">-- &#26080;&#35770;&#26159;&#21542;&#21024;&#38500; test.db-wal, &#25171;&#24320; test.db</span>
+    <span style="color: #859900;">select</span> <span style="color: #859900;">count</span>(*) <span style="color: #859900;">from</span> test <span style="color: #859900;">where</span> <span style="color: #859900;">name</span>="a";
+    3
+</pre>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-5-2" class="outline-4">
+<h4 id="sec-1-5-2"><span class="section-number-4">1.5.2</span> FTS</h4>
+<div class="outline-text-4" id="text-1-5-2">
 
 <p>FTS (Full Text Search), 即全文检索,主要有以下几个方面:
 </p>
@@ -2052,9 +2683,9 @@ do.
 
 </div>
 
-<div id="outline-container-1-4-2-1" class="outline-5">
-<h5 id="sec-1-4-2-1"><span class="section-number-5">1.4.2.1</span> stemming</h5>
-<div class="outline-text-5" id="text-1-4-2-1">
+<div id="outline-container-1-5-2-1" class="outline-5">
+<h5 id="sec-1-5-2-1"><span class="section-number-5">1.5.2.1</span> stemming</h5>
+<div class="outline-text-5" id="text-1-5-2-1">
 
 <p><a href="http://en.wikipedia.org/wiki/Stemming">http://en.wikipedia.org/wiki/Stemming</a>
 </p>
@@ -2075,9 +2706,9 @@ android contacts provider 就是使用的一种叫做 porter 的 stemmer 算法,
 
 </div>
 
-<div id="outline-container-1-4-2-2" class="outline-5">
-<h5 id="sec-1-4-2-2"><span class="section-number-5">1.4.2.2</span> tokenizer and word segregation (分词)</h5>
-<div class="outline-text-5" id="text-1-4-2-2">
+<div id="outline-container-1-5-2-2" class="outline-5">
+<h5 id="sec-1-5-2-2"><span class="section-number-5">1.5.2.2</span> tokenizer and word segregation (分词)</h5>
+<div class="outline-text-5" id="text-1-5-2-2">
 
 <p>全文检索是基于`关键字`匹配的检索, 与传统的 grep 等检索方法不同, 全文检索需要先建
 立索引文件, 建立索引文件的第一步就是将全文分解为一系列的关键字. 例如:
@@ -2105,7 +2736,7 @@ tokenize 的过程主要分为三步:
 
 
 <ul>
-<li id="sec-1-4-2-2-1">分词<br/>
+<li id="sec-1-5-2-2-1">分词<br/>
 英文分词比较简单,就是以空格来分词, 对于中文或其他一些语言就麻烦的多, 以中文为例,
 主要有以下几种分词方法:
 
@@ -2210,9 +2841,9 @@ sqlite3 中因为支持 FTS, 所以也支持几种分词算法:
 
 </div>
 
-<div id="outline-container-1-4-2-3" class="outline-5">
-<h5 id="sec-1-4-2-3"><span class="section-number-5">1.4.2.3</span> inverted index (倒排索引)</h5>
-<div class="outline-text-5" id="text-1-4-2-3">
+<div id="outline-container-1-5-2-3" class="outline-5">
+<h5 id="sec-1-5-2-3"><span class="section-number-5">1.5.2.3</span> inverted index (倒排索引)</h5>
+<div class="outline-text-5" id="text-1-5-2-3">
 
 <p>通过分词算法确定关键词后, FTS 会使用倒排索引建立索引, 例如全文有两句话:
 </p>
@@ -2245,9 +2876,9 @@ sqlite3 中因为支持 FTS, 所以也支持几种分词算法:
 
 </div>
 
-<div id="outline-container-1-4-2-4" class="outline-5">
-<h5 id="sec-1-4-2-4"><span class="section-number-5">1.4.2.4</span> 查找过程</h5>
-<div class="outline-text-5" id="text-1-4-2-4">
+<div id="outline-container-1-5-2-4" class="outline-5">
+<h5 id="sec-1-5-2-4"><span class="section-number-5">1.5.2.4</span> 查找过程</h5>
+<div class="outline-text-5" id="text-1-5-2-4">
 
 <p>根据索引文件格式的不同, 查找的过程有所区别, 以 B 树为例, 查找过程就是以查找字符
 串为KEY在B树中查找该关键字,查到的VALUE就是该关键字在文档中的行列位置.
@@ -2269,9 +2900,9 @@ sqlite3 中因为支持 FTS, 所以也支持几种分词算法:
 
 </div>
 
-<div id="outline-container-1-4-2-5" class="outline-5">
-<h5 id="sec-1-4-2-5"><span class="section-number-5">1.4.2.5</span> FTS in sqlite3</h5>
-<div class="outline-text-5" id="text-1-4-2-5">
+<div id="outline-container-1-5-2-5" class="outline-5">
+<h5 id="sec-1-5-2-5"><span class="section-number-5">1.5.2.5</span> FTS in sqlite3</h5>
+<div class="outline-text-5" id="text-1-5-2-5">
 
 <ul>
 <li>create virtual table search<sub>index</sub> using fts3(content TEXT, tokenize=porter);
@@ -2290,9 +2921,9 @@ sqlite3 中因为支持 FTS, 所以也支持几种分词算法:
 
 </div>
 
-<div id="outline-container-1-4-3" class="outline-4">
-<h4 id="sec-1-4-3"><span class="section-number-4">1.4.3</span> SQLite Optimization FAQ</h4>
-<div class="outline-text-4" id="text-1-4-3">
+<div id="outline-container-1-5-3" class="outline-4">
+<h4 id="sec-1-5-3"><span class="section-number-4">1.5.3</span> SQLite Optimization FAQ</h4>
+<div class="outline-text-4" id="text-1-5-3">
 
 
 <p>
@@ -2309,6 +2940,11 @@ sqlite3 中因为支持 FTS, 所以也支持几种分词算法:
 </p>
 
 
+<p class="footnote"><sup><a class="footnum" name="fn-.3" href="#fnr-.3">3</a></sup> 具体的情况应该取决于: 1. page cache 的大小 2. 生产者(sql 程序)
+与消费者(io) 的处理数据的速度的差
+</p>
+
+
 </div>
 </div>
 </div>
@@ -2319,7 +2955,7 @@ sqlite3 中因为支持 FTS, 所以也支持几种分词算法:
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-06-04T13:23+0800</p>
+<p class="date">Date: 2013-06-08T19:02+0800</p>
 <p class="author">Author: sunway</p>
 <p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>

@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="todo"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-06-04T13:23+0800"/>
+<meta name="generated" content="2013-06-08T19:02+0800"/>
 <meta name="author" content="sunway"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -190,6 +190,8 @@ for the JavaScript code in this tag.
 <li><a href="#sec-66">66 content provider</a></li>
 <li><a href="#sec-67">67 try AndEngine &amp;&amp; Box2d</a></li>
 <li><a href="#sec-68">68 odex</a></li>
+<li><a href="#sec-69">69 sqlite optimization</a></li>
+<li><a href="#sec-70">70 cursor window 的 fillwindow 是否有问题</a></li>
 </ul>
 </div>
 </div>
@@ -913,11 +915,80 @@ care of it: the PARENT<sub>SAVE</sub><sub>DISABLED</sub><sub>MASK</sub>
 
 <p> <span class="timestamp-wrapper"> <span class="timestamp">2013-05-30 Thu 17:07</span></span><br/>
 </p></div>
+
+</div>
+
+<div id="outline-container-69" class="outline-2">
+<h2 id="sec-69"><span class="section-number-2">69</span> <span class="todo TODO">TODO</span> sqlite optimization &nbsp;&nbsp;&nbsp;<span class="tag"><span class="todo">todo</span></span></h2>
+<div class="outline-text-2" id="text-69">
+
+
+<ul>
+<li>enable WAL
+<ul>
+<li>set synchronous to NORMAL in WAL
+</li>
+<li>tuning auto<sub>checkpoint</sub> in WAL
+</li>
+</ul>
+
+</li>
+<li>use connection pool for non-WAL
+
+</li>
+<li>tuning content operation size limit
+
+</li>
+<li>tuning cache<sub>size</sub>
+
+</li>
+<li>tuning db notification
+
+</li>
+<li>for 4.0
+<ul>
+<li>porting connection pool from 4.1
+</li>
+<li>change threading mode from SERIALIZED to MULTITHREAD
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+
+<p>
+ <span class="timestamp-wrapper"> <span class="timestamp">2013-06-04 Tue 20:07</span></span><br/>
+</p></div>
+
+</div>
+
+<div id="outline-container-70" class="outline-2">
+<h2 id="sec-70"><span class="section-number-2">70</span> <span class="todo TODO">TODO</span> cursor window 的 fillwindow 是否有问题 &nbsp;&nbsp;&nbsp;<span class="tag"><span class="todo">todo</span></span></h2>
+<div class="outline-text-2" id="text-70">
+
+<ol>
+<li>查询返回 cursor
+</li>
+<li>moveToFirst, 查询第一项 A
+</li>
+<li>moveTo 10000 (超过一个 window 的大小)
+</li>
+<li>在开头插入数据
+</li>
+<li>moveToFirst, 查询第一项为 B
+</li>
+</ol>
+
+<p>Q: A B 是否可能不同?
+[2013-06-07 Fri 19:01]
+</p></div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-06-04T13:23+0800</p>
+<p class="date">Date: 2013-06-08T19:02+0800</p>
 <p class="author">Author: sunway</p>
 <p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
