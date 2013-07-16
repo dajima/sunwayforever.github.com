@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Android DEX &amp; ODEX"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-06-04T13:23+0800"/>
+<meta name="generated" content="2013-07-16T14:46+0800"/>
 <meta name="author" content="sunway"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -124,8 +124,9 @@ for the JavaScript code in this tag.
 <ul>
 <li><a href="#sec-1">1 Android DEX &amp; ODEX</a>
 <ul>
-<li><a href="#sec-1-1">1.1 dex</a></li>
-<li><a href="#sec-1-2">1.2 odex</a></li>
+<li><a href="#sec-1-1">1.1 Tools</a></li>
+<li><a href="#sec-1-2">1.2 dex</a></li>
+<li><a href="#sec-1-3">1.3 odex</a></li>
 </ul>
 </li>
 </ul>
@@ -140,28 +141,399 @@ for the JavaScript code in this tag.
 </div>
 
 <div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> dex</h3>
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Tools</h3>
 <div class="outline-text-3" id="text-1-1">
 
+
+</div>
+
+<div id="outline-container-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> dexdump</h4>
+<div class="outline-text-4" id="text-1-1-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> dx [class-&gt;dex]</h4>
+<div class="outline-text-4" id="text-1-1-2">
+
+<ul>
+<li>class 转换为 dex 
+  dx &ndash;dex HelloWorld.class  &ndash;output=classes.dex
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> dex2jar [dex-&gt;class]</h4>
+<div class="outline-text-4" id="text-1-1-3">
+
+<p>将 dex 转换为 class/jar
+</p><ul>
+<li>dex2jar classes.dex
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-4" class="outline-4">
+<h4 id="sec-1-1-4"><span class="section-number-4">1.1.4</span> smali [smali-&gt;dex]</h4>
+<div class="outline-text-4" id="text-1-1-4">
+
+<ul>
+<li>smali 转换为 dex
+  java -jar smali.jar -o classes.dex HelloWorld.smali
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-5" class="outline-4">
+<h4 id="sec-1-1-5"><span class="section-number-4">1.1.5</span> baksmali [dex-&gt;smali]</h4>
+<div class="outline-text-4" id="text-1-1-5">
+
+<ul>
+<li>dex 转换为 smali
+  java -jar baksmali classes.dex
+</li>
+</ul>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-6" class="outline-4">
+<h4 id="sec-1-1-6"><span class="section-number-4">1.1.6</span> apktool [dex-&gt;smali-&gt;dex]</h4>
+<div class="outline-text-4" id="text-1-1-6">
+
+<p>apktool use smali/baksmali to decode/encode dex, and also
+decode/encode xml e.g. manifest.xml
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-7" class="outline-4">
+<h4 id="sec-1-1-7"><span class="section-number-4">1.1.7</span> adb shell dalvikvm</h4>
+<div class="outline-text-4" id="text-1-1-7">
+
+<p>android 里的 `java`, 例如:
+adb shell dalvikvm -cp /data/Test.apk Hello
+</p></div>
 </div>
 
 </div>
 
 <div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> odex</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> dex</h3>
 <div class="outline-text-3" id="text-1-2">
+
+
+</div>
+
+<div id="outline-container-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> dex 基于寄存器</h4>
+<div class="outline-text-4" id="text-1-2-1">
+
+
+<p>
+java -jar smali.jar classes.dex
+</p>
+
+
+
+<pre class="example">.class public LHelloWorld;
+
+#Ye olde hello world application
+#To assemble and run this on a phone or emulator:
+#
+#java -jar smali.jar -o classes.dex HelloWorld.smali
+#zip HelloWorld.zip classes.dex
+#adb push HelloWorld.zip /data/local
+#adb shell dalvikvm -cp /data/local/HelloWorld.zip HelloWorld
+#
+#if you get out of memory type errors when running smali.jar, try
+#java -Xmx512m -jar smali.jar HelloWorld.smali
+#instead
+
+.super Ljava/lang/Object;
+
+.method public static main([Ljava/lang/String;)V
+    .registers 2
+
+    sget-object v0, Ljava/lang/System;-&gt;out:Ljava/io/PrintStream;
+
+    const-string        v1, "Hello World!"
+
+    invoke-virtual {v0, v1}, Ljava/io/PrintStream;-&gt;println(Ljava/lang/String;)V
+
+    return-void
+.end method
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> dex 优化了常量池</h4>
+<div class="outline-text-4" id="text-1-2-2">
+
+
+<p>
+dexdump classes.dex
+</p>
+
+
+
+<pre class="example">Processing 'classes.dex'...
+Opened 'classes.dex', DEX version '035'
+Class #0            -
+  Class descriptor  : 'LHelloWorld2;'
+  Access flags      : 0x0001 (PUBLIC)
+  Superclass        : 'Ljava/lang/Object;'
+  Interfaces        -
+  Static fields     -
+  Instance fields   -
+  Direct methods    -
+    #0              : (in LHelloWorld2;)
+      name          : '&lt;init&gt;'
+      type          : '()V'
+      access        : 0x10001 (PUBLIC CONSTRUCTOR)
+      code          -
+      registers     : 1
+      ins           : 1
+      outs          : 1
+      insns size    : 4 16-bit code units
+00016c:                                        |[00016c] HelloWorld2.&lt;init&gt;:()V
+00017c: 7010 0500 0000                         |0000: invoke-direct {v0}, Ljava/lang/Object;.&lt;init&gt;:()V // method@0005
+000182: 0e00                                   |0003: return-void
+      catches       : (none)
+      positions     : 
+        0x0000 line=2
+      locals        : 
+        0x0000 - 0x0004 reg=0 this LHelloWorld2; 
+
+    #1              : (in LHelloWorld2;)
+      name          : 'main'
+      type          : '([Ljava/lang/String;)V'
+      access        : 0x0009 (PUBLIC STATIC)
+      code          -
+      registers     : 3
+      ins           : 1
+      outs          : 2
+      insns size    : 8 16-bit code units
+000184:                                        |[000184] HelloWorld2.main:([Ljava/lang/String;)V
+000194: 6200 0000                              |0000: sget-object v0, Ljava/lang/System;.out:Ljava/io/PrintStream; // field@0000
+000198: 1a01 0c00                              |0002: const-string v1, "hello" // string@000c
+00019c: 6e20 0400 1000                         |0004: invoke-virtual {v0, v1}, Ljava/io/PrintStream;.println:(Ljava/lang/String;)V // method@0004
+0001a2: 0e00                                   |0007: return-void
+      catches       : (none)
+      positions     : 
+        0x0000 line=4
+        0x0007 line=5
+      locals        : 
+
+  Virtual methods   -
+  source_file_idx   : 2 (HelloWorld2.java)
+
+Class #1            -
+  Class descriptor  : 'LHelloWorld;'
+  Access flags      : 0x0001 (PUBLIC)
+  Superclass        : 'Ljava/lang/Object;'
+  Interfaces        -
+  Static fields     -
+  Instance fields   -
+  Direct methods    -
+    #0              : (in LHelloWorld;)
+      name          : '&lt;init&gt;'
+      type          : '()V'
+      access        : 0x10001 (PUBLIC CONSTRUCTOR)
+      code          -
+      registers     : 1
+      ins           : 1
+      outs          : 1
+      insns size    : 4 16-bit code units
+0001a4:                                        |[0001a4] HelloWorld.&lt;init&gt;:()V
+0001b4: 7010 0500 0000                         |0000: invoke-direct {v0}, Ljava/lang/Object;.&lt;init&gt;:()V // method@0005
+0001ba: 0e00                                   |0003: return-void
+      catches       : (none)
+      positions     : 
+        0x0000 line=2
+      locals        : 
+        0x0000 - 0x0004 reg=0 this LHelloWorld; 
+
+    #1              : (in LHelloWorld;)
+      name          : 'main'
+      type          : '([Ljava/lang/String;)V'
+      access        : 0x0009 (PUBLIC STATIC)
+      code          -
+      registers     : 3
+      ins           : 1
+      outs          : 2
+      insns size    : 8 16-bit code units
+0001bc:                                        |[0001bc] HelloWorld.main:([Ljava/lang/String;)V
+0001cc: 6200 0000                              |0000: sget-object v0, Ljava/lang/System;.out:Ljava/io/PrintStream; // field@0000
+0001d0: 1a01 0c00                              |0002: const-string v1, "hello" // string@000c
+0001d4: 6e20 0400 1000                         |0004: invoke-virtual {v0, v1}, Ljava/io/PrintStream;.println:(Ljava/lang/String;)V // method@0004
+0001da: 0e00                                   |0007: return-void
+      catches       : (none)
+      positions     : 
+        0x0000 line=4
+        0x0007 line=5
+      locals        : 
+
+  Virtual methods   -
+  source_file_idx   : 1 (HelloWorld.java)
+
+
+</pre>
+
+
+<p>
+可见, `hello` 这个字符串在两个 class 中引用的是同一个常量池中的值. 
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> odex</h3>
+<div class="outline-text-3" id="text-1-3">
 
 <p><a href="http://blog.sina.com.cn/s/blog_77d0785c0100vp8j.html">http://blog.sina.com.cn/s/blog_77d0785c0100vp8j.html</a>
 <a href="http://www.addictivetips.com/mobile/what-is-odex-and-deodex-in-android-complete-guide/">http://www.addictivetips.com/mobile/what-is-odex-and-deodex-in-android-complete-guide/</a>
+</p>
+
+</div>
+
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> dexopt</h4>
+<div class="outline-text-4" id="text-1-3-1">
+
+<p>dexopt is located in dalvik/dexopt/OptMain.cpp
+</p>
+
+</div>
+
+<div id="outline-container-1-3-1-1" class="outline-5">
+<h5 id="sec-1-3-1-1"><span class="section-number-5">1.3.1.1</span> dexopt 的作用</h5>
+<div class="outline-text-5" id="text-1-3-1-1">
+
+<ul>
+<li>verification
+
+</li>
+<li>optimization
+  /dalvik/vm/analysis/Optimize.cpp::optimizeMethod
+
+<ol>
+<li>quick替换 与 符号解析
+
+<p>     
+     将本来 java 在类加载时完成的符号解析的工作拿出来,提前将符号解析出
+     来, 并且使用相应的 `quick' 指令代替原来的基于常量池符号引用的指令,
+     例如: 将之前的
+</p>
+
+
+
+<pre class="example">invoke-virtual {v0,v1},Ljava/io/PrintStream;-&gt;println(Ljava/lang/String;)V
+</pre>
+
+
+<p>
+     替换为
+</p>
+
+
+
+<pre class="example">invoke-virtual-quick {v0,v1},vtable #0x3b
+</pre>
+
+
+</li>
+<li>inline method
+
+</li>
+<li>&hellip;
+
+</li>
+</ol>
+
+</li>
+<li>register map
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-1-2" class="outline-5">
+<h5 id="sec-1-3-1-2"><span class="section-number-5">1.3.1.2</span> There are three ways to launch dexopt</h5>
+<div class="outline-text-5" id="text-1-3-1-2">
+
+
+<ol>
+<li>From the VM.  This takes a dozen args, one of which is a file
+   descriptor that acts as both input and output.  This allows us to
+   remain ignorant of where the DEX data originally came from.
+
+</li>
+<li>From installd or another native application.  Pass in a file
+   descriptor for a zip file, a file descriptor for the output, and a
+   filename for debug messages.  Many assumptions are made about
+   what's going on (verification + optimization are enabled, boot
+   class path is in BOOTCLASSPATH, etc).
+
+</li>
+<li>On the host during a build for preoptimization. This behaves almost
+   the same as (2), except it takes file names instead of file
+   descriptors.
+</li>
+</ol>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> Why `dalvik-cache' need to be rebuild for all apps when framework.jar (or services.jar &hellip;) is changed?</h4>
+<div class="outline-text-4" id="text-1-3-2">
+
+
+<p>
+since framework.jar (and services.jar, android.policy.jar &hellip;) is
+`dynamic' linked to app (actually java doesn't have the concept of
+`dynamic link' and `static link', `dynamic' here means the jar is not
+packed into the apk), when the jar is changed, apps using the jar
+must be re-resolved according to the jar.
 </p></div>
+</div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-06-04T13:23+0800</p>
+<p class="date">Date: 2013-07-16T14:46+0800</p>
 <p class="author">Author: sunway</p>
-<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
+<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Android Resource"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-21T14:34+0800"/>
+<meta name="generated" content="2013-07-16T14:52+0800"/>
 <meta name="author" content="sunway"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -282,7 +282,7 @@ id 是一类特殊的 resource, 它们没有值, 只是利用了它们的 resID 
 
 <p>
 只定义了 resID 和 type, 没有定义值. 这种 resource 定义了一种 可配置的 "属性
-".  例如 attrs.xml 中通过 declare-styleable 定义的 style 的各个 attribute. 
+".  例如 attrs.xml 中通过 declare-styleable 定义的 style 的各个 attribute.
 </p>
 <p>
 某些 resource 可以指定这些属性, 例如
@@ -296,7 +296,7 @@ id 是一类特殊的 resource, 它们没有值, 只是利用了它们的 resID 
 </ul>
 
 
-<p>     
+<p>
 layout 可以通过 AttributeSet, TypedArray, obtainStyledAttributes 访问其
 attribute resource
 </p>
@@ -354,7 +354,7 @@ attribute resource
 </li>
 <li>res 中除 values 的其他资源文件会在 resources.arsc 中生成一些 resID 与 xml 路
    径的对应信息, 用于 getResources 时的查找. 并且这些资源文件会被转换为 axml 格
-   式后打包到 apk 中. 
+   式后打包到 apk 中.
 </li>
 </ol>
 
@@ -645,7 +645,7 @@ sort of `Assets`
                       padding=a.getDimensionPixelSize(attr,-1);
                     <span style="color: #859900;">case</span> : <span style="color: #2aa198;">com</span>.<span style="color: #2aa198;">android</span>.<span style="color: #2aa198;">internal</span>.<span style="color: #2aa198;">R</span>.<span style="color: #2aa198;">styleable</span>.<span style="color: #2aa198;">View_id</span>:
                       mId=a.getResourceId(attr,NO_ID;
-                    ...                                   
+                    ...
           <span style="color: #859900;">return</span> view;
         <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">createViewFromTag ends here</span>
     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">now that view is created, generate layout_params</span>
@@ -727,15 +727,609 @@ sort of `Assets`
 </div>
 
 <div id="outline-container-1-4-7" class="outline-4">
-<h4 id="sec-1-4-7"><span class="section-number-4">1.4.7</span> misc</h4>
+<h4 id="sec-1-4-7"><span class="section-number-4">1.4.7</span> XMLPullParser, AttribteSet, TypedValue</h4>
 <div class="outline-text-4" id="text-1-4-7">
 
 
 </div>
 
 <div id="outline-container-1-4-7-1" class="outline-5">
-<h5 id="sec-1-4-7-1"><span class="section-number-5">1.4.7.1</span> get application resources?</h5>
+<h5 id="sec-1-4-7-1"><span class="section-number-5">1.4.7.1</span> XMLPullParser 负责解析 original-xml</h5>
 <div class="outline-text-5" id="text-1-4-7-1">
+
+
+<ul>
+<li>parser.getAttributeName()
+</li>
+<li>parse.getAttributeValue()
+</li>
+<li>parset.getAttributeCount()
+</li>
+<li>&hellip;
+</li>
+</ul>
+
+
+<p>
+但 parser 只能拿到 xml 这一层次的东西, 关于 resource id 等, 它是无能为
+力的, 这时需要资源相关的 api 来进一步处理. 
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-4-7-2" class="outline-5">
+<h5 id="sec-1-4-7-2"><span class="section-number-5">1.4.7.2</span> AttribteSet 解析 compiled-xml</h5>
+<div class="outline-text-5" id="text-1-4-7-2">
+
+
+<p>
+AttribteSet 兼有 XMLPullParser 和 resource id 相关的功能, 实际上,
+XmlResourceParser 就是 AttribteSet 的一个实例类. 它的功能不仅包含
+XMLPullParser 的所有功能, 还有一部分和 resource id 相关的功能, 因为它
+解析的是 compiled-xml, 像 resouce id 这类信息在 compiled-xml 存在, 但
+在 original-xml 中是不存在的. 
+</p>
+<ul>
+<li>attr.getAttributeResourceValue()
+</li>
+<li>attr.getAttributeNameResource()
+</li>
+<li>&hellip;
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-4-7-3" class="outline-5">
+<h5 id="sec-1-4-7-3"><span class="section-number-5">1.4.7.3</span> TypedValue 是最终的和资源相关的 value</h5>
+<div class="outline-text-5" id="text-1-4-7-3">
+
+
+<p>
+AttribteSet 获取 resource id 后, 需要通过 resource (或 asset) 在资源中
+查找, 最终获取 TypedValue
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-4-7-4" class="outline-5">
+<h5 id="sec-1-4-7-4"><span class="section-number-5">1.4.7.4</span> example</h5>
+<div class="outline-text-5" id="text-1-4-7-4">
+
+
+
+
+<pre class="src src-xml">&lt;<span style="color: #268bd2;">application</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">icon</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/icon</span><span style="color: #2aa198;">"</span>
+             <span style="color: #859900;">android</span>:<span style="color: #268bd2;">label</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@string/app_name</span><span style="color: #2aa198;">"</span>
+             <span style="color: #859900;">pluto</span>:<span style="color: #268bd2;">test</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@string/app_name2</span><span style="color: #2aa198;">"</span>&gt;
+&lt;/<span style="color: #268bd2;">application</span>&gt;
+</pre>
+
+
+
+<pre class="src src-java"><span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#36820;&#22238;&#19968;&#20010;&#23383;&#31526;&#20018;: "@string/app_name2"</span>
+parser.getAttributeValue(<span style="color: #2aa198;">"http://www.w3.org/2001/pluto.html"</span>,<span style="color: #2aa198;">"test"</span>)
+
+<span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#36820;&#22238;&#19968;&#20010;&#23383;&#31526;&#20018;: "@string/app_name2"</span>
+attrs.getAttributeValue(<span style="color: #2aa198;">"http://www.w3.org/2001/pluto.html"</span>, <span style="color: #2aa198;">"test"</span>);
+
+<span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#36820;&#22238; resource id</span>
+<span style="color: #b58900;">int</span> <span style="color: #268bd2;">testId</span> = attrs.getAttributeResourceValue(<span style="color: #2aa198;">"http://www.w3.org/2001/pluto.html"</span>, <span style="color: #2aa198;">"test"</span>, 0);
+
+<span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#36820;&#22238;&#26368;&#32456;&#24341;&#29992;&#30340; app_name2</span>
+<span style="color: #b58900;">TypedValue</span> <span style="color: #268bd2;">outValue</span>=<span style="color: #859900;">new</span> <span style="color: #b58900;">TypedValue</span>();
+res.getValue(testId, outValue, true);
+
+
+</pre>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-4-8" class="outline-4">
+<h4 id="sec-1-4-8"><span class="section-number-4">1.4.8</span> Configuration Qualifiers: Providing resources and supporting multiple screen.</h4>
+<div class="outline-text-4" id="text-1-4-8">
+
+
+<p>
+<a href="http://developer.android.com/guide/topics/resources/providing-resources.html">http://developer.android.com/guide/topics/resources/providing-resources.html</a>
+<a href="http://developer.android.com/guide/practices/screens_support.html">http://developer.android.com/guide/practices/screens_support.html</a>
+</p>
+<p>
+选择合适的资源分为三步:
+</p>
+<ol>
+<li>match
+   把同一个 package 中所有 config 与 requestedConfig 进行 match, 不匹
+   配的直接去掉
+</li>
+<li>isBetterThan
+   对 match 剩下的 config 进行比较, 找到这个 package 中最合适的 config
+</li>
+<li>isMoreSpecificThan
+   对多个 package 中最合适的 config 再进行比较, 找到所有 package 中最
+   合适的 config
+</li>
+</ol>
+
+
+
+</div>
+
+<div id="outline-container-1-4-8-1" class="outline-5">
+<h5 id="sec-1-4-8-1"><span class="section-number-5">1.4.8.1</span> match</h5>
+<div class="outline-text-5" id="text-1-4-8-1">
+
+
+<p>
+density 在 match 阶段会被认为是都是 match 的, 因为系统对任何 density
+的图片都可以通过 scale 来和当前的屏幕匹配. 后续的 isBetterThan 会从各
+种 density 的图片中找到最合适的.
+</p>
+
+
+
+<pre class="src src-java"><span style="color: #b58900;">bool</span> <span style="color: #268bd2;">ResTable_config</span>::match(<span style="color: #859900;">const</span> <span style="color: #b58900;">ResTable_config</span>&amp; settings) <span style="color: #859900;">const</span> {
+    <span style="color: #859900;">if</span> (imsi != 0) {
+        <span style="color: #859900;">if</span> (mcc != 0 &amp;&amp; mcc != settings.mcc) {
+            <span style="color: #859900;">return</span> false;
+        }
+        <span style="color: #859900;">if</span> (mnc != 0 &amp;&amp; mnc != settings.mnc) {
+            <span style="color: #859900;">return</span> false;
+        }
+    }
+    <span style="color: #859900;">if</span> (locale != 0) {
+        <span style="color: #859900;">if</span> (language[0] != 0
+            &amp;&amp; (language[0] != settings.language[0]
+                || language[1] != settings.language[1])) {
+            <span style="color: #859900;">return</span> false;
+        }
+        <span style="color: #859900;">if</span> (country[0] != 0
+            &amp;&amp; (country[0] != settings.country[0]
+                || country[1] != settings.country[1])) {
+            <span style="color: #859900;">return</span> false;
+        }
+    }
+    <span style="color: #859900;">if</span> (screenConfig != 0) {
+        <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">screenSize</span> = screenLayout&amp;MASK_SCREENSIZE;
+        <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">setScreenSize</span> = settings.screenLayout&amp;MASK_SCREENSIZE;
+        <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">Any screen sizes for larger screens than the setting do not</span>
+        <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">match.</span>
+        <span style="color: #859900;">if</span> (screenSize != 0 &amp;&amp; screenSize &gt; setScreenSize) {
+            <span style="color: #859900;">return</span> false;
+        }
+
+        <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">screenLong</span> = screenLayout&amp;MASK_SCREENLONG;
+        <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">setScreenLong</span> = settings.screenLayout&amp;MASK_SCREENLONG;
+        <span style="color: #859900;">if</span> (screenLong != 0 &amp;&amp; screenLong != setScreenLong) {
+            <span style="color: #859900;">return</span> false;
+        }
+
+        <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">uiModeType</span> = uiMode&amp;MASK_UI_MODE_TYPE;
+        <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">setUiModeType</span> = settings.uiMode&amp;MASK_UI_MODE_TYPE;
+        <span style="color: #859900;">if</span> (uiModeType != 0 &amp;&amp; uiModeType != setUiModeType) {
+            <span style="color: #859900;">return</span> false;
+        }
+
+        <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">uiModeNight</span> = uiMode&amp;MASK_UI_MODE_NIGHT;
+        <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">setUiModeNight</span> = settings.uiMode&amp;MASK_UI_MODE_NIGHT;
+        <span style="color: #859900;">if</span> (uiModeNight != 0 &amp;&amp; uiModeNight != setUiModeNight) {
+            <span style="color: #859900;">return</span> false;
+        }
+
+        <span style="color: #859900;">if</span> (smallestScreenWidthDp != 0
+            &amp;&amp; smallestScreenWidthDp &gt; settings.smallestScreenWidthDp) {
+            <span style="color: #859900;">return</span> false;
+        }
+    }
+    <span style="color: #859900;">if</span> (screenSizeDp != 0) {
+        <span style="color: #859900;">if</span> (screenWidthDp != 0 &amp;&amp; screenWidthDp &gt; settings.screenWidthDp) {
+            <span style="color: #586e75; font-style: italic;">//</span><span style="color: #586e75; font-style: italic;">ALOGI("Filtering out width %d in requested %d", screenWidthDp, settings.screenWidthDp);</span>
+            <span style="color: #859900;">return</span> false;
+        }
+        <span style="color: #859900;">if</span> (screenHeightDp != 0 &amp;&amp; screenHeightDp &gt; settings.screenHeightDp) {
+            <span style="color: #586e75; font-style: italic;">//</span><span style="color: #586e75; font-style: italic;">ALOGI("Filtering out height %d in requested %d", screenHeightDp, settings.screenHeightDp);</span>
+            <span style="color: #859900;">return</span> false;
+        }
+    }
+    <span style="color: #859900;">if</span> (screenType != 0) {
+        <span style="color: #859900;">if</span> (orientation != 0 &amp;&amp; orientation != settings.orientation) {
+            <span style="color: #859900;">return</span> false;
+        }
+        <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">density always matches - we can scale it.  See isBetterThan</span>
+        <span style="color: #859900;">if</span> (touchscreen != 0 &amp;&amp; touchscreen != settings.touchscreen) {
+            <span style="color: #859900;">return</span> false;
+        }
+    }
+    <span style="color: #859900;">if</span> (input != 0) {
+        <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">keysHidden</span> = inputFlags&amp;MASK_KEYSHIDDEN;
+        <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">setKeysHidden</span> = settings.inputFlags&amp;MASK_KEYSHIDDEN;
+        <span style="color: #859900;">if</span> (keysHidden != 0 &amp;&amp; keysHidden != setKeysHidden) {
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">For compatibility, we count a request for KEYSHIDDEN_NO as also</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">matching the more recent KEYSHIDDEN_SOFT.  Basically</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">KEYSHIDDEN_NO means there is some kind of keyboard available.</span>
+            <span style="color: #586e75; font-style: italic;">//</span><span style="color: #586e75; font-style: italic;">ALOGI("Matching keysHidden: have=%d, config=%d\n", keysHidden, setKeysHidden);</span>
+            <span style="color: #859900;">if</span> (keysHidden != KEYSHIDDEN_NO || setKeysHidden != KEYSHIDDEN_SOFT) {
+                <span style="color: #586e75; font-style: italic;">//</span><span style="color: #586e75; font-style: italic;">ALOGI("No match!");</span>
+                <span style="color: #859900;">return</span> false;
+            }
+        }
+        <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">navHidden</span> = inputFlags&amp;MASK_NAVHIDDEN;
+        <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">setNavHidden</span> = settings.inputFlags&amp;MASK_NAVHIDDEN;
+        <span style="color: #859900;">if</span> (navHidden != 0 &amp;&amp; navHidden != setNavHidden) {
+            <span style="color: #859900;">return</span> false;
+        }
+        <span style="color: #859900;">if</span> (keyboard != 0 &amp;&amp; keyboard != settings.keyboard) {
+            <span style="color: #859900;">return</span> false;
+        }
+        <span style="color: #859900;">if</span> (navigation != 0 &amp;&amp; navigation != settings.navigation) {
+            <span style="color: #859900;">return</span> false;
+        }
+    }
+    <span style="color: #859900;">if</span> (screenSize != 0) {
+        <span style="color: #859900;">if</span> (screenWidth != 0 &amp;&amp; screenWidth &gt; settings.screenWidth) {
+            <span style="color: #859900;">return</span> false;
+        }
+        <span style="color: #859900;">if</span> (screenHeight != 0 &amp;&amp; screenHeight &gt; settings.screenHeight) {
+            <span style="color: #859900;">return</span> false;
+        }
+    }
+    <span style="color: #859900;">if</span> (version != 0) {
+        <span style="color: #859900;">if</span> (sdkVersion != 0 &amp;&amp; sdkVersion &gt; settings.sdkVersion) {
+            <span style="color: #859900;">return</span> false;
+        }
+        <span style="color: #859900;">if</span> (minorVersion != 0 &amp;&amp; minorVersion != settings.minorVersion) {
+            <span style="color: #859900;">return</span> false;
+        }
+    }
+    <span style="color: #859900;">return</span> true;
+}
+
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-4-8-2" class="outline-5">
+<h5 id="sec-1-4-8-2"><span class="section-number-5">1.4.8.2</span> isBetterThan</h5>
+<div class="outline-text-5" id="text-1-4-8-2">
+
+
+<p>
+isBetterThan(targetConfig, requestedConfig) is used to check `whether
+this config is better than targetConfig according to requestedConfig'
+</p>
+<p>
+其中density 的判断比较特殊, 基本上, 两个原则:
+</p>
+<ol>
+<li>接近的优先
+</li>
+<li>大的更优先
+</li>
+</ol>
+
+
+<p>
+具体的: 
+</p>
+<ol>
+<li>若 requestedConfig 比 thisConfig 和 targetConfig 都大, 则从
+   thisConfig 和 targetConfig 中选择大的
+
+</li>
+<li>若 requestedConfig 比 thisConfig 和 targetConfig 都小, 则从
+   thisConfig 和 targetConfig 中选择小的
+
+</li>
+<li>若 requestedConfig 位于 thisConfig 和 targetConfig 之间, 则系统会在
+   两者间选一个中间点 r, requestedConfig 位于 thisConfig 和 中间点之间
+   的,选择 thisConfig, 否则选择 targetConfig. 中间点 r 的选择不是简单的
+   取了个中间值, 而要使用了一个公式来获得:
+</li>
+</ol>
+
+
+
+
+<div style="text-align: center">
+
+
+
+</div>
+
+
+<p>
+通过 gnuplot 画图可以观察到:
+</p>
+
+
+<p>
+<img src="plot.png"  alt="plot.png" />
+</p>
+<p>
+固定 h 为 100
+</p>
+
+<p>
+<img src="plot2.png"  alt="plot2.png" />
+</p>
+<p>
+r 始终偏向 l (h&gt;l), 且 h-l 越大, 越偏向 l
+</p>
+<p>
+例如:
+</p><ol>
+<li>h=320, l=120, request=240, 则 r=160 (&lt;220), 选择 h
+</li>
+<li>h=240, l=120, request=160, 则 r=147 (&lt;180), 选择 h
+</li>
+</ol>
+
+
+
+
+
+<pre class="src src-java"><span style="color: #b58900;">bool</span> <span style="color: #268bd2;">ResTable_config</span>::isBetterThan(<span style="color: #859900;">const</span> <span style="color: #b58900;">ResTable_config</span>&amp; o,
+                                   <span style="color: #859900;">const</span> <span style="color: #b58900;">ResTable_config</span>* requested) <span style="color: #859900;">const</span> {
+    <span style="color: #859900;">if</span> (requested) {
+        <span style="color: #859900;">if</span> (imsi || o.imsi) {
+            <span style="color: #859900;">if</span> ((mcc != o.mcc) &amp;&amp; requested-&gt;mcc) {
+                <span style="color: #859900;">return</span> (mcc);
+            }
+
+            <span style="color: #859900;">if</span> ((mnc != o.mnc) &amp;&amp; requested-&gt;mnc) {
+                <span style="color: #859900;">return</span> (mnc);
+            }
+        }
+
+        <span style="color: #859900;">if</span> (locale || o.locale) {
+            <span style="color: #859900;">if</span> ((language[0] != o.language[0]) &amp;&amp; requested-&gt;language[0]) {
+                <span style="color: #859900;">return</span> (language[0]);
+            }
+
+            <span style="color: #859900;">if</span> ((country[0] != o.country[0]) &amp;&amp; requested-&gt;country[0]) {
+                <span style="color: #859900;">return</span> (country[0]);
+            }
+        }
+
+        <span style="color: #859900;">if</span> (smallestScreenWidthDp || o.smallestScreenWidthDp) {
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">The configuration closest to the actual size is best.</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">We assume that larger configs have already been filtered</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">out at this point.  That means we just want the largest one.</span>
+            <span style="color: #859900;">if</span> (smallestScreenWidthDp != o.smallestScreenWidthDp) {
+                <span style="color: #859900;">return</span> smallestScreenWidthDp &gt; o.smallestScreenWidthDp;
+            }
+        }
+
+        <span style="color: #859900;">if</span> (screenSizeDp || o.screenSizeDp) {
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">"Better" is based on the sum of the difference between both</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">width and height from the requested dimensions.  We are</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">assuming the invalid configs (with smaller dimens) have</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">already been filtered.  Note that if a particular dimension</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">is unspecified, we will end up with a large value (the</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">difference between 0 and the requested dimension), which is</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">good since we will prefer a config that has specified a</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">dimension value.</span>
+            <span style="color: #b58900;">int</span> <span style="color: #268bd2;">myDelta</span> = 0, <span style="color: #268bd2;">otherDelta</span> = 0;
+            <span style="color: #859900;">if</span> (requested-&gt;screenWidthDp) {
+                myDelta += requested-&gt;screenWidthDp - screenWidthDp;
+                otherDelta += requested-&gt;screenWidthDp - o.screenWidthDp;
+            }
+            <span style="color: #859900;">if</span> (requested-&gt;screenHeightDp) {
+                myDelta += requested-&gt;screenHeightDp - screenHeightDp;
+                otherDelta += requested-&gt;screenHeightDp - o.screenHeightDp;
+            }
+            <span style="color: #586e75; font-style: italic;">//</span><span style="color: #586e75; font-style: italic;">ALOGI("Comparing this %dx%d to other %dx%d in %dx%d: myDelta=%d otherDelta=%d",</span>
+            <span style="color: #586e75; font-style: italic;">//    </span><span style="color: #586e75; font-style: italic;">screenWidthDp, screenHeightDp, o.screenWidthDp, o.screenHeightDp,</span>
+            <span style="color: #586e75; font-style: italic;">//    </span><span style="color: #586e75; font-style: italic;">requested-&gt;screenWidthDp, requested-&gt;screenHeightDp, myDelta, otherDelta);</span>
+            <span style="color: #859900;">if</span> (myDelta != otherDelta) {
+                <span style="color: #859900;">return</span> myDelta &lt; <span style="color: #b58900;">otherDelta</span>;
+            }
+        }
+
+        <span style="color: #859900;">if</span> (screenLayout || o.screenLayout) {
+            <span style="color: #859900;">if</span> (((screenLayout^o.screenLayout) &amp; MASK_SCREENSIZE) != 0
+                &amp;&amp; (requested-&gt;screenLayout &amp; MASK_SCREENSIZE)) {
+                <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">A little backwards compatibility here: undefined is</span>
+                <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">considered equivalent to normal.  But only if the</span>
+                <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">requested size is at least normal; otherwise, small</span>
+                <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">is better than the default.</span>
+                <span style="color: #b58900;">int</span> <span style="color: #268bd2;">mySL</span> = (screenLayout &amp; MASK_SCREENSIZE);
+                <span style="color: #b58900;">int</span> <span style="color: #268bd2;">oSL</span> = (o.screenLayout &amp; MASK_SCREENSIZE);
+                <span style="color: #b58900;">int</span> <span style="color: #268bd2;">fixedMySL</span> = mySL;
+                <span style="color: #b58900;">int</span> <span style="color: #268bd2;">fixedOSL</span> = oSL;
+                <span style="color: #859900;">if</span> ((requested-&gt;screenLayout &amp; MASK_SCREENSIZE) &gt;= SCREENSIZE_NORMAL) {
+                    <span style="color: #859900;">if</span> (fixedMySL == 0) fixedMySL = SCREENSIZE_NORMAL;
+                    <span style="color: #859900;">if</span> (fixedOSL == 0) fixedOSL = SCREENSIZE_NORMAL;
+                }
+                <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">For screen size, the best match is the one that is</span>
+                <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">closest to the requested screen size, but not over</span>
+                <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">(the not over part is dealt with in match() below).</span>
+                <span style="color: #859900;">if</span> (fixedMySL == fixedOSL) {
+                    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">If the two are the same, but 'this' is actually</span>
+                    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">undefined, then the other is really a better match.</span>
+                    <span style="color: #859900;">if</span> (mySL == 0) <span style="color: #859900;">return</span> false;
+                    <span style="color: #859900;">return</span> true;
+                }
+                <span style="color: #859900;">if</span> (fixedMySL != fixedOSL) {
+                    <span style="color: #859900;">return</span> fixedMySL &gt; fixedOSL;
+                }
+            }
+            <span style="color: #859900;">if</span> (((screenLayout^o.screenLayout) &amp; MASK_SCREENLONG) != 0
+                &amp;&amp; (requested-&gt;screenLayout &amp; MASK_SCREENLONG)) {
+                <span style="color: #859900;">return</span> (screenLayout &amp; MASK_SCREENLONG);
+            }
+        }
+
+        <span style="color: #859900;">if</span> ((orientation != o.orientation) &amp;&amp; requested-&gt;orientation) {
+            <span style="color: #859900;">return</span> (orientation);
+        }
+
+        <span style="color: #859900;">if</span> (uiMode || o.uiMode) {
+            <span style="color: #859900;">if</span> (((uiMode^o.uiMode) &amp; MASK_UI_MODE_TYPE) != 0
+                &amp;&amp; (requested-&gt;uiMode &amp; MASK_UI_MODE_TYPE)) {
+                <span style="color: #859900;">return</span> (uiMode &amp; MASK_UI_MODE_TYPE);
+            }
+            <span style="color: #859900;">if</span> (((uiMode^o.uiMode) &amp; MASK_UI_MODE_NIGHT) != 0
+                &amp;&amp; (requested-&gt;uiMode &amp; MASK_UI_MODE_NIGHT)) {
+                <span style="color: #859900;">return</span> (uiMode &amp; MASK_UI_MODE_NIGHT);
+            }
+        }
+
+        <span style="color: #859900;">if</span> (screenType || o.screenType) {
+            <span style="color: #859900;">if</span> (density != o.density) {
+                <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">density is tough.  Any density is potentially useful</span>
+                <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">because the system will scale it.  Scaling down</span>
+                <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">is generally better than scaling up.</span>
+                <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">Default density counts as 160dpi (the system default)</span>
+                <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">TODO - remove 160 constants</span>
+                <span style="color: #b58900;">int</span> <span style="color: #268bd2;">h</span> = (density?density:160);
+                <span style="color: #b58900;">int</span> <span style="color: #268bd2;">l</span> = (o.density?o.density:160);
+                <span style="color: #b58900;">bool</span> <span style="color: #268bd2;">bImBigger</span> = true;
+                <span style="color: #859900;">if</span> (l &gt; h) {
+                    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">t</span> = h;
+                    h = l;
+                    l = t;
+                    bImBigger = false;
+                }
+
+                <span style="color: #b58900;">int</span> <span style="color: #268bd2;">reqValue</span> = (requested-&gt;density?requested-&gt;density:160);
+                <span style="color: #859900;">if</span> (reqValue &gt;= h) {
+                    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">requested value higher than both l and h, give h</span>
+                    <span style="color: #859900;">return</span> bImBigger;
+                }
+                <span style="color: #859900;">if</span> (l &gt;= reqValue) {
+                    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">requested value lower than both l and h, give l</span>
+                    <span style="color: #859900;">return</span> <span style="color: #dc322f;">!</span>bImBigger;
+                }
+                <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">saying that scaling down is 2x better than up</span>
+                <span style="color: #859900;">if</span> (((2 * l) - reqValue) * h &gt; reqValue * reqValue) {
+                    <span style="color: #859900;">return</span> <span style="color: #dc322f;">!</span>bImBigger;
+                } <span style="color: #859900;">else</span> {
+                    <span style="color: #859900;">return</span> bImBigger;
+                }
+            }
+
+            <span style="color: #859900;">if</span> ((touchscreen != o.touchscreen) &amp;&amp; requested-&gt;touchscreen) {
+                <span style="color: #859900;">return</span> (touchscreen);
+            }
+        }
+
+        <span style="color: #859900;">if</span> (input || o.input) {
+            <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">keysHidden</span> = inputFlags &amp; MASK_KEYSHIDDEN;
+            <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">oKeysHidden</span> = o.inputFlags &amp; MASK_KEYSHIDDEN;
+            <span style="color: #859900;">if</span> (keysHidden != oKeysHidden) {
+                <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">reqKeysHidden</span> =
+                    requested-&gt;inputFlags &amp; MASK_KEYSHIDDEN;
+                <span style="color: #859900;">if</span> (reqKeysHidden) {
+
+                    <span style="color: #859900;">if</span> (<span style="color: #dc322f;">!</span>keysHidden) <span style="color: #859900;">return</span> false;
+                    <span style="color: #859900;">if</span> (<span style="color: #dc322f;">!</span>oKeysHidden) <span style="color: #859900;">return</span> true;
+                    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">For compatibility, we count KEYSHIDDEN_NO as being</span>
+                    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">the same as KEYSHIDDEN_SOFT.  Here we disambiguate</span>
+                    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">these by making an exact match more specific.</span>
+                    <span style="color: #859900;">if</span> (reqKeysHidden == keysHidden) <span style="color: #859900;">return</span> true;
+                    <span style="color: #859900;">if</span> (reqKeysHidden == oKeysHidden) <span style="color: #859900;">return</span> false;
+                }
+            }
+
+            <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">navHidden</span> = inputFlags &amp; MASK_NAVHIDDEN;
+            <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">oNavHidden</span> = o.inputFlags &amp; MASK_NAVHIDDEN;
+            <span style="color: #859900;">if</span> (navHidden != oNavHidden) {
+                <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">reqNavHidden</span> =
+                    requested-&gt;inputFlags &amp; MASK_NAVHIDDEN;
+                <span style="color: #859900;">if</span> (reqNavHidden) {
+
+                    <span style="color: #859900;">if</span> (<span style="color: #dc322f;">!</span>navHidden) <span style="color: #859900;">return</span> false;
+                    <span style="color: #859900;">if</span> (<span style="color: #dc322f;">!</span>oNavHidden) <span style="color: #859900;">return</span> true;
+                }
+            }
+
+            <span style="color: #859900;">if</span> ((keyboard != o.keyboard) &amp;&amp; requested-&gt;keyboard) {
+                <span style="color: #859900;">return</span> (keyboard);
+            }
+
+            <span style="color: #859900;">if</span> ((navigation != o.navigation) &amp;&amp; requested-&gt;navigation) {
+                <span style="color: #859900;">return</span> (navigation);
+            }
+        }
+
+        <span style="color: #859900;">if</span> (screenSize || o.screenSize) {
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">"Better" is based on the sum of the difference between both</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">width and height from the requested dimensions.  We are</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">assuming the invalid configs (with smaller sizes) have</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">already been filtered.  Note that if a particular dimension</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">is unspecified, we will end up with a large value (the</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">difference between 0 and the requested dimension), which is</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">good since we will prefer a config that has specified a</span>
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">size value.</span>
+            <span style="color: #b58900;">int</span> <span style="color: #268bd2;">myDelta</span> = 0, <span style="color: #268bd2;">otherDelta</span> = 0;
+            <span style="color: #859900;">if</span> (requested-&gt;screenWidth) {
+                myDelta += requested-&gt;screenWidth - screenWidth;
+                otherDelta += requested-&gt;screenWidth - o.screenWidth;
+            }
+            <span style="color: #859900;">if</span> (requested-&gt;screenHeight) {
+                myDelta += requested-&gt;screenHeight - screenHeight;
+                otherDelta += requested-&gt;screenHeight - o.screenHeight;
+            }
+            <span style="color: #859900;">if</span> (myDelta != otherDelta) {
+                <span style="color: #859900;">return</span> myDelta &lt; <span style="color: #b58900;">otherDelta</span>;
+            }
+        }
+
+        <span style="color: #859900;">if</span> (version || o.version) {
+            <span style="color: #859900;">if</span> ((sdkVersion != o.sdkVersion) &amp;&amp; requested-&gt;sdkVersion) {
+                <span style="color: #859900;">return</span> (sdkVersion &gt; o.sdkVersion);
+            }
+
+            <span style="color: #859900;">if</span> ((minorVersion != o.minorVersion) &amp;&amp;
+                requested-&gt;minorVersion) {
+                <span style="color: #859900;">return</span> (minorVersion);
+            }
+        }
+
+        <span style="color: #859900;">return</span> false;
+    }
+    <span style="color: #859900;">return</span> isMoreSpecificThan(o);
+}
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-4-8-3" class="outline-5">
+<h5 id="sec-1-4-8-3"><span class="section-number-5">1.4.8.3</span> isMoreSpecificThan'</h5>
+<div class="outline-text-5" id="text-1-4-8-3">
+
+<p>  select more specific resource package from resource packages
+  (e.g. when there are overlay packages)
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-1-4-9" class="outline-4">
+<h4 id="sec-1-4-9"><span class="section-number-4">1.4.9</span> misc</h4>
+<div class="outline-text-4" id="text-1-4-9">
+
+
+</div>
+
+<div id="outline-container-1-4-9-1" class="outline-5">
+<h5 id="sec-1-4-9-1"><span class="section-number-5">1.4.9.1</span> get application resources?</h5>
+<div class="outline-text-5" id="text-1-4-9-1">
 
 <ol>
 <li>use PackageContext
@@ -918,7 +1512,7 @@ package 的 pkg id, 所以查找 base package 的 resID 时取得的 package gro
 
 <p>Overlay 机制主要是通过 idmap 完成 `original ID-&gt;overlay ID` 的映射而起作用的, 但
 是, 如果资源查找过程中涉及到 reference 时, idmap 提供的这种单向的 map 无法起作用,
-例如, 以 LayoutInflater 为例: 
+例如, 以 LayoutInflater 为例:
 </p>
 <p>
 假设通过 idmap 找到了这个 overlay package 中定义的 layout:
@@ -1044,7 +1638,7 @@ attrs.xml 中 <code>declare-styleable</code> 其实就是定义了一个该 `att
       &lt;<span style="color: #268bd2;">item</span> <span style="color: #268bd2;">name</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">android:paddingLeft</span><span style="color: #2aa198;">"</span>&gt;8dip&lt;/<span style="color: #268bd2;">item</span>&gt;
   &lt;/<span style="color: #268bd2;">style</span>&gt;
 
-Style &#30340;&#21517;&#23383;&#20063;&#26263;&#31034;&#20102;&#36825;&#20010; style &#21487;&#20197;&#20570;&#20026;&#20160;&#20040;&#30340; style, &#20363;&#22914;, Widget.TextView.ListSeparator &#34920;&#31034;&#23427;&#21487;&#20197;&#20570;&#20026; ListView &#30340; style, 
+Style &#30340;&#21517;&#23383;&#20063;&#26263;&#31034;&#20102;&#36825;&#20010; style &#21487;&#20197;&#20570;&#20026;&#20160;&#20040;&#30340; style, &#20363;&#22914;, Widget.TextView.ListSeparator &#34920;&#31034;&#23427;&#21487;&#20197;&#20570;&#20026; ListView &#30340; style,
 &#25552;&#20379;&#19968;&#31181;&#21487;&#20570;&#20026; List Seperator &#30340; TextView &#26679;&#24335;. &#20294; Style &#21517;&#23383;&#21482;&#26159;&#19968;&#20010;&#26263;&#31034;, &#24182;&#19981;&#26159;&#19968;&#20010;&#24378;&#21046;&#30340;&#35201;&#27714;, &#29992;&#25143;&#21487;&#20197;&#23558; ActionBar &#30340; style &#35774;&#20026;
 Widget.TextView.ListSeparator, &#20294;&#22240;&#20026; ActionBar &#26412;&#36523;&#26377;&#21487;&#33021;&#22312; obtainStyledAttributes &#26102;&#20174;&#35813; style &#20013;&#26681;&#25454;&#33719;&#21462;&#19981;&#21462;&#23427;&#24819;&#35201;&#30340;&#23646;&#24615;, &#25152;&#20197;&#21487;&#33021;
 &#23548;&#33268;&#36825;&#31181; style &#27809;&#26377;&#25928;&#26524;.
@@ -1153,7 +1747,7 @@ R.attr.layout<sub>width</sub> 的值为 <code>wrap_content</code>.
 其中:
 </p>
 <ul>
-<li>set 
+<li>set
 </li>
 </ul>
 
@@ -1423,6 +2017,21 @@ Manifest, Asset, Resource
 
 <p>
   生成 apk (不包含 classes.dex)
+</p>
+</li>
+<li>aapt package -S res/ -c mdpi,en -A ./asset -M AndroidManifest.xml -I android.jar -F
+  ./1.apk
+
+<p>
+  生成 apk (不包含 classes.dex), 但只包含 mdpi 和 en 的资源 (对应于
+  Android.mk 中的 LOCAL<sub>AAPT</sub><sub>FLAG</sub>)
+</p>
+</li>
+<li>aapt package -S res/ -A ./asset -M AndroidManifest.xml -I
+  android.jar -F ./1.apk -c zh -c mdpi
+
+<p>
+  生成的 apk 只包含 resource qualifiers 为 zh 或 mdpi 的资源
 </p>
 </li>
 <li>aapt dump resources xxx.apk
@@ -1900,15 +2509,79 @@ Package Group 0 id=127 packageCount=1 name=com.sunway.test
 </div>
 
 <div id="outline-container-1-8-7" class="outline-4">
-<h4 id="sec-1-8-7"><span class="section-number-4">1.8.7</span> System asset &amp; Zygote.preloadResources</h4>
+<h4 id="sec-1-8-7"><span class="section-number-4">1.8.7</span> Preload Drawable</h4>
 <div class="outline-text-4" id="text-1-8-7">
 
+<p>Preload Drawable 机制是 zygote 针对图片内存使用的一个优化. 
+Zygote 进程是所有 java 进程的父进程, 在开机的早些阶段启动, 它启动后会
+调用 preloadDrawable 预先加载一些系统图片, 这些图片会置于 zygote 的
+AssetManager 的管理之下. 
+</p>
+<p>
+AssetManager 不是一个集中式的 service, 相反, 对于每个进程, 都会有一个
+AssetManager
+</p>
+<p>
+每个进程都有 AssetManager, 会导致每个应用都需要各自加载各自的资源, 但这
+种机制对于系统资源来说, 会造成内存的浪费, 因为所有系统资源对所有进程其
+实都是一样的.
+</p>
+<p>
+preloadDrawable 可以解决这种针对系统资源的浪费, 因为 zygote 是所有
+java 进程的父进程, linux kernel 里的 COW (copy on write) 机制决定了
+preloadDrawable 加载的资源是可以被所有 java 进程共享的. 
+</p>
+<p>
+UUI 中将 preloadDrawable 禁用了, 是因为 drawable cache 的存在.
+AssetManager 会维护一个 drawable cache, 通过 preloadDrawable 加载进来
+的图片会一直放在 cache 中, 导致 UUI 无法在运行时替换到系统的图片. 
+</p>
+<ul>
+<li>UUI 若禁用 preloadDrawable, 会导致每个进程的 AssetManager 都去加载一
+  份系统资源,浪费内存
+</li>
+<li>UUI 若不禁用 preloadDrawable, 会导致运行时系统图片无法被 UUI 替换. 
+</li>
+</ul>
+
+
+<p>
+我们可以调整 zygote, 让它在启动预先加载 UUI 定义的图片, 而不是系统
+默认的图片, 这样似乎是可以的, 但这样无法满足 UUI 的另一个 feature: 运
+行时的主题切换. 
+</p>
+<p>
+当运行时切换主题时, 必定要将所有进程的 AssetManager 中的系统资源替换掉,
+而对每一个进程的`write`会触发 `copy-on-write` 中的 copy, 还是无法共享
+资源.
+</p>
+
+<p>
+综上, zygote 使用 `copy-on-write` 这种 trick 来共享系统资源, 但 UUI 的
+动态切换主题功能使这种 trick 无法工作. 
+</p>
+<p>
+解决方法
+</p>
+<p>
+不使用 `copy-on-write' 这种 trick, 而是使用显式的 shared mmap 来共享系
+统图片, 不过这种方式可能难以实现, 因为 dvm 是在 dalvik heap 中分配图片
+内存的, 我们可能没有办法让它工作在其他的 vma. 
+</p>
+
+</div>
+
+<div id="outline-container-1-8-7-1" class="outline-5">
+<h5 id="sec-1-8-7-1"><span class="section-number-5">1.8.7.1</span> Resource drawable cache</h5>
+<div class="outline-text-5" id="text-1-8-7-1">
+
+</div>
 </div>
 
 </div>
 
 <div id="outline-container-1-8-8" class="outline-4">
-<h4 id="sec-1-8-8"><span class="section-number-4">1.8.8</span> Resource drawable cache</h4>
+<h4 id="sec-1-8-8"><span class="section-number-4">1.8.8</span> mipmap drawable</h4>
 <div class="outline-text-4" id="text-1-8-8">
 
 </div>
@@ -1918,9 +2591,9 @@ Package Group 0 id=127 packageCount=1 name=com.sunway.test
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-05-21T14:34+0800</p>
+<p class="date">Date: 2013-07-16T14:52+0800</p>
 <p class="author">Author: sunway</p>
-<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
+<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

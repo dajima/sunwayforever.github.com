@@ -1,0 +1,652 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Android Bitmap</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="Android Bitmap"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-07-16T14:52+0800"/>
+<meta name="author" content="sunway"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Android Bitmap</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Android Bitmap</a>
+<ul>
+<li><a href="#sec-1-1">1.1 Terminology</a></li>
+<li><a href="#sec-1-2">1.2 Java</a></li>
+<li><a href="#sec-1-3">1.3 C++</a></li>
+<li><a href="#sec-1-4">1.4 Topics</a></li>
+<li><a href="#sec-1-5">1.5 References</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Android Bitmap</h2>
+<div class="outline-text-2" id="text-1">
+
+<p>see also <a href="#Android-Skia">Android Skia</a>
+</p>
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Terminology</h3>
+<div class="outline-text-3" id="text-1-1">
+
+
+</div>
+
+<div id="outline-container-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> pixel</h4>
+<div class="outline-text-4" id="text-1-1-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> color table</h4>
+<div class="outline-text-4" id="text-1-1-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> stride</h4>
+<div class="outline-text-4" id="text-1-1-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-4" class="outline-4">
+<h4 id="sec-1-1-4"><span class="section-number-4">1.1.4</span> dither</h4>
+<div class="outline-text-4" id="text-1-1-4">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-5" class="outline-4">
+<h4 id="sec-1-1-5"><span class="section-number-4">1.1.5</span> RGB vs. YUV</h4>
+<div class="outline-text-4" id="text-1-1-5">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-6" class="outline-4">
+<h4 id="sec-1-1-6"><span class="section-number-4">1.1.6</span> alpha channel</h4>
+<div class="outline-text-4" id="text-1-1-6">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-7" class="outline-4">
+<h4 id="sec-1-1-7"><span class="section-number-4">1.1.7</span> ARGB<sub>8888</sub>, ARGB<sub>4444</sub> and RGB<sub>565</sub></h4>
+<div class="outline-text-4" id="text-1-1-7">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-8" class="outline-4">
+<h4 id="sec-1-1-8"><span class="section-number-4">1.1.8</span> gray</h4>
+<div class="outline-text-4" id="text-1-1-8">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-9" class="outline-4">
+<h4 id="sec-1-1-9"><span class="section-number-4">1.1.9</span> matrix</h4>
+<div class="outline-text-4" id="text-1-1-9">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-10" class="outline-4">
+<h4 id="sec-1-1-10"><span class="section-number-4">1.1.10</span> scale</h4>
+<div class="outline-text-4" id="text-1-1-10">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Java</h3>
+<div class="outline-text-3" id="text-1-2">
+
+
+</div>
+
+<div id="outline-container-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> BitmapFactory</h4>
+<div class="outline-text-4" id="text-1-2-1">
+
+
+</div>
+
+<div id="outline-container-1-2-1-1" class="outline-5">
+<h5 id="sec-1-2-1-1"><span class="section-number-5">1.2.1.1</span> BitmapFactory.options</h5>
+<div class="outline-text-5" id="text-1-2-1-1">
+
+<ul>
+<li>inBitmap
+</li>
+<li>inDither
+</li>
+<li>inPreferredConfig
+</li>
+<li>inSampleSize
+</li>
+<li>inScaled
+</li>
+<li>inTempStorage
+</li>
+<li>inJustDecodeBounds
+<ul>
+<li>outHeight
+</li>
+<li>outWidth
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> Bitmap.createBitmap</h4>
+<div class="outline-text-4" id="text-1-2-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2-3" class="outline-4">
+<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> Bitmap.getPixels</h4>
+<div class="outline-text-4" id="text-1-2-3">
+
+<p><a href="http://blog.csdn.net/sunboy_2050/article/details/7308805">http://blog.csdn.net/sunboy_2050/article/details/7308805</a>
+</p></div>
+
+</div>
+
+<div id="outline-container-1-2-4" class="outline-4">
+<h4 id="sec-1-2-4"><span class="section-number-4">1.2.4</span> Bitmap.setPixels</h4>
+<div class="outline-text-4" id="text-1-2-4">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> C++</h3>
+<div class="outline-text-3" id="text-1-3">
+
+
+</div>
+
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> SkBitmap</h4>
+<div class="outline-text-4" id="text-1-3-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> Allocator</h4>
+<div class="outline-text-4" id="text-1-3-2">
+
+
+</div>
+
+<div id="outline-container-1-3-2-1" class="outline-5">
+<h5 id="sec-1-3-2-1"><span class="section-number-5">1.3.2.1</span> JavaPixelAllocator</h5>
+<div class="outline-text-5" id="text-1-3-2-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2-2" class="outline-5">
+<h5 id="sec-1-3-2-2"><span class="section-number-5">1.3.2.2</span> HeapAllocator</h5>
+<div class="outline-text-5" id="text-1-3-2-2">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> SkPixelRef</h4>
+<div class="outline-text-4" id="text-1-3-3">
+
+
+</div>
+
+<div id="outline-container-1-3-3-1" class="outline-5">
+<h5 id="sec-1-3-3-1"><span class="section-number-5">1.3.3.1</span> SkMallocPixelRef</h5>
+<div class="outline-text-5" id="text-1-3-3-1">
+
+<ul>
+<li id="sec-1-3-3-1-1">AndroidPixelRef<br/>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3-2" class="outline-5">
+<h5 id="sec-1-3-3-2"><span class="section-number-5">1.3.3.2</span> lock/unlock</h5>
+<div class="outline-text-5" id="text-1-3-3-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3-3" class="outline-5">
+<h5 id="sec-1-3-3-3"><span class="section-number-5">1.3.3.3</span> ref/unref</h5>
+<div class="outline-text-5" id="text-1-3-3-3">
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Topics</h3>
+<div class="outline-text-3" id="text-1-4">
+
+
+</div>
+
+<div id="outline-container-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> create</h4>
+<div class="outline-text-4" id="text-1-4-1">
+
+
+
+
+<pre class="src src-text">// Bitmap.java
+Bitmap.createBitmap()
+  Bitmap bm = nativeCreate();
+    // Bitmap.cpp
+    Bitmap_creator();
+      SkBitmap bitmap;
+      jbyteArray buff = GraphicsJNI::allocateJavaPixelRef(env,&amp;bitmap, NULL);
+        jbyteArray arrayObj = env-&gt;NewByteArray(size);
+        SkPixelRef* pr = new AndroidPixelRef(env, (void*) addr, size, arrayObj, ctable);
+        bitmap-&gt;setPixelRef(pr)-&gt;unref();
+      return env-&gt;NewObject(...,bitmap,...);     
+
+
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-4-2" class="outline-4">
+<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> finalize</h4>
+<div class="outline-text-4" id="text-1-4-2">
+
+
+
+
+<pre class="src src-text">BitmapFinalizer.finalize()
+  // Bitmap.cpp
+  nativeDestructor(mNativeBitmap);
+    delete skBitmap;
+      ~SkBitmap
+        this-&gt;freePixels();
+          fPixelRef-&gt;unref();
+            // SkRefCnt.h
+            if (sk_atomic_dec(&amp;fRefCnt) == 1):
+              SkDELETE(this); // delete (this)
+                ~AndroidPixelRef()
+                  env-&gt;DeleteGlobalRef(fStorageObj);
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-4-3" class="outline-4">
+<h4 id="sec-1-4-3"><span class="section-number-4">1.4.3</span> copy</h4>
+<div class="outline-text-4" id="text-1-4-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-4-4" class="outline-4">
+<h4 id="sec-1-4-4"><span class="section-number-4">1.4.4</span> recycle</h4>
+<div class="outline-text-4" id="text-1-4-4">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-4-5" class="outline-4">
+<h4 id="sec-1-4-5"><span class="section-number-4">1.4.5</span> parcel</h4>
+<div class="outline-text-4" id="text-1-4-5">
+
+<p>see also <a href="#asheme">asheme</a>
+</p>
+</div>
+
+<div id="outline-container-1-4-5-1" class="outline-5">
+<h5 id="sec-1-4-5-1"><span class="section-number-5">1.4.5.1</span> Parcel.Blob</h5>
+<div class="outline-text-5" id="text-1-4-5-1">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-4-6" class="outline-4">
+<h4 id="sec-1-4-6"><span class="section-number-4">1.4.6</span> mutability</h4>
+<div class="outline-text-4" id="text-1-4-6">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-4-7" class="outline-4">
+<h4 id="sec-1-4-7"><span class="section-number-4">1.4.7</span> density and scale</h4>
+<div class="outline-text-4" id="text-1-4-7">
+
+<p>Bitmap 本身并没所谓的 density 的概念, Bitmap 主要存储的是 pixel 数组,
+表示一共有多少个像素, 每个像素的 ARGB 值, 并不会存储该图片的物理尺寸,
+也就不会有什么 density 的概念. 所以, 同一张图片, 在不同 density 的屏幕
+上显示的大小是不同的. 
+</p>
+<ul>
+<li>inDensity vs. inTargetDensity
+  inDensity 是指 bitmap 本身的 density, 
+
+<blockquote>
+
+<p>&lt;p&gt;If this is 0,
+{@link BitmapFactory#decodeResource(Resources, int)}, 
+{@link BitmapFactory#decodeResource(Resources, int, android.graphics.BitmapFactory.Options)},
+and {@link BitmapFactory#decodeResourceStream}
+will fill in the density associated with the resource.  The other
+functions will leave it as-is and no density will be applied.
+</p>
+</blockquote>
+
+
+
+<p>  
+  即若 bitmap 是通过 resource 获得,则 resource 会负责将 bitmap 的
+  inDensity 填充为相应的值(根据图片资源的 config), 同样
+  inTargetDensity 也会被 resource 自动填充.
+</p>
+</li>
+<li>scaled width
+
+<p>  
+  对于一个图片来说, 其 width 和 height 对应的是它的 pixel 数, 在任何设
+  备上其 width 和 height 都是固定的. 但如果通过 java 给 bitmap 设置一个
+  density 的属性, 则这个 density 的意义是什么? 实际上, bitmap (或者
+  dib) 文件本身并没有所谓的 density 属性. 
+</p>
+<p>
+  若给一个 bitmap 指定了一个 density (通过 decodeResource 或者
+  setDensity), 其意义在于:
+</p>
+
+<div style="text-align: center">
+<p>指定了该图片期望的物理显示大小 (inch, 或 dp), 例如, 该图片有100
+pixel, 若指定 density 为 100, 则期望的物理大小为 1 inch, 即 160 dp
+</p>
+</div>
+
+
+<p> 
+  此时, 若设备的 density 为 200, 则若 100 pixel 的图片直接显示的话,
+  其物理大小为 100/200 = 0.5 inch = 80 dp, 因为需要对原图进行 scale
+  up, 最终 100 pixel 的图片 scale up 成 200 pixel. 200 pixel 即为
+  scaledWidth. 
+</p>
+<p>
+  bitmap.getWidth 返回的是 scaledWidth, 而不是原始图片的 width. 同样,
+  因为 scale 会导致 bitmap pixel 的变多或变少, 所以相应的 bitmap 大小
+  也会变化. 
+</p>
+</li>
+<li>How to scale a bitmap
+
+
+
+<pre class="src src-text">Bitmap.createScaledBitmap  
+  ...
+</pre>
+
+<p>
+  使用
+</p>
+
+
+
+<pre class="example">Canvas.setMatrix -&gt; Canvas.setBitmap(scaledBitmap) -&gt;  Canvas.drawBitmap() 
+</pre>
+
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-4-8" class="outline-4">
+<h4 id="sec-1-4-8"><span class="section-number-4">1.4.8</span> Summaries</h4>
+<div class="outline-text-4" id="text-1-4-8">
+
+
+<ul>
+<li>Bitmap use Parcel.WritableBlob (which is a simple wrapper of ashmem)
+  to write bitmap pixels large than 1MB through binder.
+
+</li>
+<li>Why there is a SkPixelRef to trace the ref count of the storageObj?
+
+<p>
+  SkRefCnt (or SkPixelRef) is the base class for objects that may be
+  shared by multiple objects. When a new owner wants a reference, it
+  calls ref(). When an owner wants to release its reference, it calls
+  unref().  When the shared object's reference count goes to zero as
+  the result of an unref() call, its (virtual) destructor is
+  called. It is an error for the destructor to be called explicitly
+  (or via the object going out of scope on the stack or calling
+  delete) if getRefCnt() &gt; 1.
+</p>
+<p>
+  AndroidPixelRef is a SkRefCnt for the fStorageObj, that is,
+  `SkBitmap.setPixelRef(ref)' means `this bitmap refs the fStorageObj'
+</p>
+<p>
+  But currently I don't see many use of the SkRefCnt &hellip;,
+  SkBitmap.setPixelRef is invoked only in a few cases, e.g. by
+  SkGpuDevice.drawBitmap(SkBitmap, SkIRect), which will draw a
+  part of the origin SkBitmap, instead of copy the origin SkBitmap,
+  it will use SkBitmap.extractSubset, which will create a SkBitmap
+  referring to the origin SkBitmap.
+</p></li>
+</ul>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> References</h3>
+<div class="outline-text-3" id="text-1-5">
+
+<ul>
+<li>use LrcCache as memroy cache, and use disk cache to avoid bitmap decoding
+  <a href="http://developer.android.com/training/displaying-bitmaps/cache-bitmap.html">http://developer.android.com/training/displaying-bitmaps/cache-bitmap.html</a>
+
+</li>
+<li>resize the bitmap to save memory
+  <a href="http://developer.android.com/training/displaying-bitmaps/load-bitmap.html">http://developer.android.com/training/displaying-bitmaps/load-bitmap.html</a>
+
+</li>
+<li>use `inBitmap' to reuse memory
+  <a href="http://developer.android.com/training/displaying-bitmaps/manage-memory.html">http://developer.android.com/training/displaying-bitmaps/manage-memory.html</a>
+
+</li>
+<li>about ARGB<sub>8888</sub>, ARGB<sub>4444</sub> and RGB<sub>565</sub>
+  <a href="http://www.curious-creature.org/2010/12/08/bitmap-quality-banding-and-dithering/">http://www.curious-creature.org/2010/12/08/bitmap-quality-banding-and-dithering/</a>
+</li>
+</ul>
+
+
+</div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2013-07-16T14:52+0800</p>
+<p class="author">Author: sunway</p>
+<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 24</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>

@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Android Security"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-21T14:34+0800"/>
+<meta name="generated" content="2013-07-16T14:46+0800"/>
 <meta name="author" content="sunway"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -298,7 +298,7 @@ ams.checkComponentPermission(perm, pid, uid, &hellip;)
 </li>
 </ul>
 <ul>
-<li id="sec-1-1-3-1-2">pms.checkUidPermission<br/>
+<li id="sec-1-1-3-1-2">pms.checkUridPermission<br/>
 see also <a href="#sec-1-1-2">grant</a>
 </li>
 </ul>
@@ -463,6 +463,89 @@ delegated to B
 <h5 id="sec-1-1-5-3"><span class="section-number-5">1.1.5.3</span> uri permission</h5>
 <div class="outline-text-5" id="text-1-1-5-3">
 
+<p>ContentProvider has special permission settings for uri
+</p>
+
+
+<pre class="src src-xml">&lt;<span style="color: #268bd2;">provider</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">name</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">ContactsProvider2</span><span style="color: #2aa198;">"</span>
+          <span style="color: #859900;">android</span>:<span style="color: #268bd2;">grantUriPermissions</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">false</span><span style="color: #2aa198;">"</span>
+          <span style="color: #859900;">android</span>:<span style="color: #268bd2;">readPermission</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">android.permission.READ_CONTACTS</span><span style="color: #2aa198;">"</span>
+          <span style="color: #859900;">android</span>:<span style="color: #268bd2;">writePermission</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">android.permission.WRITE_CONTACTS</span><span style="color: #2aa198;">"</span>&gt;
+  &lt;<span style="color: #268bd2;">path-permission</span>
+      <span style="color: #859900;">android</span>:<span style="color: #268bd2;">pathPrefix</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">/search_suggest_query</span><span style="color: #2aa198;">"</span>
+      <span style="color: #859900;">android</span>:<span style="color: #268bd2;">readPermission</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">android.permission.GLOBAL_SEARCH</span><span style="color: #2aa198;">"</span> /&gt;
+  &lt;<span style="color: #268bd2;">path-permission</span>
+      <span style="color: #859900;">android</span>:<span style="color: #268bd2;">pathPrefix</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">/search_suggest_shortcut</span><span style="color: #2aa198;">"</span>
+      <span style="color: #859900;">android</span>:<span style="color: #268bd2;">readPermission</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">android.permission.GLOBAL_SEARCH</span><span style="color: #2aa198;">"</span> /&gt;
+  &lt;<span style="color: #268bd2;">path-permission</span>
+      <span style="color: #859900;">android</span>:<span style="color: #268bd2;">pathPattern</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">/contacts/.*/photo</span><span style="color: #2aa198;">"</span>
+      <span style="color: #859900;">android</span>:<span style="color: #268bd2;">readPermission</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">android.permission.GLOBAL_SEARCH</span><span style="color: #2aa198;">"</span> /&gt;
+  &lt;<span style="color: #268bd2;">grant-uri-permission</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">pathPattern</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">.*</span><span style="color: #2aa198;">"</span> /&gt;
+&lt;/<span style="color: #268bd2;">provider</span>&gt;
+</pre>
+
+
+<ul>
+<li>&lt;path-permission&gt;
+</li>
+</ul>
+
+
+<p>
+指定拥有哪个 permission 的包可以访问该 path
+</p>
+<ul>
+<li>&lt;grant-uri-permissions&gt;
+</li>
+</ul>
+
+
+<p>
+若为 true, 则所有 path 都可以通过
+Context.grantUriPermission(pkg,uri,mode) 使 pkg 对该 path 获得权限
+</p>
+<ul>
+<li>&lt;grant-uri-permission&gt;
+</li>
+</ul>
+
+
+<p>
+若 grant-uri-permissions 为 false, 则该属于才起作用, 它指定了哪些
+path 可以被 grant permission
+</p>
+<ul>
+<li id="sec-1-1-5-3-1">grant uri permission<br/>
+已经获得权限的应用可以通过两种方法使另一个 package 获得对特定 uri 的权
+限 (即使该 package 本身就没有相应的权限)
+<ul>
+<li>Context.grantUriPermission
+</li>
+<li>startActivity
+</li>
+</ul>
+
+
+
+
+
+<pre class="src src-java"><span style="color: #b58900;">Intent</span> <span style="color: #268bd2;">i</span>=<span style="color: #859900;">new</span> <span style="color: #b58900;">Intent</span>(xxx);
+  <span style="color: #586e75; font-style: italic;">/**</span>
+<span style="color: #586e75; font-style: italic;">   * If set, the recipient of this Intent will be granted permission to</span>
+<span style="color: #586e75; font-style: italic;">   * perform read operations on the Uri in the Intent's data and any URIs</span>
+<span style="color: #586e75; font-style: italic;">   * specified in its ClipData.  When applying to an Intent's ClipData,</span>
+<span style="color: #586e75; font-style: italic;">   * all URIs as well as recursive traversals through data or other ClipData</span>
+<span style="color: #586e75; font-style: italic;">   * in Intent items will be granted; only the grant flags of the top-level</span>
+<span style="color: #586e75; font-style: italic;">   * Intent are used.</span>
+<span style="color: #586e75; font-style: italic;">   */</span>
+i.setFlag((FLAG_GRANT_READ_URI_PERMISSION))
+i.setData(uri)
+startActivity(i)
+</pre>
+
+
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -991,9 +1074,9 @@ Android APK的软件安全呢？
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-05-21T14:34+0800</p>
+<p class="date">Date: 2013-07-16T14:46+0800</p>
 <p class="author">Author: sunway</p>
-<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
+<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

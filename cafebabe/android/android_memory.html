@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Android Memory"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-21T14:34+0800"/>
+<meta name="generated" content="2013-07-16T14:46+0800"/>
 <meta name="author" content="sunway"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -125,7 +125,8 @@ for the JavaScript code in this tag.
 <li><a href="#sec-1">1 Android Memory</a>
 <ul>
 <li><a href="#sec-1-1">1.1 tools</a></li>
-<li><a href="#sec-1-2">1.2 appendix</a></li>
+<li><a href="#sec-1-2">1.2 xss</a></li>
+<li><a href="#sec-1-3">1.3 appendix</a></li>
 </ul>
 </li>
 </ul>
@@ -196,8 +197,75 @@ for the JavaScript code in this tag.
 </div>
 
 <div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> appendix</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> xss</h3>
 <div class="outline-text-3" id="text-1-2">
+
+<ul>
+<li>vss
+  虚拟地址
+</li>
+<li>rss
+  占用的物理内存, 包含和其他进程共享的 mmap 区域
+</li>
+<li>pss
+  物理内存, 但共享的部分会按比例分配
+</li>
+<li>uss
+  物理内在, 不包含共享的部分
+</li>
+</ul>
+
+
+<p>
+所谓`共享'的部分, 不仅仅包含共享库,实际上,页表上所有物理页只要被多个进
+行共享 (包含 cow 这种情况) 就不会被计入 uss.
+</p>
+<p>
+例如:
+</p>
+
+
+<pre class="src src-c"><span style="color: #b58900;">int</span> <span style="color: #268bd2;">main</span>(<span style="color: #b58900;">int</span> <span style="color: #268bd2;">argc</span>, <span style="color: #b58900;">char</span> *<span style="color: #268bd2;">argv</span>[]) {
+    fork();
+    sleep (1000);
+    <span style="color: #859900;">return</span> 0;
+}
+</pre>
+
+
+<p>
+以上的代码, 
+</p>
+<p>
+当没有 fork 时, procrank 显示为:
+</p>
+
+
+<pre class="example">1905    1396K    1392K     582K     556K  test_sqlite
+</pre>
+
+
+<p>
+当有 fork 时, procrank 显示为:
+</p>
+
+
+
+<pre class="example">1975    1328K    1324K     323K      24K  test_sqlite
+1974    1404K    1400K     313K      12K  test_sqlite
+</pre>
+
+
+<p>
+注意看 uss 的差别. 
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> appendix</h3>
+<div class="outline-text-3" id="text-1-3">
 
 <ul>
 <li><a href="http://stackoverflow.com/questions/2298208/how-to-discover-memory-usage-of-my-application-in-android">how-to-discover-memory-usage-of-my-application-in-android</a>
@@ -212,9 +280,9 @@ for the JavaScript code in this tag.
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-05-21T14:34+0800</p>
+<p class="date">Date: 2013-07-16T14:46+0800</p>
 <p class="author">Author: sunway</p>
-<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
+<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>
