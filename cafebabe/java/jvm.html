@@ -1,71 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>JVM</title>
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="JVM"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-06-04T13:23+0800"/>
-<meta name="author" content="sunway"/>
-<meta name="description" content=""/>
-<meta name="keywords" content=""/>
+<!-- 2013-12-24 Tue 14:13 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="sunway" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
-  html { font-family: Times, serif; font-size: 12pt; }
   .title  { text-align: center; }
-  .todo   { color: red; }
+  .todo   { font-family: monospace; color: red; }
   .done   { color: green; }
-  .tag    { background-color: #add8e6; font-weight:normal }
-  .target { }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
-  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
-  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
-  .center {margin-left:auto; margin-right:auto; text-align:center;}
-  p.verse { margin-left: 3% }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
   pre {
-	border: 1pt solid #AEBDCC;
-	background-color: #F3F5F7;
-	padding: 5pt;
-	font-family: courier, monospace;
-        font-size: 90%;
-        overflow:auto;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
   }
-  table { border-collapse: collapse; }
-  td, th { vertical-align: top;  }
-  th.right  { text-align:center;  }
-  th.left   { text-align:center;   }
-  th.center { text-align:center; }
-  td.right  { text-align:right;  }
-  td.left   { text-align:left;   }
-  td.center { text-align:center; }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
   dt { font-weight: bold; }
-  div.figure { padding: 0.5em; }
-  div.figure p { text-align: center; }
-  div.inlinetask {
-    padding:10px;
-    border:2px solid gray;
-    margin:10px;
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
     background: #ffffcc;
   }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
   textarea { overflow-x: auto; }
-  .linenr { font-size:smaller }
-  .code-highlighted {background-color:#ffff00;}
-  .org-info-js_info-navigation { border-style:none; }
-  #org-info-js_console-label { font-size:10px; font-weight:bold;
-                               white-space:nowrap; }
-  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
-                                 font-weight:bold; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
   /*]]>*/-->
-</style>    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
+</style>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012  Free Software Foundation, Inc.
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -106,108 +132,92 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
-
 </head>
 <body>
-
-<div id="preamble">
-
-</div>
-
 <div id="content">
 <h1 class="title">JVM</h1>
-
-
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 Java VM Specification</a>
+<li><a href="#sec-1">1. Java VM Specification</a>
 <ul>
-<li><a href="#sec-1-1">1.1 String.intern()</a></li>
-<li><a href="#sec-1-2">1.2 Constant Pool</a></li>
-<li><a href="#sec-1-3">1.3 Class Loader</a></li>
-<li><a href="#sec-1-4">1.4 invokeXXX</a></li>
+<li><a href="#sec-1-1">1.1. String.intern()</a></li>
+<li><a href="#sec-1-2">1.2. Constant Pool</a></li>
+<li><a href="#sec-1-3">1.3. Class Loader</a></li>
+<li><a href="#sec-1-4">1.4. invokeXXX</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-
-<div id="outline-container-1" class="outline-2">
+<div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> Java VM Specification</h2>
 <div class="outline-text-2" id="text-1">
-
-
-</div>
-
-<div id="outline-container-1-1" class="outline-3">
+</div><div id="outline-container-sec-1-1" class="outline-3">
 <h3 id="sec-1-1"><span class="section-number-3">1.1</span> String.intern()</h3>
 <div class="outline-text-3" id="text-1-1">
-
-<p>see also <a href="#constant-pool">constant pool</a>
+<p>
+see also <i>constant pool</i>
 </p>
+
 <p>
 String.intern()与constant pool的关系?
 VM 运行后, VM 本身会维护一个 internedStrings&lt;char *, String&gt; 的 HashMap, String.intern() 的作用是:
-</p><ul>
+</p>
+<ul class="org-ul">
 <li>从 internedStrings 中查找是否已存在, 若不存在, 向 map 中插入一条记录, 最后返回 map的value,
 </li>
 <li>所以 assert(new String("abc").intern() == new String("abc").intern());
 
 <p>
-  String.intern() 使用的 internedStrings 本身和 constant pool 并没有直接关系, 但:
-</p></li>
+String.intern() 使用的 internedStrings 本身和 constant pool 并没有直接关系, 但:
+</p>
+</li>
 </ul>
-
-
-
-
-<pre class="example">String s1="abc";
+<pre class="example">
+String s1="abc";
 String s2=new String("abc");
 assert(s1==s2.intern());
 </pre>
-
 <p>
 有两种可能:
-</p><ol>
+</p>
+<ol class="org-ol">
 <li>VM 在 resolve class (resolve constant pool) 时, 一次性的将所有
-     CONSTANT<sub>String</sub><sub>info</sub> 全通过 intern() 放到 internedStrings 中, 然后
-     CONSTANT<sub>String</sub><sub>info的</sub> data 为 生成的 String 对象
-
+CONSTANT<sub>String</sub><sub>info</sub> 全通过 intern() 放到 internedStrings 中, 然后
+CONSTANT<sub>String</sub><sub>info的</sub> data 为 生成的 String 对象
 </li>
-<li>LAZY initialization: 如 <a href="#constant-pool">constant pool</a> 所述, 访问
-     CONSTANT<sub>String</sub><sub>info</sub> 使用 `ldc` 指令, 而 `ldc` 指令可以隐式的调用
-     String.intern(), 并返回 intern() 的结果
+
+<li>LAZY initialization: 如 <i>constant pool</i> 所述, 访问
+CONSTANT<sub>String</sub><sub>info</sub> 使用 `ldc` 指令, 而 `ldc` 指令可以隐式的调用
+String.intern(), 并返回 intern() 的结果
 
 <p>
-   To summarize:
-</p><ul>
+To summarize:
+</p>
+<ul class="org-ul">
 <li>对于 string literal, 再显式调用 intern() 没有意义
 </li>
 <li>对于 运行时 string, 若 string 经常重复, 可以通过 intern() 做 cache
 </li>
 </ul>
-
 </li>
 </ol>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2" class="outline-3">
+<div id="outline-container-sec-1-2" class="outline-3">
 <h3 id="sec-1-2"><span class="section-number-3">1.2</span> Constant Pool</h3>
 <div class="outline-text-3" id="text-1-2">
-
-<p>see also <a href="#sec-1-1">String.intern()</a>
-see also <a href="#autoboxing">autoboxing</a>
-see also <a href="#valueOf">valueOf</a>
+<p>
+see also <a href="#sec-1-1">1.1</a>
+see also <i>autoboxing</i>
+see also <i>valueOf</i>
 </p>
 
-
-
-<pre class="example">String s1="abc";
+<pre class="example">
+String s1="abc";
 String s2="abc";
 assert(s1==s2);
 String s3=new String("abc");
@@ -222,23 +232,23 @@ Integer i4=200;
 assert(i3!=i4);  // see autoboxing &amp; valueOf
 </pre>
 
-
 <p>
-    Constant pool plays an important role in the dynamic linking of Java program. In addition to constant values (String, integer, float literal),
-    the constant pool contains the following kinds of symbolic references:
-</p><ul>
+Constant pool plays an important role in the dynamic linking of Java program. In addition to constant values (String, integer, float literal),
+the constant pool contains the following kinds of symbolic references:
+</p>
+<ul class="org-ul">
 <li>fully qualified names of classes and interfaces
 </li>
-<li>field names and descriptors (type&hellip;)
+<li>field names and descriptors (type&#x2026;)
 </li>
-<li>method names and descriptors (params,type,&hellip;)
+<li>method names and descriptors (params,type,&#x2026;)
 </li>
 </ul>
 
-
 <p>
-    Constant pool can contain the following variety entries:
-</p><ul>
+Constant pool can contain the following variety entries:
+</p>
+<ul class="org-ul">
 <li>CONSTANT<sub>Utf8</sub>
 </li>
 <li>CONSTANT<sub>Integer</sub>
@@ -261,11 +271,11 @@ assert(i3!=i4);  // see autoboxing &amp; valueOf
 </li>
 </ul>
 
-
 <p>
-    To summarize:
-    Constant pool works in 3 varieties:
-</p><ol>
+To summarize:
+Constant pool works in 3 varieties:
+</p>
+<ol class="org-ol">
 <li>save constant literal (and class static field), much like DATA section in ELF
 </li>
 <li>help dynamic linking resolution
@@ -273,19 +283,15 @@ assert(i3!=i4);  // see autoboxing &amp; valueOf
 <li>name cache
 </li>
 </ol>
-
-
 </div>
-
-<div id="outline-container-1-2-1" class="outline-5">
-<h5 id="sec-1-2-1"><span class="section-number-5">1.2.1</span> class, method, field..</h5>
-<div class="outline-text-5" id="text-1-2-1">
-
-<p>java code:
+<div id="outline-container-sec-1-2-0-1" class="outline-5">
+<h5 id="sec-1-2-0-1"><span class="section-number-5">1.2.0.1</span> class, method, field..</h5>
+<div class="outline-text-5" id="text-1-2-0-1">
+<p>
+java code:
 </p>
-
-
-<pre class="example">public class Test {
+<pre class="example">
+public class Test {
   int x;
   public static void main(String args[]) {
      Test t=new Test ();
@@ -297,34 +303,32 @@ assert(i3!=i4);  // see autoboxing &amp; valueOf
   }
 }
 </pre>
-
 <p>
 byte code:
 </p>
-
-
-<pre class="example">const #1 = Method    #6.#18; //  java/lang/Object."&lt;init&gt;":()V
-const #2 = class     #19;    //  Test
-const #3 = Method    #2.#18; //  Test."&lt;init&gt;":()V
-const #4 = Field     #2.#20; //  Test.x:I
-const #5 = Method    #2.#21; //  Test.foo:()V
-const #6 = class     #22;    //  java/lang/Object
-const #7 = Asciz     x;
-const #8 = Asciz     I;
-const #9 = Asciz     &lt;init&gt;;
-const #10 = Asciz    ()V;
-const #11 = Asciz    Code;
-const #12 = Asciz    LineNumberTable;
-const #13 = Asciz    main;
-const #14 = Asciz    ([Ljava/lang/String;)V;
-const #15 = Asciz    foo;
-const #16 = Asciz    SourceFile;
-const #17 = Asciz    Test.java;
-const #18 = NameAndType      #9:#10;//  "&lt;init&gt;":()V
-const #19 = Asciz    Test;
-const #20 = NameAndType      #7:#8;//  x:I
-const #21 = NameAndType      #15:#10;//  foo:()V
-const #22 = Asciz    java/lang/Object;
+<pre class="example">
+const #1 = Method	#6.#18;	//  java/lang/Object."&lt;init&gt;":()V
+const #2 = class	#19;	//  Test
+const #3 = Method	#2.#18;	//  Test."&lt;init&gt;":()V
+const #4 = Field	#2.#20;	//  Test.x:I
+const #5 = Method	#2.#21;	//  Test.foo:()V
+const #6 = class	#22;	//  java/lang/Object
+const #7 = Asciz	x;
+const #8 = Asciz	I;
+const #9 = Asciz	&lt;init&gt;;
+const #10 = Asciz	()V;
+const #11 = Asciz	Code;
+const #12 = Asciz	LineNumberTable;
+const #13 = Asciz	main;
+const #14 = Asciz	([Ljava/lang/String;)V;
+const #15 = Asciz	foo;
+const #16 = Asciz	SourceFile;
+const #17 = Asciz	Test.java;
+const #18 = NameAndType	#9:#10;//  "&lt;init&gt;":()V
+const #19 = Asciz	Test;
+const #20 = NameAndType	#7:#8;//  x:I
+const #21 = NameAndType	#15:#10;//  foo:()V
+const #22 = Asciz	java/lang/Object;
 
 {
 int x;
@@ -332,25 +336,25 @@ int x;
 public Test();
 Code:
 Stack=1, Locals=1, Args_size=1
-0:   aload_0
-1:   invokespecial   #1; //Method java/lang/Object."&lt;init&gt;":()V
-4:   return
+0:	aload_0
+1:	invokespecial	#1; //Method java/lang/Object."&lt;init&gt;":()V
+4:	return
 LineNumberTable:
 line 2: 0
 
 public static void main(java.lang.String[]);
 Code:
 Stack=2, Locals=2, Args_size=1
-0:   new     #2; //class Test
-3:   dup
-4:   invokespecial   #3; //Method "&lt;init&gt;":()V
-7:   astore_1
-8:   aload_1
-9:   bipush  100
-11:  putfield        #4; //Field x:I
-14:  aload_1
-15:  invokevirtual   #5; //Method foo:()V
-18:  return
+0:	new	#2; //class Test
+3:	dup
+4:	invokespecial	#3; //Method "&lt;init&gt;":()V
+7:	astore_1
+8:	aload_1
+9:	bipush	100
+11:	putfield	#4; //Field x:I
+14:	aload_1
+15:	invokevirtual	#5; //Method foo:()V
+18:	return
 LineNumberTable:
 line 5: 0
 line 6: 8
@@ -360,73 +364,62 @@ line 8: 18
 void foo();
 Code:
 Stack=0, Locals=1, Args_size=1
-0:   return
+0:	return
 LineNumberTable:
 line 11: 0
 
 }
 </pre>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-2" class="outline-5">
-<h5 id="sec-1-2-2"><span class="section-number-5">1.2.2</span> put/set static field</h5>
-<div class="outline-text-5" id="text-1-2-2">
-
-<p>     java code:
+<div id="outline-container-sec-1-2-0-2" class="outline-5">
+<h5 id="sec-1-2-0-2"><span class="section-number-5">1.2.0.2</span> put/set static field</h5>
+<div class="outline-text-5" id="text-1-2-0-2">
+<p>
+java code:
 </p>
-
-
-<pre class="example">class Test {
+<pre class="example">
+class Test {
    static float x=1.1f;
    public static void main(String args[]) {
        x=1.2f;
      }
  }
 </pre>
-
 <p>
-     byte code:
+byte code:
 </p>
-
-
-<pre class="example">...
+<pre class="example">
+...
 const #3 = Field        #5.#20; //  Test.x:F
 ...
 0:   ldc     #2; //float 1.2f
 2:   putstatic       #3; //Field x:F
 ...
 </pre>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-3" class="outline-5">
-<h5 id="sec-1-2-3"><span class="section-number-5">1.2.3</span> literal</h5>
-<div class="outline-text-5" id="text-1-2-3">
-
-<ul>
-<li id="sec-1-2-3-1">String literal<br/>
-      java code:
-
-
-
-<pre class="example">public class Test {
+<div id="outline-container-sec-1-2-0-3" class="outline-5">
+<h5 id="sec-1-2-0-3"><span class="section-number-5">1.2.0.3</span> literal</h5>
+<div class="outline-text-5" id="text-1-2-0-3">
+</div><ol class="org-ol"><li>String literal<br  /><div class="outline-text-6" id="text-1-2-0-3-1">
+<p>
+java code:
+</p>
+<pre class="example">
+public class Test {
 public static void main(String args[]) {
 String s1="abc";
 }
 }
 </pre>
-
 <p>
-      byte code:
+byte code:
 </p>
-
-
-<pre class="example">~@mbjswglx56&gt; javap -verbose Test
+<pre class="example">
+~@mbjswglx56&gt; javap -verbose Test
 Compiled from "Test.java"
 public class Test extends java.lang.Object
 SourceFile: "Test.java"
@@ -472,13 +465,14 @@ line 5: 3
 
 }
 </pre>
+<p>
+可见,"abc"这个string literal被保存在constant pool #14/#2 的位置, java代码使用 `ldc #2` 从 constant pool中获得这个string, 并放到栈顶.
+</p>
 
 <p>
-      可见,"abc"这个string literal被保存在constant pool #14/#2 的位置, java代码使用 `ldc #2` 从 constant pool中获得这个string, 并放到栈顶.
+ldc pushes a one-word constant from the constant pool onto the operand stack. the following java types can be pushed using ldc:
 </p>
-<p>
-      ldc pushes a one-word constant from the constant pool onto the operand stack. the following java types can be pushed using ldc:
-</p><ul>
+<ul class="org-ul">
 <li>int
 </li>
 <li>float
@@ -487,54 +481,46 @@ line 5: 3
 </li>
 </ul>
 
+<p>
+Pushing a String causes a reference to a java.lang.String object to be constructed and pushed onto the operand stack. Pushing an int or float causes
+a primitive value to be pushed;
+</p>
 
 <p>
-      Pushing a String causes a reference to a java.lang.String object to be constructed and pushed onto the operand stack. Pushing an int or float causes
-      a primitive value to be pushed;
+String literal总是放在constant pool中, 并通过 ldc 加载.
 </p>
-<p>
-      String literal总是放在constant pool中, 并通过 ldc 加载.
-</p>
+</div>
 </li>
-</ul>
-<ul>
-<li id="sec-1-2-3-2">int, float literal<br/>
-     java code:
-
-
-
-<pre class="example">Integer i=100;
-</pre>
-
+<li>int, float literal<br  /><div class="outline-text-6" id="text-1-2-0-3-2">
 <p>
-     byte code:
+java code:
 </p>
-
-
-<pre class="example">0:   bipush  100
+<pre class="example">
+Integer i=100;
+</pre>
+<p>
+byte code:
+</p>
+<pre class="example">
+0:   bipush  100
 2:   invokestatic    #2; //Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
 5:   astore_1
 </pre>
-
 <p>
-     java code:
+java code:
 </p>
-
-
-<pre class="example">Integer i=100000;
+<pre class="example">
+Integer i=100000;
 </pre>
-
 <p>
-     byte code:
+byte code:
 </p>
-
-
-<pre class="example">0:   ldc     #2; //int 100000
+<pre class="example">
+0:   ldc     #2; //int 100000
 2:   invokestatic    #3; //Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
 5:   astore_1
 </pre>
-
-<ul>
+<ul class="org-ul">
 <li>对于int常量, &gt;short时放在constant pool, &lt;short时直接写到代码中
 </li>
 <li>ldc 对于 int 只是放 primitive 值放在 stack中, Integer的 autoboxing 实际就是隐式的调用了 Integer.valueOf
@@ -542,72 +528,57 @@ line 5: 3
 <li>float常量始终存放在constant pool中
 </li>
 </ul>
-
-</li>
-</ul>
+</div>
+</li></ol>
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-3" class="outline-3">
+<div id="outline-container-sec-1-3" class="outline-3">
 <h3 id="sec-1-3"><span class="section-number-3">1.3</span> Class Loader</h3>
 <div class="outline-text-3" id="text-1-3">
-
-
-</div>
-
-<div id="outline-container-1-3-1" class="outline-4">
+</div><div id="outline-container-sec-1-3-1" class="outline-4">
 <h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> class unloading</h4>
-<div class="outline-text-4" id="text-1-3-1">
-
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-4" class="outline-3">
+<div id="outline-container-sec-1-4" class="outline-3">
 <h3 id="sec-1-4"><span class="section-number-3">1.4</span> invokeXXX</h3>
 <div class="outline-text-3" id="text-1-4">
-
-
-</div>
-
-<div id="outline-container-1-4-1" class="outline-4">
+</div><div id="outline-container-sec-1-4-1" class="outline-4">
 <h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> invokevirtual vs. invokespecial</h4>
 <div class="outline-text-4" id="text-1-4-1">
-
-<p>similar with c++'s call-by-reference and call-by-value; that is, `invokespecial` will prohibit polymorphism.
-</p></div>
-
+<p>
+similar with c++'s call-by-reference and call-by-value; that is, `invokespecial` will prohibit polymorphism.
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-4-2" class="outline-4">
+<div id="outline-container-sec-1-4-2" class="outline-4">
 <h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> invokestatic</h4>
 <div class="outline-text-4" id="text-1-4-2">
-
-<p>direct addressing
-</p></div>
-
+<p>
+direct addressing
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-4-3" class="outline-4">
+<div id="outline-container-sec-1-4-3" class="outline-4">
 <h4 id="sec-1-4-3"><span class="section-number-4">1.4.3</span> invokeinterface</h4>
 <div class="outline-text-4" id="text-1-4-3">
-
-<p>contant-pool would be iterated to find the interface method, since an object can inhereit multiply interface;
-</p></div>
+<p>
+contant-pool would be iterated to find the interface method, since an object can inhereit multiply interface;
+</p>
 </div>
 </div>
 </div>
 </div>
-
-<div id="postamble">
-<p class="date">Date: 2013-06-04T13:23+0800</p>
+</div>
+<div id="postamble" class="status">
 <p class="author">Author: sunway</p>
-<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
-<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
-
+<p class="email">Email: <a href="mailto:sunwayforever@gmail.com">sunwayforever@gmail.com</a></p>
+<p class="date">Created: 2013-12-24 Tue 14:13</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.2 (<a href="http://orgmode.org">Org</a> mode 8.2.4)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

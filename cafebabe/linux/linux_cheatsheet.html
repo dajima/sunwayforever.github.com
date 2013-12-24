@@ -1,71 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Linux Cheat Sheet</title>
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="Linux Cheat Sheet"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-21T14:34+0800"/>
-<meta name="author" content="sunway"/>
-<meta name="description" content=""/>
-<meta name="keywords" content=""/>
+<!-- 2013-12-24 Tue 14:13 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="sunway" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
-  html { font-family: Times, serif; font-size: 12pt; }
   .title  { text-align: center; }
-  .todo   { color: red; }
+  .todo   { font-family: monospace; color: red; }
   .done   { color: green; }
-  .tag    { background-color: #add8e6; font-weight:normal }
-  .target { }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
-  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
-  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
-  .center {margin-left:auto; margin-right:auto; text-align:center;}
-  p.verse { margin-left: 3% }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
   pre {
-	border: 1pt solid #AEBDCC;
-	background-color: #F3F5F7;
-	padding: 5pt;
-	font-family: courier, monospace;
-        font-size: 90%;
-        overflow:auto;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
   }
-  table { border-collapse: collapse; }
-  td, th { vertical-align: top;  }
-  th.right  { text-align:center;  }
-  th.left   { text-align:center;   }
-  th.center { text-align:center; }
-  td.right  { text-align:right;  }
-  td.left   { text-align:left;   }
-  td.center { text-align:center; }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
   dt { font-weight: bold; }
-  div.figure { padding: 0.5em; }
-  div.figure p { text-align: center; }
-  div.inlinetask {
-    padding:10px;
-    border:2px solid gray;
-    margin:10px;
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
     background: #ffffcc;
   }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
   textarea { overflow-x: auto; }
-  .linenr { font-size:smaller }
-  .code-highlighted {background-color:#ffff00;}
-  .org-info-js_info-navigation { border-style:none; }
-  #org-info-js_console-label { font-size:10px; font-weight:bold;
-                               white-space:nowrap; }
-  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
-                                 font-weight:bold; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
   /*]]>*/-->
-</style>    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
+</style>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012  Free Software Foundation, Inc.
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -106,193 +132,136 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
-
 </head>
 <body>
-
-<div id="preamble">
-
-</div>
-
 <div id="content">
 <h1 class="title">Linux Cheat Sheet</h1>
-
-
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 Linux Cheat Sheet</a>
+<li><a href="#sec-1">1. Linux Cheat Sheet</a>
 <ul>
-<li><a href="#sec-1-1">1.1 linux 平台下开发者必备技能</a></li>
-<li><a href="#sec-1-2">1.2 shell 命令</a></li>
-<li><a href="#sec-1-3">1.3 shell 编程</a></li>
+<li><a href="#sec-1-1">1.1. linux 平台下开发者必备技能</a></li>
+<li><a href="#sec-1-2">1.2. shell 命令</a></li>
+<li><a href="#sec-1-3">1.3. shell 编程</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-
-<div id="outline-container-1" class="outline-2">
+<div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> Linux Cheat Sheet</h2>
 <div class="outline-text-2" id="text-1">
-
-
-</div>
-
-<div id="outline-container-1-1" class="outline-3">
+</div><div id="outline-container-sec-1-1" class="outline-3">
 <h3 id="sec-1-1"><span class="section-number-3">1.1</span> linux 平台下开发者必备技能</h3>
 <div class="outline-text-3" id="text-1-1">
-
-
-</div>
-
-<div id="outline-container-1-1-1" class="outline-4">
+</div><div id="outline-container-sec-1-1-1" class="outline-4">
 <h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> 熟练使用 shell 命令, 了解常用的系统命令</h4>
-<div class="outline-text-4" id="text-1-1-1">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-1-2" class="outline-4">
+<div id="outline-container-sec-1-1-2" class="outline-4">
 <h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> 具备 shell 编程的能力</h4>
-<div class="outline-text-4" id="text-1-1-2">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-1-3" class="outline-4">
+<div id="outline-container-sec-1-1-3" class="outline-4">
 <h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> 熟悉常用脚本语言, 如 perl, python</h4>
-<div class="outline-text-4" id="text-1-1-3">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-1-4" class="outline-4">
+<div id="outline-container-sec-1-1-4" class="outline-4">
 <h4 id="sec-1-1-4"><span class="section-number-4">1.1.4</span> 熟悉常用工具</h4>
-<div class="outline-text-4" id="text-1-1-4">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-1-5" class="outline-4">
+<div id="outline-container-sec-1-1-5" class="outline-4">
 <h4 id="sec-1-1-5"><span class="section-number-4">1.1.5</span> 能够习惯没有 GUI 的生活</h4>
-<div class="outline-text-4" id="text-1-1-5">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-1-6" class="outline-4">
+<div id="outline-container-sec-1-1-6" class="outline-4">
 <h4 id="sec-1-1-6"><span class="section-number-4">1.1.6</span> 精通 vim 或 emacs</h4>
-<div class="outline-text-4" id="text-1-1-6">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-1-7" class="outline-4">
+<div id="outline-container-sec-1-1-7" class="outline-4">
 <h4 id="sec-1-1-7"><span class="section-number-4">1.1.7</span> 理解 KISS 原则</h4>
-<div class="outline-text-4" id="text-1-1-7">
-
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2" class="outline-3">
+<div id="outline-container-sec-1-2" class="outline-3">
 <h3 id="sec-1-2"><span class="section-number-3">1.2</span> shell 命令</h3>
 <div class="outline-text-3" id="text-1-2">
-
-<p>linux 下的 shell 有许多种, 但默认的是 bash, 所以以下只涉及 bash 命令
+<p>
+linux 下的 shell 有许多种, 但默认的是 bash, 所以以下只涉及 bash 命令
 </p>
 </div>
-
-<div id="outline-container-1-2-1" class="outline-4">
+<div id="outline-container-sec-1-2-1" class="outline-4">
 <h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> 文件相关</h4>
 <div class="outline-text-4" id="text-1-2-1">
-
-
-</div>
-
-<div id="outline-container-1-2-1-1" class="outline-5">
+</div><div id="outline-container-sec-1-2-1-1" class="outline-5">
 <h5 id="sec-1-2-1-1"><span class="section-number-5">1.2.1.1</span> cat</h5>
 <div class="outline-text-5" id="text-1-2-1-1">
-
-<p>显示文件内容
-</p><ul>
+<p>
+显示文件内容
+</p>
+<ul class="org-ul">
 <li>cat /home/test/Test.java
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-1-2" class="outline-5">
+<div id="outline-container-sec-1-2-1-2" class="outline-5">
 <h5 id="sec-1-2-1-2"><span class="section-number-5">1.2.1.2</span> cd</h5>
 <div class="outline-text-5" id="text-1-2-1-2">
-
-<p>  `Change Directory`, 即修当前目录 (参考 pwd 命令)
-</p><ul>
+<p>
+`Change Directory`, 即修当前目录 (参考 pwd 命令)
+</p>
+<ul class="org-ul">
 <li>cd
-   切换到用户的 home 目录
+切换到用户的 home 目录
 </li>
 <li>cd /home/test
-   切换到 /home/test
+切换到 /home/test
 </li>
 <li>cd ..
-   切换到上一级目录
+切换到上一级目录
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-1-3" class="outline-5">
+<div id="outline-container-sec-1-2-1-3" class="outline-5">
 <h5 id="sec-1-2-1-3"><span class="section-number-5">1.2.1.3</span> chgrp</h5>
 <div class="outline-text-5" id="text-1-2-1-3">
-
-<p>更改文件所属的用户组
-</p><ul>
+<p>
+更改文件所属的用户组
+</p>
+<ul class="org-ul">
 <li>chgrp group<sub>test</sub> /home/test.Test.java
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-1-4" class="outline-5">
+<div id="outline-container-sec-1-2-1-4" class="outline-5">
 <h5 id="sec-1-2-1-4"><span class="section-number-5">1.2.1.4</span> chmod</h5>
 <div class="outline-text-5" id="text-1-2-1-4">
-
-<p>更改文件的权限
-</p><ul>
-<li id="sec-1-2-1-4-1">关于文件的权限<br/>
+<p>
+更改文件的权限
+</p>
+</div>
+<ol class="org-ol"><li>关于文件的权限<br  /><div class="outline-text-6" id="text-1-2-1-4-1">
+<p>
 每个文件的权限使用一个包含四个数字的串来表示:
 例如:0751 表示这个文件是:
-<ul>
+</p>
+<ul class="org-ul">
 <li>第一个7表示这个文件对于其 owner 是 可读的 (4)+ 可写的 (2) + 可执行的 (1)
 </li>
 <li>第二个5表示这个文件对于与该文件同属一个 group 的用户是 可读(4)+可执行(1) 的
 </li>
 <li>第三个1表示对于其他用户(非 owner, 非同 group) 的用户是可执行(1)的
 </li>
-<li>第一个0一般很少使用, 它表示的是 setuid(4)+setgid(2)+sticky(1), 一般不需要了解&hellip;
+<li>第一个0一般很少使用, 它表示的是 setuid(4)+setgid(2)+sticky(1), 一般不需要了解&#x2026;
 </li>
 </ul>
+</div>
+</li>
 
-</li>
-</ul>
-<ul>
-<li id="sec-1-2-1-4-2">chmod<br/>
-<ul>
+<li>chmod<br  /><div class="outline-text-6" id="text-1-2-1-4-2">
+<ul class="org-ul">
 <li>chmod 777 file
 </li>
 <li>chmod a+x file
@@ -305,283 +274,261 @@ for the JavaScript code in this tag.
 </li>
 </ul>
 
-
 <p>
 其中:
-</p><ul>
+</p>
+<ul class="org-ul">
 <li>a,u,g,o表示 all, user, group, other,
 </li>
 <li>x,r,w 表示可执行, 可读, 可写
 </li>
 </ul>
-
-</li>
-</ul>
+</div>
+</li></ol>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-1-5" class="outline-5">
+<div id="outline-container-sec-1-2-1-5" class="outline-5">
 <h5 id="sec-1-2-1-5"><span class="section-number-5">1.2.1.5</span> chown</h5>
 <div class="outline-text-5" id="text-1-2-1-5">
-
-<p>改变文件的 owner
-</p></div>
-
+<p>
+改变文件的 owner
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-2-1-6" class="outline-5">
+<div id="outline-container-sec-1-2-1-6" class="outline-5">
 <h5 id="sec-1-2-1-6"><span class="section-number-5">1.2.1.6</span> chgrp</h5>
 <div class="outline-text-5" id="text-1-2-1-6">
-
-<p>改变文件的 group
-</p></div>
-
+<p>
+改变文件的 group
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-2-1-7" class="outline-5">
+<div id="outline-container-sec-1-2-1-7" class="outline-5">
 <h5 id="sec-1-2-1-7"><span class="section-number-5">1.2.1.7</span> convmv</h5>
 <div class="outline-text-5" id="text-1-2-1-7">
-
-<p>修改文件名的编码
+<p>
+修改文件名的编码
 </p>
+
 <p>
 例如, 已经某个文件名的编码是 gbk, 我想把它变为 utf-8
-</p><ul>
-<li>convmv -f gbk -t utf-8 &ndash;notest
+</p>
+<ul class="org-ul">
+<li>convmv -f gbk -t utf-8 &#x2013;notest
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-1-8" class="outline-5">
+<div id="outline-container-sec-1-2-1-8" class="outline-5">
 <h5 id="sec-1-2-1-8"><span class="section-number-5">1.2.1.8</span> cp</h5>
 <div class="outline-text-5" id="text-1-2-1-8">
-
-<p>复制文件和目录
-</p><ul>
+<p>
+复制文件和目录
+</p>
+<ul class="org-ul">
 <li>cp file1 file2
 </li>
 <li>cp -a /dir1 /
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-1-9" class="outline-5">
+<div id="outline-container-sec-1-2-1-9" class="outline-5">
 <h5 id="sec-1-2-1-9"><span class="section-number-5">1.2.1.9</span> file</h5>
 <div class="outline-text-5" id="text-1-2-1-9">
-
-<p>根据文件头的 magic number 判断文件类型(而不是通过扩展名)
-</p><ul>
+<p>
+根据文件头的 magic number 判断文件类型(而不是通过扩展名)
+</p>
+<ul class="org-ul">
 <li>file 1.png
-  1.png: PNG image, 480 x 800, 8-bit/color RGB, non-interlaced
+1.png: PNG image, 480 x 800, 8-bit/color RGB, non-interlaced
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-1-10" class="outline-5">
+<div id="outline-container-sec-1-2-1-10" class="outline-5">
 <h5 id="sec-1-2-1-10"><span class="section-number-5">1.2.1.10</span> head</h5>
 <div class="outline-text-5" id="text-1-2-1-10">
-
-<p>显示文件的前几行 (参考 tail)
-</p></div>
-
+<p>
+显示文件的前几行 (参考 tail)
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-2-1-11" class="outline-5">
+<div id="outline-container-sec-1-2-1-11" class="outline-5">
 <h5 id="sec-1-2-1-11"><span class="section-number-5">1.2.1.11</span> ls</h5>
 <div class="outline-text-5" id="text-1-2-1-11">
-
-<p>显示目录内容
-</p><ul>
+<p>
+显示目录内容
+</p>
+<ul class="org-ul">
 <li>ls
-  显示当前目录内容
+显示当前目录内容
 </li>
 <li>ls /dir
 </li>
 <li>ls -a /dir
-  显示 dir 下所有内容, 包括隐藏文件
+显示 dir 下所有内容, 包括隐藏文件
 </li>
 <li>ls -l
 </li>
 <li>ls -la
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-1-12" class="outline-5">
+<div id="outline-container-sec-1-2-1-12" class="outline-5">
 <h5 id="sec-1-2-1-12"><span class="section-number-5">1.2.1.12</span> locate</h5>
 <div class="outline-text-5" id="text-1-2-1-12">
-
-<p>通过预先建立索引的方式快速查找文件
-</p><ul>
+<p>
+通过预先建立索引的方式快速查找文件
+</p>
+<ul class="org-ul">
 <li>先执行 updatedb 建立一个全磁盘的文件索引
 </li>
 <li>一旦索引建立, 以后可以通过 locate "file<sub>pattern</sub>" 很快的找到文件名与
-  file<sub>pattern</sub> 匹配的文件
+file<sub>pattern</sub> 匹配的文件
 </li>
 <li>在文件有变更的需要使用 updatedb 更新索引
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-1-13" class="outline-5">
+<div id="outline-container-sec-1-2-1-13" class="outline-5">
 <h5 id="sec-1-2-1-13"><span class="section-number-5">1.2.1.13</span> ln</h5>
 <div class="outline-text-5" id="text-1-2-1-13">
-
-<p>生成一个文件或目录的链接, 根据参数的不同, 可以生成两种链接
-</p><ul>
+<p>
+生成一个文件或目录的链接, 根据参数的不同, 可以生成两种链接
+</p>
+<ul class="org-ul">
 <li>hard link (硬链接)
-  例如:ln file1 file2
-  其中 file1 是已存在的一个文件,  file2尚不存在, 执行完该命令后, file1 和 file2
-  成为指向文件系统中同一个 inode 的两个引用, 对任何一个引用的修改都会反映到另一
-  个引用, 而且只有两个引用都被删除后该 inode 才会被删除. 可以在执行该命令前后通
-  过 <a href="#sec-1-2-1-21">stat</a> 命令查看有什么变化(注意 stat 输出的 Inode 值和 Links 值的变化)
+例如:ln file1 file2
+其中 file1 是已存在的一个文件,  file2尚不存在, 执行完该命令后, file1 和 file2
+成为指向文件系统中同一个 inode 的两个引用, 对任何一个引用的修改都会反映到另一
+个引用, 而且只有两个引用都被删除后该 inode 才会被删除. 可以在执行该命令前后通
+过 <a href="#sec-1-2-1-21">1.2.1.21</a> 命令查看有什么变化(注意 stat 输出的 Inode 值和 Links 值的变化)
 </li>
 <li>symbolic link (符号链接)
-  相当于 windows 中的快捷方式
-<ul>
+相当于 windows 中的快捷方式
+<ul class="org-ul">
 <li>ln -s file1 file2
-    则新生成的 file2 在文件系统中是一个全新的 inode , 但它在 inode 元数据中会直
-    接保存 "file1" 这个字符串. 当 file1 被删除时, file2还存在, 但无法访问到数据
-    了. 
-    ln -s 有一个好处是可以跨分区, 跨文件系统的建立符号链接,而且也可以对目录建立
-    符号链接, 因为它只是保存字符串. 而 ln 则无法突破上述限制.
+则新生成的 file2 在文件系统中是一个全新的 inode , 但它在 inode 元数据中会直
+接保存 "file1" 这个字符串. 当 file1 被删除时, file2还存在, 但无法访问到数据
+了. 
+ln -s 有一个好处是可以跨分区, 跨文件系统的建立符号链接,而且也可以对目录建立
+符号链接, 因为它只是保存字符串. 而 ln 则无法突破上述限制.
 </li>
 </ul>
-
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-1-14" class="outline-5">
+<div id="outline-container-sec-1-2-1-14" class="outline-5">
 <h5 id="sec-1-2-1-14"><span class="section-number-5">1.2.1.14</span> mkdir</h5>
 <div class="outline-text-5" id="text-1-2-1-14">
-
-<p>新建文件
-</p><ul>
+<p>
+新建文件
+</p>
+<ul class="org-ul">
 <li>mkdir dir
 </li>
 <li>mkdir -p dir1/dir2
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-1-15" class="outline-5">
+<div id="outline-container-sec-1-2-1-15" class="outline-5">
 <h5 id="sec-1-2-1-15"><span class="section-number-5">1.2.1.15</span> mv</h5>
-<div class="outline-text-5" id="text-1-2-1-15">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-1-16" class="outline-5">
+<div id="outline-container-sec-1-2-1-16" class="outline-5">
 <h5 id="sec-1-2-1-16"><span class="section-number-5">1.2.1.16</span> popd</h5>
 <div class="outline-text-5" id="text-1-2-1-16">
-
-<p>从栈中 pop 一个目录,并切换到那个目录 (参考 <a href="#sec-1-2-1-17">pushd</a>)
-</p></div>
-
+<p>
+从栈中 pop 一个目录,并切换到那个目录 (参考 <a href="#sec-1-2-1-17">1.2.1.17</a>)
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-2-1-17" class="outline-5">
+<div id="outline-container-sec-1-2-1-17" class="outline-5">
 <h5 id="sec-1-2-1-17"><span class="section-number-5">1.2.1.17</span> pushd</h5>
 <div class="outline-text-5" id="text-1-2-1-17">
-
-<p>将当前目录 push 到栈中, 然后切换到另一目录 (参考 <a href="#sec-1-2-1-16">popd</a>)
-</p></div>
-
+<p>
+将当前目录 push 到栈中, 然后切换到另一目录 (参考 <a href="#sec-1-2-1-16">1.2.1.16</a>)
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-2-1-18" class="outline-5">
+<div id="outline-container-sec-1-2-1-18" class="outline-5">
 <h5 id="sec-1-2-1-18"><span class="section-number-5">1.2.1.18</span> pwd</h5>
 <div class="outline-text-5" id="text-1-2-1-18">
-
-<p>显示当前目录
-</p></div>
-
+<p>
+显示当前目录
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-2-1-19" class="outline-5">
+<div id="outline-container-sec-1-2-1-19" class="outline-5">
 <h5 id="sec-1-2-1-19"><span class="section-number-5">1.2.1.19</span> rm</h5>
 <div class="outline-text-5" id="text-1-2-1-19">
-
-<p>删除文件(删除后无法恢复)
-</p><ul>
+<p>
+删除文件(删除后无法恢复)
+</p>
+<ul class="org-ul">
 <li>rm -rf dir/
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-1-20" class="outline-5">
+<div id="outline-container-sec-1-2-1-20" class="outline-5">
 <h5 id="sec-1-2-1-20"><span class="section-number-5">1.2.1.20</span> rmdir</h5>
 <div class="outline-text-5" id="text-1-2-1-20">
-
-<p>删除目录 (目录必须为空)
-</p></div>
-
+<p>
+删除目录 (目录必须为空)
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-2-1-21" class="outline-5">
+<div id="outline-container-sec-1-2-1-21" class="outline-5">
 <h5 id="sec-1-2-1-21"><span class="section-number-5">1.2.1.21</span> stat</h5>
 <div class="outline-text-5" id="text-1-2-1-21">
-
-<p>显示文件的元数据, 例如是否是符号链接, 权限, owner, size, time-stamp
-</p></div>
-
+<p>
+显示文件的元数据, 例如是否是符号链接, 权限, owner, size, time-stamp
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-2-1-22" class="outline-5">
+<div id="outline-container-sec-1-2-1-22" class="outline-5">
 <h5 id="sec-1-2-1-22"><span class="section-number-5">1.2.1.22</span> tail</h5>
 <div class="outline-text-5" id="text-1-2-1-22">
-
-<p>显示文件的最后几行(参考 head)
-</p><ul>
+<p>
+显示文件的最后几行(参考 head)
+</p>
+<ul class="org-ul">
 <li>dmesg|tail
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-1-23" class="outline-5">
+<div id="outline-container-sec-1-2-1-23" class="outline-5">
 <h5 id="sec-1-2-1-23"><span class="section-number-5">1.2.1.23</span> touch</h5>
-<div class="outline-text-5" id="text-1-2-1-23">
-
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-2" class="outline-4">
+<div id="outline-container-sec-1-2-2" class="outline-4">
 <h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> 管道与重定向</h4>
 <div class="outline-text-4" id="text-1-2-2">
-
-<ul>
+<ul class="org-ul">
 <li>cmd &gt; file
 </li>
 <li>cmd &gt;&gt; file
@@ -595,41 +542,30 @@ for the JavaScript code in this tag.
 <li>echo "abc"|cat
 </li>
 </ul>
-
-
 </div>
-
-<div id="outline-container-1-2-2-1" class="outline-5">
+<div id="outline-container-sec-1-2-2-1" class="outline-5">
 <h5 id="sec-1-2-2-1"><span class="section-number-5">1.2.2.1</span> xargs</h5>
 <div class="outline-text-5" id="text-1-2-2-1">
-
-<ul>
+<ul class="org-ul">
 <li>find ./ -iname "*.java"|xargs rm
 </li>
 <li>find ./ -iname "*.java"|xargs -I{}  rm {}
 </li>
 </ul>
-
 </div>
 </div>
-
 </div>
 
-<div id="outline-container-1-2-3" class="outline-4">
+<div id="outline-container-sec-1-2-3" class="outline-4">
 <h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> 压缩</h4>
 <div class="outline-text-4" id="text-1-2-3">
-
-
-</div>
-
-<div id="outline-container-1-2-3-1" class="outline-5">
+</div><div id="outline-container-sec-1-2-3-1" class="outline-5">
 <h5 id="sec-1-2-3-1"><span class="section-number-5">1.2.3.1</span> tar</h5>
 <div class="outline-text-5" id="text-1-2-3-1">
-
-<ul>
+<ul class="org-ul">
 <li>tar cvf file.tar dir/
-  将 dir 下的文件打包成 file.tar
-<ul>
+将 dir 下的文件打包成 file.tar
+<ul class="org-ul">
 <li>c 表示 create
 </li>
 <li>v 表示 verbose
@@ -637,29 +573,27 @@ for the JavaScript code in this tag.
 <li>f 表示后面接的参数是目标文件名
 </li>
 </ul>
-
 </li>
 <li>tar xf file.tar
-  解包
+解包
 </li>
 <li>tar tf file.tar
-  显示 file.tar 文件的内容
+显示 file.tar 文件的内容
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-3-2" class="outline-5">
+<div id="outline-container-sec-1-2-3-2" class="outline-5">
 <h5 id="sec-1-2-3-2"><span class="section-number-5">1.2.3.2</span> tar.gz</h5>
 <div class="outline-text-5" id="text-1-2-3-2">
-
-<p>tar.gz 是指对一个 tar 文件使用 gzip 压缩生成的压缩文件, 这是因为 gzip 只能压缩单
+<p>
+tar.gz 是指对一个 tar 文件使用 gzip 压缩生成的压缩文件, 这是因为 gzip 只能压缩单
 个文件, 无法压缩一个目录, 所以需要先用 tar 对目录进行打包. tar.gz 与 tar 文件的
 命令类似, 只是多了一个 z 参数表示这是一个 gzip 压缩的 tar.
 </p>
-<ul>
+
+<ul class="org-ul">
 <li>tar zcvf file.tar.gz dir
 </li>
 <li>tar ztvf file.tar
@@ -667,287 +601,159 @@ for the JavaScript code in this tag.
 <li>tar zxf file.tar
 </li>
 </ul>
-
-
 </div>
-
 </div>
-
-<div id="outline-container-1-2-3-3" class="outline-5">
+<div id="outline-container-sec-1-2-3-3" class="outline-5">
 <h5 id="sec-1-2-3-3"><span class="section-number-5">1.2.3.3</span> tar.bz2</h5>
 <div class="outline-text-5" id="text-1-2-3-3">
-
-<p>tar.bz2 是对 tar 使用 bzip2 压缩生成的压缩文件, 与 tar.gz 类似, 要把 z 参数
+<p>
+tar.bz2 是对 tar 使用 bzip2 压缩生成的压缩文件, 与 tar.gz 类似, 要把 z 参数
 换成 j 就可以了.
-</p></div>
-
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-2-3-4" class="outline-5">
+<div id="outline-container-sec-1-2-3-4" class="outline-5">
 <h5 id="sec-1-2-3-4"><span class="section-number-5">1.2.3.4</span> zip</h5>
 <div class="outline-text-5" id="text-1-2-3-4">
-
-<ul>
+<ul class="org-ul">
 <li>zip
 </li>
 <li>unzip
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-3-5" class="outline-5">
+<div id="outline-container-sec-1-2-3-5" class="outline-5">
 <h5 id="sec-1-2-3-5"><span class="section-number-5">1.2.3.5</span> rar</h5>
 <div class="outline-text-5" id="text-1-2-3-5">
-
-<ul>
+<ul class="org-ul">
 <li>unrar
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-3-6" class="outline-5">
+<div id="outline-container-sec-1-2-3-6" class="outline-5">
 <h5 id="sec-1-2-3-6"><span class="section-number-5">1.2.3.6</span> 7z</h5>
-<div class="outline-text-5" id="text-1-2-3-6">
-
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-4" class="outline-4">
+<div id="outline-container-sec-1-2-4" class="outline-4">
 <h4 id="sec-1-2-4"><span class="section-number-4">1.2.4</span> 文本处理</h4>
 <div class="outline-text-4" id="text-1-2-4">
-
-
-</div>
-
-<div id="outline-container-1-2-4-1" class="outline-5">
+</div><div id="outline-container-sec-1-2-4-1" class="outline-5">
 <h5 id="sec-1-2-4-1"><span class="section-number-5">1.2.4.1</span> ctags</h5>
-<div class="outline-text-5" id="text-1-2-4-1">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-4-2" class="outline-5">
+<div id="outline-container-sec-1-2-4-2" class="outline-5">
 <h5 id="sec-1-2-4-2"><span class="section-number-5">1.2.4.2</span> more</h5>
-<div class="outline-text-5" id="text-1-2-4-2">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-4-3" class="outline-5">
+<div id="outline-container-sec-1-2-4-3" class="outline-5">
 <h5 id="sec-1-2-4-3"><span class="section-number-5">1.2.4.3</span> sort</h5>
-<div class="outline-text-5" id="text-1-2-4-3">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-4-4" class="outline-5">
+<div id="outline-container-sec-1-2-4-4" class="outline-5">
 <h5 id="sec-1-2-4-4"><span class="section-number-5">1.2.4.4</span> uniq</h5>
-<div class="outline-text-5" id="text-1-2-4-4">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-4-5" class="outline-5">
+<div id="outline-container-sec-1-2-4-5" class="outline-5">
 <h5 id="sec-1-2-4-5"><span class="section-number-5">1.2.4.5</span> iconv</h5>
-<div class="outline-text-5" id="text-1-2-4-5">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-4-6" class="outline-5">
+<div id="outline-container-sec-1-2-4-6" class="outline-5">
 <h5 id="sec-1-2-4-6"><span class="section-number-5">1.2.4.6</span> od</h5>
-<div class="outline-text-5" id="text-1-2-4-6">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-4-7" class="outline-5">
+<div id="outline-container-sec-1-2-4-7" class="outline-5">
 <h5 id="sec-1-2-4-7"><span class="section-number-5">1.2.4.7</span> find</h5>
-<div class="outline-text-5" id="text-1-2-4-7">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-4-8" class="outline-5">
+<div id="outline-container-sec-1-2-4-8" class="outline-5">
 <h5 id="sec-1-2-4-8"><span class="section-number-5">1.2.4.8</span> diff</h5>
-<div class="outline-text-5" id="text-1-2-4-8">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-4-9" class="outline-5">
+<div id="outline-container-sec-1-2-4-9" class="outline-5">
 <h5 id="sec-1-2-4-9"><span class="section-number-5">1.2.4.9</span> grep</h5>
-<div class="outline-text-5" id="text-1-2-4-9">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-4-10" class="outline-5">
+<div id="outline-container-sec-1-2-4-10" class="outline-5">
 <h5 id="sec-1-2-4-10"><span class="section-number-5">1.2.4.10</span> sed</h5>
-<div class="outline-text-5" id="text-1-2-4-10">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-4-11" class="outline-5">
+<div id="outline-container-sec-1-2-4-11" class="outline-5">
 <h5 id="sec-1-2-4-11"><span class="section-number-5">1.2.4.11</span> awk</h5>
-<div class="outline-text-5" id="text-1-2-4-11">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-4-12" class="outline-5">
+<div id="outline-container-sec-1-2-4-12" class="outline-5">
 <h5 id="sec-1-2-4-12"><span class="section-number-5">1.2.4.12</span> wc</h5>
-<div class="outline-text-5" id="text-1-2-4-12">
-
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-5" class="outline-4">
+<div id="outline-container-sec-1-2-5" class="outline-4">
 <h4 id="sec-1-2-5"><span class="section-number-4">1.2.5</span> 作业管理</h4>
 <div class="outline-text-4" id="text-1-2-5">
-
-
-</div>
-
-<div id="outline-container-1-2-5-1" class="outline-5">
+</div><div id="outline-container-sec-1-2-5-1" class="outline-5">
 <h5 id="sec-1-2-5-1"><span class="section-number-5">1.2.5.1</span> &amp;</h5>
-<div class="outline-text-5" id="text-1-2-5-1">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-5-2" class="outline-5">
+<div id="outline-container-sec-1-2-5-2" class="outline-5">
 <h5 id="sec-1-2-5-2"><span class="section-number-5">1.2.5.2</span> ;</h5>
-<div class="outline-text-5" id="text-1-2-5-2">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-5-3" class="outline-5">
+<div id="outline-container-sec-1-2-5-3" class="outline-5">
 <h5 id="sec-1-2-5-3"><span class="section-number-5">1.2.5.3</span> |</h5>
-<div class="outline-text-5" id="text-1-2-5-3">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-5-4" class="outline-5">
+<div id="outline-container-sec-1-2-5-4" class="outline-5">
 <h5 id="sec-1-2-5-4"><span class="section-number-5">1.2.5.4</span> nohup</h5>
-<div class="outline-text-5" id="text-1-2-5-4">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-5-5" class="outline-5">
+<div id="outline-container-sec-1-2-5-5" class="outline-5">
 <h5 id="sec-1-2-5-5"><span class="section-number-5">1.2.5.5</span> fg</h5>
-<div class="outline-text-5" id="text-1-2-5-5">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-5-6" class="outline-5">
+<div id="outline-container-sec-1-2-5-6" class="outline-5">
 <h5 id="sec-1-2-5-6"><span class="section-number-5">1.2.5.6</span> bg</h5>
-<div class="outline-text-5" id="text-1-2-5-6">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-5-7" class="outline-5">
+<div id="outline-container-sec-1-2-5-7" class="outline-5">
 <h5 id="sec-1-2-5-7"><span class="section-number-5">1.2.5.7</span> C***Z</h5>
-<div class="outline-text-5" id="text-1-2-5-7">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-5-8" class="outline-5">
+<div id="outline-container-sec-1-2-5-8" class="outline-5">
 <h5 id="sec-1-2-5-8"><span class="section-number-5">1.2.5.8</span> jobs</h5>
-<div class="outline-text-5" id="text-1-2-5-8">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-5-9" class="outline-5">
+<div id="outline-container-sec-1-2-5-9" class="outline-5">
 <h5 id="sec-1-2-5-9"><span class="section-number-5">1.2.5.9</span> wait</h5>
-<div class="outline-text-5" id="text-1-2-5-9">
-
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-6" class="outline-4">
+<div id="outline-container-sec-1-2-6" class="outline-4">
 <h4 id="sec-1-2-6"><span class="section-number-4">1.2.6</span> 系统管理</h4>
 <div class="outline-text-4" id="text-1-2-6">
-
-
-</div>
-
-<div id="outline-container-1-2-6-1" class="outline-5">
+</div><div id="outline-container-sec-1-2-6-1" class="outline-5">
 <h5 id="sec-1-2-6-1"><span class="section-number-5">1.2.6.1</span> df</h5>
 <div class="outline-text-5" id="text-1-2-6-1">
-
-<p>显示磁盘使用情况
-</p></div>
-
+<p>
+显示磁盘使用情况
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-2-6-2" class="outline-5">
+<div id="outline-container-sec-1-2-6-2" class="outline-5">
 <h5 id="sec-1-2-6-2"><span class="section-number-5">1.2.6.2</span> free</h5>
 <div class="outline-text-5" id="text-1-2-6-2">
-
-<p>显示内存使用情况
-</p></div>
-
+<p>
+显示内存使用情况
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-2-6-3" class="outline-5">
+<div id="outline-container-sec-1-2-6-3" class="outline-5">
 <h5 id="sec-1-2-6-3"><span class="section-number-5">1.2.6.3</span> du</h5>
 <div class="outline-text-5" id="text-1-2-6-3">
-
-<p>显示目录的磁盘占用情况
-</p></div>
-
+<p>
+显示目录的磁盘占用情况
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-2-6-4" class="outline-5">
+<div id="outline-container-sec-1-2-6-4" class="outline-5">
 <h5 id="sec-1-2-6-4"><span class="section-number-5">1.2.6.4</span> dd</h5>
 <div class="outline-text-5" id="text-1-2-6-4">
-
-<p>复制文件? 通常只用来做两件事:
-</p><ul>
+<p>
+复制文件? 通常只用来做两件事:
+</p>
+<ul class="org-ul">
 <li>以 raw 方式直接读取设备的内容
-  dd if=/dev/hda of=/boot/mbr bs=512 count=1fc3
-  该命令的意思是:
-<ul>
+dd if=/dev/hda of=/boot/mbr bs=512 count=1fc3
+该命令的意思是:
+<ul class="org-ul">
 <li>从 /dev/hda (即硬盘) 设备读取数据
 </li>
 <li>保存到 /boot/mbr 文件
@@ -957,484 +763,233 @@ for the JavaScript code in this tag.
 <li>一共读取 1fc3 个
 </li>
 </ul>
-
-<p>  最终的结果是把硬盘的 MBR (主引导记录) 保存到了 /boot/mbr 文件中
-</p></li>
+<p>
+最终的结果是把硬盘的 MBR (主引导记录) 保存到了 /boot/mbr 文件中
+</p>
+</li>
 <li>通过 /dev/zero 文件生成任意大小的测试文件
-  dd if=/dev/zero of=file bs=1024 count=1024
-  该命令生成一个1MB大小的文件, 其中 /dev/zero 是一个特殊的设备, 它保证每次读操作
-  都返回一个0,而且永远不会读到EOF
+dd if=/dev/zero of=file bs=1024 count=1024
+该命令生成一个1MB大小的文件, 其中 /dev/zero 是一个特殊的设备, 它保证每次读操作
+都返回一个0,而且永远不会读到EOF
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-6-5" class="outline-5">
+<div id="outline-container-sec-1-2-6-5" class="outline-5">
 <h5 id="sec-1-2-6-5"><span class="section-number-5">1.2.6.5</span> mount</h5>
 <div class="outline-text-5" id="text-1-2-6-5">
-
-<p>挂载设备
-</p><ul>
+<p>
+挂载设备
+</p>
+<ul class="org-ul">
 <li>mount /dev/sda1 /mnt/usb
-  挂载 u 盘 (/dev/sda1 具体是哪个需要看 <a href="#sec-1-2-8-3">dmesg</a> 的输出, /mnt/usb 是指挂载到哪个目
-  录, 可以任意指定, 挂载成功后可以通过 /mnt/usb 访问 u 盘的文件
+挂载 u 盘 (/dev/sda1 具体是哪个需要看 <a href="#sec-1-2-8-3">1.2.8.3</a> 的输出, /mnt/usb 是指挂载到哪个目
+录, 可以任意指定, 挂载成功后可以通过 /mnt/usb 访问 u 盘的文件
 </li>
 <li>mount 
-  显示当前 mount 的情况
+显示当前 mount 的情况
 </li>
 <li>mount -t iso9660 -o loop file1.iso /mnt/cdrom
-  挂载 iso 镜像
+挂载 iso 镜像
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-6-6" class="outline-5">
+<div id="outline-container-sec-1-2-6-6" class="outline-5">
 <h5 id="sec-1-2-6-6"><span class="section-number-5">1.2.6.6</span> date</h5>
 <div class="outline-text-5" id="text-1-2-6-6">
-
-<p>显示当前时间
-</p></div>
-
+<p>
+显示当前时间
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-2-6-7" class="outline-5">
+<div id="outline-container-sec-1-2-6-7" class="outline-5">
 <h5 id="sec-1-2-6-7"><span class="section-number-5">1.2.6.7</span> time</h5>
 <div class="outline-text-5" id="text-1-2-6-7">
-
-<p>显示一个命令的执行时间
-</p><ul>
+<p>
+显示一个命令的执行时间
+</p>
+<ul class="org-ul">
 <li>time sleep 10
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-6-8" class="outline-5">
+<div id="outline-container-sec-1-2-6-8" class="outline-5">
 <h5 id="sec-1-2-6-8"><span class="section-number-5">1.2.6.8</span> umount</h5>
-<div class="outline-text-5" id="text-1-2-6-8">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-6-9" class="outline-5">
+<div id="outline-container-sec-1-2-6-9" class="outline-5">
 <h5 id="sec-1-2-6-9"><span class="section-number-5">1.2.6.9</span> shutdown</h5>
-<div class="outline-text-5" id="text-1-2-6-9">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-6-10" class="outline-5">
+<div id="outline-container-sec-1-2-6-10" class="outline-5">
 <h5 id="sec-1-2-6-10"><span class="section-number-5">1.2.6.10</span> reboot</h5>
-<div class="outline-text-5" id="text-1-2-6-10">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-6-11" class="outline-5">
+<div id="outline-container-sec-1-2-6-11" class="outline-5">
 <h5 id="sec-1-2-6-11"><span class="section-number-5">1.2.6.11</span> lsof</h5>
-<div class="outline-text-5" id="text-1-2-6-11">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-6-12" class="outline-5">
+<div id="outline-container-sec-1-2-6-12" class="outline-5">
 <h5 id="sec-1-2-6-12"><span class="section-number-5">1.2.6.12</span> ps</h5>
-<div class="outline-text-5" id="text-1-2-6-12">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-6-13" class="outline-5">
+<div id="outline-container-sec-1-2-6-13" class="outline-5">
 <h5 id="sec-1-2-6-13"><span class="section-number-5">1.2.6.13</span> top</h5>
-<div class="outline-text-5" id="text-1-2-6-13">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-6-14" class="outline-5">
+<div id="outline-container-sec-1-2-6-14" class="outline-5">
 <h5 id="sec-1-2-6-14"><span class="section-number-5">1.2.6.14</span> kill</h5>
-<div class="outline-text-5" id="text-1-2-6-14">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-6-15" class="outline-5">
+<div id="outline-container-sec-1-2-6-15" class="outline-5">
 <h5 id="sec-1-2-6-15"><span class="section-number-5">1.2.6.15</span> su</h5>
-<div class="outline-text-5" id="text-1-2-6-15">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-6-16" class="outline-5">
+<div id="outline-container-sec-1-2-6-16" class="outline-5">
 <h5 id="sec-1-2-6-16"><span class="section-number-5">1.2.6.16</span> sudo</h5>
-<div class="outline-text-5" id="text-1-2-6-16">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-6-17" class="outline-5">
+<div id="outline-container-sec-1-2-6-17" class="outline-5">
 <h5 id="sec-1-2-6-17"><span class="section-number-5">1.2.6.17</span> hostname</h5>
-<div class="outline-text-5" id="text-1-2-6-17">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-6-18" class="outline-5">
+<div id="outline-container-sec-1-2-6-18" class="outline-5">
 <h5 id="sec-1-2-6-18"><span class="section-number-5">1.2.6.18</span> /etc/hosts</h5>
-<div class="outline-text-5" id="text-1-2-6-18">
-
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-7" class="outline-4">
+<div id="outline-container-sec-1-2-7" class="outline-4">
 <h4 id="sec-1-2-7"><span class="section-number-4">1.2.7</span> 网络相关</h4>
 <div class="outline-text-4" id="text-1-2-7">
-
-
-</div>
-
-<div id="outline-container-1-2-7-1" class="outline-5">
+</div><div id="outline-container-sec-1-2-7-1" class="outline-5">
 <h5 id="sec-1-2-7-1"><span class="section-number-5">1.2.7.1</span> curl</h5>
-<div class="outline-text-5" id="text-1-2-7-1">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-7-2" class="outline-5">
+<div id="outline-container-sec-1-2-7-2" class="outline-5">
 <h5 id="sec-1-2-7-2"><span class="section-number-5">1.2.7.2</span> wget</h5>
-<div class="outline-text-5" id="text-1-2-7-2">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-7-3" class="outline-5">
+<div id="outline-container-sec-1-2-7-3" class="outline-5">
 <h5 id="sec-1-2-7-3"><span class="section-number-5">1.2.7.3</span> nc</h5>
-<div class="outline-text-5" id="text-1-2-7-3">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-7-4" class="outline-5">
+<div id="outline-container-sec-1-2-7-4" class="outline-5">
 <h5 id="sec-1-2-7-4"><span class="section-number-5">1.2.7.4</span> telnet</h5>
-<div class="outline-text-5" id="text-1-2-7-4">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-7-5" class="outline-5">
+<div id="outline-container-sec-1-2-7-5" class="outline-5">
 <h5 id="sec-1-2-7-5"><span class="section-number-5">1.2.7.5</span> lftp</h5>
-<div class="outline-text-5" id="text-1-2-7-5">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-7-6" class="outline-5">
+<div id="outline-container-sec-1-2-7-6" class="outline-5">
 <h5 id="sec-1-2-7-6"><span class="section-number-5">1.2.7.6</span> netstat</h5>
-<div class="outline-text-5" id="text-1-2-7-6">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-7-7" class="outline-5">
+<div id="outline-container-sec-1-2-7-7" class="outline-5">
 <h5 id="sec-1-2-7-7"><span class="section-number-5">1.2.7.7</span> ifconfig</h5>
-<div class="outline-text-5" id="text-1-2-7-7">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-7-8" class="outline-5">
+<div id="outline-container-sec-1-2-7-8" class="outline-5">
 <h5 id="sec-1-2-7-8"><span class="section-number-5">1.2.7.8</span> dhclient</h5>
-<div class="outline-text-5" id="text-1-2-7-8">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-7-9" class="outline-5">
+<div id="outline-container-sec-1-2-7-9" class="outline-5">
 <h5 id="sec-1-2-7-9"><span class="section-number-5">1.2.7.9</span> nload</h5>
-<div class="outline-text-5" id="text-1-2-7-9">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-7-10" class="outline-5">
+<div id="outline-container-sec-1-2-7-10" class="outline-5">
 <h5 id="sec-1-2-7-10"><span class="section-number-5">1.2.7.10</span> iptables</h5>
-<div class="outline-text-5" id="text-1-2-7-10">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-7-11" class="outline-5">
+<div id="outline-container-sec-1-2-7-11" class="outline-5">
 <h5 id="sec-1-2-7-11"><span class="section-number-5">1.2.7.11</span> tc</h5>
-<div class="outline-text-5" id="text-1-2-7-11">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-7-12" class="outline-5">
+<div id="outline-container-sec-1-2-7-12" class="outline-5">
 <h5 id="sec-1-2-7-12"><span class="section-number-5">1.2.7.12</span> ip</h5>
-<div class="outline-text-5" id="text-1-2-7-12">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-7-13" class="outline-5">
+<div id="outline-container-sec-1-2-7-13" class="outline-5">
 <h5 id="sec-1-2-7-13"><span class="section-number-5">1.2.7.13</span> route</h5>
-<div class="outline-text-5" id="text-1-2-7-13">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-7-14" class="outline-5">
+<div id="outline-container-sec-1-2-7-14" class="outline-5">
 <h5 id="sec-1-2-7-14"><span class="section-number-5">1.2.7.14</span> ping</h5>
-<div class="outline-text-5" id="text-1-2-7-14">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-7-15" class="outline-5">
+<div id="outline-container-sec-1-2-7-15" class="outline-5">
 <h5 id="sec-1-2-7-15"><span class="section-number-5">1.2.7.15</span> traceroute</h5>
-<div class="outline-text-5" id="text-1-2-7-15">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-7-16" class="outline-5">
+<div id="outline-container-sec-1-2-7-16" class="outline-5">
 <h5 id="sec-1-2-7-16"><span class="section-number-5">1.2.7.16</span> tcpdump</h5>
-<div class="outline-text-5" id="text-1-2-7-16">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-7-17" class="outline-5">
+<div id="outline-container-sec-1-2-7-17" class="outline-5">
 <h5 id="sec-1-2-7-17"><span class="section-number-5">1.2.7.17</span> ssh</h5>
-<div class="outline-text-5" id="text-1-2-7-17">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-7-18" class="outline-5">
+<div id="outline-container-sec-1-2-7-18" class="outline-5">
 <h5 id="sec-1-2-7-18"><span class="section-number-5">1.2.7.18</span> scp</h5>
-<div class="outline-text-5" id="text-1-2-7-18">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-7-19" class="outline-5">
+<div id="outline-container-sec-1-2-7-19" class="outline-5">
 <h5 id="sec-1-2-7-19"><span class="section-number-5">1.2.7.19</span> sftp</h5>
-<div class="outline-text-5" id="text-1-2-7-19">
-
-
 </div>
 </div>
-
-</div>
-
-<div id="outline-container-1-2-8" class="outline-4">
+<div id="outline-container-sec-1-2-8" class="outline-4">
 <h4 id="sec-1-2-8"><span class="section-number-4">1.2.8</span> Log</h4>
 <div class="outline-text-4" id="text-1-2-8">
-
-
-</div>
-
-<div id="outline-container-1-2-8-1" class="outline-5">
+</div><div id="outline-container-sec-1-2-8-1" class="outline-5">
 <h5 id="sec-1-2-8-1"><span class="section-number-5">1.2.8.1</span> whoami</h5>
-<div class="outline-text-5" id="text-1-2-8-1">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-8-2" class="outline-5">
+<div id="outline-container-sec-1-2-8-2" class="outline-5">
 <h5 id="sec-1-2-8-2"><span class="section-number-5">1.2.8.2</span> last</h5>
-<div class="outline-text-5" id="text-1-2-8-2">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-8-3" class="outline-5">
+<div id="outline-container-sec-1-2-8-3" class="outline-5">
 <h5 id="sec-1-2-8-3"><span class="section-number-5">1.2.8.3</span> dmesg</h5>
-<div class="outline-text-5" id="text-1-2-8-3">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-8-4" class="outline-5">
+<div id="outline-container-sec-1-2-8-4" class="outline-5">
 <h5 id="sec-1-2-8-4"><span class="section-number-5">1.2.8.4</span> who</h5>
-<div class="outline-text-5" id="text-1-2-8-4">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-8-5" class="outline-5">
+<div id="outline-container-sec-1-2-8-5" class="outline-5">
 <h5 id="sec-1-2-8-5"><span class="section-number-5">1.2.8.5</span> w</h5>
-<div class="outline-text-5" id="text-1-2-8-5">
-
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-9" class="outline-4">
+<div id="outline-container-sec-1-2-9" class="outline-4">
 <h4 id="sec-1-2-9"><span class="section-number-4">1.2.9</span> 其他</h4>
 <div class="outline-text-4" id="text-1-2-9">
-
-
-</div>
-
-<div id="outline-container-1-2-9-1" class="outline-5">
+</div><div id="outline-container-sec-1-2-9-1" class="outline-5">
 <h5 id="sec-1-2-9-1"><span class="section-number-5">1.2.9.1</span> screen</h5>
-<div class="outline-text-5" id="text-1-2-9-1">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-9-2" class="outline-5">
+<div id="outline-container-sec-1-2-9-2" class="outline-5">
 <h5 id="sec-1-2-9-2"><span class="section-number-5">1.2.9.2</span> man</h5>
-<div class="outline-text-5" id="text-1-2-9-2">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-9-3" class="outline-5">
+<div id="outline-container-sec-1-2-9-3" class="outline-5">
 <h5 id="sec-1-2-9-3"><span class="section-number-5">1.2.9.3</span> info</h5>
-<div class="outline-text-5" id="text-1-2-9-3">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-9-4" class="outline-5">
+<div id="outline-container-sec-1-2-9-4" class="outline-5">
 <h5 id="sec-1-2-9-4"><span class="section-number-5">1.2.9.4</span> reset</h5>
-<div class="outline-text-5" id="text-1-2-9-4">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-9-5" class="outline-5">
+<div id="outline-container-sec-1-2-9-5" class="outline-5">
 <h5 id="sec-1-2-9-5"><span class="section-number-5">1.2.9.5</span> base64</h5>
-<div class="outline-text-5" id="text-1-2-9-5">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-9-6" class="outline-5">
+<div id="outline-container-sec-1-2-9-6" class="outline-5">
 <h5 id="sec-1-2-9-6"><span class="section-number-5">1.2.9.6</span> md5sum</h5>
-<div class="outline-text-5" id="text-1-2-9-6">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-9-7" class="outline-5">
+<div id="outline-container-sec-1-2-9-7" class="outline-5">
 <h5 id="sec-1-2-9-7"><span class="section-number-5">1.2.9.7</span> sha1sum</h5>
-<div class="outline-text-5" id="text-1-2-9-7">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-9-8" class="outline-5">
+<div id="outline-container-sec-1-2-9-8" class="outline-5">
 <h5 id="sec-1-2-9-8"><span class="section-number-5">1.2.9.8</span> yes</h5>
-<div class="outline-text-5" id="text-1-2-9-8">
-
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-10" class="outline-4">
+<div id="outline-container-sec-1-2-10" class="outline-4">
 <h4 id="sec-1-2-10"><span class="section-number-4">1.2.10</span> 环境变量</h4>
 <div class="outline-text-4" id="text-1-2-10">
-
-
-</div>
-
-<div id="outline-container-1-2-10-1" class="outline-5">
+</div><div id="outline-container-sec-1-2-10-1" class="outline-5">
 <h5 id="sec-1-2-10-1"><span class="section-number-5">1.2.10.1</span> PATH</h5>
-<div class="outline-text-5" id="text-1-2-10-1">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-10-2" class="outline-5">
+<div id="outline-container-sec-1-2-10-2" class="outline-5">
 <h5 id="sec-1-2-10-2"><span class="section-number-5">1.2.10.2</span> http<sub>proxy</sub></h5>
-<div class="outline-text-5" id="text-1-2-10-2">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-2-10-3" class="outline-5">
+<div id="outline-container-sec-1-2-10-3" class="outline-5">
 <h5 id="sec-1-2-10-3"><span class="section-number-5">1.2.10.3</span> ftp<sub>proxy</sub></h5>
-<div class="outline-text-5" id="text-1-2-10-3">
-
 </div>
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-3" class="outline-3">
+<div id="outline-container-sec-1-3" class="outline-3">
 <h3 id="sec-1-3"><span class="section-number-3">1.3</span> shell 编程</h3>
-<div class="outline-text-3" id="text-1-3">
-
-
 </div>
 </div>
 </div>
-</div>
-
-<div id="postamble">
-<p class="date">Date: 2013-05-21T14:34+0800</p>
+<div id="postamble" class="status">
 <p class="author">Author: sunway</p>
-<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
-<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
-
+<p class="email">Email: <a href="mailto:sunwayforever@gmail.com">sunwayforever@gmail.com</a></p>
+<p class="date">Created: 2013-12-24 Tue 14:13</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.2 (<a href="http://orgmode.org">Org</a> mode 8.2.4)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

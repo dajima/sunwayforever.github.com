@@ -1,71 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Joke</title>
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="Joke"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-21T14:33+0800"/>
-<meta name="author" content="sunway"/>
-<meta name="description" content=""/>
-<meta name="keywords" content=""/>
+<!-- 2013-12-24 Tue 14:13 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="sunway" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
-  html { font-family: Times, serif; font-size: 12pt; }
   .title  { text-align: center; }
-  .todo   { color: red; }
+  .todo   { font-family: monospace; color: red; }
   .done   { color: green; }
-  .tag    { background-color: #add8e6; font-weight:normal }
-  .target { }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
-  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
-  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
-  .center {margin-left:auto; margin-right:auto; text-align:center;}
-  p.verse { margin-left: 3% }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
   pre {
-	border: 1pt solid #AEBDCC;
-	background-color: #F3F5F7;
-	padding: 5pt;
-	font-family: courier, monospace;
-        font-size: 90%;
-        overflow:auto;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
   }
-  table { border-collapse: collapse; }
-  td, th { vertical-align: top;  }
-  th.right  { text-align:center;  }
-  th.left   { text-align:center;   }
-  th.center { text-align:center; }
-  td.right  { text-align:right;  }
-  td.left   { text-align:left;   }
-  td.center { text-align:center; }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
   dt { font-weight: bold; }
-  div.figure { padding: 0.5em; }
-  div.figure p { text-align: center; }
-  div.inlinetask {
-    padding:10px;
-    border:2px solid gray;
-    margin:10px;
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
     background: #ffffcc;
   }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
   textarea { overflow-x: auto; }
-  .linenr { font-size:smaller }
-  .code-highlighted {background-color:#ffff00;}
-  .org-info-js_info-navigation { border-style:none; }
-  #org-info-js_console-label { font-size:10px; font-weight:bold;
-                               white-space:nowrap; }
-  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
-                                 font-weight:bold; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
   /*]]>*/-->
-</style>    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
+</style>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012  Free Software Foundation, Inc.
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -106,72 +132,59 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
-
 </head>
 <body>
-
-<div id="preamble">
-
-</div>
-
 <div id="content">
 <h1 class="title">Joke</h1>
-
-
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 Joke</a>
+<li><a href="#sec-1">1. Joke</a>
 <ul>
-<li><a href="#sec-1-1">1.1 经典搞笑：一个BUG引发的血案|为程序员打造的年终大片</a></li>
-<li><a href="#sec-1-2">1.2 产品经理你伤不起</a></li>
-<li><a href="#sec-1-3">1.3 一看到某些人签名写个“我们是糖，甜到哀伤”。我就想说一句“你们是蛋，扯到膀胱”</a></li>
-<li><a href="#sec-1-4">1.4 昨晚店面被撬了，一店衣服没拿，就把我的一台电脑一条烟偷了，报案了，jc进来转了一圈，第一句话，你这件衣服怎么卖？</a></li>
-<li><a href="#sec-1-5">1.5 三国野史&ndash;马伯庸</a></li>
-<li><a href="#sec-1-6">1.6 When I was a kid</a></li>
-<li><a href="#sec-1-7">1.7 《强大的冰女》</a></li>
-<li><a href="#sec-1-8">1.8 有一只猪400斤，一座桥承重200斤，猪怎么过桥？</a></li>
-<li><a href="#sec-1-9">1.9 公园情侣谈情说爱被老太太骂</a></li>
-<li><a href="#sec-1-10">1.10 好久没笑趴下了</a></li>
-<li><a href="#sec-1-11">1.11 打击面太大</a></li>
-<li><a href="#sec-1-12">1.12 改名</a></li>
-<li><a href="#sec-1-13">1.13 嗬嗬,记起了某年某大期间的一件趣事</a></li>
-<li><a href="#sec-1-14">1.14 我见到的最短的笑话</a></li>
-<li><a href="#sec-1-15">1.15 QQ上聊天。</a></li>
-<li><a href="#sec-1-16">1.16 到哪里</a></li>
-<li><a href="#sec-1-17">1.17 验算</a></li>
-<li><a href="#sec-1-18">1.18 小白兔</a></li>
-<li><a href="#sec-1-19">1.19 没有那么聪明的毛驴</a></li>
-<li><a href="#sec-1-20">1.20 找兔子</a></li>
-<li><a href="#sec-1-21">1.21 追车</a></li>
-<li><a href="#sec-1-22">1.22 假钞</a></li>
-<li><a href="#sec-1-23">1.23 考试默写</a></li>
-<li><a href="#sec-1-24">1.24 从二十楼掉下来和二楼的区别</a></li>
-<li><a href="#sec-1-25">1.25 一句话笑话</a></li>
-<li><a href="#sec-1-26">1.26 我就胖了,就爱吃肉了怎么了? 老子花了几千万年进化到食物链顶端不是为了吃蔬菜!</a></li>
-<li><a href="#sec-1-27">1.27 我刚刚拒绝了levi's美女售货员的求合体的想法</a></li>
-<li><a href="#sec-1-28">1.28 死猪是检验开水的唯一标准</a></li>
-<li><a href="#sec-1-29">1.29 cat sleep style</a></li>
-<li><a href="#sec-1-30">1.30 浣熊</a></li>
+<li><a href="#sec-1-1">1.1. 经典搞笑：一个BUG引发的血案|为程序员打造的年终大片</a></li>
+<li><a href="#sec-1-2">1.2. 产品经理你伤不起</a></li>
+<li><a href="#sec-1-3">1.3. 一看到某些人签名写个“我们是糖，甜到哀伤”。我就想说一句“你们是蛋，扯到膀胱”</a></li>
+<li><a href="#sec-1-4">1.4. 昨晚店面被撬了，一店衣服没拿，就把我的一台电脑一条烟偷了，报案了，jc进来转了一圈，第一句话，你这件衣服怎么卖？</a></li>
+<li><a href="#sec-1-5">1.5. 三国野史&#x2013;马伯庸</a></li>
+<li><a href="#sec-1-6">1.6. When I was a kid</a></li>
+<li><a href="#sec-1-7">1.7. 《强大的冰女》</a></li>
+<li><a href="#sec-1-8">1.8. 有一只猪400斤，一座桥承重200斤，猪怎么过桥？</a></li>
+<li><a href="#sec-1-9">1.9. 公园情侣谈情说爱被老太太骂</a></li>
+<li><a href="#sec-1-10">1.10. 好久没笑趴下了</a></li>
+<li><a href="#sec-1-11">1.11. 打击面太大</a></li>
+<li><a href="#sec-1-12">1.12. 改名</a></li>
+<li><a href="#sec-1-13">1.13. 嗬嗬,记起了某年某大期间的一件趣事</a></li>
+<li><a href="#sec-1-14">1.14. 我见到的最短的笑话</a></li>
+<li><a href="#sec-1-15">1.15. QQ上聊天。</a></li>
+<li><a href="#sec-1-16">1.16. 到哪里</a></li>
+<li><a href="#sec-1-17">1.17. 验算</a></li>
+<li><a href="#sec-1-18">1.18. 小白兔</a></li>
+<li><a href="#sec-1-19">1.19. 没有那么聪明的毛驴</a></li>
+<li><a href="#sec-1-20">1.20. 找兔子</a></li>
+<li><a href="#sec-1-21">1.21. 追车</a></li>
+<li><a href="#sec-1-22">1.22. 假钞</a></li>
+<li><a href="#sec-1-23">1.23. 考试默写</a></li>
+<li><a href="#sec-1-24">1.24. 从二十楼掉下来和二楼的区别</a></li>
+<li><a href="#sec-1-25">1.25. 一句话笑话</a></li>
+<li><a href="#sec-1-26">1.26. 我就胖了,就爱吃肉了怎么了? 老子花了几千万年进化到食物链顶端不是为了吃蔬菜!</a></li>
+<li><a href="#sec-1-27">1.27. 我刚刚拒绝了levi's美女售货员的求合体的想法</a></li>
+<li><a href="#sec-1-28">1.28. 死猪是检验开水的唯一标准</a></li>
+<li><a href="#sec-1-29">1.29. cat sleep style&#xa0;&#xa0;&#xa0;<span class="tag"><span class="ATTACH">ATTACH</span></span></a></li>
+<li><a href="#sec-1-30">1.30. 浣熊&#xa0;&#xa0;&#xa0;<span class="tag"><span class="ATTACH">ATTACH</span></span></a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-
-<div id="outline-container-1" class="outline-2">
+<div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> Joke</h2>
 <div class="outline-text-2" id="text-1">
-
-
-</div>
-
-<div id="outline-container-1-1" class="outline-3">
+</div><div id="outline-container-sec-1-1" class="outline-3">
 <h3 id="sec-1-1"><span class="section-number-3">1.1</span> 经典搞笑：一个BUG引发的血案|为程序员打造的年终大片</h3>
 <div class="outline-text-3" id="text-1-1">
-
-<p> <span class="timestamp-wrapper"> <span class="timestamp">2012-10-06 周六</span></span><br/>
+<p>
+<span class="timestamp-wrapper"><span class="timestamp">&lt;2012-10-06 周六&gt;</span></span>
 数百条线程为何频繁断开，
 回调函数为何迟迟没有结果，
 mysql的数据为何屡遭黑手，
@@ -197,260 +210,289 @@ mysql的数据为何屡遭黑手，
 《杨门女 将之BUG堆积如山》
 </p>
 </div>
-
 </div>
-
-<div id="outline-container-1-2" class="outline-3">
+<div id="outline-container-sec-1-2" class="outline-3">
 <h3 id="sec-1-2"><span class="section-number-3">1.2</span> 产品经理你伤不起</h3>
 <div class="outline-text-3" id="text-1-2">
-
-<p> <span class="timestamp-wrapper"> <span class="timestamp">2012-10-06 周六</span></span><br/>
-</p><ol>
+<p>
+<span class="timestamp-wrapper"><span class="timestamp">&lt;2012-10-06 周六&gt;</span></span>
+</p>
+<ol class="org-ol">
 <li>Dropbox提供储存功能，然后用户要求提供删除功能。提供之后，用户要求提供误删除恢
-   复功能。提供之后，用户要求提供永久删除无法恢复功能。提供之后，用户要求提供永久
-   删除紧急恢复功能。提供之后，dropbox创始人自杀，遗书上写着：I AM A SB.
+复功能。提供之后，用户要求提供永久删除无法恢复功能。提供之后，用户要求提供永久
+删除紧急恢复功能。提供之后，dropbox创始人自杀，遗书上写着：I AM A SB.
 </li>
 <li>Facebook入华，用户要求提供注销功能。提供之后，用户要求提供恢复帐号功能。提供之
-   后，用户要求提供永久注销功能。提供之后，用户要求提供永久注销后反悔功能。提供之
-   后，用户要求提供永久注销后不能反悔功能。Mark自杀，遗书是：你们TM的有准主意的时
-   候吗？
+后，用户要求提供永久注销功能。提供之后，用户要求提供永久注销后反悔功能。提供之
+后，用户要求提供永久注销后不能反悔功能。Mark自杀，遗书是：你们TM的有准主意的时
+候吗？
 </li>
 <li>iPhone5全面进入中国，用户要求提供四喇叭。乔布斯提供之后，用户要求有镜子。乔布
-   斯提供之后，用户要求有收音机。乔布斯提供之后，用户要求有手写板。乔布斯提供之后，
-   用户要求提供双卡双待。提供之后，用户要求预装动感地带。乔布斯吐血说：去华强北直
-   接买山寨机会死啊？
+斯提供之后，用户要求有收音机。乔布斯提供之后，用户要求有手写板。乔布斯提供之后，
+用户要求提供双卡双待。提供之后，用户要求预装动感地带。乔布斯吐血说：去华强北直
+接买山寨机会死啊？
 </li>
 <li>Twitter获准入华，用户要求提供评论功能。提供之后，用户要求提供传图功能。提供之
-   后，用户要求提供表情功能。提供之后，用户要求提供5000字符。提供之后，用户要求上
-   传音频。提供之后，用户要求绑定美图秀秀。提供之后，用户破口大骂：XXX是谁说推特
-   简洁的？
+后，用户要求提供表情功能。提供之后，用户要求提供5000字符。提供之后，用户要求上
+传音频。提供之后，用户要求绑定美图秀秀。提供之后，用户破口大骂：XXX是谁说推特
+简洁的？
 </li>
 <li>一位腾讯的QQ产品经理崩溃了，发疯之前他根据用户需求依次做了以下功能：隐身，对其
-   隐身，隐身对其可见，对其一三五隐身，对其21点后隐身，对其隐身可见签名，对其隐身
-   可见最后一次在线签名，隐身对其可见但只显示最后一次在线签名，对其隐身群内自动屏
-   蔽呈不在线状且他人不能提及。
+隐身，隐身对其可见，对其一三五隐身，对其21点后隐身，对其隐身可见签名，对其隐身
+可见最后一次在线签名，隐身对其可见但只显示最后一次在线签名，对其隐身群内自动屏
+蔽呈不在线状且他人不能提及。
 </li>
 </ol>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-3" class="outline-3">
+<div id="outline-container-sec-1-3" class="outline-3">
 <h3 id="sec-1-3"><span class="section-number-3">1.3</span> 一看到某些人签名写个“我们是糖，甜到哀伤”。我就想说一句“你们是蛋，扯到膀胱”</h3>
 <div class="outline-text-3" id="text-1-3">
-
-<p> <span class="timestamp-wrapper"> <span class="timestamp">2012-10-06 周六 17:02</span></span><br/>
-</p></div>
-
+<p>
+<span class="timestamp-wrapper"><span class="timestamp">[2012-10-06 周六 17:02]</span></span>
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-4" class="outline-3">
+<div id="outline-container-sec-1-4" class="outline-3">
 <h3 id="sec-1-4"><span class="section-number-3">1.4</span> 昨晚店面被撬了，一店衣服没拿，就把我的一台电脑一条烟偷了，报案了，jc进来转了一圈，第一句话，你这件衣服怎么卖？</h3>
 <div class="outline-text-3" id="text-1-4">
-
-<p> <span class="timestamp-wrapper"> <span class="timestamp">2012-10-06 周六 17:13</span></span><br/>
-</p></div>
-
+<p>
+<span class="timestamp-wrapper"><span class="timestamp">[2012-10-06 周六 17:13]</span></span>
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-5" class="outline-3">
-<h3 id="sec-1-5"><span class="section-number-3">1.5</span> 三国野史&ndash;马伯庸</h3>
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> 三国野史&#x2013;马伯庸</h3>
 <div class="outline-text-3" id="text-1-5">
-
-
-<ul>
+<ul class="org-ul">
 <li>操与马超战于潼关。西兵悍勇，纵骑攻之，操军不敌，遂大溃而走。操杂于乱
 </li>
 </ul>
-
-<p>   军之中，马超策骑疾追，乃大呼：“长髯者，曹操也。”操闻之大惊，割须弃袍，以旗角掩
-   面，方亡归本营。众来问安，操抚膝大哭：“倘使云长在侧，孤必不致此。”众将问曰：“
-   关君侯武姿卓然，丞相颇思否？”操对曰：“吾思云长美髯也。
+<p>
+军之中，马超策骑疾追，乃大呼：“长髯者，曹操也。”操闻之大惊，割须弃袍，以旗角掩
+面，方亡归本营。众来问安，操抚膝大哭：“倘使云长在侧，孤必不致此。”众将问曰：“
+关君侯武姿卓然，丞相颇思否？”操对曰：“吾思云长美髯也。
 </p>
-<ul>
+
+<ul class="org-ul">
 <li>明嘉靖朝间，兵部右侍郎范钦始建天一阁，置古善、孤本于其内，良加眷护，卷册至七万余。
 </li>
 </ul>
-
-<p>   时有仆役举烛不慎，阁中走水。护院不得以，遽以水泼浇。火既熄，范钦点检古本，有《三国志》与《范文正公集》两下交叠，页濡粘连，字多互篡。
-   范钦揭卷读之，见《诸葛亮传》上犹有洇迹。其上曰：“臣亮言：先帝创业未半而中道崩殂。越明年，政通人和，百废俱兴。
+<p>
+时有仆役举烛不慎，阁中走水。护院不得以，遽以水泼浇。火既熄，范钦点检古本，有《三国志》与《范文正公集》两下交叠，页濡粘连，字多互篡。
+范钦揭卷读之，见《诸葛亮传》上犹有洇迹。其上曰：“臣亮言：先帝创业未半而中道崩殂。越明年，政通人和，百废俱兴。
 </p>
-<ul>
+
+<ul class="org-ul">
 <li>魏延在蜀中，每随亮出,欲请兵万人,与亮异道会于潼关，而亮为万全策，不许
 </li>
 </ul>
-
-<p>   。延志不得伸，心积愤懑。而又与杨仪交恶，深怨葛氏偏袒太甚。凡数年，腹部辄绞痛，发
-   时汗如雨下，鞍马不扶。医者断曰：“将军情志所伤，忧思恼怒，而致横犯胃腑。此吞酸之
-   症也。”延请其方，医者曰：“名姓或有碍。”
-   魏延别传》云：“魏延，字馈阳，义阳人也。少时慷慨，于乡里乐善好施，多行义举
-   ，曾放言曰：“但有寸金，必馈吾乡。”故表字“馈阳”。后，人谓不祥，遂改之。
+<p>
+。延志不得伸，心积愤懑。而又与杨仪交恶，深怨葛氏偏袒太甚。凡数年，腹部辄绞痛，发
+时汗如雨下，鞍马不扶。医者断曰：“将军情志所伤，忧思恼怒，而致横犯胃腑。此吞酸之
+症也。”延请其方，医者曰：“名姓或有碍。”
+魏延别传》云：“魏延，字馈阳，义阳人也。少时慷慨，于乡里乐善好施，多行义举
+，曾放言曰：“但有寸金，必馈吾乡。”故表字“馈阳”。后，人谓不祥，遂改之。
 </p>
 </div>
-
 </div>
-
-<div id="outline-container-1-6" class="outline-3">
+<div id="outline-container-sec-1-6" class="outline-3">
 <h3 id="sec-1-6"><span class="section-number-3">1.6</span> When I was a kid</h3>
 <div class="outline-text-3" id="text-1-6">
+<p>
+发信人: ifas (连个手机号都不值), 信区: Joke
+标  题: when i was a kid
+发信站: 水木社区 (Wed Dec  3 19:32:25 2008), 站内
+</p>
 
-<p>   发信人: ifas (连个手机号都不值), 信区: Joke
-   标  题: when i was a kid
-   发信站: 水木社区 (Wed Dec  3 19:32:25 2008), 站内
-</p>
 <p>
-   When I was a kid I used to pray every night for a new bicycle.
-   Then I realised God doesn’t work that way, so I stole
-   one and prayed for forgiveness.
+When I was a kid I used to pray every night for a new bicycle.
+Then I realised God doesn’t work that way, so I stole
+one and prayed for forgiveness.
 </p>
-<p>
-   --
-</p>
-<p>
-   ※ 来源:·水木社区 newsmth.net·[FROM: 219.236.122.*]
-</p></div>
 
+<p>
+&#x2013;
+</p>
+
+<p>
+※ 来源:·水木社区 newsmth.net·[FROM: 219.236.122.*]
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-7" class="outline-3">
+<div id="outline-container-sec-1-7" class="outline-3">
 <h3 id="sec-1-7"><span class="section-number-3">1.7</span> 《强大的冰女》</h3>
 <div class="outline-text-3" id="text-1-7">
-
-<p>   冰女他日出猴棒，打得幻刺直尿炕；
-   冰女他日出希瓦，打得巨魔直犯傻；
-   冰女闲来合双刀，虎妞打成小花猫；
-   冰女堆钱买辉耀，烧的幽鬼嗷嗷叫；
-   冰女撑血出臂章，幻刺红字也不慌；
-   冰女吸血出撒旦，小狗见了也流汗；
-   冰女祭品偷肉山，拍拍只能撕床单；
+<p>
+冰女他日出猴棒，打得幻刺直尿炕；
+冰女他日出希瓦，打得巨魔直犯傻；
+冰女闲来合双刀，虎妞打成小花猫；
+冰女堆钱买辉耀，烧的幽鬼嗷嗷叫；
+冰女撑血出臂章，幻刺红字也不慌；
+冰女吸血出撒旦，小狗见了也流汗；
+冰女祭品偷肉山，拍拍只能撕床单；
 </p>
 </div>
-
 </div>
-
-<div id="outline-container-1-8" class="outline-3">
+<div id="outline-container-sec-1-8" class="outline-3">
 <h3 id="sec-1-8"><span class="section-number-3">1.8</span> 有一只猪400斤，一座桥承重200斤，猪怎么过桥？</h3>
 <div class="outline-text-3" id="text-1-8">
-
-<p>   发信人: ccccc (嘴嘴·不是破嘴), 信区: Joke
-   标  题: 有一只猪400斤，一座桥承重200斤，猪怎么过桥？
-   发信站: 水木社区 (Sun Nov  9 19:07:22 2008), 站内
-</p>
 <p>
-   问题：有一只猪四百斤，一座桥承重两百斤，猪怎么过桥？
-</p>
-<p>
-   条件：
-</p>
-<p>
-   1.猪是活猪，任何解决方案都不得切割猪
-</p>
-<p>
-   2.故事发生在猪王国，不要引入人的因素
-</p>
-<p>
-   3.是过桥，不是过河，不要说是游泳过去
-</p>
-<p>
-   4.是过桥，不是过涧，不要说是飞过去丫
-</p>
-<p>
-   5.桥是承重两百斤的桥，把桥挪到平地上抑或过另一座承重超过四百斤的桥都属改
-   变性状
-</p>
-<p>
-   6.不是文字游戏，不要说“猪晕过去了”
-</p>
-<p>
-   ————————————————————
-</p>
-<p>
-   以下是网友跟帖：
-</p>
-<p>
-   作者：千年寺
-</p>
-<p>
-   综合前面高人们的意见
-</p>
-<p>
-   一：减肥，用什么减肥方法都可以，电视广告上多的是！此乃女猪所为！
-</p>
-<p>
-   二：南辕北辙，环绕地球一圈，此乃强猪所为！
-</p>
-<p>
-   三：化身沙僧二师哥！此乃神猪所为！
-</p>
-<p>
-   四：桥有多长？练个跳远行不？此乃奥运跳远冠军猪所为！
+发信人: ccccc (嘴嘴·不是破嘴), 信区: Joke
+标  题: 有一只猪400斤，一座桥承重200斤，猪怎么过桥？
+发信站: 水木社区 (Sun Nov  9 19:07:22 2008), 站内
 </p>
 
 <p>
-   作者：健笑
-</p>
-<p>
-   1、这头猪叫“朱坚强”
-</p>
-<p>
-   2、这头猪叫“四百斤”
-</p>
-<p>
-   3、这头猪是临产的母猪，产仔后剩200斤
-</p>
-<p>
-   4、这头猪会轻功
-</p>
-<p>
-   5、这头猪腿比桥长，直接跨过去的
-</p>
-<p>
-   6、这头猪是“飞天猪”
-</p>
-<p>
-   ……
-</p>
-<p>
-   作者：GaAs
-</p>
-<p>
-   猪硬着头皮走过去了~~！！~~~~！！
-</p>
-<p>
-   猪硬着头皮走过去了~~！！~~~~！！
-</p>
-<p>
-   猪硬着头皮走过去了~~！！~~~~！！
-</p>
-<p>
-   猪硬着头皮走过去了~~！！~~~~！！
-</p>
-<p>
-   5、这头猪腿比桥长，直接跨过去的
+问题：有一只猪四百斤，一座桥承重两百斤，猪怎么过桥？
 </p>
 
 <p>
-   大家一起开动脑筋，想想有啥好办法。。。牛人们，一起探讨下，攻克这个难关！
+条件：
 </p>
+
 <p>
-   利尿剂、泻药、高渗葡萄糖、脱水剂、抽脂
-   不知道最后一项算不算变向切割
+1.猪是活猪，任何解决方案都不得切割猪
 </p>
+
 <p>
-   其实不仅仅是腿长的猪可以直接跨过去……
-   就算腿超级短，只要身子超级长的猪也可以过去，前两条腿都到对岸了，后两条腿还没上桥
-   呢……
+2.故事发生在猪王国，不要引入人的因素
 </p>
+
 <p>
-   如果桥允许净载荷是200斤的话，或许可以这样：
-   猪做找一块比桥略长的木板，两头装上轮子，猪像玩滑板一样踩在中间，冲过去，
-   任何时候只有两个轮子在桥上，所以桥只承重一半。
+3.是过桥，不是过河，不要说是游泳过去
+</p>
+
+<p>
+4.是过桥，不是过涧，不要说是飞过去丫
+</p>
+
+<p>
+5.桥是承重两百斤的桥，把桥挪到平地上抑或过另一座承重超过四百斤的桥都属改
+变性状
+</p>
+
+<p>
+6.不是文字游戏，不要说“猪晕过去了”
+</p>
+
+<p>
+————————————————————
+</p>
+
+<p>
+以下是网友跟帖：
+</p>
+
+<p>
+作者：千年寺
+</p>
+
+<p>
+综合前面高人们的意见
+</p>
+
+<p>
+一：减肥，用什么减肥方法都可以，电视广告上多的是！此乃女猪所为！
+</p>
+
+<p>
+二：南辕北辙，环绕地球一圈，此乃强猪所为！
+</p>
+
+<p>
+三：化身沙僧二师哥！此乃神猪所为！
+</p>
+
+<p>
+四：桥有多长？练个跳远行不？此乃奥运跳远冠军猪所为！
 </p>
 
 
+<p>
+作者：健笑
+</p>
 
-<pre class="example">猪
+<p>
+1、这头猪叫“朱坚强”
+</p>
+
+<p>
+2、这头猪叫“四百斤”
+</p>
+
+<p>
+3、这头猪是临产的母猪，产仔后剩200斤
+</p>
+
+<p>
+4、这头猪会轻功
+</p>
+
+<p>
+5、这头猪腿比桥长，直接跨过去的
+</p>
+
+<p>
+6、这头猪是“飞天猪”
+</p>
+
+<p>
+……
+</p>
+
+<p>
+作者：GaAs
+</p>
+
+<p>
+猪硬着头皮走过去了~~！！~~~~！！
+</p>
+
+<p>
+猪硬着头皮走过去了~~！！~~~~！！
+</p>
+
+<p>
+猪硬着头皮走过去了~~！！~~~~！！
+</p>
+
+<p>
+猪硬着头皮走过去了~~！！~~~~！！
+</p>
+
+<p>
+5、这头猪腿比桥长，直接跨过去的
+</p>
+
+
+<p>
+大家一起开动脑筋，想想有啥好办法。。。牛人们，一起探讨下，攻克这个难关！
+</p>
+
+<p>
+利尿剂、泻药、高渗葡萄糖、脱水剂、抽脂
+不知道最后一项算不算变向切割
+</p>
+
+<p>
+其实不仅仅是腿长的猪可以直接跨过去……
+就算腿超级短，只要身子超级长的猪也可以过去，前两条腿都到对岸了，后两条腿还没上桥
+呢……
+</p>
+
+<p>
+如果桥允许净载荷是200斤的话，或许可以这样：
+猪做找一块比桥略长的木板，两头装上轮子，猪像玩滑板一样踩在中间，冲过去，
+任何时候只有两个轮子在桥上，所以桥只承重一半。
+</p>
+
+<pre class="example">
+猪
 ____
 | \
 |  \
@@ -464,811 +506,927 @@ ____
 河
 </pre>
 
-
 <p>
-   只要桥的倾角达到90度,多重的猪都可以过去,不摔死就行
-</p>
-<p>
-   脚踩两座桥，正好各承重200斤。
-</p>
-<p>
-   猪也在想找个问题，哈哈哈
-</p>
-<p>
-   酒是穿肠毒药，色是刮骨钢刀，财是惹祸根苗，气是雷烟火炮。
-</p>
-<p>
-   这四句话，说的是酒色财气这几样东西，千万不要沾，沾上就得惹事，轻则伤身，
-   重则害命。这不嘛，有一只猪，这天喝多了，歪歪扭扭往家里赶，迎面看见一座桥。他仔细
-   这么一打量，这地儿以前没来过啊……心里就发迷糊。书中暗表，怎么回事儿啊？这猪它不
-   是喝晕了嘛，两眼根本就看不清东西了，就低着头看着脚赶路，一不留神，走茬路了。
-</p>
-<p>
-   这猪心想，没来过就没来过吧，怎么回不是回啊。就往桥上走，还没等上去呢，旁
-   边过来一人：“嘿~~说你呐，站住！”就把这猪拉住了。这猪一瞧，怎么回事儿，我一没贪
-   赃，二没枉法，三不算酒后驾驶，你没事儿不让我走路干嘛？仔细打量，来的这人，长得一
-   般，穿得利落，是一套制服。怎么知道呢？上面明白印着一行字“看桥员”。
-</p>
-<p>
-   看桥员用手一指，这猪顺着一望，瞧见这桥上刻着四个大字“限重一百斤”。“瞧
-   见没，你……总有四五百斤上下了吧，你要上去，非把这桥压塌了不可。绕道吧，赶紧的，
-   走走走。”就轰这猪。
-</p>
-<p>
-   要不怎么说喝酒害人呢，要放往日，这猪也就绕道了，这又不是平常自己走的，绕
-   回原道就完了。今儿这猪喝高了，被人一轰，还上来脾气了。噢，你让我绕我就绕，那哪儿
-   行啊。瞧不起我，以为我胖，我就过不去了？今儿爷爷给你瞧个鲜儿。这猪伸手就把看桥员
-   拨拉到一边去了，后退了几步，奔着桥就跑过去了，眼看到桥边上，这猪较一力丹田混元气
-   ，舌尖一舔上牙塘，脚尖一点，脑袋一晃，ri的一声，跳在空中。旁边过路的可看傻了眼，
-   哥哥大爷，嫂子弟妹，瞧见没有，空中飞人啊，哗~~~可热闹瞭。
-</p>
-<p>
-   看热闹的暂且不说，再说这猪跳在空中，还那句话，喝酒害人，怎么呢？本来这只
-   猪，是个练家子，出身可了不得，乃是水木社区粥客版的当家，跳过的大坑无数，轻功非常
-   了得，区区一座小桥，扭扭腰就蹦过去了。今天不行，今天它喝酒了，脚软，跳起来眼看着
-   还没到那一边就往下落，想起来了，噢，今天我喝多了，跳的时候劲儿没用够……那哪儿行
-   啊，噢，我砸下去，把桥砸塌了，好说不好听，丢人就丢大了，不行。想到这儿，这猪咬咬
-   牙，把压箱底的绝活拿出来了。
-</p>
-<p>
-   只见它，左后蹄一踩右后蹄，“蹭”的一声，往前窜了五尺，右后蹄再一踩左后蹄
-   ，“蹭”的一声，又窜了五尺……正好落在桥的那一头。
-</p>
-<p>
-   这正是：
-   猪头三抄水，轻过限重桥。
+只要桥的倾角达到90度,多重的猪都可以过去,不摔死就行
 </p>
 
 <p>
-   ※ 来源:·水木社区 newsmth.net·[FROM: 123.169.79.*]
-</p></div>
+脚踩两座桥，正好各承重200斤。
+</p>
 
+<p>
+猪也在想找个问题，哈哈哈
+</p>
+
+<p>
+酒是穿肠毒药，色是刮骨钢刀，财是惹祸根苗，气是雷烟火炮。
+</p>
+
+<p>
+这四句话，说的是酒色财气这几样东西，千万不要沾，沾上就得惹事，轻则伤身，
+重则害命。这不嘛，有一只猪，这天喝多了，歪歪扭扭往家里赶，迎面看见一座桥。他仔细
+这么一打量，这地儿以前没来过啊……心里就发迷糊。书中暗表，怎么回事儿啊？这猪它不
+是喝晕了嘛，两眼根本就看不清东西了，就低着头看着脚赶路，一不留神，走茬路了。
+</p>
+
+<p>
+这猪心想，没来过就没来过吧，怎么回不是回啊。就往桥上走，还没等上去呢，旁
+边过来一人：“嘿~~说你呐，站住！”就把这猪拉住了。这猪一瞧，怎么回事儿，我一没贪
+赃，二没枉法，三不算酒后驾驶，你没事儿不让我走路干嘛？仔细打量，来的这人，长得一
+般，穿得利落，是一套制服。怎么知道呢？上面明白印着一行字“看桥员”。
+</p>
+
+<p>
+看桥员用手一指，这猪顺着一望，瞧见这桥上刻着四个大字“限重一百斤”。“瞧
+见没，你……总有四五百斤上下了吧，你要上去，非把这桥压塌了不可。绕道吧，赶紧的，
+走走走。”就轰这猪。
+</p>
+
+<p>
+要不怎么说喝酒害人呢，要放往日，这猪也就绕道了，这又不是平常自己走的，绕
+回原道就完了。今儿这猪喝高了，被人一轰，还上来脾气了。噢，你让我绕我就绕，那哪儿
+行啊。瞧不起我，以为我胖，我就过不去了？今儿爷爷给你瞧个鲜儿。这猪伸手就把看桥员
+拨拉到一边去了，后退了几步，奔着桥就跑过去了，眼看到桥边上，这猪较一力丹田混元气
+，舌尖一舔上牙塘，脚尖一点，脑袋一晃，ri的一声，跳在空中。旁边过路的可看傻了眼，
+哥哥大爷，嫂子弟妹，瞧见没有，空中飞人啊，哗~~~可热闹瞭。
+</p>
+
+<p>
+看热闹的暂且不说，再说这猪跳在空中，还那句话，喝酒害人，怎么呢？本来这只
+猪，是个练家子，出身可了不得，乃是水木社区粥客版的当家，跳过的大坑无数，轻功非常
+了得，区区一座小桥，扭扭腰就蹦过去了。今天不行，今天它喝酒了，脚软，跳起来眼看着
+还没到那一边就往下落，想起来了，噢，今天我喝多了，跳的时候劲儿没用够……那哪儿行
+啊，噢，我砸下去，把桥砸塌了，好说不好听，丢人就丢大了，不行。想到这儿，这猪咬咬
+牙，把压箱底的绝活拿出来了。
+</p>
+
+<p>
+只见它，左后蹄一踩右后蹄，“蹭”的一声，往前窜了五尺，右后蹄再一踩左后蹄
+，“蹭”的一声，又窜了五尺……正好落在桥的那一头。
+</p>
+
+<p>
+这正是：
+猪头三抄水，轻过限重桥。
+</p>
+
+
+<p>
+※ 来源:·水木社区 newsmth.net·[FROM: 123.169.79.*]
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-9" class="outline-3">
+<div id="outline-container-sec-1-9" class="outline-3">
 <h3 id="sec-1-9"><span class="section-number-3">1.9</span> 公园情侣谈情说爱被老太太骂</h3>
 <div class="outline-text-3" id="text-1-9">
-
-<p>   公园有一对恋人正在甜蜜，女孩撒娇说老公：我牙痛！男孩于是吻了女孩一口问：还疼吗？
-   女孩说：不痛了！一会女孩又撒娇的说：老公，我脖子痛！男孩又吻了吻女孩的脖子，又问
-   这回还疼吗女孩很开心的说：不痛了！旁边一老太太站着看了半天了忍不住了,上前就问小
-   伙子说：。。。。。小伙子你真神了，你能治痔疮不?
-</p></div>
-
+<p>
+公园有一对恋人正在甜蜜，女孩撒娇说老公：我牙痛！男孩于是吻了女孩一口问：还疼吗？
+女孩说：不痛了！一会女孩又撒娇的说：老公，我脖子痛！男孩又吻了吻女孩的脖子，又问
+这回还疼吗女孩很开心的说：不痛了！旁边一老太太站着看了半天了忍不住了,上前就问小
+伙子说：。。。。。小伙子你真神了，你能治痔疮不?
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-10" class="outline-3">
+<div id="outline-container-sec-1-10" class="outline-3">
 <h3 id="sec-1-10"><span class="section-number-3">1.10</span> 好久没笑趴下了</h3>
 <div class="outline-text-3" id="text-1-10">
+<p>
+明月几时有,自己抬头瞅
+</p>
 
-<p>   明月几时有,自己抬头瞅
-</p>
 <p>
-   你有什么不开心的事? 说出来让大家开心一下.
+你有什么不开心的事? 说出来让大家开心一下.
 </p>
-<p>
-   女人是水做的,男人是泥做的,李俊基李宇春都是水泥做的。
-</p>
-<p>
-   “你要是嫁人,不要嫁给别人,更不要嫁给我&hellip;&hellip;”
-</p>
-<p>
-   您真是贱人多忘事啊
-</p>
-<p>
-   披着凉皮的狼
-</p></div>
 
+<p>
+女人是水做的,男人是泥做的,李俊基李宇春都是水泥做的。
+</p>
+
+<p>
+“你要是嫁人,不要嫁给别人,更不要嫁给我&#x2026;&#x2026;”
+</p>
+
+<p>
+您真是贱人多忘事啊
+</p>
+
+<p>
+披着凉皮的狼
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-11" class="outline-3">
+<div id="outline-container-sec-1-11" class="outline-3">
 <h3 id="sec-1-11"><span class="section-number-3">1.11</span> 打击面太大</h3>
 <div class="outline-text-3" id="text-1-11">
-
-<p>   A:周济这秃驴
-   B:后两个字打击面太大了吧
-</p></div>
-
+<p>
+A:周济这秃驴
+B:后两个字打击面太大了吧
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-12" class="outline-3">
+<div id="outline-container-sec-1-12" class="outline-3">
 <h3 id="sec-1-12"><span class="section-number-3">1.12</span> 改名</h3>
 <div class="outline-text-3" id="text-1-12">
-
-<p>   话说某好友，原名张铁杵，10年后忽闻其改名曰：张针
-</p></div>
-
+<p>
+话说某好友，原名张铁杵，10年后忽闻其改名曰：张针
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-13" class="outline-3">
+<div id="outline-container-sec-1-13" class="outline-3">
 <h3 id="sec-1-13"><span class="section-number-3">1.13</span> 嗬嗬,记起了某年某大期间的一件趣事</h3>
 <div class="outline-text-3" id="text-1-13">
-
-<p>   标  题: Re: 嗬嗬，记起了某年某大期间的一件趣事
-   发信站: 水木社区 (Tue Oct 16 11:08:44 2007), 站内
-</p>
 <p>
-   在介绍拉萨市长罗布顿珠同志的时候，全场哄笑
-   记者注意到常委里只有胡core一人表情严肃
-   包括温等人都忍不住笑起来
-   当然事后大家猜测是因为胡当年在西藏早就笑过了
+标  题: Re: 嗬嗬，记起了某年某大期间的一件趣事
+发信站: 水木社区 (Tue Oct 16 11:08:44 2007), 站内
+</p>
+
+<p>
+在介绍拉萨市长罗布顿珠同志的时候，全场哄笑
+记者注意到常委里只有胡core一人表情严肃
+包括温等人都忍不住笑起来
+当然事后大家猜测是因为胡当年在西藏早就笑过了
 </p>
 </div>
-
 </div>
-
-<div id="outline-container-1-14" class="outline-3">
+<div id="outline-container-sec-1-14" class="outline-3">
 <h3 id="sec-1-14"><span class="section-number-3">1.14</span> 我见到的最短的笑话</h3>
 <div class="outline-text-3" id="text-1-14">
+<p>
+发信人: clusterbang (cluster), 信区: Joke
+标  题: 我见到的最短的笑话
+发信站: 水木社区 (Sat Oct 13 19:47:00 2007), 站内
+</p>
 
-<p>   发信人: clusterbang (cluster), 信区: Joke
-   标  题: 我见到的最短的笑话
-   发信站: 水木社区 (Sat Oct 13 19:47:00 2007), 站内
-</p>
 <p>
-   长个包子样就别怨狗跟着！
+长个包子样就别怨狗跟着！
+</p>
+<hr  />
+<p>
+发信人: chumsdock (微笑服务), 信区: Joke
+标  题: Re: 我见到的最短的笑话
+发信站: 水木社区 (Sat Oct 13 19:47:21 2007), 站内
+</p>
 
-</p>
-<hr/>
 <p>
-   发信人: chumsdock (微笑服务), 信区: Joke
-   标  题: Re: 我见到的最短的笑话
-   发信站: 水木社区 (Sat Oct 13 19:47:21 2007), 站内
+从前有个太监
+【 在 clusterbang (cluster) 的大作中提到: 】
 </p>
-<p>
-   从前有个太监
-   【 在 clusterbang (cluster) 的大作中提到: 】
-</p><pre class="example">
+<pre class="example">
 长个包子样就别怨狗跟着！
 </pre>
-
-
-<hr/>
+<hr  />
 <p>
-   发信人: milicic (人肉生理学家), 信区: Joke
-   标  题: Re: 我见到的最短的笑话
-   发信站: 水木社区 (Sat Oct 13 19:51:01 2007), 站内
+发信人: milicic (人肉生理学家), 信区: Joke
+标  题: Re: 我见到的最短的笑话
+发信站: 水木社区 (Sat Oct 13 19:51:01 2007), 站内
 </p>
+
 <p>
-   下面呢？
+下面呢？
 </p>
+
 <p>
-   【 在 chumsdock (微笑服务) 的大作中提到: 】
-</p><pre class="example">
+【 在 chumsdock (微笑服务) 的大作中提到: 】
+</p>
+<pre class="example">
 从前有个太监
 </pre>
-
-
-<hr/>
+<hr  />
 <p>
-   发信人: zgntc (攒钱买辆小四轮), 信区: Joke
-   标  题: Re: 我见到的最短的笑话
-   发信站: 水木社区 (Sat Oct 13 19:51:29 2007), 站内
+发信人: zgntc (攒钱买辆小四轮), 信区: Joke
+标  题: Re: 我见到的最短的笑话
+发信站: 水木社区 (Sat Oct 13 19:51:29 2007), 站内
 </p>
+
 <p>
-   没了
-   【 在 milicic (人肉生理学家) 的大作中提到: 】
-</p><pre class="example">
+没了
+【 在 milicic (人肉生理学家) 的大作中提到: 】
+</p>
+<pre class="example">
 下面呢？
 </pre>
-
-
 </div>
-
 </div>
-
-<div id="outline-container-1-15" class="outline-3">
+<div id="outline-container-sec-1-15" class="outline-3">
 <h3 id="sec-1-15"><span class="section-number-3">1.15</span> QQ上聊天。</h3>
 <div class="outline-text-3" id="text-1-15">
-
-<p>   　　偶：我的头像牛B吗？
-   　　M&hellip;
-</p></div>
-
+<p>
+　　偶：我的头像牛B吗？
+　　M&#x2026;
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-16" class="outline-3">
+<div id="outline-container-sec-1-16" class="outline-3">
 <h3 id="sec-1-16"><span class="section-number-3">1.16</span> 到哪里</h3>
 <div class="outline-text-3" id="text-1-16">
-
-<p>   某日，一位小姐打电话叫出租车。
-   小姐："你好！我在某某路口，我要搭计程车。"
-   司机："那你穿着什么衣服呢？"小姐："我穿白色上衣，蓝色裙子。"
-   司机："到哪里？"
-   小姐："到膝盖。"司机："。。。。。。"
-</p></div>
-
+<p>
+某日，一位小姐打电话叫出租车。
+小姐："你好！我在某某路口，我要搭计程车。"
+司机："那你穿着什么衣服呢？"小姐："我穿白色上衣，蓝色裙子。"
+司机："到哪里？"
+小姐："到膝盖。"司机："。。。。。。"
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-17" class="outline-3">
+<div id="outline-container-sec-1-17" class="outline-3">
 <h3 id="sec-1-17"><span class="section-number-3">1.17</span> 验算</h3>
 <div class="outline-text-3" id="text-1-17">
-
-<p>   考试中某学生拿出骰子，摇出十道选择题答案。快结束时他突然又拿出来摇。
-   监考老师终于忍无可忍："你在干什么？"
-   学生答："我在验算。"
+<p>
+考试中某学生拿出骰子，摇出十道选择题答案。快结束时他突然又拿出来摇。
+监考老师终于忍无可忍："你在干什么？"
+学生答："我在验算。"
 </p>
 </div>
-
 </div>
-
-<div id="outline-container-1-18" class="outline-3">
+<div id="outline-container-sec-1-18" class="outline-3">
 <h3 id="sec-1-18"><span class="section-number-3">1.18</span> 小白兔</h3>
 <div class="outline-text-3" id="text-1-18">
+<p>
+发信人: k4kid (kay), 信区: Joke
+标  题: 我也来个小白兔的冷笑话
+发信站: 北邮人论坛 (Mon Jun 25 02:38:26 2007), 站内
+</p>
 
-<p>   发信人: k4kid (kay), 信区: Joke
-   标  题: 我也来个小白兔的冷笑话
-   发信站: 北邮人论坛 (Mon Jun 25 02:38:26 2007), 站内
-</p>
 <p>
-   小白兔蹦蹦跳跳到小卖部，问：老板，你们有没有萝卜啊？
-   老板：没有
+小白兔蹦蹦跳跳到小卖部，问：老板，你们有没有萝卜啊？
+老板：没有
 </p>
+
 <p>
-   第二天，小白兔蹦蹦跳跳到小卖部，问：老板，你们有没有萝卜啊？
-   老板：没有
+第二天，小白兔蹦蹦跳跳到小卖部，问：老板，你们有没有萝卜啊？
+老板：没有
 </p>
+
 <p>
-   第三天，小白兔蹦蹦跳跳到小卖部，问：老板，你们有没有萝卜啊？
-   老板：没有，你再来问我就把你的耳朵剪下来！
+第三天，小白兔蹦蹦跳跳到小卖部，问：老板，你们有没有萝卜啊？
+老板：没有，你再来问我就把你的耳朵剪下来！
 </p>
+
 <p>
-   第四天，小白兔蹦蹦跳跳到小卖部，问：老板，你们有没有剪刀啊？
-   老板：没有
-   小白兔：那你们有没有萝卜啊？
+第四天，小白兔蹦蹦跳跳到小卖部，问：老板，你们有没有剪刀啊？
+老板：没有
+小白兔：那你们有没有萝卜啊？
 </p>
 </div>
-
 </div>
-
-<div id="outline-container-1-19" class="outline-3">
+<div id="outline-container-sec-1-19" class="outline-3">
 <h3 id="sec-1-19"><span class="section-number-3">1.19</span> 没有那么聪明的毛驴</h3>
 <div class="outline-text-3" id="text-1-19">
-
-<p>   发信人: so (桐叶封晋|恭喜发财~!!), 信区: Joke
-   标  题: 没有那么聪明的毛驴
-   发信站: 北邮人论坛 (Mon Jul  2 16:11:54 2007), 站内
-</p>
 <p>
-   一个聪明人在乡下散步，看到磨房里面一头毛驴在拉磨，脖子上头挂着一串铃铛。于是聪明人向磨房主道：
-   '你为何要在毛驴的脖子上挂一串铃铛呢？'
-   磨房主回答：'我打瞌睡的时候，毛驴常常会偷懒，挂上铃铛以后，如果铃铛不响了，
-   我就知道这个畜生又在偷懒了。'
-   聪明人想了一下，又问：'如果毛驴停在原地不动，只是摇头，你又能听到铃声，它又没有干活，那怎么办呢？'
-   磨房主楞了一下，说：'先生，我哪能买到像您这样聪明的毛驴啊！'
+发信人: so (桐叶封晋|恭喜发财~!!), 信区: Joke
+标  题: 没有那么聪明的毛驴
+发信站: 北邮人论坛 (Mon Jul  2 16:11:54 2007), 站内
+</p>
+
+<p>
+一个聪明人在乡下散步，看到磨房里面一头毛驴在拉磨，脖子上头挂着一串铃铛。于是聪明人向磨房主道：
+'你为何要在毛驴的脖子上挂一串铃铛呢？'
+磨房主回答：'我打瞌睡的时候，毛驴常常会偷懒，挂上铃铛以后，如果铃铛不响了，
+我就知道这个畜生又在偷懒了。'
+聪明人想了一下，又问：'如果毛驴停在原地不动，只是摇头，你又能听到铃声，它又没有干活，那怎么办呢？'
+磨房主楞了一下，说：'先生，我哪能买到像您这样聪明的毛驴啊！'
 </p>
 </div>
-
 </div>
-
-<div id="outline-container-1-20" class="outline-3">
+<div id="outline-container-sec-1-20" class="outline-3">
 <h3 id="sec-1-20"><span class="section-number-3">1.20</span> 找兔子</h3>
 <div class="outline-text-3" id="text-1-20">
+<p>
+测试美国, 香港, 中国大陆三地警察的实力, 联合国将三只兔子放在三个森林中, 看三地警察谁先找出兔子.
+任务:找出兔子
+</p>
 
-<p>   测试美国, 香港, 中国大陆三地警察的实力, 联合国将三只兔子放在三个森林中, 看三地警察谁先找出兔子.
-   任务:找出兔子
-</p>
 <p>
-   第一个进森林的是美国警察, 他们先花整整半天时间开会制定作战计划, 严格分工, 然后
-   派特种部队快速进入森林进行地毯式搜索,结果开会耽搁了时间, 兔子跑了, 任务失败!!!!
+第一个进森林的是美国警察, 他们先花整整半天时间开会制定作战计划, 严格分工, 然后
+派特种部队快速进入森林进行地毯式搜索,结果开会耽搁了时间, 兔子跑了, 任务失败!!!!
 </p>
-<p>
-   然后轮到香港警察, 他们派了一百多 号人和几十辆警车在身临其境外一字排开, 由带头
-   人 用喇叭喊话:"兔子,兔子,你已经被包围了, 快出来投降&hellip;&hellip;" 半天过去了, 没动静.
-   飞 虎队进入森林, 搜索一遍,没结果, 任务失败!!!!
-</p>
-<p>
-   最后是中国警察, 只有四个, 先打了一天麻将, 黄昏时一人拿 一警棍进入森林,没五分钟,
-   听到森林里传来一阵动物的惨叫, 中国警察一人抽着一根烟有说有笑的出来, 后面拖着一
-   只鼻青脸肿的熊, 熊奄奄一息的说到:"不要再打了,我就是兔子&hellip;&hellip;."
-</p></div>
 
+<p>
+然后轮到香港警察, 他们派了一百多 号人和几十辆警车在身临其境外一字排开, 由带头
+人 用喇叭喊话:"兔子,兔子,你已经被包围了, 快出来投降&#x2026;&#x2026;" 半天过去了, 没动静.
+飞 虎队进入森林, 搜索一遍,没结果, 任务失败!!!!
+</p>
+
+<p>
+最后是中国警察, 只有四个, 先打了一天麻将, 黄昏时一人拿 一警棍进入森林,没五分钟,
+听到森林里传来一阵动物的惨叫, 中国警察一人抽着一根烟有说有笑的出来, 后面拖着一
+只鼻青脸肿的熊, 熊奄奄一息的说到:"不要再打了,我就是兔子&#x2026;&#x2026;."
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-21" class="outline-3">
+<div id="outline-container-sec-1-21" class="outline-3">
 <h3 id="sec-1-21"><span class="section-number-3">1.21</span> 追车</h3>
 <div class="outline-text-3" id="text-1-21">
-
-<p>   早上赶公共汽车,到站台的时候,汽车已经启动了。
-   于是我只好边追边喊：'师傅,等等我！师傅,等等我呀！'
-   这时一乘客从车窗探出头来冲我说了一句：'八戒你就别追了'
-</p></div>
-
+<p>
+早上赶公共汽车,到站台的时候,汽车已经启动了。
+于是我只好边追边喊：'师傅,等等我！师傅,等等我呀！'
+这时一乘客从车窗探出头来冲我说了一句：'八戒你就别追了'
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-22" class="outline-3">
+<div id="outline-container-sec-1-22" class="outline-3">
 <h3 id="sec-1-22"><span class="section-number-3">1.22</span> 假钞</h3>
 <div class="outline-text-3" id="text-1-22">
-
-<p>   有两个造假钞的不小心造出面值15元的假钞，两人决定拿到偏远山区花掉，当他们拿一张
-   15元买了1元的糖葫芦后，他们哭了，农民找了他们两张7块的
-</p></div>
-
+<p>
+有两个造假钞的不小心造出面值15元的假钞，两人决定拿到偏远山区花掉，当他们拿一张
+15元买了1元的糖葫芦后，他们哭了，农民找了他们两张7块的
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-23" class="outline-3">
+<div id="outline-container-sec-1-23" class="outline-3">
 <h3 id="sec-1-23"><span class="section-number-3">1.23</span> 考试默写</h3>
 <div class="outline-text-3" id="text-1-23">
-
-<p>   发信人: teneo (keep walking), 信区: Joke
-   标  题: zz考试默写
-   发信站: 水木社区 (Tue Sep  9 12:58:30 2008), 站内
-</p>
 <p>
-   高考了，高考完后又是中考&hellip;考题千奇百怪，答卷也五花八门。真佩服现在的学生
-</p>
-<p>
-   啊，思维跳脱，天马行空，和我们那时候的循规蹈矩，差别太大了，呵呵。看一组语文
-   试卷中的填空题―
-</p>
-<p>
-   1.__<sub>，为伊消得人憔悴</sub>
-</p>
-<p>
-   同学答：宽衣解带终不悔
-</p>
-<p>
-   （正解为“衣带渐宽终不悔”，偶承认这个是思想有问题）
-</p>
-<p>
-   2.问渠哪得清如许，____
-</p>
-<p>
-   同学答：心中自有清泉在
-</p>
-<p>
-   （正解为“唯有源头活水来”，咱还是和水粘了点边~~~）
-</p>
-<p>
-   3.何当共剪西窗烛，____
-</p>
-<p>
-   同学答：夫妻对坐到天明
-</p>
-<p>
-   （语文老师阅卷时笑晕。后在课堂时说此事，又晕！正解为“却话巴山夜雨时”）
-</p>
-<p>
-   4.蚍蜉撼大树，____
-</p>
-<p>
-   同学答：一动也不动
-</p>
-<p>
-   （正解为“可笑不自量”。一动也不动，赫赫，很符合事实阿）
-</p>
-<p>
-   5.君子成人之美，____
-</p>
-<p>
-   同学答：小人夺人所爱
-</p>
-<p>
-   （直接晕死）
-</p>
-<p>
-   6.穷则独善其身，____
-</p>
-<p>
-   同学答：富则妻妾成群
-</p>
-<p>
-   （正解：达则兼济天下）
-</p>
-<p>
-   7.__<sub>，天下谁人不识君</sub>
-</p>
-<p>
-   同学答：只要貌似萨达姆
-</p>
-<p>
-   （汗|||&hellip;.）
-</p>
-<p>
-   8.后宫佳丽三千人，____
-</p>
-<p>
-   同学答：铁棒也会磨成针~~~（估计不是磨成针这么简单了吧）
-</p>
-<p>
-   （正解为“三千宠爱在一身”）
-</p>
-<p>
-   9.身无彩凤双飞翼，___
-</p>
-<p>
-   同学答：拔毛凤凰不如鸡
-</p>
-<p>
-   还有个同学答：夫妻双双把家还
-</p>
-<p>
-   （正解为“心有灵犀一点通”）
-</p>
-<p>
-   10.东边日出西边雨，___
-</p>
-<p>
-   同学答：床头打架床尾合
-</p>
-<p>
-   还有个同学答：上错花轿嫁对郎
-</p>
-<p>
-   11._<sub>，糟糠之妻不下堂</sub>
-</p>
-<p>
-   同学答：结发之夫不上床
-</p>
-<p>
-   （语文老师暴怒！）
-</p>
-<p>
-   12.但愿人长久，____
-</p>
-<p>
-   同学答：一颗永流传
-</p>
-<p>
-   （当时狂笑，现在觉得挺经典的。正解为“千里共婵娟”）
-</p>
-<p>
-   13.西塞山前白鹭飞，___
-</p>
-<p>
-   同学答：东村河边爬乌龟
-</p>
-<p>
-   （对的挺工整的）
-</p>
-<p>
-   14.我劝天公重抖擞，____
-</p>
-<p>
-   同学答：天公对我吼三吼
-</p>
-<p>
-   （正解为“不拘一格降人才”，龚自珍）
-</p>
-<p>
-   15.天生我才必有用，____
-</p>
-<p>
-   同学答：关键时刻显神通
-</p>
-<p>
-   又有同学答：老鼠儿子会打洞
-</p>
-<p>
-   （整办公室的语文老师集体毫无形象的狂笑）
-</p>
-<p>
-   16.天若有情天亦老，___
-</p>
-<p>
-   同学答：人不风流枉少年！
-</p>
-<p>
-   （正解为“月若无恨月长圆” 李贺《金铜仙人辞汉歌》 )（还有一句是“人间正道是沧
-   桑”）
-</p>
-<p>
-   17.洛阳亲友如相问，____
-</p>
-<p>
-   同学答：请你不要告诉他
-</p>
-<p>
-   （正解为“一片冰心在玉壶”）
-</p>
-<p>
-   18.期末考试出对联, 上联是英雄宝刀未老
-</p>
-<p>
-   该初三同学对下联为：老娘丰韵尤存
-</p>
-<p>
-   19.良药苦口利于病，___
-</p>
-<p>
-   同学答：不吃才是大傻瓜
-</p>
-<p>
-   人生自古谁无死，___
-</p>
-<p>
-   同学答：只是死的有先后
-</p>
-<p>
-   （结局：家长会后被老师留下来训话鸟…)
-</p>
-<p>
-   20.床前明月光，___
-</p>
-<p>
-   同学答：李白睡的香
-</p>
-<p>
-   21.管中窥豹，___
-</p>
-<p>
-   同学答：吓我一跳
-</p>
-<p>
-   （哈哈哈！正解为“可见一斑”)
-</p>
-<p>
-   22.__<sub>，飞入寻常百姓家</sub>
-</p>
-<p>
-   同学答：康佳彩霸电视机
-</p>
-<p>
-   23.葡萄美酒夜光杯，___
-</p>
-<p>
-   同学答：金钱美人一大堆
-</p>
-<p>
-   24.___<sub>，路上行人欲断魂</sub>
-</p>
-<p>
-   初一学生的杰作：半夜三更鬼敲门
-</p>
-<p>
-   25.还有次考陶渊明的“吾不能为五斗米折腰”，同学填的是“给我六斗就可以”…
-</p>
-<p>
-   26.老吾老以及人之老，___
-</p>
-<p>
-   同学答：妻吾妻以及人之妻
-</p>
-<p>
-   （老师后来评卷时说那个同学特别具有奉献精神，哈哈）
-</p>
-<p>
-   27.想当年，金戈铁马，___
-</p>
-<p>
-   同学答：看今朝，死缠烂打
-</p>
-<p>
-   （正解为“气吞万里如虎”）
-</p>
-<p>
-   28.五年级的一次考试就考到了“三个臭皮匠，__<sub>”</sub>
-</p>
-<p>
-   同学答：臭味都一样
-</p>
-<p>
-   （把监考和外面的校长笑翻了）
-</p>
-<p>
-   29.初一的学生对对子，“登城白云间揽山色入怀，__<sub>”</sub>
-</p>
-<p>
-   同学答：我到酒店去抱小姐上床
-</p>
-<p>
-   （他的语文老师差点当场吐血而亡）
-</p>
-<p>
-   30.两情若是长久时，__
-</p>
-<p>
-   同学答：该是两人成婚时
-</p>
-<p>
-   31.沉舟侧畔千帆过，___
-</p>
-<p>
-   同学答：孔雀开屏花样多
-</p>
-<p>
-   32.书到用时方恨少，____
-</p>
-<p>
-   同学答：钱到月底不够花
-</p>
-<p>
-   33.天若有情天亦老，____
-</p>
-<p>
-   同学答：人若有情死得早
-</p>
-<p>
-   （正解为“月若无恨月长圆”）
-</p>
-<p>
-   34.人生自古谁无死，___
-</p>
-<p>
-   同学答：有谁大便不带纸
-</p>
-<p>
-   （没有语言了&hellip;）
-</p>
-<p>
-   35.有次考李清照的如梦令，“知否？知否？__<sub>”</sub>
-</p>
-<p>
-   同学答：SORRY I，DONT KNOW&hellip;
-</p>
-<p>
-   （正解为“应是绿肥红瘦”）
-</p>
-<p>
-   36.有次考鲁迅先生某句：“__<sub>，我以我血溅轩辕”</sub>
-</p>
-<p>
-   同学答：他以他刀插我身
-</p>
-<p>
-   37.语文考试，填空里有一首革命诗：“为人进出的门紧锁着，__
-</p>
-<p>
-   ，一个声音高喊着：_<sub>我渴望自由，但人的身躯怎能从狗洞子里爬出</sub>
-</p>
-<p>
-   …”
-</p>
-<p>
-   同学答：为狗爬出的洞也锁着 / 他妈的，都锁着！
-</p>
-<p>
-   38.千山万水总是情，__
-</p>
-<p>
-   同学答：多给一份行不行
-</p>
-<p>
-   （批卷老师对了一句：情是情，分是分，多给一份都不行）
-</p>
-<p>
-   39.高一的时候，一次月考，上句“仰天大笑出门去，（正解）我辈岂是蓬蒿人”。班
-</p>
-<p>
-   上有人写：一不小心扭到腰。 还有一句，上句：“清水出芙蓉，（正解）天然去雕饰”
+发信人: teneo (keep walking), 信区: Joke
+标  题: zz考试默写
+发信站: 水木社区 (Tue Sep  9 12:58:30 2008), 站内
 </p>
 
 <p>
-   。有人写，淤泥出莲藕；还有人更绝，写：乱世出英雄
+高考了，高考完后又是中考&#x2026;考题千奇百怪，答卷也五花八门。真佩服现在的学生
 </p>
-<ol>
+
+<p>
+啊，思维跳脱，天马行空，和我们那时候的循规蹈矩，差别太大了，呵呵。看一组语文
+试卷中的填空题―
+</p>
+
+<p>
+1.__<sub>，为伊消得人憔悴</sub>
+</p>
+
+<p>
+同学答：宽衣解带终不悔
+</p>
+
+<p>
+（正解为“衣带渐宽终不悔”，偶承认这个是思想有问题）
+</p>
+
+<p>
+2.问渠哪得清如许，____
+</p>
+
+<p>
+同学答：心中自有清泉在
+</p>
+
+<p>
+（正解为“唯有源头活水来”，咱还是和水粘了点边~~~）
+</p>
+
+<p>
+3.何当共剪西窗烛，____
+</p>
+
+<p>
+同学答：夫妻对坐到天明
+</p>
+
+<p>
+（语文老师阅卷时笑晕。后在课堂时说此事，又晕！正解为“却话巴山夜雨时”）
+</p>
+
+<p>
+4.蚍蜉撼大树，____
+</p>
+
+<p>
+同学答：一动也不动
+</p>
+
+<p>
+（正解为“可笑不自量”。一动也不动，赫赫，很符合事实阿）
+</p>
+
+<p>
+5.君子成人之美，____
+</p>
+
+<p>
+同学答：小人夺人所爱
+</p>
+
+<p>
+（直接晕死）
+</p>
+
+<p>
+6.穷则独善其身，____
+</p>
+
+<p>
+同学答：富则妻妾成群
+</p>
+
+<p>
+（正解：达则兼济天下）
+</p>
+
+<p>
+7.__<sub>，天下谁人不识君</sub>
+</p>
+
+<p>
+同学答：只要貌似萨达姆
+</p>
+
+<p>
+（汗|||&#x2026;.）
+</p>
+
+<p>
+8.后宫佳丽三千人，____
+</p>
+
+<p>
+同学答：铁棒也会磨成针~~~（估计不是磨成针这么简单了吧）
+</p>
+
+<p>
+（正解为“三千宠爱在一身”）
+</p>
+
+<p>
+9.身无彩凤双飞翼，___
+</p>
+
+<p>
+同学答：拔毛凤凰不如鸡
+</p>
+
+<p>
+还有个同学答：夫妻双双把家还
+</p>
+
+<p>
+（正解为“心有灵犀一点通”）
+</p>
+
+<p>
+10.东边日出西边雨，___
+</p>
+
+<p>
+同学答：床头打架床尾合
+</p>
+
+<p>
+还有个同学答：上错花轿嫁对郎
+</p>
+
+<p>
+11._<sub>，糟糠之妻不下堂</sub>
+</p>
+
+<p>
+同学答：结发之夫不上床
+</p>
+
+<p>
+（语文老师暴怒！）
+</p>
+
+<p>
+12.但愿人长久，____
+</p>
+
+<p>
+同学答：一颗永流传
+</p>
+
+<p>
+（当时狂笑，现在觉得挺经典的。正解为“千里共婵娟”）
+</p>
+
+<p>
+13.西塞山前白鹭飞，___
+</p>
+
+<p>
+同学答：东村河边爬乌龟
+</p>
+
+<p>
+（对的挺工整的）
+</p>
+
+<p>
+14.我劝天公重抖擞，____
+</p>
+
+<p>
+同学答：天公对我吼三吼
+</p>
+
+<p>
+（正解为“不拘一格降人才”，龚自珍）
+</p>
+
+<p>
+15.天生我才必有用，____
+</p>
+
+<p>
+同学答：关键时刻显神通
+</p>
+
+<p>
+又有同学答：老鼠儿子会打洞
+</p>
+
+<p>
+（整办公室的语文老师集体毫无形象的狂笑）
+</p>
+
+<p>
+16.天若有情天亦老，___
+</p>
+
+<p>
+同学答：人不风流枉少年！
+</p>
+
+<p>
+（正解为“月若无恨月长圆” 李贺《金铜仙人辞汉歌》 )（还有一句是“人间正道是沧
+桑”）
+</p>
+
+<p>
+17.洛阳亲友如相问，____
+</p>
+
+<p>
+同学答：请你不要告诉他
+</p>
+
+<p>
+（正解为“一片冰心在玉壶”）
+</p>
+
+<p>
+18.期末考试出对联, 上联是英雄宝刀未老
+</p>
+
+<p>
+该初三同学对下联为：老娘丰韵尤存
+</p>
+
+<p>
+19.良药苦口利于病，___
+</p>
+
+<p>
+同学答：不吃才是大傻瓜
+</p>
+
+<p>
+人生自古谁无死，___
+</p>
+
+<p>
+同学答：只是死的有先后
+</p>
+
+<p>
+（结局：家长会后被老师留下来训话鸟…)
+</p>
+
+<p>
+20.床前明月光，___
+</p>
+
+<p>
+同学答：李白睡的香
+</p>
+
+<p>
+21.管中窥豹，___
+</p>
+
+<p>
+同学答：吓我一跳
+</p>
+
+<p>
+（哈哈哈！正解为“可见一斑”)
+</p>
+
+<p>
+22.__<sub>，飞入寻常百姓家</sub>
+</p>
+
+<p>
+同学答：康佳彩霸电视机
+</p>
+
+<p>
+23.葡萄美酒夜光杯，___
+</p>
+
+<p>
+同学答：金钱美人一大堆
+</p>
+
+<p>
+24.___<sub>，路上行人欲断魂</sub>
+</p>
+
+<p>
+初一学生的杰作：半夜三更鬼敲门
+</p>
+
+<p>
+25.还有次考陶渊明的“吾不能为五斗米折腰”，同学填的是“给我六斗就可以”…
+</p>
+
+<p>
+26.老吾老以及人之老，___
+</p>
+
+<p>
+同学答：妻吾妻以及人之妻
+</p>
+
+<p>
+（老师后来评卷时说那个同学特别具有奉献精神，哈哈）
+</p>
+
+<p>
+27.想当年，金戈铁马，___
+</p>
+
+<p>
+同学答：看今朝，死缠烂打
+</p>
+
+<p>
+（正解为“气吞万里如虎”）
+</p>
+
+<p>
+28.五年级的一次考试就考到了“三个臭皮匠，__<sub>”</sub>
+</p>
+
+<p>
+同学答：臭味都一样
+</p>
+
+<p>
+（把监考和外面的校长笑翻了）
+</p>
+
+<p>
+29.初一的学生对对子，“登城白云间揽山色入怀，__<sub>”</sub>
+</p>
+
+<p>
+同学答：我到酒店去抱小姐上床
+</p>
+
+<p>
+（他的语文老师差点当场吐血而亡）
+</p>
+
+<p>
+30.两情若是长久时，__
+</p>
+
+<p>
+同学答：该是两人成婚时
+</p>
+
+<p>
+31.沉舟侧畔千帆过，___
+</p>
+
+<p>
+同学答：孔雀开屏花样多
+</p>
+
+<p>
+32.书到用时方恨少，____
+</p>
+
+<p>
+同学答：钱到月底不够花
+</p>
+
+<p>
+33.天若有情天亦老，____
+</p>
+
+<p>
+同学答：人若有情死得早
+</p>
+
+<p>
+（正解为“月若无恨月长圆”）
+</p>
+
+<p>
+34.人生自古谁无死，___
+</p>
+
+<p>
+同学答：有谁大便不带纸
+</p>
+
+<p>
+（没有语言了&#x2026;）
+</p>
+
+<p>
+35.有次考李清照的如梦令，“知否？知否？__<sub>”</sub>
+</p>
+
+<p>
+同学答：SORRY I，DONT KNOW&#x2026;
+</p>
+
+<p>
+（正解为“应是绿肥红瘦”）
+</p>
+
+<p>
+36.有次考鲁迅先生某句：“__<sub>，我以我血溅轩辕”</sub>
+</p>
+
+<p>
+同学答：他以他刀插我身
+</p>
+
+<p>
+37.语文考试，填空里有一首革命诗：“为人进出的门紧锁着，__
+</p>
+
+<p>
+，一个声音高喊着：_<sub>我渴望自由，但人的身躯怎能从狗洞子里爬出</sub>
+</p>
+
+<p>
+…”
+</p>
+
+<p>
+同学答：为狗爬出的洞也锁着 / 他妈的，都锁着！
+</p>
+
+<p>
+38.千山万水总是情，__
+</p>
+
+<p>
+同学答：多给一份行不行
+</p>
+
+<p>
+（批卷老师对了一句：情是情，分是分，多给一份都不行）
+</p>
+
+<p>
+39.高一的时候，一次月考，上句“仰天大笑出门去，（正解）我辈岂是蓬蒿人”。班
+</p>
+
+<p>
+上有人写：一不小心扭到腰。 还有一句，上句：“清水出芙蓉，（正解）天然去雕饰”
+</p>
+
+
+<p>
+。有人写，淤泥出莲藕；还有人更绝，写：乱世出英雄
+</p>
+
+<ol class="org-ol">
 <li>问君能有几多愁，___
 
 <p>
-       同学答：恰似一壶二锅头
-</p></li>
+同学答：恰似一壶二锅头
+</p>
+</li>
 </ol>
-
-
 </div>
-
 </div>
-
-<div id="outline-container-1-24" class="outline-3">
+<div id="outline-container-sec-1-24" class="outline-3">
 <h3 id="sec-1-24"><span class="section-number-3">1.24</span> 从二十楼掉下来和二楼的区别</h3>
 <div class="outline-text-3" id="text-1-24">
-
-<p>   发信人: zhuang5122 (管他三九27-闷锅王), 信区: Joke
-   标  题: 从二十楼掉下来和二楼的区别。。爆冷
-   发信站: 北邮人论坛 (Tue Oct 28 20:42:11 2008), 站内
-</p>
 <p>
-   二十楼: 啊啊啊啊啊啊啊啊啊啊啊啊~~~~~~~~~~~~~~~~~~~~~~啪~~~
-   二 楼: 啪~~~~啊啊啊啊啊啊啊啊啊啊啊啊~~~~~~~~~~~~~~~~~~~~~
+发信人: zhuang5122 (管他三九27-闷锅王), 信区: Joke
+标  题: 从二十楼掉下来和二楼的区别。。爆冷
+发信站: 北邮人论坛 (Tue Oct 28 20:42:11 2008), 站内
 </p>
-<p>
-   --
-   [b]  [url=[[http://www.xiayy.com]2008年最新冷笑话[/url][/b][http://www.xiayy.com]2008年最新冷笑话[/url][/b]]]
-   ※ 来源:·北邮人论坛 <a href="http://forum.byr.edu.cn·[FROM">http://forum.byr.edu.cn·[FROM</a>: 59.57.167.*]
-</p></div>
 
+<p>
+二十楼: 啊啊啊啊啊啊啊啊啊啊啊啊~~~~~~~~~~~~~~~~~~~~~~啪~~~
+二 楼: 啪~~~~啊啊啊啊啊啊啊啊啊啊啊啊~~~~~~~~~~~~~~~~~~~~~
+</p>
+
+<p>
+&#x2013;
+[b]  [url=<a href="http://www.xiayy.com]2008年最新冷笑话[/url][/b">http://www.xiayy.com]2008年最新冷笑话[/url][/b</a>]
+※ 来源:·北邮人论坛 <a href="http://forum.byr.edu.cn·[FROM">http://forum.byr.edu.cn·[FROM</a>: 59.57.167.*]
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-25" class="outline-3">
+<div id="outline-container-sec-1-25" class="outline-3">
 <h3 id="sec-1-25"><span class="section-number-3">1.25</span> 一句话笑话</h3>
 <div class="outline-text-3" id="text-1-25">
-
-<ul>
+<ul class="org-ul">
 <li>俺村就剩俺一个光棍儿了，其它男人生了孩儿都结扎了，大夫，您也给俺结扎了吧，我怕
-     要是哪个女的怀孕了，这个责任俺担当不起啊。
+要是哪个女的怀孕了，这个责任俺担当不起啊。
 </li>
 <li>抢匪：快把保险箱密码说出来！不说杀了你！女职员：杀了我也不说！你糟蹋了我我也不
-     说！抢匪上下打量她后：你想得美！
+说！抢匪上下打量她后：你想得美！
 </li>
 <li>一神经病在床上唱歌,唱着唱着翻了个身,趴在枕头上继续唱歌,主治医生问:“唱就唱吧,
-     你翻身干什么?”神经病说:“傻B,A面唱完了当然要唱B面了。”
+你翻身干什么?”神经病说:“傻B,A面唱完了当然要唱B面了。”
 </li>
 <li>餐厅中，女：你到底打算跟我结婚吗？男的沉默。女：别以为没人要我，搞火了我马上就
-     在这找个人嫁了！侍应生走过来：小姐你把本店的客人都吓跑了。
+在这找个人嫁了！侍应生走过来：小姐你把本店的客人都吓跑了。
 </li>
 <li>强盗：“抢劫，都他妈给我趴下！”当他看到一女士的趴下姿势后吼道：“你他妈给我文
-     明点，老子只劫财不劫色！”
+明点，老子只劫财不劫色！”
 </li>
 <li>一位白人到黑人区发表竞选演说，为了赢得黑人选民的支持，演说中他竟脱口而出：“虽
-     然我的皮肤是白的，但心却和你们一样黑。”
+然我的皮肤是白的，但心却和你们一样黑。”
 </li>
 <li>某男,妻经常红杏出墙,而视若不见,同事送一付对联,上联:只要日子过的去，下联:哪怕头
-     上有点绿, 横批:忍者神龟
+上有点绿, 横批:忍者神龟
 </li>
 <li>男女朋友睡一个房间，女的划了条线：过线的是禽兽。醒来发现男的真的没过线，女的狠
-     狠打了男的一耳光：你连禽兽都不如！
+狠打了男的一耳光：你连禽兽都不如！
 </li>
 </ul>
-
-
 </div>
-
 </div>
-
-<div id="outline-container-1-26" class="outline-3">
+<div id="outline-container-sec-1-26" class="outline-3">
 <h3 id="sec-1-26"><span class="section-number-3">1.26</span> 我就胖了,就爱吃肉了怎么了? 老子花了几千万年进化到食物链顶端不是为了吃蔬菜!</h3>
-<div class="outline-text-3" id="text-1-26">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-27" class="outline-3">
+<div id="outline-container-sec-1-27" class="outline-3">
 <h3 id="sec-1-27"><span class="section-number-3">1.27</span> 我刚刚拒绝了levi's美女售货员的求合体的想法</h3>
 <div class="outline-text-3" id="text-1-27">
-
-<p>   之前朋友说levi's的牛仔裤很不错，于是我决定去买一条。到了商场逛了逛，走进了levi's的店面。大牌店真不错，售货员都是美女，站成一排一个赛一个清纯漂亮。
-   一进店，就有一个很漂亮的售货员跑了过来。“先生，你好。能忙您做点什么么？”
-   “把你们最新款裤子拿给我。”
-   售货员匆忙拿来一条506跑了过来。为了装作熟客，我接过裤子没搭理她直接走进了试衣间，没想到美女售货员却主动跟上来站在试衣间门口。
-   为了防止她偷窥我，我赶紧把试衣间的门关严。然后开始换裤子，我刚把裤子脱了，就听到美女就站在试衣间门口小声的问我：“帅哥，合不合体，合不合体？”
-   公共场合她问这种问题，真不害臊。感叹社会风气实在太不好了，日风正下、世态炎凉啊。她问的我可是觉得又害羞又尴尬，不过作为一个品德高尚，有情操的人，我只好用沉默来拒绝她与我合体的要求。
-   可没想到的是等我出试衣间，她仍然不依不饶的问，“合体的话，第一次我可以给你打9折哦。”
-   我冷峻的走出了试衣间，把裤子拿给了她，我真是对这个美女失望透了。她怎么能把我当成那种爱占小便宜的人呢。虽然她很漂亮而且还是第一次，但是我绝对不能为了9折出卖自己的肉体，虽然那条裤子穿在我身上绝对帅气潇洒，但我还是决定不买了，当然，钱没带够也是另外一方面。我没好意思直接把我高尚的人格说出来，只好对她说“对不起，我不喜欢这裤子。”
-   她却“不买没关系，欢迎下次再来哦。”我实在忍无可忍，临出门前我告诉她，“我不是一个随便的人。”只见她窘迫又充满敬仰的神情望着我，红着的脸映红了我胸前的红领巾。我希望经过这次教训她能懂一些做人的道理，虽然裤子没买成，但很开心做了一件好事，于是我笑着离开了。
-   以后再不听朋友的买levi's了
-</p></div>
-
+<p>
+之前朋友说levi's的牛仔裤很不错，于是我决定去买一条。到了商场逛了逛，走进了levi's的店面。大牌店真不错，售货员都是美女，站成一排一个赛一个清纯漂亮。
+一进店，就有一个很漂亮的售货员跑了过来。“先生，你好。能忙您做点什么么？”
+“把你们最新款裤子拿给我。”
+售货员匆忙拿来一条506跑了过来。为了装作熟客，我接过裤子没搭理她直接走进了试衣间，没想到美女售货员却主动跟上来站在试衣间门口。
+为了防止她偷窥我，我赶紧把试衣间的门关严。然后开始换裤子，我刚把裤子脱了，就听到美女就站在试衣间门口小声的问我：“帅哥，合不合体，合不合体？”
+公共场合她问这种问题，真不害臊。感叹社会风气实在太不好了，日风正下、世态炎凉啊。她问的我可是觉得又害羞又尴尬，不过作为一个品德高尚，有情操的人，我只好用沉默来拒绝她与我合体的要求。
+可没想到的是等我出试衣间，她仍然不依不饶的问，“合体的话，第一次我可以给你打9折哦。”
+我冷峻的走出了试衣间，把裤子拿给了她，我真是对这个美女失望透了。她怎么能把我当成那种爱占小便宜的人呢。虽然她很漂亮而且还是第一次，但是我绝对不能为了9折出卖自己的肉体，虽然那条裤子穿在我身上绝对帅气潇洒，但我还是决定不买了，当然，钱没带够也是另外一方面。我没好意思直接把我高尚的人格说出来，只好对她说“对不起，我不喜欢这裤子。”
+她却“不买没关系，欢迎下次再来哦。”我实在忍无可忍，临出门前我告诉她，“我不是一个随便的人。”只见她窘迫又充满敬仰的神情望着我，红着的脸映红了我胸前的红领巾。我希望经过这次教训她能懂一些做人的道理，虽然裤子没买成，但很开心做了一件好事，于是我笑着离开了。
+以后再不听朋友的买levi's了
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-28" class="outline-3">
+<div id="outline-container-sec-1-28" class="outline-3">
 <h3 id="sec-1-28"><span class="section-number-3">1.28</span> 死猪是检验开水的唯一标准</h3>
 <div class="outline-text-3" id="text-1-28">
-
-<p> <span class="timestamp-wrapper"> <span class="timestamp">2012-10-19 Fri 13:10</span></span><br/>
-</p></div>
-
+<p>
+<span class="timestamp-wrapper"><span class="timestamp">[2012-10-19 Fri 13:10]</span></span>
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-29" class="outline-3">
-<h3 id="sec-1-29"><a name="ID-e6a82ba7-b39e-43d6-8ed1-f629c576de4b" id="ID-e6a82ba7-b39e-43d6-8ed1-f629c576de4b"></a><span class="section-number-3">1.29</span> cat sleep style &nbsp;&nbsp;&nbsp;<span class="tag"><span class="ATTACH">ATTACH</span></span></h3>
+<div id="outline-container-sec-1-29" class="outline-3">
+<h3 id="sec-1-29"><a id="ID-e6a82ba7-b39e-43d6-8ed1-f629c576de4b" name="ID-e6a82ba7-b39e-43d6-8ed1-f629c576de4b"></a><span class="section-number-3">1.29</span> cat sleep style&#xa0;&#xa0;&#xa0;<span class="tag"><span class="ATTACH">ATTACH</span></span></h3>
 <div class="outline-text-3" id="text-1-29">
 
-
-<p> 
- <span class="timestamp-wrapper"> <span class="timestamp">2012-10-19 Fri 13:47</span></span><br/>
-</p></div>
-
+<p>
+<span class="timestamp-wrapper"><span class="timestamp">[2012-10-19 Fri 13:47]</span></span>
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-30" class="outline-3">
-<h3 id="sec-1-30"><a name="ID-8b22d46f-3ee5-4a02-8a22-a523248048f1" id="ID-8b22d46f-3ee5-4a02-8a22-a523248048f1"></a><span class="section-number-3">1.30</span> 浣熊 &nbsp;&nbsp;&nbsp;<span class="tag"><span class="ATTACH">ATTACH</span></span></h3>
+<div id="outline-container-sec-1-30" class="outline-3">
+<h3 id="sec-1-30"><a id="ID-8b22d46f-3ee5-4a02-8a22-a523248048f1" name="ID-8b22d46f-3ee5-4a02-8a22-a523248048f1"></a><span class="section-number-3">1.30</span> 浣熊&#xa0;&#xa0;&#xa0;<span class="tag"><span class="ATTACH">ATTACH</span></span></h3>
 <div class="outline-text-3" id="text-1-30">
 
-
-<p> 
- <span class="timestamp-wrapper"> <span class="timestamp">2012-10-19 Fri 13:51</span></span><br/>
-</p></div>
+<p>
+<span class="timestamp-wrapper"><span class="timestamp">[2012-10-19 Fri 13:51]</span></span>
+</p>
 </div>
 </div>
 </div>
-
-<div id="postamble">
-<p class="date">Date: 2013-05-21T14:33+0800</p>
+</div>
+<div id="postamble" class="status">
 <p class="author">Author: sunway</p>
-<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
-<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
-
+<p class="email">Email: <a href="mailto:sunwayforever@gmail.com">sunwayforever@gmail.com</a></p>
+<p class="date">Created: 2013-12-24 Tue 14:13</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.2 (<a href="http://orgmode.org">Org</a> mode 8.2.4)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

@@ -1,71 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Android Menu</title>
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="Android Menu"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-21T14:34+0800"/>
-<meta name="author" content="sunway"/>
-<meta name="description" content=""/>
-<meta name="keywords" content=""/>
+<!-- 2013-12-24 Tue 14:13 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="sunway" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
-  html { font-family: Times, serif; font-size: 12pt; }
   .title  { text-align: center; }
-  .todo   { color: red; }
+  .todo   { font-family: monospace; color: red; }
   .done   { color: green; }
-  .tag    { background-color: #add8e6; font-weight:normal }
-  .target { }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
-  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
-  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
-  .center {margin-left:auto; margin-right:auto; text-align:center;}
-  p.verse { margin-left: 3% }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
   pre {
-	border: 1pt solid #AEBDCC;
-	background-color: #F3F5F7;
-	padding: 5pt;
-	font-family: courier, monospace;
-        font-size: 90%;
-        overflow:auto;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
   }
-  table { border-collapse: collapse; }
-  td, th { vertical-align: top;  }
-  th.right  { text-align:center;  }
-  th.left   { text-align:center;   }
-  th.center { text-align:center; }
-  td.right  { text-align:right;  }
-  td.left   { text-align:left;   }
-  td.center { text-align:center; }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
   dt { font-weight: bold; }
-  div.figure { padding: 0.5em; }
-  div.figure p { text-align: center; }
-  div.inlinetask {
-    padding:10px;
-    border:2px solid gray;
-    margin:10px;
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
     background: #ffffcc;
   }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
   textarea { overflow-x: auto; }
-  .linenr { font-size:smaller }
-  .code-highlighted {background-color:#ffff00;}
-  .org-info-js_info-navigation { border-style:none; }
-  #org-info-js_console-label { font-size:10px; font-weight:bold;
-                               white-space:nowrap; }
-  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
-                                 font-weight:bold; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
   /*]]>*/-->
-</style>    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
+</style>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012  Free Software Foundation, Inc.
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -106,108 +132,80 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
-
 </head>
 <body>
-
-<div id="preamble">
-
-</div>
-
 <div id="content">
 <h1 class="title">Android Menu</h1>
-
-
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 Android Menu</a>
+<li><a href="#sec-1">1. Android Menu</a>
 <ul>
-<li><a href="#sec-1-1">1.1 Options Menu</a></li>
-<li><a href="#sec-1-2">1.2 Context Menu</a></li>
+<li><a href="#sec-1-1">1.1. Options Menu</a></li>
+<li><a href="#sec-1-2">1.2. Context Menu</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-
-<div id="outline-container-1" class="outline-2">
+<div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> Android Menu</h2>
 <div class="outline-text-2" id="text-1">
-
-
-</div>
-
-<div id="outline-container-1-1" class="outline-3">
+</div><div id="outline-container-sec-1-1" class="outline-3">
 <h3 id="sec-1-1"><span class="section-number-3">1.1</span> Options Menu</h3>
 <div class="outline-text-3" id="text-1-1">
-
-
-</div>
-
-<div id="outline-container-1-1-1" class="outline-4">
+</div><div id="outline-container-sec-1-1-1" class="outline-4">
 <h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> Overflow Menu</h4>
 <div class="outline-text-4" id="text-1-1-1">
-
-
-
-
-<pre class="example">: java.lang.Throwable: stack dump
-:       at java.lang.Thread.dumpStack(Thread.java:496)
-:       at com.android.internal.view.menu.ActionMenuPresenter.showOverflowMenu(ActionMenuPresenter.java:281)
-:       at com.android.internal.widget.AbsActionBarView.showOverflowMenu(AbsActionBarView.java:177)
-:       at com.android.internal.policy.impl.PhoneWindow.onKeyUpPanel(PhoneWindow.java:789)
-:       at com.android.internal.policy.impl.PhoneWindow.onKeyUp(PhoneWindow.java:1488)
-:       at com.android.internal.policy.impl.PhoneWindow$DecorView.dispatchKeyEvent(PhoneWindow.java:1815)
-:       at android.view.ViewRootImpl.deliverKeyEventPostIme(ViewRootImpl.java:3330)
-:       at android.view.ViewRootImpl.handleFinishedEvent(ViewRootImpl.java:3303)
-:       at android.view.ViewRootImpl.handleMessage(ViewRootImpl.java:2463)
-:       at android.os.Handler.dispatchMessage(Handler.java:99)
-:       at android.os.Looper.loop(Looper.java:137)
-:       at android.app.ActivityThread.main(ActivityThread.java:4496)
-:       at java.lang.reflect.Method.invokeNative(Native Method)
-:       at java.lang.reflect.Method.invoke(Method.java:511)
-:       at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:797)
-:       at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:564)
-:       at dalvik.system.NativeStart.main(Native Method)
+<pre class="example">
+: java.lang.Throwable: stack dump
+:	at java.lang.Thread.dumpStack(Thread.java:496)
+:	at com.android.internal.view.menu.ActionMenuPresenter.showOverflowMenu(ActionMenuPresenter.java:281)
+:	at com.android.internal.widget.AbsActionBarView.showOverflowMenu(AbsActionBarView.java:177)
+:	at com.android.internal.policy.impl.PhoneWindow.onKeyUpPanel(PhoneWindow.java:789)
+:	at com.android.internal.policy.impl.PhoneWindow.onKeyUp(PhoneWindow.java:1488)
+:	at com.android.internal.policy.impl.PhoneWindow$DecorView.dispatchKeyEvent(PhoneWindow.java:1815)
+:	at android.view.ViewRootImpl.deliverKeyEventPostIme(ViewRootImpl.java:3330)
+:	at android.view.ViewRootImpl.handleFinishedEvent(ViewRootImpl.java:3303)
+:	at android.view.ViewRootImpl.handleMessage(ViewRootImpl.java:2463)
+:	at android.os.Handler.dispatchMessage(Handler.java:99)
+:	at android.os.Looper.loop(Looper.java:137)
+:	at android.app.ActivityThread.main(ActivityThread.java:4496)
+:	at java.lang.reflect.Method.invokeNative(Native Method)
+:	at java.lang.reflect.Method.invoke(Method.java:511)
+:	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:797)
+:	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:564)
+:	at dalvik.system.NativeStart.main(Native Method)
 ----
 : java.lang.Throwable: stack dump
-:       at java.lang.Thread.dumpStack(Thread.java:496)
-:       at com.android.contacts.activities.PeopleActivity.onPrepareOptionsMenu(PeopleActivity.java:1411)
-:       at android.app.Activity.onPreparePanel(Activity.java:2467)
-:       at com.android.internal.policy.impl.PhoneWindow.reopenMenu(PhoneWindow.java:968)
-:       at com.android.internal.policy.impl.PhoneWindow.onMenuModeChange(PhoneWindow.java:959)
-:       at com.android.internal.view.menu.MenuBuilder.changeMenuMode(MenuBuilder.java:743)
-:       at com.android.internal.view.menu.ActionMenuPresenter$OpenOverflowRunnable.run(ActionMenuPresenter.java:659)
-:       at android.os.Handler.handleCallback(Handler.java:605)
-:       at android.os.Handler.dispatchMessage(Handler.java:92)
-:       at android.os.Looper.loop(Looper.java:137)
-:       at android.app.ActivityThread.main(ActivityThread.java:4496)
-:       at java.lang.reflect.Method.invokeNative(Native Method)
-:       at java.lang.reflect.Method.invoke(Method.java:511)
-:       at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:797)
-:       at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:564)
-:       at dalvik.system.NativeStart.main(Native Method)
+:	at java.lang.Thread.dumpStack(Thread.java:496)
+:	at com.android.contacts.activities.PeopleActivity.onPrepareOptionsMenu(PeopleActivity.java:1411)
+:	at android.app.Activity.onPreparePanel(Activity.java:2467)
+:	at com.android.internal.policy.impl.PhoneWindow.reopenMenu(PhoneWindow.java:968)
+:	at com.android.internal.policy.impl.PhoneWindow.onMenuModeChange(PhoneWindow.java:959)
+:	at com.android.internal.view.menu.MenuBuilder.changeMenuMode(MenuBuilder.java:743)
+:	at com.android.internal.view.menu.ActionMenuPresenter$OpenOverflowRunnable.run(ActionMenuPresenter.java:659)
+:	at android.os.Handler.handleCallback(Handler.java:605)
+:	at android.os.Handler.dispatchMessage(Handler.java:92)
+:	at android.os.Looper.loop(Looper.java:137)
+:	at android.app.ActivityThread.main(ActivityThread.java:4496)
+:	at java.lang.reflect.Method.invokeNative(Native Method)
+:	at java.lang.reflect.Method.invoke(Method.java:511)
+:	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:797)
+:	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:564)
+:	at dalvik.system.NativeStart.main(Native Method)
 </pre>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-1-2" class="outline-4">
+<div id="outline-container-sec-1-1-2" class="outline-4">
 <h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> Panel</h4>
 <div class="outline-text-4" id="text-1-1-2">
-
-
-</div>
-
-<div id="outline-container-1-1-2-1" class="outline-5">
+</div><div id="outline-container-sec-1-1-2-1" class="outline-5">
 <h5 id="sec-1-1-2-1"><span class="section-number-5">1.1.2.1</span> Activity Start up</h5>
 <div class="outline-text-5" id="text-1-1-2-1">
-
-
-
+<div class="org-src-container">
 
 <pre class="src src-text">Activity.setContentView
   PhoneWindow.installDecor()
@@ -220,8 +218,9 @@ for the JavaScript code in this tag.
             }
     });
 </pre>
+</div>
 
-
+<div class="org-src-container">
 
 <pre class="src src-text">PhoneWindow.invalidatePanelMenu(featureId)
   PanelFeatureState st = getPanelState(featureId,true)
@@ -256,66 +255,59 @@ for the JavaScript code in this tag.
       // now `menu` is prepared, but `view` is still not ready:
       // `openPanel` will do the work later
 </pre>
-
+</div>
 
 <p>
 that is: `onCreateOptionsMenu` is invoked during `setContentView`
-</p><ul>
-<li id="sec-1-1-2-1-1">To summaries<br/>
+</p>
+</div>
+<ol class="org-ol"><li>To summaries<br  /><div class="outline-text-6" id="text-1-1-2-1-1">
+<p>
 during Activity `setContentView`:
-<ul>
+</p>
+<ul class="org-ul">
 <li>invalidateOptionsMenu
 </li>
 <li>st.refreshMenuContent &amp; st.refreshDecorView
 </li>
 <li>preparePanel
-
 </li>
+
 <li>if there is no action bar
-  both of the panel view and the panel menu need not be initialized, because
-  they could be postponed until user pressed the MENU key. so, only some flags
-  are set for later use, e.g. st.refreshMenuContent, st.refreshDecorView &hellip;,
-  later when MENU key is pressed, `openPanel` will notice these flags, and
-  `prepare` 
-
+both of the panel view and the panel menu need not be initialized, because
+they could be postponed until user pressed the MENU key. so, only some flags
+are set for later use, e.g. st.refreshMenuContent, st.refreshDecorView &#x2026;,
+later when MENU key is pressed, `openPanel` will notice these flags, and
+`prepare` 
 </li>
+
 <li>if there is action bar
-  in addition of setting those flags, the menu is also `prepared`, because
-  action bar need to show some menu even when MENU key is not pressed though.
-</li>
-</ul>
-
-
+in addition of setting those flags, the menu is also `prepared`, because
+action bar need to show some menu even when MENU key is not pressed though.
 </li>
 </ul>
 </div>
-
+</li></ol>
 </div>
-
-<div id="outline-container-1-1-2-2" class="outline-5">
+<div id="outline-container-sec-1-1-2-2" class="outline-5">
 <h5 id="sec-1-1-2-2"><span class="section-number-5">1.1.2.2</span> On Key</h5>
 <div class="outline-text-5" id="text-1-1-2-2">
-
-<ul>
-<li id="sec-1-1-2-2-1">onKeyDown<br/>
-
-
+</div><ol class="org-ol"><li>onKeyDown<br  /><div class="outline-text-6" id="text-1-1-2-2-1">
+<div class="org-src-container">
 
 <pre class="src src-text">PhoneWindow.onKeyDownPanel
   preparePanel()
 </pre>
-
+</div>
 
 <p>
 that is, just when `onKeyDown`, the panel is `prepared`, `onCreateOptionsMenu`
 and `onPrepareOptionsMenu` is invoked accordingly.
 </p>
+</div>
 </li>
-</ul>
-<ul>
-<li id="sec-1-1-2-2-2">onKeyUp<br/>
-
-
+<li>onKeyUp<br  /><div class="outline-text-6" id="text-1-1-2-2-2">
+<div class="org-src-container">
 
 <pre class="src src-text">PhoneWindow.onKeyUp()
   PhoneWindow.onKeyUpPanel()
@@ -347,22 +339,18 @@ and `onPrepareOptionsMenu` is invoked accordingly.
       lp.gravity = st.gravity; // Gravity.CENTER | Gravity.BOTTOM;
       wm.addView(st.decorView, lp);
 </pre>
-
-
-</li>
-</ul>
 </div>
-
 </div>
-
-<div id="outline-container-1-1-2-3" class="outline-5">
+</li></ol>
+</div>
+<div id="outline-container-sec-1-1-2-3" class="outline-5">
 <h5 id="sec-1-1-2-3"><span class="section-number-5">1.1.2.3</span> To summaries:</h5>
 <div class="outline-text-5" id="text-1-1-2-3">
-
-<ul>
-<li id="sec-1-1-2-3-1">Activity Callback<br/>
+</div><ol class="org-ol"><li>Activity Callback<br  /><div class="outline-text-6" id="text-1-1-2-3-1">
+<p>
 Activity has several callbacks to interact with PopupWindow for menu:
-<ol>
+</p>
+<ol class="org-ol">
 <li>onCreatePanelMenu &amp;&amp; onCreateOptionsMenu
 </li>
 <li>onPreparePanel &amp;&amp; onPrepareOptionsMenu
@@ -371,48 +359,39 @@ Activity has several callbacks to interact with PopupWindow for menu:
 </li>
 <li>onMenuOpened
 </li>
-<li>&hellip;
+<li>&#x2026;
 </li>
 </ol>
-
-
+</div>
 </li>
-</ul>
-<ul>
-<li id="sec-1-1-2-3-2">preparePanel &amp;&amp; openPanel<br/>
-<ul>
+<li>preparePanel &amp;&amp; openPanel<br  /><div class="outline-text-6" id="text-1-1-2-3-2">
+<ul class="org-ul">
 <li>preparePanel for the menu DATA
-<ul>
+<ul class="org-ul">
 <li>createOptionsMenu
 </li>
 <li>prepareOptionsMenu
 </li>
 </ul>
-
 </li>
 <li>openPanel for the menu VIEW
 </li>
 <li>any time when MENU key is pressed, menu is `prepared`: `prepareOptionsMenu` and
-  if invalidated, `createOptionsMenu`
+if invalidated, `createOptionsMenu`
 </li>
 <li>if there is action bar, menu is `prepared` on activity start up.
 </li>
 </ul>
-
-</li>
-</ul>
+</div>
+</li></ol>
 </div>
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2" class="outline-3">
+<div id="outline-container-sec-1-2" class="outline-3">
 <h3 id="sec-1-2"><span class="section-number-3">1.2</span> Context Menu</h3>
 <div class="outline-text-3" id="text-1-2">
-
-
-
+<div class="org-src-container">
 
 <pre class="src src-text">View.performLongClick()
   if mOnLongClickListener.onLongClick(view.this):
@@ -446,18 +425,17 @@ Activity has several callbacks to interact with PopupWindow for menu:
               mDialog = builder.create();
               mDialog.show();
 </pre>
-
 </div>
 </div>
 </div>
 </div>
-
-<div id="postamble">
-<p class="date">Date: 2013-05-21T14:34+0800</p>
+</div>
+<div id="postamble" class="status">
 <p class="author">Author: sunway</p>
-<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
-<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
-
+<p class="email">Email: <a href="mailto:sunwayforever@gmail.com">sunwayforever@gmail.com</a></p>
+<p class="date">Created: 2013-12-24 Tue 14:13</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.2 (<a href="http://orgmode.org">Org</a> mode 8.2.4)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

@@ -1,71 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Android LinearLayout</title>
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="Android LinearLayout"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-21T14:34+0800"/>
-<meta name="author" content="sunway"/>
-<meta name="description" content=""/>
-<meta name="keywords" content=""/>
+<!-- 2013-12-24 Tue 14:13 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="sunway" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
-  html { font-family: Times, serif; font-size: 12pt; }
   .title  { text-align: center; }
-  .todo   { color: red; }
+  .todo   { font-family: monospace; color: red; }
   .done   { color: green; }
-  .tag    { background-color: #add8e6; font-weight:normal }
-  .target { }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
-  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
-  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
-  .center {margin-left:auto; margin-right:auto; text-align:center;}
-  p.verse { margin-left: 3% }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
   pre {
-	border: 1pt solid #AEBDCC;
-	background-color: #F3F5F7;
-	padding: 5pt;
-	font-family: courier, monospace;
-        font-size: 90%;
-        overflow:auto;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
   }
-  table { border-collapse: collapse; }
-  td, th { vertical-align: top;  }
-  th.right  { text-align:center;  }
-  th.left   { text-align:center;   }
-  th.center { text-align:center; }
-  td.right  { text-align:right;  }
-  td.left   { text-align:left;   }
-  td.center { text-align:center; }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
   dt { font-weight: bold; }
-  div.figure { padding: 0.5em; }
-  div.figure p { text-align: center; }
-  div.inlinetask {
-    padding:10px;
-    border:2px solid gray;
-    margin:10px;
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
     background: #ffffcc;
   }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
   textarea { overflow-x: auto; }
-  .linenr { font-size:smaller }
-  .code-highlighted {background-color:#ffff00;}
-  .org-info-js_info-navigation { border-style:none; }
-  #org-info-js_console-label { font-size:10px; font-weight:bold;
-                               white-space:nowrap; }
-  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
-                                 font-weight:bold; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
   /*]]>*/-->
-</style>    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
+</style>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012  Free Software Foundation, Inc.
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -106,74 +132,56 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
-
 </head>
 <body>
-
-<div id="preamble">
-
-</div>
-
 <div id="content">
 <h1 class="title">Android LinearLayout</h1>
-
-
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 LinearLayout</a>
+<li><a href="#sec-1">1. LinearLayout</a>
 <ul>
-<li><a href="#sec-1-1">1.1 onMeasure</a></li>
-<li><a href="#sec-1-2">1.2 onLayout</a></li>
-<li><a href="#sec-1-3">1.3 onDraw</a></li>
-<li><a href="#sec-1-4">1.4 To summarize</a></li>
-<li><a href="#sec-1-5">1.5 Q&amp;A</a></li>
+<li><a href="#sec-1-1">1.1. onMeasure</a></li>
+<li><a href="#sec-1-2">1.2. onLayout</a></li>
+<li><a href="#sec-1-3">1.3. onDraw</a></li>
+<li><a href="#sec-1-4">1.4. To summarize</a></li>
+<li><a href="#sec-1-5">1.5. Q&amp;A</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-
-<div id="outline-container-1" class="outline-2">
+<div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> LinearLayout</h2>
 <div class="outline-text-2" id="text-1">
-
-
-</div>
-
-<div id="outline-container-1-1" class="outline-3">
+</div><div id="outline-container-sec-1-1" class="outline-3">
 <h3 id="sec-1-1"><span class="section-number-3">1.1</span> onMeasure</h3>
 <div class="outline-text-3" id="text-1-1">
-
-<p>LinearLayout 的 measure 过程用于确定整个 LinearLayout 及其 child view 的大小,
+<p>
+LinearLayout 的 measure 过程用于确定整个 LinearLayout 及其 child view 的大小,
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-java"><span style="color: #859900;">if</span> mOrientation == VERTICAL:
     measureVertical(widthMeasureSpec, heightMeasureSpec);
 <span style="color: #859900;">else</span>
     measureHorizontal(widthMeasureSpec, heightMeasureSpec);
 </pre>
-
+</div>
 
 <p>
 measureVertical 相对 measureHorizontal 简单一些, 因为它不涉及 baseline
 alignment.
 </p>
-
 </div>
 
-<div id="outline-container-1-1-1" class="outline-4">
+<div id="outline-container-sec-1-1-1" class="outline-4">
 <h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> measureVertical:</h4>
 <div class="outline-text-4" id="text-1-1-1">
-
-
-
-
-
-<pre class="example">int largestChildHeight = Integer.MIN_VALUE;
+<pre class="example">
+int largestChildHeight = Integer.MIN_VALUE;
 int mTotalLength;
 // mTotalLenght 为第一次 measure 时总的高度(不考虑 weight)
 // 包含各个 child view 的高度的和, 加上 padding, divider,这个值
@@ -287,23 +295,21 @@ else:
 setMeasuredDimension(...,heightSize);
 // 向LinearLayout parent view 通告自己的大小.
 </pre>
-
-
 </div>
-
 </div>
-
-<div id="outline-container-1-1-2" class="outline-4">
+<div id="outline-container-sec-1-1-2" class="outline-4">
 <h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> measureHorizontal</h4>
 <div class="outline-text-4" id="text-1-1-2">
-
-<p>measureHorizontal 与 measureVertical 类似, 不同的是多了对 baseline alignment 的
+<p>
+measureHorizontal 与 measureVertical 类似, 不同的是多了对 baseline alignment 的
 考虑.
 </p>
 
+
 <div class="figure">
-<p><img src="file:///home/apuser/.elisp/dotemacs/org/attachment/baseline.png"  alt="file:///home/apuser/.elisp/dotemacs/org/attachment/baseline.png" /></p>
-<p>baseline</p>
+<p><img src="file:///home/apuser/.elisp/dotemacs/org/attachment/baseline.png" alt="baseline.png" />
+</p>
+<p><span class="figure-number">Figure 1:</span> baseline</p>
 </div>
 
 <p>
@@ -312,48 +318,46 @@ setMeasuredDimension(...,heightSize);
 供了一个 getBaseline 方法告诉 LinearLayout 它的 baseline 离控件的顶端有多远. 
 TextView, Button 都实现了 getBaseline 方法. 
 </p>
+
 <p>
 而现在又有一个问题:若 LinearLayout 是 baseline alignment, 而各个 child view 指定
-了不同的 layout gravity 怎么办? 根本不可能对的齐&hellip; android 的做法是:
+了不同的 layout gravity 怎么办? 根本不可能对的齐&#x2026; android 的做法是:
 属于同一个 layout gravity 的 child view 是 baseline aligned 就可以了. 
 </p>
+
 <p>
 由于 baseline alignment 属于 layout 的范畴, 所以在 measure 阶段系统需要做的只是
 顺便将各个 child view 的 getBaseline 的返回值保存在一个名为 mMaxAscent 的
-int[VERTICAL_GRAVITY_COUNT] 数组中, 其意义为:
-若 mMaxAscent[GRAVITY_CENTER_VERTICAL] 为 10, 则表示在 center_vertical gravity
+int[VERTICAL\<sub>GRAVITY\</sub><sub>COUNT]</sub> 数组中, 其意义为:
+若 mMaxAscent[GRAVITY\<sub>CENTER\</sub><sub>VERTICAL]</sub> 为 10, 则表示在 center\<sub>vertical</sub> gravity
 的位置 baseline 最大的一个控件的 baseline 为10, 其它的小控件需要与其 baseline alignment
 </p>
 </div>
 </div>
-
 </div>
-
-<div id="outline-container-1-2" class="outline-3">
+<div id="outline-container-sec-1-2" class="outline-3">
 <h3 id="sec-1-2"><span class="section-number-3">1.2</span> onLayout</h3>
 <div class="outline-text-3" id="text-1-2">
-
-<p>onMeasure 结束后, LinearLayout 及其 child view 的大小就确定了, 对 LinearLayout
+<p>
+onMeasure 结束后, LinearLayout 及其 child view 的大小就确定了, 对 LinearLayout
 来说, 下面需要做的是确定各个 child view 的位置, 这个过程就是 layout 的过程.
 </p>
+
 <p>
 总的来说, LinearLayout 对 child view 的 layout 过程比 RelativeLayout 简单的多,因
 为它的名字就决定了 layout 的过程基本上就是从上到下,从左到右顺序摆放. 但比起
 FrameLayout 和 AbsoluteLayout 还是要复杂一些.
 </p>
+
 <p>
 还是先以 vertical LinearLayout 为例:
 </p>
 </div>
-
-<div id="outline-container-1-2-1" class="outline-4">
+<div id="outline-container-sec-1-2-1" class="outline-4">
 <h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> layoutVertical</h4>
 <div class="outline-text-4" id="text-1-2-1">
-
-
-
-
-<pre class="example">int childTop;
+<pre class="example">
+int childTop;
 // child view 的 top, 通常这个值是 LinearLayout 最上面的位置加上 LinearLayout 的 padding,
 // 但 LinearLayout 的 gravity 属性会让一切有所变化
 
@@ -392,153 +396,135 @@ for (int i = 0; i &lt; count; i++):
   childTop += childHeight + lp.bottomMargin + getNextLocationOffset(child);
 // for ... ends here
 </pre>
-
 <p>
 可见, LinearLayout 的 layout 过程是相关简单的, 对于 vertical LinearLayout, 只需
-要考虑 LinearLayout 的 gravity 属性和 child view 的 layout_gravity 属性. 
-</p></div>
-
+要考虑 LinearLayout 的 gravity 属性和 child view 的 layout\<sub>gravity</sub> 属性. 
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-2-2" class="outline-4">
+<div id="outline-container-sec-1-2-2" class="outline-4">
 <h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> layoutHorizontal</h4>
 <div class="outline-text-4" id="text-1-2-2">
-
-<p>layoutHorizontal 与 layoutVertical 类似, 唯一不同的就是需要根据 child view 的
+<p>
+layoutHorizontal 与 layoutVertical 类似, 唯一不同的就是需要根据 child view 的
 gravity 获得 mMaxAscent 里对应的 baseline 的值, layout 时考虑这个值就可以了. 
-</p></div>
+</p>
+</div>
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-3" class="outline-3">
+<div id="outline-container-sec-1-3" class="outline-3">
 <h3 id="sec-1-3"><span class="section-number-3">1.3</span> onDraw</h3>
-<div class="outline-text-3" id="text-1-3">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-4" class="outline-3">
+<div id="outline-container-sec-1-4" class="outline-3">
 <h3 id="sec-1-4"><span class="section-number-3">1.4</span> To summarize</h3>
 <div class="outline-text-3" id="text-1-4">
-
-<ul>
+<ul class="org-ul">
 <li>measure 过程
-<ul>
+<ul class="org-ul">
 <li><b>ViewGroup.getChildMeasureSpec 非常重要</b>
 
 <p>
-    WRAP_CONTENT, FILL_PARENT 如何转换为 AT_MOST 或 EXACTLY 的? 大小如何确定的?
-</p></li>
-<li>layout_weight
-<ol>
+WRAP\<sub>CONTENT</sub>, FILL\<sub>PARENT</sub> 如何转换为 AT\<sub>MOST</sub> 或 EXACTLY 的? 大小如何确定的?
+</p>
+</li>
+<li>layout\<sub>weight</sub>
+<ol class="org-ol">
 <li>LinearLayout 会 measure 两次
 </li>
 <li>第一次 measure 时会有些优化和特殊处理, 例如: 
-<ol>
-<li>layout_height 为 0 时可能会省略一次 measure;
+<ol class="org-ol">
+<li>layout\<sub>height</sub> 为 0 时可能会省略一次 measure;
 </li>
 <li>若 measure 某个 child view 时, 这个 child view 或之前的 child view 有
-          layout_weight 属性, 则 LinearLayout 尝试给该 child view 更大的空间.
+layout\<sub>weight</sub> 属性, 则 LinearLayout 尝试给该 child view 更大的空间.
 </li>
 </ol>
-
 </li>
 <li>第二次 measure 时会通过第一次 measure 计算的 mTotalHeight 与 heightSize 计
-       算一个 delta 值 (可正可负), 然后按 weight 做权值分配到各个 child view 上.
+算一个 delta 值 (可正可负), 然后按 weight 做权值分配到各个 child view 上.
 </li>
 </ol>
-
 </li>
 <li>由于 measure 的过程只是一个 for 循环, 没有回溯的过程, 所以在没有 weight 的情
-    况下, fill_parent 是极具杀伤力的&hellip;
-
+况下, fill\<sub>parent</sub> 是极具杀伤力的&#x2026;
 </li>
 </ul>
-
 </li>
+
 <li>layout 过程
-<ul>
-<li>graivty &amp;&amp; layout_gravity
+<ul class="org-ul">
+<li>graivty &amp;&amp; layout\<sub>gravity</sub>
 </li>
 <li>baselineAlligned 
 </li>
 </ul>
-
 </li>
-<li>区分 layout_xxx 与 xxx 属性, 例如: 
-<ul>
-<li>layout_gravity 与 gravity
+<li>区分 layout\<sub>xxx</sub> 与 xxx 属性, 例如: 
+<ul class="org-ul">
+<li>layout\<sub>gravity</sub> 与 gravity
 </li>
-<li>layout_height 与 height
+<li>layout\<sub>height</sub> 与 height
 </li>
 <li>margin 与 padding
 </li>
 </ul>
-
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-5" class="outline-3">
+<div id="outline-container-sec-1-5" class="outline-3">
 <h3 id="sec-1-5"><span class="section-number-3">1.5</span> Q&amp;A</h3>
 <div class="outline-text-3" id="text-1-5">
-
-
-</div>
-
-<div id="outline-container-1-5-1" class="outline-4">
+</div><div id="outline-container-sec-1-5-1" class="outline-4">
 <h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> MeasureSpec.UNSPECIFIED 何时被用到?</h4>
 <div class="outline-text-4" id="text-1-5-1">
-
-
 <p>
 UNSPECIFIED 相当于没有 AT<sub>MOST</sub> 限制的 WRAP<sub>CONTENT</sub>.当 parent view 完全无法确定
 child view 的 measure spec 时, 会使用这个 mode, 表示没有任何限制.
 </p>
+
 <p>
 UNSPECIFIED 很少被用到, 因为大部分 layout 都会用 EXACTLY, AT<sub>MOST</sub> 确保其 child
 view 不会超过固定的大小. 但 ListView, ScrollView 这种高度不限的 Layout 除外.
 </p>
+
 
 <p>
 ListView 在 measure 它的 child view 时会使用这个 mode, 因为 ListView 没有高度的限
 制, 所以它没有必要给 child view 强加一个 AT<sub>MOST</sub> 的measure spec, 换句话说: child
 view, 你想多高就多高吧!
 </p>
+
 <p>
 ListView.measureScrapChild():
 </p>
 
-
-
-<pre class="example">if (lpHeight &gt; 0) {
+<pre class="example">
+if (lpHeight &gt; 0) {
     childHeightSpec = MeasureSpec.makeMeasureSpec(lpHeight, MeasureSpec.EXACTLY);
 } else {
     childHeightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
 }
 </pre>
 
-
 <p>
 由此可见, 在 List item 的 layout 中声明 layout<sub>height</sub> 时, 除了明确的数值, 如 10dp, 其它的值
 是没有区别的.
-</p></div>
+</p>
 </div>
 </div>
 </div>
 </div>
-
-<div id="postamble">
-<p class="date">Date: 2013-05-21T14:34+0800</p>
+</div>
+<div id="postamble" class="status">
 <p class="author">Author: sunway</p>
-<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
-<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
-
+<p class="email">Email: <a href="mailto:sunwayforever@gmail.com">sunwayforever@gmail.com</a></p>
+<p class="date">Created: 2013-12-24 Tue 14:13</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.2 (<a href="http://orgmode.org">Org</a> mode 8.2.4)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

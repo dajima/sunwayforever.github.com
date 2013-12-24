@@ -1,71 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Android Loader</title>
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="Android Loader"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-21T14:34+0800"/>
-<meta name="author" content="sunway"/>
-<meta name="description" content=""/>
-<meta name="keywords" content=""/>
+<!-- 2013-12-24 Tue 14:13 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="sunway" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
-  html { font-family: Times, serif; font-size: 12pt; }
   .title  { text-align: center; }
-  .todo   { color: red; }
+  .todo   { font-family: monospace; color: red; }
   .done   { color: green; }
-  .tag    { background-color: #add8e6; font-weight:normal }
-  .target { }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
-  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
-  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
-  .center {margin-left:auto; margin-right:auto; text-align:center;}
-  p.verse { margin-left: 3% }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
   pre {
-	border: 1pt solid #AEBDCC;
-	background-color: #F3F5F7;
-	padding: 5pt;
-	font-family: courier, monospace;
-        font-size: 90%;
-        overflow:auto;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
   }
-  table { border-collapse: collapse; }
-  td, th { vertical-align: top;  }
-  th.right  { text-align:center;  }
-  th.left   { text-align:center;   }
-  th.center { text-align:center; }
-  td.right  { text-align:right;  }
-  td.left   { text-align:left;   }
-  td.center { text-align:center; }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
   dt { font-weight: bold; }
-  div.figure { padding: 0.5em; }
-  div.figure p { text-align: center; }
-  div.inlinetask {
-    padding:10px;
-    border:2px solid gray;
-    margin:10px;
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
     background: #ffffcc;
   }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
   textarea { overflow-x: auto; }
-  .linenr { font-size:smaller }
-  .code-highlighted {background-color:#ffff00;}
-  .org-info-js_info-navigation { border-style:none; }
-  #org-info-js_console-label { font-size:10px; font-weight:bold;
-                               white-space:nowrap; }
-  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
-                                 font-weight:bold; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
   /*]]>*/-->
-</style>    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
+</style>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012  Free Software Foundation, Inc.
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -106,54 +132,35 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
-
 </head>
 <body>
-
-<div id="preamble">
-
-</div>
-
 <div id="content">
 <h1 class="title">Android Loader</h1>
-
-
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 Android Loader</a>
+<li><a href="#sec-1">1. Android Loader</a>
 <ul>
-<li><a href="#sec-1-1">1.1 Loader</a></li>
-<li><a href="#sec-1-2">1.2 LoaderManager</a></li>
-<li><a href="#sec-1-3">1.3 Loader Life Cycle</a></li>
-<li><a href="#sec-1-4">1.4 To summaries:</a></li>
+<li><a href="#sec-1-1">1.1. Loader</a></li>
+<li><a href="#sec-1-2">1.2. LoaderManager</a></li>
+<li><a href="#sec-1-3">1.3. Loader Life Cycle</a></li>
+<li><a href="#sec-1-4">1.4. To summaries:</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-
-<div id="outline-container-1" class="outline-2">
+<div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> Android Loader</h2>
 <div class="outline-text-2" id="text-1">
-
-
-</div>
-
-<div id="outline-container-1-1" class="outline-3">
+</div><div id="outline-container-sec-1-1" class="outline-3">
 <h3 id="sec-1-1"><span class="section-number-3">1.1</span> Loader</h3>
 <div class="outline-text-3" id="text-1-1">
-
-
-</div>
-
-<div id="outline-container-1-1-1" class="outline-4">
+</div><div id="outline-container-sec-1-1-1" class="outline-4">
 <h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> Loader:deliverResult()</h4>
 <div class="outline-text-4" id="text-1-1-1">
-
-
-
+<div class="org-src-container">
 
 <pre class="src src-java">CursorLoader.deliverResult (cursor)
     <span style="color: #859900;">if</span> isReset():
@@ -174,11 +181,11 @@ for the JavaScript code in this tag.
           <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">in mPendingLoader</span>
 
           <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">STEP 1: check pending</span>
-          <span style="color: #859900;">if</span> pending!=null:
+          <span style="color: #859900;">if</span> pending!=<span style="color: #2aa198;">null</span>:
             <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">There is a new request pending and we were just</span>
             <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">waiting for the old one to complete before starting</span>
             <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">it.  So now it is time, switch over to the new loader.</span>
-            mPendingLoader=null;
+            mPendingLoader=<span style="color: #2aa198;">null</span>;
             destroy();
             installLoader(pending);
               pending.start();
@@ -186,9 +193,9 @@ for the JavaScript code in this tag.
             <span style="color: #859900;">return</span>;
 
           <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">STEP 2: check new data is valid</span>
-<span id="coderef-checkDataNew" class="coderef-off">          <span style="color: #859900;">if</span> (mData != data || <span style="color: #dc322f;">!</span>mHaveData):   (checkDataNew)</span>
+<span id="coderef-checkDataNew" class="coderef-off">          <span style="color: #859900;">if</span> (mData != data || <span style="color: #dc322f;">!</span>mHaveData): (checkDataNew)</span>
              mData = data;
-             mHaveData = true;
+             mHaveData = <span style="color: #2aa198;">true</span>;
              <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">Notify of the new data so the app can switch out the old data before</span>
              <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">we try to destroy it.</span>
              <span style="color: #859900;">if</span> mStarted:
@@ -201,19 +208,16 @@ for the JavaScript code in this tag.
           inactive.destroy();
       <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">after new data is delivered, old data will be destroyed. so, after</span>
       <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">LoaderCallback.onLoadFinished, we should never use the old cursor data.</span>
-      oldCursor.close();                                                            
+      oldCursor.close();
 </pre>
-
+</div>
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-1-2" class="outline-4">
+<div id="outline-container-sec-1-1-2" class="outline-4">
 <h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> Loader:forceLoad()</h4>
 <div class="outline-text-4" id="text-1-1-2">
-
-
-
+<div class="org-src-container">
 
 <pre class="src src-java">Loader.forceLoad
   AsyncTaskLoader.<span style="color: #b58900;">onForceLoad</span>
@@ -224,87 +228,75 @@ for the JavaScript code in this tag.
         mHandler.removeCallbacks(mTask);
       <span style="color: #859900;">else</span>:
         mTask.cancel
-        mTask=null;
+        mTask=<span style="color: #2aa198;">null</span>;
     mTask = <span style="color: #859900;">new</span> <span style="color: #b58900;">LoadTask</span>();
     executePendingTask();
       <span style="color: #859900;">if</span> mUpdateThrottle&gt;0:
         <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">current task ask has set a throttle</span>
         <span style="color: #859900;">if</span> should_be_delayed:
-          mTask.waiting=true;
+          mTask.waiting=<span style="color: #2aa198;">true</span>;
           mHandler.postAtTime(mTask,..throttle..);
       mTask.executeOnExecutor(<span style="color: #2aa198;">AsyncTask</span>.THREAD_POOL_EXECUTOR);
-
 </pre>
-
+</div>
+</div>
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2" class="outline-3">
+<div id="outline-container-sec-1-2" class="outline-3">
 <h3 id="sec-1-2"><span class="section-number-3">1.2</span> LoaderManager</h3>
 <div class="outline-text-3" id="text-1-2">
-
-
-</div>
-
-<div id="outline-container-1-2-1" class="outline-4">
+</div><div id="outline-container-sec-1-2-1" class="outline-4">
 <h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> LoaderManager</h4>
 <div class="outline-text-4" id="text-1-2-1">
-
-<p>Every acitivty could have several LoaderManager, and each app could get the LoaderManager instance via:
-</p><ul>
+<p>
+Every acitivty could have several LoaderManager, and each app could get the LoaderManager instance via:
+</p>
+<ul class="org-ul">
 <li>Acitivty.getLoaderManager()
 </li>
 <li>Fragment.getLoaderManager()
 </li>
 </ul>
-
-<p>what makes the difference:
-</p><ul>
+<p>
+what makes the difference:
+</p>
+<ul class="org-ul">
 <li>Fragment.getLoaderManager will get a LoaderManager with a `mIndex` same as the
-  Fragment's `mIndex`
+Fragment's `mIndex`
 </li>
 <li>Acitivty.getLoaderManager will get a LoaderManager with a `mIndex` of -1
 </li>
 </ul>
 
-
 <p>
 that is, if an Acitivty have 2 fragments, it may have 3 LoaderManager at most.
 </p>
-
 </div>
 
-<div id="outline-container-1-2-1-1" class="outline-5">
+<div id="outline-container-sec-1-2-1-1" class="outline-5">
 <h5 id="sec-1-2-1-1"><span class="section-number-5">1.2.1.1</span> LoaderManager is kept during Orientation Change, through `retainNonConfigurationInstances`</h5>
 <div class="outline-text-5" id="text-1-2-1-1">
-
-<p>Event though Activity is finished and recreated due to Orientation
+<p>
+Event though Activity is finished and recreated due to Orientation
 Change,Acitivty's LoaderManager is not destroyed though: 
-</p><ol>
+</p>
+<ol class="org-ol">
 <li>prev Acitivty's mAllLoaderManagers is saved by `retainNonConfigurationInstances`,
-   called by the system, as part of destroying an activity due to a configuration change
+called by the system, as part of destroying an activity due to a configuration change
 </li>
 <li>new Acitivty's mAllLoaderManagers is reloaded from
-   `mLastNonConfigurationInstances.loaders` on acitivty create
+`mLastNonConfigurationInstances.loaders` on acitivty create
 </li>
 </ol>
-
-
 </div>
 </div>
-
 </div>
-
-<div id="outline-container-1-2-2" class="outline-4">
+<div id="outline-container-sec-1-2-2" class="outline-4">
 <h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> initloader</h4>
 <div class="outline-text-4" id="text-1-2-2">
-
-
-
-
-<pre class="example">LoaderManager.initLoader
+<pre class="example">
+LoaderManager.initLoader
   LoaderInfo info = mLoaders.get(id);
   if (info == null):
     info = createAndInstallLoader(id, args, callback);
@@ -315,27 +307,23 @@ Change,Acitivty's LoaderManager is not destroyed though:
           info.start()
   if info.mHaveData &amp;&amp; mStarted:
     // If the loader has already generated its data, report it now.
-<span id="coderef-retriveOldData" class="coderef-off">    info.callOnLoadFinished;      (retriveOldData)</span>
+<span id="coderef-retriveOldData" class="coderef-off">    info.callOnLoadFinished; (retriveOldData)</span>
   return info.mLoader;
 </pre>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-2-3" class="outline-4">
+<div id="outline-container-sec-1-2-3" class="outline-4">
 <h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> restartLoader:</h4>
 <div class="outline-text-4" id="text-1-2-3">
-
-
-
+<div class="org-src-container">
 
 <pre class="src src-java">LoaderManager.restartLoader
   <span style="color: #b58900;">LoaderInfo</span> <span style="color: #268bd2;">info</span> = mLoaders.get(id);
-  <span style="color: #859900;">if</span> info!=null:
+  <span style="color: #859900;">if</span> info!=<span style="color: #2aa198;">null</span>:
   <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">there is already an old loader</span>
     LoaderInfo inactive = mInactiveLoaders.get(id);
-    <span style="color: #859900;">if</span> inactive!=null:
+    <span style="color: #859900;">if</span> inactive!=<span style="color: #2aa198;">null</span>:
       <span style="color: #859900;">if</span> <span style="color: #dc322f;">!</span>info.mStarted:
         <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">we already have an inactive loader, and the current loader has not yet started..</span>
         <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">destroy the current loader</span>
@@ -353,73 +341,65 @@ Change,Acitivty's LoaderManager is not destroyed though:
   info=createAndInstallLoader();
   <span style="color: #859900;">return</span> info.mLoader;
 </pre>
-
+</div>
+</div>
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-3" class="outline-3">
+<div id="outline-container-sec-1-3" class="outline-3">
 <h3 id="sec-1-3"><span class="section-number-3">1.3</span> Loader Life Cycle</h3>
 <div class="outline-text-3" id="text-1-3">
-
-<p>Acitivty's `mLoadersStarted` ==  LoaderManager's `mStarted` == Loader's `mStarted` 
+<p>
+Acitivty's `mLoadersStarted` <code>=  LoaderManager's `mStarted` =</code> Loader's `mStarted` 
 </p>
 </div>
-
-<div id="outline-container-1-3-1" class="outline-4">
+<div id="outline-container-sec-1-3-1" class="outline-4">
 <h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> start activity</h4>
 <div class="outline-text-4" id="text-1-3-1">
-
-<p>on Activity start, LoaderManager and it's Loader is restarted automatically, and,
+<p>
+on Activity start, LoaderManager and it's Loader is restarted automatically, and,
 Loader.onLoadFinished is invoked automatically for the `old` data. and, if
 loader data is `changed` since the activity is stopped, Loader.onForceLoad is
 invoked for `new` data. 
 </p>
+
 <p>
 and, most importantly, `mStarted` is set.
 e.g.
 </p>
-
-
-<pre class="example">12-25 10:21:02.980 W/System.err(  665):         at android.content.Loader.takeContentChanged(Loader.java:362)
-12-25 10:21:02.980 W/System.err(  665):         at android.content.CursorLoader.onStartLoading(CursorLoader.java:136)
-12-25 10:21:02.980 W/System.err(  665):         at android.content.Loader.startLoading(Loader.java:226)
-12-25 10:21:02.980 W/System.err(  665):         at android.app.LoaderManagerImpl$LoaderInfo.start(LoaderManager.java:276)
-12-25 10:21:02.980 W/System.err(  665):         at android.app.LoaderManagerImpl.doStart(LoaderManager.java:724)
-12-25 10:21:02.980 W/System.err(  665):         at android.app.Fragment.onStart(Fragment.java:1180)
-12-25 10:21:02.980 W/System.err(  665):         at com.android.contacts.list.ContactEntryListFragment.onStart(ContactEntryListFragment.java:322)
-12-25 10:21:02.980 W/System.err(  665):         at android.app.Fragment.performStart(Fragment.java:1532)
-
+<pre class="example">
+12-25 10:21:02.980 W/System.err(  665): 	at android.content.Loader.takeContentChanged(Loader.java:362)
+12-25 10:21:02.980 W/System.err(  665): 	at android.content.CursorLoader.onStartLoading(CursorLoader.java:136)
+12-25 10:21:02.980 W/System.err(  665): 	at android.content.Loader.startLoading(Loader.java:226)
+12-25 10:21:02.980 W/System.err(  665): 	at android.app.LoaderManagerImpl$LoaderInfo.start(LoaderManager.java:276)
+12-25 10:21:02.980 W/System.err(  665): 	at android.app.LoaderManagerImpl.doStart(LoaderManager.java:724)
+12-25 10:21:02.980 W/System.err(  665): 	at android.app.Fragment.onStart(Fragment.java:1180)
+12-25 10:21:02.980 W/System.err(  665): 	at com.android.contacts.list.ContactEntryListFragment.onStart(ContactEntryListFragment.java:322)
+12-25 10:21:02.980 W/System.err(  665): 	at android.app.Fragment.performStart(Fragment.java:1532)
 </pre>
-
-
-
 </div>
 
-<div id="outline-container-1-3-1-1" class="outline-5">
+<div id="outline-container-sec-1-3-1-1" class="outline-5">
 <h5 id="sec-1-3-1-1"><span class="section-number-5">1.3.1.1</span> Activity.performStart()</h5>
 <div class="outline-text-5" id="text-1-3-1-1">
-
-
-
+<div class="org-src-container">
 
 <pre class="src src-java">Activity.<span style="color: #b58900;">performStart</span>
   Activity.<span style="color: #268bd2;">onStart</span>
-    <span style="color: #859900;">if</span> (mLoaderManager != null):
+    <span style="color: #859900;">if</span> (mLoaderManager != <span style="color: #2aa198;">null</span>):
       mLoaderManager.doStart();
     <span style="color: #859900;">else</span> <span style="color: #859900;">if</span> (<span style="color: #dc322f;">!</span>mCheckedForLoaderManager):
-      mLoaderManager = getLoaderManager(-1, mLoadersStarted, false);
+      mLoaderManager = getLoaderManager(-1, mLoadersStarted, <span style="color: #2aa198;">false</span>);
     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">when Acitivty onStart invoked without any exiting LoaderManager, init the LoaderManager and put it inot mLoadersStarted state</span>
     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">so that when the LoaderManager is used to init/restart a Loader, the Loader could start loading since the LoaderManager is in</span>
     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">`mStarted` state</span>
   mFragments.dispatchStart();
   <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">start LoaderManager of mFragments</span>
-    mLoaderManager = mActivity.getLoaderManager(mIndex, mLoadersStarted, false);
+    mLoaderManager = mActivity.getLoaderManager(mIndex, mLoadersStarted, <span style="color: #2aa198;">false</span>);
     mLoaderManager.doStart();
       foreach loaderInfo <span style="color: #b58900;">in</span> <span style="color: #268bd2;">mLoaders</span>:
         loaderInfo.start()
-          mStarted = true;
+          mStarted = <span style="color: #2aa198;">true</span>;
           <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">LoaderInfo mainly contains 3 member:</span>
           <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">1. mLoader , of Loader</span>
           <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">2. mPendingLoader, of Loader</span>
@@ -427,33 +407,30 @@ e.g.
           <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">mLoader is an instance of Loader</span>
           mLoader.startLoading();
             Loader.onStartLoading();
-              <span style="color: #859900;">if</span> CursorLoader.mCursor!=null:
+              <span style="color: #859900;">if</span> CursorLoader.mCursor!=<span style="color: #2aa198;">null</span>:
                 deliverResult(mCursor);
-              <span style="color: #859900;">if</span> takeContentChanged || mCursor==null:
+              <span style="color: #859900;">if</span> takeContentChanged || mCursor==<span style="color: #2aa198;">null</span>:
                 takeContentChanged?
                   ForceLoadContentObserver
                     onContentChanged:
                       <span style="color: #859900;">if</span> mStarted:
                         forceLoad
                       <span style="color: #859900;">else</span>:
-                        mContentChanged=true
+                        mContentChanged=<span style="color: #2aa198;">true</span>
                 forceLoad();
 </pre>
-
-
 </div>
 </div>
-
 </div>
-
-<div id="outline-container-1-3-2" class="outline-4">
+</div>
+<div id="outline-container-sec-1-3-2" class="outline-4">
 <h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> stop activity</h4>
 <div class="outline-text-4" id="text-1-3-2">
-
-<p>`mStarted` is cleared.
+<p>
+`mStarted` is cleared.
 Activity.performStop
 </p>
-
+<div class="org-src-container">
 
 <pre class="src src-fundamental">performStop()
   if (!mLoadersStarted):
@@ -481,37 +458,33 @@ Activity.performStop
         else:
           mLoaderManager.doRetain();
 </pre>
-
+</div>
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-3-3" class="outline-4">
+<div id="outline-container-sec-1-3-3" class="outline-4">
 <h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> finish activity</h4>
 <div class="outline-text-4" id="text-1-3-3">
-
-
-
+<div class="org-src-container">
 
 <pre class="src src-java">Fragment.onDestroy
     foreach loaderInfo <span style="color: #b58900;">in</span> <span style="color: #268bd2;">mLoaders</span>:
       loaderInfo.destroy
         mCallbacks.onLoaderReset(mLoader)
 </pre>
-
+</div>
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-3-4" class="outline-4">
+<div id="outline-container-sec-1-3-4" class="outline-4">
 <h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> misc</h4>
 <div class="outline-text-4" id="text-1-3-4">
-
-<p>note that Loader.mContentObserver is still working even the activity is
+<p>
+note that Loader.mContentObserver is still working even the activity is
 onStop(ped).
 e.g.
 </p>
-
+<div class="org-src-container">
 
 <pre class="src src-java"><span style="color: #859900;">public</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">onContentChanged</span>() {
     <span style="color: #859900;">if</span> (mStarted) {
@@ -520,43 +493,43 @@ e.g.
         <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">This loader has been stopped, so we don't want to load</span>
         <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">new data right now...  but keep track of it changing to</span>
         <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">refresh later if we start again.</span>
-        mContentChanged = true;
+        mContentChanged = <span style="color: #2aa198;">true</span>;
     }
 }
 </pre>
-
+</div>
+</div>
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-4" class="outline-3">
+<div id="outline-container-sec-1-4" class="outline-3">
 <h3 id="sec-1-4"><span class="section-number-3">1.4</span> To summaries:</h3>
 <div class="outline-text-3" id="text-1-4">
-
-<ul>
+<ul class="org-ul">
 <li>LoaderManager is invoked in two ways:
-<ol>
+<ol class="org-ol">
 <li>LoaderManager.initLoader/restartLoader/destroyLoader
 
-<p>     
-     these methods are invoked by user, to manually init/restart/destroy a
-     loader, but note that there is no way by the user to manually `STOP` a loader
+<p>
+these methods are invoked by user, to manually init/restart/destroy a
+loader, but note that there is no way by the user to manually `STOP` a loader
 </p>
 </li>
+
 <li>LoaderManager.doStart/doStop/doDestroy
 
 <p>
-     these methods are invoked by Fragment, which is controlled by the
-     Fragment/Activity life cycle.
+these methods are invoked by Fragment, which is controlled by the
+Fragment/Activity life cycle.
 </p>
 </li>
 </ol>
-
-<p>  Case 2 is especially important, since it is invisible to user&hellip;However,
-  thanks to these methods, user need not to do these trivial things any more:
+<p>
+Case 2 is especially important, since it is invisible to user&#x2026;However,
+thanks to these methods, user need not to do these trivial things any more:
 </p>
-<ul>
+
+<ul class="org-ul">
 <li>reload data on activity start
 </li>
 <li>stop monitoring data changes on activity stop
@@ -565,126 +538,125 @@ e.g.
 </li>
 <li>what about when cursor data arrives while the activity is not started yet.
 </li>
-<li>&hellip;
-
+<li>&#x2026;
 </li>
 </ul>
-
 </li>
+
 <li>inactive/active loader and resources management
 
 <p>
-  loader tends to manage resources by itself: the main problem is, how to
-  discard old data? since loader client may be using it. 
+loader tends to manage resources by itself: the main problem is, how to
+discard old data? since loader client may be using it. 
 </p>
-<ol>
+
+<ol class="org-ol">
 <li>LoaderManager.restartLoader
 
 <p>
-     If the current loader already have delivered data to client, LoaderManager
-     can't simply destroy current loader, since it's resource maybe using by
-     client&hellip; so LoaderManager will put the current loader to inactive
-     loaders, and install a new loader as active loader. 
+If the current loader already have delivered data to client, LoaderManager
+can't simply destroy current loader, since it's resource maybe using by
+client&#x2026; so LoaderManager will put the current loader to inactive
+loaders, and install a new loader as active loader. 
 </p>
-<p>     
-     After the new loader got it's data, the inactive loader will be destroyed.
+
+<p>
+After the new loader got it's data, the inactive loader will be destroyed.
 </p>
 </li>
+
 <li>CursorLoader.deliverResult
 
 <p>
-     After CursorLoader got new cursor, it will first deliver it the client,
-     then close the old cursor automatically.
+After CursorLoader got new cursor, it will first deliver it the client,
+then close the old cursor automatically.
 </p>
 </li>
 </ol>
-
 </li>
+
 <li>Pending loader
 
 <p>
-  With pending loader, for the same loader id, there could be at most 3 loaders
-  at the same time.
+With pending loader, for the same loader id, there could be at most 3 loaders
+at the same time.
 </p>
 </li>
+
 <li>LoaderManager is kept during orientation change
-
 </li>
+
 <li>LoaderManager and Loader is auto started on Acitivty `start`, and `mStarted`
-  is set on Acitivty `start`
-
+is set on Acitivty `start`
 </li>
+
 <li>There are some optimizations for `onLoadFinished`
 
-<ol>
+<ol class="org-ol">
 <li>initLoader may cause an immediate onLoadFinished  (mHaveData &amp;&amp; mStarted)
 </li>
 <li>Although CursorLoader may always deliver result to LoaderManager,
-     LoaderManager will keeping those unchanged result from being delivered to
-     client (thought onLoadFinished).
-
+LoaderManager will keeping those unchanged result from being delivered to
+client (thought onLoadFinished).
 </li>
 </ol>
-
 </li>
-<li>Loader keep running in the background, regardless of the state of
-  Activity/Fragment
 
-<p>  
-  CursorLoader use a ForceLoadContentObserver to monitor DB change, once DB
-  changed, it will `forceLoad ` (if mStarted) or mark the event
-  (takeContentChanged), next time onStart will notice the flag and `forceLoad`
+<li>Loader keep running in the background, regardless of the state of
+Activity/Fragment
+
+<p>
+CursorLoader use a ForceLoadContentObserver to monitor DB change, once DB
+changed, it will `forceLoad ` (if mStarted) or mark the event
+(takeContentChanged), next time onStart will notice the flag and `forceLoad`
 </p>
 </li>
+
 <li>mStarted flag
-
 </li>
+
 <li>Loader.mUpdateThrottle
-
 </li>
+
 <li>initLoader vs. restartLoader: 
 
-<ol>
+<ol class="org-ol">
 <li>initLoader will reuse the `stale` loader, although the client may supply
-     different `args` for this call, since mCallbacks.onCreateLoader is not
-     invoked at all, the new `args` make no sense. thus, When the loader's args
-     need to be changed (new uri/new projection), initLoader doesn't work as
-     expected.
-
+different `args` for this call, since mCallbacks.onCreateLoader is not
+invoked at all, the new `args` make no sense. thus, When the loader's args
+need to be changed (new uri/new projection), initLoader doesn't work as
+expected.
 </li>
-<li>Although Fragment.onStart will re-deliver data, because of <a href="#coderef-checkDataNew" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-checkDataNew');" onmouseout="CodeHighlightOff(this, 'coderef-checkDataNew');">(checkDataNew)</a>,
-     the data may not be delivered to client eventually. thus, sometimes a manual call to
-     initLoader is still needed (<a href="#coderef-retriveOldData" class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-retriveOldData');" onmouseout="CodeHighlightOff(this, 'coderef-retriveOldData');">(retriveOldData)</a>) to `retrieve old data`.
 
+<li>Although Fragment.onStart will re-deliver data, because of <a href="#coderef-checkDataNew"class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-checkDataNew');" onmouseout="CodeHighlightOff(this, 'coderef-checkDataNew');">checkDataNew</a>,
+the data may not be delivered to client eventually. thus, sometimes a manual call to
+initLoader is still needed (<a href="#coderef-retriveOldData"class="coderef" onmouseover="CodeHighlightOn(this, 'coderef-retriveOldData');" onmouseout="CodeHighlightOff(this, 'coderef-retriveOldData');">retriveOldData</a>) to `retrieve old data`.
 </li>
 </ol>
-
 </li>
+
 <li>Threading Rule
-<ol>
+<ol class="org-ol">
 <li>onLoadFinished is assured by the AsyncTaskLoader that `it runs in the UI thread`
 </li>
 <li>Loader client should make sure that initLoader/restartLoader/destroyLoader
-     runs in the UI thread, to avoid the condition that `loader is destroyed
-     while it is delivering data to client (in this case, onLoadFinished may saw
-     a NULL-ed cursor)
+runs in the UI thread, to avoid the condition that `loader is destroyed
+while it is delivering data to client (in this case, onLoadFinished may saw
+a NULL-ed cursor)
 </li>
 </ol>
-
 </li>
 </ul>
-
 </div>
 </div>
 </div>
 </div>
-
-<div id="postamble">
-<p class="date">Date: 2013-05-21T14:34+0800</p>
+<div id="postamble" class="status">
 <p class="author">Author: sunway</p>
-<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
-<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
-
+<p class="email">Email: <a href="mailto:sunwayforever@gmail.com">sunwayforever@gmail.com</a></p>
+<p class="date">Created: 2013-12-24 Tue 14:13</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.2 (<a href="http://orgmode.org">Org</a> mode 8.2.4)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>
