@@ -1,71 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Android PackageManager</title>
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="Android PackageManager"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-21T14:34+0800"/>
-<meta name="author" content="sunway"/>
-<meta name="description" content=""/>
-<meta name="keywords" content=""/>
+<!-- 2014-01-22 Wed 16:05 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="wei.sun" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
-  html { font-family: Times, serif; font-size: 12pt; }
   .title  { text-align: center; }
-  .todo   { color: red; }
+  .todo   { font-family: monospace; color: red; }
   .done   { color: green; }
-  .tag    { background-color: #add8e6; font-weight:normal }
-  .target { }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
-  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
-  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
-  .center {margin-left:auto; margin-right:auto; text-align:center;}
-  p.verse { margin-left: 3% }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
   pre {
-	border: 1pt solid #AEBDCC;
-	background-color: #F3F5F7;
-	padding: 5pt;
-	font-family: courier, monospace;
-        font-size: 90%;
-        overflow:auto;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
   }
-  table { border-collapse: collapse; }
-  td, th { vertical-align: top;  }
-  th.right  { text-align:center;  }
-  th.left   { text-align:center;   }
-  th.center { text-align:center; }
-  td.right  { text-align:right;  }
-  td.left   { text-align:left;   }
-  td.center { text-align:center; }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
   dt { font-weight: bold; }
-  div.figure { padding: 0.5em; }
-  div.figure p { text-align: center; }
-  div.inlinetask {
-    padding:10px;
-    border:2px solid gray;
-    margin:10px;
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
     background: #ffffcc;
   }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
   textarea { overflow-x: auto; }
-  .linenr { font-size:smaller }
-  .code-highlighted {background-color:#ffff00;}
-  .org-info-js_info-navigation { border-style:none; }
-  #org-info-js_console-label { font-size:10px; font-weight:bold;
-                               white-space:nowrap; }
-  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
-                                 font-weight:bold; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
   /*]]>*/-->
-</style>    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
+</style>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012  Free Software Foundation, Inc.
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -106,128 +134,341 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
-
 </head>
 <body>
-
-<div id="preamble">
-
-</div>
-
 <div id="content">
 <h1 class="title">Android PackageManager</h1>
-
-
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 PackageManager</a>
+<li><a href="#sec-1">1. PackageManagerService</a>
 <ul>
-<li><a href="#sec-1-1">1.1 installd</a></li>
-<li><a href="#sec-1-2">1.2 forward<sub>lock</sub></a></li>
-<li><a href="#sec-1-3">1.3 install Package</a></li>
-<li><a href="#sec-1-4">1.4 Replace Package</a></li>
-<li><a href="#sec-1-5">1.5 Uninstall package</a></li>
-<li><a href="#sec-1-6">1.6 resolveActivity</a></li>
-<li><a href="#sec-1-7">1.7 android package vs. java package vs. android application</a></li>
-<li><a href="#sec-1-8">1.8 UID &amp; GID</a></li>
-<li><a href="#sec-1-9">1.9 Multi-User support</a></li>
+<li><a href="#sec-1-1">1.1. PMS</a></li>
+<li><a href="#sec-1-2">1.2. MountService</a></li>
+<li><a href="#sec-1-3">1.3. Vold</a></li>
+<li><a href="#sec-1-4">1.4. Installd</a></li>
+<li><a href="#sec-1-5">1.5. ASEC</a></li>
+<li><a href="#sec-1-6">1.6. Topics</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-
-<div id="outline-container-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> PackageManager</h2>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> PackageManagerService</h2>
 <div class="outline-text-2" id="text-1">
-
-
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> PMS</h3>
 </div>
-
-<div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> installd</h3>
-<div class="outline-text-3" id="text-1-1">
-
-<p>installd is a system binary running as `root` and listening on `installd` socket.
-see <a href="#dalvik-cache">@dalvik-cache</a>
-</p><ul>
-<li>when installing and uninstalling package, PMS need to mkdir/rmdir /data/data/xxx, but those data dirs is not accessable by PMS (PMS running with
-  `system` uid, while data dirs is owned by package uids like `app<sub>1`</sub>), so PMS need to use `installd` to access those data dir.
-</li>
-<li>after package is installed / deleted, PMS need invoke dex<sub>opt</sub> / rm<sub>dex</sub> to do the dirty work like optimize dex to dalvik-cache or remove dalvik-cache,
-  those works are also delegated to installd.
-</li>
-</ul>
-
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> MountService</h3>
 </div>
-
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Vold</h3>
 </div>
-
-<div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> forward<sub>lock</sub></h3>
-<div class="outline-text-3" id="text-1-2">
-
-<p>    adb install -l xxx.apk ( -l means `forward<sub>lock`</sub> install )
-</p>
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Installd</h3>
+<div class="outline-text-3" id="text-1-4">
 <p>
-    when xxx.apk is `forward<sub>lock`</sub> installed
-</p><ul>
-<li>it's orig .apk is deleted
+installd is a system binary running as `root` and listening on
+`installd` socket. see <i>@dalvik-cache</i>
+</p>
+
+<ul class="org-ul">
+<li>when installing and uninstalling package, PMS need to mkdir/rmdir
+/data/data/xxx, but those data dirs is not accessable by PMS (PMS
+running with `system` uid, while data dirs is owned by package uids
+like `app<sub>1`</sub>), so PMS need to use `installd` to access those data
+dir.
 </li>
-<li>it's res/, manifest.xml is put to /data/app/xxx.zip
-      (note that .dex is cached in dalvik-cache)
+<li>after package is installed / deleted, PMS need invoke dex<sub>opt</sub> /
+rm<sub>dex</sub> to do the dirty work like optimize dex to dalvik-cache or
+remove dalvik-cache, those works are also delegated to installd.
 </li>
 </ul>
-
 </div>
-
 </div>
-
-<div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> install Package</h3>
-<div class="outline-text-3" id="text-1-3">
-
-<ul>
-<li>there are 2 ways to install package:
-<ol>
-<li>push xxx.apk to any folder of /data/app, /system/app, /system/framework
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> ASEC</h3>
+</div>
+<div id="outline-container-sec-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> Topics</h3>
+<div class="outline-text-3" id="text-1-6">
+</div><div id="outline-container-sec-1-6-1" class="outline-4">
+<h4 id="sec-1-6-1"><span class="section-number-4">1.6.1</span> scanPackage</h4>
+<div class="outline-text-4" id="text-1-6-1">
+</div><div id="outline-container-sec-1-6-1-1" class="outline-5">
+<h5 id="sec-1-6-1-1"><span class="section-number-5">1.6.1.1</span> internal package</h5>
+</div>
+<div id="outline-container-sec-1-6-1-2" class="outline-5">
+<h5 id="sec-1-6-1-2"><span class="section-number-5">1.6.1.2</span> external package</h5>
+<div class="outline-text-5" id="text-1-6-1-2">
+<ol class="org-ol">
+<li>MountService init NativeDaemonConnector to connect to the vold
 </li>
-<li>use PackageInstaller or adb install (which will invoke PM.installPackage())
+</ol>
+<div class="org-src-container">
 
+<pre class="src src-text">MountService.init
+  mConnector = new NativeDaemonConnector(this, "vold", ...)
+</pre>
+</div>
+<ol class="org-ol">
+<li>mConnector.onDaemonConnected() or mConnector.onEvent()
+</li>
+</ol>
+<div class="org-src-container">
+
+<pre class="src src-text">onDaemonConnected())
+  // PMS.java
+  mPms.scanAvailableAsecs();
+    updateExternalMediaStatusInner(true, false, false);
+    list = PackageHelper.getSecureContainerList();
+      getMountService().getSecureContainerList();
+        // MountService.java
+        mConnector.executeForList("asec", "list")
+          // CommandListener.cpp
+          listAsecsInDirectory(cli, Volume::SEC_ASECDIR_EXT);
+          listAsecsInDirectory(cli, Volume::SEC_ASECDIR_INT);
+    foreach (cid:list):
+      // cid &#26684;&#24335;&#20026;: com.xx.xx.xx-1, &#20854; package name &#20026; com.xx.xx.xx
+      pkgName = getAsecPackageName(cid);
+      ps = mSettings.mPackages.get(pkgName);
+      if (ps == null):
+        // mSettings &#20013;&#27809;&#26377;&#30331;&#35760;&#36825;&#20010; cid? &#21487;&#20197;&#36825;&#20010; sd &#21345;&#26159;&#20174;&#21035;&#22788;&#25343;&#30340;&#21543;
+        removeCids.add(cid);
+      AsecInstallArgs args = new AsecInstallArgs(cid,isForwardLocked(ps));
+      processCids.put(args, ps.codePathString);
+    // foreach ends here
+    loadMediaPackages(processCids, uidArr, removeCids);
+      for (AsecInstallArgs args : keys):
+        args.doPreInstall();
+          String newCachePath = PackageHelper.mountSdDir(cid, getEncryptKey(),Process.SYSTEM_UID);
+            getMountService().mountSecureContainer(cid, key,ownerUid);
+              mConnector.execute("asec", "mount", id, key, ownerUid);
+          setCachePath(newCachePath);
+        PackageParser.Package pkg = scanPackageLI(new File(codePath),  parseFlags);
+        // &#27880;&#24847;, scanPackageLI &#23545;&#20110; external
+        //  package, &#20250;&#36127;&#36131;&#22312; data/data/xxx/ &#19979;&#29983;&#25104;&#21040;
+        //  /mnt/asec/xxx/lib &#30340; symlink
+        args.doPostInstall()
+      updatePermissionsLP()
+      mSettings.writeLPr();
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-6-2" class="outline-4">
+<h4 id="sec-1-6-2"><span class="section-number-4">1.6.2</span> sdcard</h4>
+<div class="outline-text-4" id="text-1-6-2">
+</div><div id="outline-container-sec-1-6-2-1" class="outline-5">
+<h5 id="sec-1-6-2-1"><span class="section-number-5">1.6.2.1</span> mount sdcard</h5>
+<div class="outline-text-5" id="text-1-6-2-1">
+</div><ol class="org-ol"><li>主动<br  /><div class="outline-text-6" id="text-1-6-2-1-1">
+<div class="org-src-container">
+
+<pre class="src src-text">MountService.mountVolume()
+  doMountVolume(path);
+  // doMountVolume &#30452;&#25509;&#35843;&#29992; volume mount &#21629;&#20196;, &#22240;&#20026; mount &#25104;&#21151;&#21518;
+  // onEvent &#20250;&#25910;&#21040;&#29366;&#24577;&#30340;&#21464;&#21270;, &#28982;&#21518;&#20250;&#20570;&#20854;&#20182;&#30340;&#20363;&#22914; mount asec &#30340;&#21160;&#20316;.
+</pre>
+</div>
+</div>
+</li>
+<li>被动<br  /><div class="outline-text-6" id="text-1-6-2-1-2">
+<div class="org-src-container">
+
+<pre class="src src-text">onEvent()
+  if (code == VoldResponseCode.VolumeStateChange):
+    notifyVolumeStateChange;
+  else if (code == VoldResponseCode.VolumeDiskInserted):
+    doMountVolume(path)
+    // &#19982;&#25163;&#21160; mount &#22914;&#20986;&#19968;&#36761;
+</pre>
+</div>
+</div>
+</li>
+
+<li>To summaries<br  /><div class="outline-text-6" id="text-1-6-2-1-3">
+<p>
+mount 过程比较简单, 先调用 volume mount, 然后等 onEvent 状态变化后
+mount asec.
+</p>
+
+<p>
+umount 却不能这样, 先 umount 再等 event, 而要先把 asec 等处理完, 再
+umount, 因为 asec 没 umount 前, umount sdcard 是不可能成功的.
+</p>
+</div>
+</li></ol>
+</div>
+<div id="outline-container-sec-1-6-2-2" class="outline-5">
+<h5 id="sec-1-6-2-2"><span class="section-number-5">1.6.2.2</span> umount sdcard</h5>
+<div class="outline-text-5" id="text-1-6-2-2">
+</div><ol class="org-ol"><li>被动<br  /><div class="outline-text-6" id="text-1-6-2-2-1">
+<div class="org-src-container">
+
+<pre class="src src-text">MountService.onEvent();
+  updatePublicVolumeState(path, state);
+    mPms.updateExternalMediaStatus(false, false); // false for umount
+      sendMsg (UPDATED_MEDIA_STATUS)
+        mPms.unloadAllContainers(all_asecinstallargs);
+          for (AsecInstallArgs arg : cidArgs):
+            PackageHelper.unMountSdDir(cid);
+        PackageHelper.getMountService().finishMediaUpdate();
+        // MountService
+          ucb.handleFinished();
+            doUnmountVolume(path, true, removeEncryption);
+              //vold: volumn unmount
+      updateExternalMediaStatusInner();
+        if (isMounted):
+            loadMediaPackages(processCids, uidArr, removeCids);
+            startCleaningPackages();
+        else:
+            unloadMediaPackages(processCids, uidArr, reportStatus);
+              for (AsecInstallArgs args : cids):
+                deletePackageLI(..., PackageManager.DONT_DELETE_DATA,...);
+                // DONT_DELETE_DATA !
+</pre>
+</div>
+</div>
+</li>
+<li>To summaries<br  /><div class="outline-text-6" id="text-1-6-2-2-2">
+<p>
+不管主动被动的 umount:
+</p>
+
+<ol class="org-ol">
+<li>MountService 通过 PMS 先 umount 所有的 ASEC 设备, 并在完成后通知 MountService
+</li>
+<li>同时 MountService 会通过 deletePackageLI 删除 ASEC 上的程序, 但保留
+数据.
+</li>
+<li>MountService 获得通知后调用 vold 的 `volume unmount`, 真正 umount
+sdcard.
+<ol class="org-ol">
+<li>vold 的 volumn umount 也不是简单的 umount sdcard, 它会 umount
+<i>mnt/secure, /mnt/sdcard</i>.android<sub>secure</sub> 等. 并 kill 打开 sdcard 的
+进程.
+</li>
+</ol>
+</li>
+</ol>
+</div>
+</li></ol>
+</div>
+<div id="outline-container-sec-1-6-2-3" class="outline-5">
+<h5 id="sec-1-6-2-3"><span class="section-number-5">1.6.2.3</span> usb mass storage mode (UMS 模式)</h5>
+<div class="outline-text-5" id="text-1-6-2-3">
+<p>
+sdcard 除了 mounted, umounted 状态外, 还有一个状态是 shared,  当 usb
+切换为 mass storage mode 时, sdcard 卡变为 shared 状态, 此时对于 PMS
+来说, 相当于 umounted 状态.
+</p>
+</div>
+
+<ol class="org-ol"><li>进入 UMS 模式<br  /><div class="outline-text-6" id="text-1-6-2-3-1">
+<p>
+进入 UMS 模式只有一种方法: 通过 MountService.setUsbMassStorageEnabled()
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">MountService.setUsbMassStorageEnabled()
+  if (enable
+      &amp;&amp; (vs.equals(Environment.MEDIA_MOUNTED))):
+    setUmsEnabling(enable);
+    // &#35843;&#29992; vold: volumne ums &#21629;&#20196;
+    UmsEnableCallBack umscb = new UmsEnableCallBack(path, method, true);
+    // umscb &#22312; updateExternalMediaStatus &#22312; finish &#38454;&#27573; (asec umount &#23436;&#25104;)
+    // &#20250;&#35843;&#29992; doShareUnshareVolume(path, method, true); &#20197; setup UMS
+    mHandler.sendMessage(mHandler.obtainMessage(H_UNMOUNT_PM_UPDATE, umscb));
+      mPms.updateExternalMediaStatus(false, true); // false &#25351; umount
+    setUmsEnabling(false); // setUmsEnabling &#34920;&#31034; UMS enabling &#29366;&#24577;
+  if (!enable): // UMS &#27169;&#24335;&#21462;&#28040;
+    doShareUnshareVolume(path, method, false);
+    // false &#25351;&#35843;&#29992; vold: volume unshare &#21629;&#20196;
+    doMountVolume(path);
+    // &#37325;&#26032; mount
+</pre>
+</div>
+</div>
+</li>
+<li>退出 UMS 模式<br  /><div class="outline-text-6" id="text-1-6-2-3-2">
+<p>
+退出 UMS 模式有两种方法,
+</p>
+<ol class="org-ol">
+<li>主动调用上面提到的 setUsbMassStorageEnabled,
+</li>
+<li>拔下 USB 线 &#x2026; :(
 </li>
 </ol>
 
-</li>
-<li>`system` application &amp; 3rd application
-  `system` is a property of ApplicationInfo after installation.
-  `system` application are applications not listed in `downloaded` category in Settings, while 3rd applications are applications listed in `downloaded`
-  category.
+<p>
+当 USB 线拔掉时, UsbManager 会发相应的 intent, PMS 负责重新 mount
+sdcard, 然后 mount 动作会间接导致 vold 上报 mounted 消息, 从而导致
+updatePublicVolumeState 等, 最终 setup ASEC.
+</p>
 
-<p>      
-  PackageManager will decide whether a newly installed application is a `system` application:
-</p><ul>
+<div class="org-src-container">
+
+<pre class="src src-text">Intent.UsbManager.ACTION_USB_STATE // from UsbManager
+  available = (intent.getBooleanExtra(UsbManager.USB_CONNECTED, false) &amp;&amp;
+              intent.getBooleanExtra(UsbManager.USB_FUNCTION_MASS_STORAGE, false));
+  notifyShareAvailabilityChange(available);
+    // &#33509; USB &#26029;&#24320;, &#25110;&#32773; USB &#25509;&#30528;, &#20294;&#24403;&#21069; USB &#24182;&#19981;&#26159; UMS &#27169;&#24335;,
+    // &#20363;&#22914;&#36830;&#25509; USB &#20026;&#20805;&#30005;&#27169;&#24335;
+    if (avail == false
+        &amp;&amp; getVolumeState(path).equals(Environment.MEDIA_SHARED)):
+      doShareUnshareVolume(path, "ums", false);
+      doMountVolume(path);
+</pre>
+</div>
+</div>
+</li></ol>
+</div>
+</div>
+<div id="outline-container-sec-1-6-3" class="outline-4">
+<h4 id="sec-1-6-3"><span class="section-number-4">1.6.3</span> installPackage</h4>
+<div class="outline-text-4" id="text-1-6-3">
+<ul class="org-ul">
+<li>there are 2 ways to install package:
+<ol class="org-ol">
+<li>push xxx.apk to any folder of /data/app, /system/app, /system/framework
+</li>
+<li>use PackageInstaller or adb install (which will invoke PM.installPackage())
+</li>
+</ol>
+</li>
+
+<li>`system` application &amp; 3rd application
+`system` is a property of ApplicationInfo after installation.
+`system` application are applications not listed in `downloaded` category in Settings, while 3rd applications are applications listed in `downloaded`
+category.
+
+<p>
+PackageManager will decide whether a newly installed application is a `system` application:
+</p>
+<ul class="org-ul">
 <li>if apk is pushed to /system/app &amp; /system/framework, then it is `system` application
 </li>
 <li>if apk is replacing an existing old system application, then it is.
 </li>
-<li>&hellip;
+<li>&#x2026;
 </li>
 </ul>
-
 </li>
 </ul>
-
-
 </div>
 
-<div id="outline-container-1-3-1" class="outline-4">
-<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> adb push</h4>
-<div class="outline-text-4" id="text-1-3-1">
-
-
-
+<div id="outline-container-sec-1-6-3-1" class="outline-5">
+<h5 id="sec-1-6-3-1"><span class="section-number-5">1.6.3.1</span> internal package</h5>
+<div class="outline-text-5" id="text-1-6-3-1">
+</div><ol class="org-ol"><li>adb push<br  /><div class="outline-text-6" id="text-1-6-3-1-1">
+<div class="org-src-container">
 
 <pre class="src src-java">FileObserver.onEvent()
   isApk=isPackageFilename():
@@ -238,57 +479,37 @@ see <a href="#dalvik-cache">@dalvik-cache</a>
                                     ;; special naming rule to prevent FileObserver from installing <span style="color: #b58900;">the</span> <span style="color: #268bd2;">apk</span> again.
     <span style="color: #859900;">return</span>
   <span style="color: #859900;">if</span> ADD_EVENTS:
-    scanPackageLI(mIsRom?PARSE_IS_SYSTEM:0) ;; <span style="color: #859900;">if</span> apk is in /system/app or /system/framework, mIsRom <span style="color: #b58900;">is</span> <span style="color: #268bd2;">true</span>
+    scanPackageLI(mIsRom?PARSE_IS_SYSTEM:0) ;; <span style="color: #859900;">if</span> apk is in /system/app or /system/framework, <span style="color: #b58900;">mIsRom</span> <span style="color: #268bd2;">is</span> <span style="color: #2aa198;">true</span>
                                             ;; <span style="color: #859900;">package</span> <span style="color: #2aa198;">with</span> PARSE_IS_SYSTEM flag will <span style="color: #b58900;">be</span> <span style="color: #b58900;">marked</span> <span style="color: #268bd2;">as</span> `system` application
     updatePermissionsLP()
   <span style="color: #859900;">if</span> REMOVE_EVENTS:
     removePackageLI()
-  <span style="color: #859900;">if</span> addedPackage!=null:
+  <span style="color: #859900;">if</span> addedPackage!=<span style="color: #2aa198;">null</span>:
     sendPackageBroadcast(ACTION_PACKAGE_ADDED)
-  <span style="color: #859900;">if</span> removedPackage!=null:
+  <span style="color: #859900;">if</span> removedPackage!=<span style="color: #2aa198;">null</span>:
     sendPackageBroadcast(ACTION_PACKAGE_REMOVED)
 </pre>
-
 </div>
-
 </div>
+</li>
 
-<div id="outline-container-1-3-2" class="outline-4">
-<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> PM.installPackage</h4>
-<div class="outline-text-4" id="text-1-3-2">
-
-
-</div>
-
-<div id="outline-container-1-3-2-1" class="outline-5">
-<h5 id="sec-1-3-2-1"><span class="section-number-5">1.3.2.1</span> PackageInstaller</h5>
-<div class="outline-text-5" id="text-1-3-2-1">
-
-</div>
-
-</div>
-
-<div id="outline-container-1-3-2-2" class="outline-5">
-<h5 id="sec-1-3-2-2"><span class="section-number-5">1.3.2.2</span> install location (src &amp; dest)</h5>
-<div class="outline-text-5" id="text-1-3-2-2">
-
-<ul>
-<li id="sec-1-3-2-2-1">src apk location<br/>
-<ul>
+<li>installPackage<br  /><ol class="org-ol"><li>install location (src &amp; dest)<br  /><ol class="org-ol"><li>src apk location<br  /><div class="outline-text-8" id="text-1-6-3-1-2-1-1">
+<ul class="org-ul">
 <li>from DownloadManager through ContentProvider
 </li>
 <li>from file though MediaContainerService
 </li>
 </ul>
-
+</div>
 </li>
-</ul>
-<ul>
-<li id="sec-1-3-2-2-2">app install location<br/>
+
+<li>app install location<br  /><div class="outline-text-8" id="text-1-6-3-1-2-1-2">
+<p>
 the apk's install location can be internal flash / sdcard.
-<ol>
+</p>
+<ol class="org-ol">
 <li>The apk's manifest may declares it's `install location`, including:
-<ul>
+<ul class="org-ul">
 <li>auto
 </li>
 <li>internalOnly
@@ -296,30 +517,29 @@ the apk's install location can be internal flash / sdcard.
 <li>preferExternal
 </li>
 </ul>
-
 </li>
 <li>PackageHelper.recommendAppInstallLocation() make the ultimate decision:
-<ul>
+<ul class="org-ul">
 <li>if `install location` is not set in manifest, internal will always be selected
 </li>
 <li>auto
-    if apk's code size&gt;1MB, location will be set to external, unless external storage is slow (&lt;10% free space..
+if apk's code size&gt;1MB, location will be set to external, unless external storage is slow (&lt;10% free space..
 </li>
 <li>internalOnly
-    internal will be selected
+internal will be selected
 </li>
 <li>preferExternal
-    always selected external unless storage is unavailable or inefficient.
+always selected external unless storage is unavailable or inefficient.
 </li>
 <li>system setting for default installation location is also considered
 </li>
 </ul>
-
 </li>
 </ol>
-
-<p>To summurize:
-</p><ul>
+<p>
+To summurize:
+</p>
+<ul class="org-ul">
 <li>manifest's `install location`
 </li>
 <li>system setting for `default install location`
@@ -327,98 +547,124 @@ the apk's install location can be internal flash / sdcard.
 <li>internal/external storage status
 </li>
 </ul>
-
-
-</li>
-</ul>
 </div>
-
-</div>
-
-<div id="outline-container-1-3-2-3" class="outline-5">
-<h5 id="sec-1-3-2-3"><span class="section-number-5">1.3.2.3</span> MediaContainerService / DefaultContainerService</h5>
-<div class="outline-text-5" id="text-1-3-2-3">
-
-<p> <span class="timestamp-wrapper"><span class="timestamp-kwd">SCHEDULED: </span> <span class="timestamp">2011-03-02 Wed</span></span>  <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2011-03-02 Wed 16:42</span></span><br/>
-</p><ul>
-<li>State "DONE" <span class="timestamp-wrapper"> <span class="timestamp">2011-03-02 Wed 16:42</span></span>
-  see <a href="#MountService">@MountService</a>
-  see <a href="#secure_container">@secure<sub>container</sub></a>
+</li></ol>
 </li>
-</ul>
-
-<p>MediaContainerService is mainly used by app with `system' uid to access sdcard,
-because `system' process can't access sdcard, because:
+<li>MediaContainerService / DefaultContainerService<br  /><div class="outline-text-7" id="text-1-6-3-1-2-2">
+<p>
+see <i>@MountService</i>
+see <i>@secure_container</i>
 </p>
 
+<p>
+MediaContainerService is mainly used by app with `system' uid to
+access sdcard, because `system' process can't access sdcard, because:
+</p>
+</div>
 
+<ol class="org-ol"><li>`system` process can't access sdcard<br  /><div class="outline-text-8" id="text-1-6-3-1-2-2-1">
+<div class="org-src-container">
 
 <pre class="src src-fundamental">$ ls sdcard
 d---rwxr-x system sdcard_rw 2010-07-26 12:56 sdcard
 </pre>
-
+</div>
 
 <blockquote>
 
+<div class="figure">
+<p>
+</p>
+</div>
 
 <p>
 <a href="http://stackoverflow.com/questions/5617797/android-shared-user-id-and-reading-writing-a-file">http://stackoverflow.com/questions/5617797/android-shared-user-id-and-reading-writing-a-file</a>
 </p>
-<p>
-The system user can not access the SD card, because if the SD card gets
-unmounted it may need to kill any processes that have files open on it and we
-don't want system processes being killed like that. If you want to access the SD
-card, you need to not use the system shared user ID.
-</p>
 
+<p>
+The system user can not access the SD card, because if the SD card
+gets unmounted it may need to kill any processes that have files open
+on it and we don't want system processes being killed like that. If
+you want to access the SD card, you need to not use the system shared
+user ID.
+</p>
 </blockquote>
 
+<p>
+即, 因为 sdcard 的权限对 `system` 用户是 000, 所以 `system` 用户无法访
+问.即 sharedUserId 为 `system` 的 java 进行无法访问. 而 sdcard 对
+system 权限之所以为 000, 是 vold 在 mount 时使用了如下命令:
+</p>
 
+<div class="org-src-container">
+
+<pre class="src src-java">Fat::doMount(devicePath, getMountpoint(), <span style="color: #2aa198;">false</span>, <span style="color: #2aa198;">false</span>, <span style="color: #2aa198;">false</span>,AID_SYSTEM, gid, 0702, <span style="color: #2aa198;">true</span>)
+</pre>
 </div>
 
+<p>
+即使用702做掩码, 使 system 无法访问 sdcard.
+</p>
+
+
+<p>
+之所以这样做, 是因为 sharedUserId 为 `system` 的 app 可以将其 process
+设置为 `system`, 这样的话一旦该 app 访问了 sdcard, 当 sdcard 被
+umount 时, vold (可能)会将该进程 (也就是 system 进程) kill
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">VolumeManager::unmountLoopImage
+  for (i = 1; i &lt;= UNMOUNT_RETRIES; i++):
+    rc = umount(mountPoint);
+    if succ:
+      break;
+    else:
+      int action = 0; // default is to just complain
+      if (i &gt; (UNMOUNT_RETRIES - 2))
+          action = 2; // SIGKILL
+      else if (i &gt; (UNMOUNT_RETRIES - 3))
+          action = 1; // SIGHUP
+      Process::killProcessesWithOpenFiles(path, action);
+      usleep(UNMOUNT_SLEEP_BETWEEN_RETRY_MS); // 1s
+</pre>
 </div>
 
-<div id="outline-container-1-3-2-4" class="outline-5">
-<h5 id="sec-1-3-2-4"><span class="section-number-5">1.3.2.4</span> calling stack</h5>
-<div class="outline-text-5" id="text-1-3-2-4">
-
+<p>
+可见, 在 umount 时系统会尝试多次, 若一直失败, 则 kill 相关的进程, 否则
+只是 complain 一下, 并不会 kill 进程. 而 umount 失败的条件是 umount
+时有文件被打开 (或者被 mmap)
+</p>
 </div>
+</li></ol>
+</li></ol>
+</li></ol>
 </div>
-</div>
-
-</div>
-
-<div id="outline-container-1-4" class="outline-3">
-<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Replace Package</h3>
-<div class="outline-text-3" id="text-1-4">
-
-</div>
-
-</div>
-
-<div id="outline-container-1-5" class="outline-3">
-<h3 id="sec-1-5"><span class="section-number-3">1.5</span> Uninstall package</h3>
-<div class="outline-text-3" id="text-1-5">
-
-
-</div>
-
-<div id="outline-container-1-5-1" class="outline-4">
-<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> Intent.ACTION<sub>PACKAGE</sub><sub>REMOVED</sub></h4>
-<div class="outline-text-4" id="text-1-5-1">
-
+<div id="outline-container-sec-1-6-3-2" class="outline-5">
+<h5 id="sec-1-6-3-2"><span class="section-number-5">1.6.3.2</span> external package</h5>
 </div>
 </div>
 
+<div id="outline-container-sec-1-6-4" class="outline-4">
+<h4 id="sec-1-6-4"><span class="section-number-4">1.6.4</span> replacePackage</h4>
+</div>
+<div id="outline-container-sec-1-6-5" class="outline-4">
+<h4 id="sec-1-6-5"><span class="section-number-4">1.6.5</span> uninstallPackage</h4>
+<div class="outline-text-4" id="text-1-6-5">
+</div><div id="outline-container-sec-1-6-5-1" class="outline-5">
+<h5 id="sec-1-6-5-1"><span class="section-number-5">1.6.5.1</span> Intent.ACTION<sub>PACKAGE</sub><sub>REMOVED</sub></h5>
+</div>
 </div>
 
-<div id="outline-container-1-6" class="outline-3">
-<h3 id="sec-1-6"><span class="section-number-3">1.6</span> resolveActivity</h3>
-<div class="outline-text-3" id="text-1-6">
-
-<p>as shown in <a href="#IntentFilter-matching">IntentFilter matching</a>, startActivity will call
+<div id="outline-container-sec-1-6-6" class="outline-4">
+<h4 id="sec-1-6-6"><span class="section-number-4">1.6.6</span> resolveActivity</h4>
+<div class="outline-text-4" id="text-1-6-6">
+<p>
+as shown in <i>IntentFilter matching</i>, startActivity will call
 PM.resolveIntent to resolve the intent, and get one best ResolveInfo;
 </p>
+
 <p>
 PM.resolveActivity() will also call PM.resolveIntent() to resolve the
 intent, but there is ONE difference, PM.resolveActivity will not force
@@ -426,38 +672,49 @@ the DEFAULT<sub>ONLY</sub> flag set when calling resolveIntent(). but
 startActivity will.
 </p>
 </div>
-
 </div>
 
-<div id="outline-container-1-7" class="outline-3">
-<h3 id="sec-1-7"><span class="section-number-3">1.7</span> android package vs. java package vs. android application</h3>
-<div class="outline-text-3" id="text-1-7">
+<div id="outline-container-sec-1-6-7" class="outline-4">
+<h4 id="sec-1-6-7"><span class="section-number-4">1.6.7</span> forward<sub>lock</sub></h4>
+<div class="outline-text-4" id="text-1-6-7">
+<p>
+adb install -l xxx.apk ( -l means `forward<sub>lock`</sub> install )
+</p>
 
+<p>
+when xxx.apk is `forward<sub>lock`</sub> installed
+</p>
+
+<ul class="org-ul">
+<li>it's orig .apk is deleted
+</li>
+<li>it's res/, manifest.xml is put to /data/app/xxx.zip (note that .dex
+is cached in dalvik-cache)
+</li>
+</ul>
 </div>
-
 </div>
-
-<div id="outline-container-1-8" class="outline-3">
-<h3 id="sec-1-8"><span class="section-number-3">1.8</span> UID &amp; GID</h3>
-<div class="outline-text-3" id="text-1-8">
-
-<p>see also <a href="#Java-Process-Creation">Java Process Creation</a>, <a href="#Zygote">Zygote</a>, <a href="#System-Init">System Init</a> to distinguish
+<div id="outline-container-sec-1-6-8" class="outline-4">
+<h4 id="sec-1-6-8"><span class="section-number-4">1.6.8</span> uid &amp; gid</h4>
+<div class="outline-text-4" id="text-1-6-8">
+<p>
+see also <i>Java Process Creation</i>, <i>Zygote</i>, <i>System Init</i> to distinguish
 `process uid' against `file uid'
 </p>
+
 <p>
 UID (including sharedUserId) is maintained by pm.Settings
 </p>
-
 </div>
 
-<div id="outline-container-1-8-1" class="outline-4">
-<h4 id="sec-1-8-1"><span class="section-number-4">1.8.1</span> pre-defined UID</h4>
-<div class="outline-text-4" id="text-1-8-1">
-
-<p>see system/core/include/private/android<sub>filesystem</sub><sub>config</sub>.h
+<div id="outline-container-sec-1-6-8-1" class="outline-5">
+<h5 id="sec-1-6-8-1"><span class="section-number-5">1.6.8.1</span> pre-defined UID</h5>
+<div class="outline-text-5" id="text-1-6-8-1">
+<p>
+see system/core/include/private/android<sub>filesystem</sub><sub>config</sub>.h
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-c"><span style="color: #859900;">static</span> <span style="color: #859900;">const</span> <span style="color: #859900;">struct</span> <span style="color: #b58900;">android_id_info</span> <span style="color: #268bd2;">android_ids</span>[] = {
     { <span style="color: #2aa198;">"root"</span>,      AID_ROOT, },
@@ -493,20 +750,17 @@ UID (including sharedUserId) is maintained by pm.Settings
     { <span style="color: #2aa198;">"nobody"</span>,    AID_NOBODY, },
 };
 </pre>
-
-
 </div>
-
 </div>
-
-<div id="outline-container-1-8-2" class="outline-4">
-<h4 id="sec-1-8-2"><span class="section-number-4">1.8.2</span> app UID</h4>
-<div class="outline-text-4" id="text-1-8-2">
-
-<p>during scanPackageLI, but before mInstaller.install(), app UID is
+</div>
+<div id="outline-container-sec-1-6-8-2" class="outline-5">
+<h5 id="sec-1-6-8-2"><span class="section-number-5">1.6.8.2</span> uid generation</h5>
+<div class="outline-text-5" id="text-1-6-8-2">
+<p>
+during scanPackageLI, but before mInstaller.install(), app UID is
 generate by the mSettings.
 </p>
-
+<div class="org-src-container">
 
 <pre class="src src-text">scanPackageLI
   // Just create the setting, don't add it yet. For already existing packages
@@ -530,24 +784,15 @@ generate by the mSettings.
         return Process.FIRST_APPLICATION_UID + N;
   pkg.applicationInfo.uid = pkgSetting.appId;
 </pre>
-
+</div>
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-8-3" class="outline-4">
-<h4 id="sec-1-8-3"><span class="section-number-4">1.8.3</span> sharedUserId</h4>
-<div class="outline-text-4" id="text-1-8-3">
-
-
-</div>
-
-<div id="outline-container-1-8-3-1" class="outline-5">
-<h5 id="sec-1-8-3-1"><span class="section-number-5">1.8.3.1</span> sharedUserId pre-defined by the PMS</h5>
-<div class="outline-text-5" id="text-1-8-3-1">
-
-
-
+<div id="outline-container-sec-1-6-8-3" class="outline-5">
+<h5 id="sec-1-6-8-3"><span class="section-number-5">1.6.8.3</span> sharedUserId</h5>
+<div class="outline-text-5" id="text-1-6-8-3">
+</div><ol class="org-ol"><li>sharedUserId pre-defined by the PMS<br  /><div class="outline-text-6" id="text-1-6-8-3-1">
+<div class="org-src-container">
 
 <pre class="src src-java">PackageManagerService.&lt;init&gt;
   mSettings.addSharedUserLPw(<span style="color: #2aa198;">"android.uid.system"</span>, <span style="color: #2aa198;">Process</span>.SYSTEM_UID, <span style="color: #2aa198;">ApplicationInfo</span>.FLAG_SYSTEM);
@@ -555,11 +800,12 @@ generate by the mSettings.
   mSettings.addSharedUserLPw(<span style="color: #2aa198;">"android.uid.log"</span>, LOG_UID, <span style="color: #2aa198;">ApplicationInfo</span>.FLAG_SYSTEM);
   mSettings.addSharedUserLPw(<span style="color: #2aa198;">"android.uid.nfc"</span>, NFC_UID, <span style="color: #2aa198;">ApplicationInfo</span>.FLAG_SYSTEM);
 </pre>
-
+</div>
 
 <p>
-That is, 
-</p><ul>
+That is,
+</p>
+<ul class="org-ul">
 <li>android.uid.system
 </li>
 <li>android.uid.phone
@@ -570,56 +816,66 @@ That is,
 </li>
 </ul>
 
-
 <p>
 these 4 sharedUserId is defined statically in PMS, and they
-  corresponds to the static UID (SYSTEM<sub>UID</sub>, RADIO<sub>UID</sub>, &hellip;)
+corresponds to the static UID (SYSTEM<sub>UID</sub>, RADIO<sub>UID</sub>, &#x2026;)
 </p>
 </div>
-
-</div>
-
-<div id="outline-container-1-8-3-2" class="outline-5">
-<h5 id="sec-1-8-3-2"><span class="section-number-5">1.8.3.2</span> sharedUserId defined by app</h5>
-<div class="outline-text-5" id="text-1-8-3-2">
-
-<p>App can define `sharedUserId' freely, PMS will use `Setings' to
+</li>
+<li>sharedUserId defined by app<br  /><div class="outline-text-6" id="text-1-6-8-3-2">
+<p>
+App can define `sharedUserId' freely, PMS will use `Setings' to
 maintain the dynamic `sharedUserId' -&gt; `uid' mapping during `scanPackageLI'
 </p>
+
 <p>
 The most well-known app `sharedUserId' is `android.uid.shared', which
 is defined by `Contacts' and `ContactsProvider'
 </p>
-
-
-
+</div>
+</li></ol>
 </div>
 </div>
-</div>
-
-</div>
-
-<div id="outline-container-1-9" class="outline-3">
-<h3 id="sec-1-9"><span class="section-number-3">1.9</span> Multi-User support</h3>
-<div class="outline-text-3" id="text-1-9">
-
-<p>android 4.1 use UserManager to support multi-user, in-short, uid
-stored in pm.Setting is encoded as a mixer of multi-user-id and app<sub>id</sub>,
-e.g. u0<sub>a33</sub>, or u1<sub>a33</sub>. 
+<div id="outline-container-sec-1-6-9" class="outline-4">
+<h4 id="sec-1-6-9"><span class="section-number-4">1.6.9</span> multi-user</h4>
+<div class="outline-text-4" id="text-1-6-9">
+<p>
+android 4.1 use UserManager to support multi-user, in-short, uid
+stored in pm.Setting is encoded as a mixer of multi-user-id and
+app<sub>id</sub>, e.g. u0<sub>a33</sub>, or u1<sub>a33</sub>.
 </p>
+
 <p>
 As against android pre 4.1, app<sub>id</sub> is taken as uid.
-</p></div>
-</div>
+</p>
 </div>
 </div>
 
-<div id="postamble">
-<p class="date">Date: 2013-05-21T14:34+0800</p>
-<p class="author">Author: sunway</p>
-<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
-<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+<div id="outline-container-sec-1-6-10" class="outline-4">
+<h4 id="sec-1-6-10"><span class="section-number-4">1.6.10</span> enable/disable application or component</h4>
+<div class="outline-text-4" id="text-1-6-10">
+<ul class="org-ul">
+<li>pm enable/disable
+</li>
+<li>PMS.setComponentEnabledSetting(ComponentName)
+</li>
+</ul>
 
+<p>
+一些自启动管理的软件会通过这个方法禁用某些 receiver, 以达到禁止应用通过
+receiver 启动的目的. 
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: wei.sun</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2014-01-22 Wed 16:05</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.2 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

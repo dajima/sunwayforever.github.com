@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Android Root</title>
+<title>Andorid Graphics</title>
 <!-- 2014-01-22 Wed 16:04 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
@@ -137,60 +137,145 @@ for the JavaScript code in this tag.
 </head>
 <body>
 <div id="content">
-<h1 class="title">Android Root</h1>
+<h1 class="title">Andorid Graphics</h1>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. Android Root Howto</a>
+<li><a href="#sec-1">1. Android Graphics</a>
 <ul>
-<li><a href="#sec-1-1">1.1. SuperUser</a></li>
-<li><a href="#sec-1-2">1.2. Rooting tookit</a></li>
-<li><a href="#sec-1-3">1.3. After rooted, we can</a></li>
+<li><a href="#sec-1-1">1.1. Skia</a></li>
+<li><a href="#sec-1-2">1.2. Surface &amp; SurfaceFlinger</a></li>
+<li><a href="#sec-1-3">1.3. onDraw</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 <div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> Android Root Howto</h2>
+<h2 id="sec-1"><span class="section-number-2">1</span> Android Graphics</h2>
 <div class="outline-text-2" id="text-1">
 </div><div id="outline-container-sec-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> SuperUser</h3>
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Skia</h3>
 <div class="outline-text-3" id="text-1-1">
 </div><div id="outline-container-sec-1-1-1" class="outline-4">
-<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> SuperUser.apk</h4>
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> core</h4>
+<div class="outline-text-4" id="text-1-1-1">
+</div><div id="outline-container-sec-1-1-1-1" class="outline-5">
+<h5 id="sec-1-1-1-1"><span class="section-number-5">1.1.1.1</span> SkCanvas</h5>
 </div>
+<div id="outline-container-sec-1-1-1-2" class="outline-5">
+<h5 id="sec-1-1-1-2"><span class="section-number-5">1.1.1.2</span> SkDraw</h5>
+</div>
+<div id="outline-container-sec-1-1-1-3" class="outline-5">
+<h5 id="sec-1-1-1-3"><span class="section-number-5">1.1.1.3</span> SkDevice</h5>
+</div>
+<div id="outline-container-sec-1-1-1-4" class="outline-5">
+<h5 id="sec-1-1-1-4"><span class="section-number-5">1.1.1.4</span> SkBitmap</h5>
+</div>
+<div id="outline-container-sec-1-1-1-5" class="outline-5">
+<h5 id="sec-1-1-1-5"><span class="section-number-5">1.1.1.5</span> SkMatrix</h5>
+</div>
+<div id="outline-container-sec-1-1-1-6" class="outline-5">
+<h5 id="sec-1-1-1-6"><span class="section-number-5">1.1.1.6</span> SkPaint</h5>
+</div>
+<div id="outline-container-sec-1-1-1-7" class="outline-5">
+<h5 id="sec-1-1-1-7"><span class="section-number-5">1.1.1.7</span> SkDevice</h5>
+</div>
+</div>
+
 <div id="outline-container-sec-1-1-2" class="outline-4">
-<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> The malicious `su'</h4>
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> sample code</h4>
+<div class="outline-text-4" id="text-1-1-2">
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span style="color: #cb4b16;">#include</span> <span style="color: #2aa198;">"SkBitmap.h"</span>
+<span style="color: #cb4b16;">#include</span> <span style="color: #2aa198;">"SkDevice.h"</span>
+<span style="color: #cb4b16;">#include</span> <span style="color: #2aa198;">"SkPaint.h"</span>
+<span style="color: #cb4b16;">#include</span> <span style="color: #2aa198;">"SkRect.h"</span>
+<span style="color: #cb4b16;">#include</span> <span style="color: #2aa198;">"SkImageEncoder.h"</span>
+<span style="color: #cb4b16;">#include</span> <span style="color: #2aa198;">"SkTypeface.h"</span>
+
+<span style="color: #859900;">using</span> <span style="color: #859900;">namespace</span> <span style="color: #2aa198;">std</span>;
+
+<span style="color: #b58900;">int</span> <span style="color: #268bd2;">main</span>()
+{
+    <span style="color: #b58900;">SkBitmap</span> <span style="color: #268bd2;">bitmap</span>;
+    bitmap.setConfig(<span style="color: #2aa198;">SkBitmap</span>::kARGB_8888_Config,320,240);
+    bitmap.allocPixels();
+    <span style="color: #b58900;">SkCanvas</span> <span style="color: #268bd2;">canvas</span>(<span style="color: #859900;">new</span> <span style="color: #b58900;">SkDevice</span>(bitmap));
+    <span style="color: #b58900;">SkPaint</span> <span style="color: #268bd2;">paint</span>;
+
+    paint.setARGB(255, 255, 0, 0);
+    paint.setStrokeWidth(4);
+    canvas.drawPoint(40,30, paint);
+    canvas.drawPoint(80,60, paint);
+    canvas.drawPoint(120,90, paint);
+
+    paint.setARGB(255, 0, 255, 0);
+    paint.setStrokeWidth(4);
+    canvas.drawLine(160,10,320,110,paint);
+
+    paint.setARGB(255, 0, 0, 255);
+    canvas.drawCircle(80,180,50,paint);
+
+    paint.setARGB(255, 255, 0, 0);
+    paint.setTextSize(24);
+    canvas.drawText(<span style="color: #2aa198;">"HELLO!:)"</span>, 8, 200, 180, paint);
+    <span style="color: #2aa198;">SkImageEncoder</span>::EncodeFile(<span style="color: #2aa198;">"/data/data/snapshot.png"</span>, bitmap,<span style="color: #2aa198;">SkImageEncoder</span>::kPNG_Type,100);
+    <span style="color: #859900;">return</span> 0;
+}
+</pre>
+</div>
+</div>
 </div>
 </div>
 
 <div id="outline-container-sec-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Rooting tookit</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Surface &amp; SurfaceFlinger</h3>
 <div class="outline-text-3" id="text-1-2">
 </div><div id="outline-container-sec-1-2-1" class="outline-4">
-<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> zergRush</h4>
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> ComposerService</h4>
+</div>
+<div id="outline-container-sec-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> SurfaceComposerClient</h4>
+</div>
+<div id="outline-container-sec-1-2-3" class="outline-4">
+<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> SurfaceSession</h4>
+</div>
+<div id="outline-container-sec-1-2-4" class="outline-4">
+<h4 id="sec-1-2-4"><span class="section-number-4">1.2.4</span> Surface</h4>
 </div>
 </div>
 
 <div id="outline-container-sec-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> After rooted, we can</h3>
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> onDraw</h3>
 <div class="outline-text-3" id="text-1-3">
-</div><div id="outline-container-sec-1-3-1" class="outline-4">
-<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> refrain notification</h4>
-</div>
-<div id="outline-container-sec-1-3-2" class="outline-4">
-<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> refrain broadcast (include BOOT<sub>COMPLETED</sub>)</h4>
-</div>
-<div id="outline-container-sec-1-3-3" class="outline-4">
-<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> silently install package</h4>
-<div class="outline-text-4" id="text-1-3-3">
-<blockquote>
-<p>
-$&gt; am install
-</p>
-</blockquote>
+<div class="org-src-container">
+
+<pre class="src src-text">ViewRootImpl.performTraversals
+  // measure
+  // layout
+  performDraw
+    draw(fullRedrawNeeded);
+      if (attachInfo.mHardwareRenderer.isEnabled()):
+        attachInfo.mHardwareRenderer.draw
+      else:
+        drawSoftware(surface, attachInfo, ...);
+          Canava canvas = mSurface.lockCanvas(dirty);
+          canvas.setDensity(mDensity);
+          mView.draw(canvas); // decorView
+            canvas.translate(mLeft, mTop);
+            canvas.scale(scale, scale);
+            canvas.clipRect(0, 0, mRight - mLeft, mBottom - mTop);
+            draw(canvas);
+              background.draw(canvas);
+              onDraw(canvas);
+              dispatchDraw(canvas);
+              onDrawScrollBars(canvas);
+          surface.unlockCanvasAndPost(canvas);
+        // drawSoftware ends
+</pre>
 </div>
 </div>
 </div>

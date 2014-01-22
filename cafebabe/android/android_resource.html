@@ -1,71 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Android Resource</title>
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="Android Resource"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-07-16T14:52+0800"/>
-<meta name="author" content="sunway"/>
-<meta name="description" content=""/>
-<meta name="keywords" content=""/>
+<!-- 2014-01-22 Wed 16:05 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="wei.sun" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
-  html { font-family: Times, serif; font-size: 12pt; }
   .title  { text-align: center; }
-  .todo   { color: red; }
+  .todo   { font-family: monospace; color: red; }
   .done   { color: green; }
-  .tag    { background-color: #add8e6; font-weight:normal }
-  .target { }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
-  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
-  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
-  .center {margin-left:auto; margin-right:auto; text-align:center;}
-  p.verse { margin-left: 3% }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
   pre {
-	border: 1pt solid #AEBDCC;
-	background-color: #F3F5F7;
-	padding: 5pt;
-	font-family: courier, monospace;
-        font-size: 90%;
-        overflow:auto;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
   }
-  table { border-collapse: collapse; }
-  td, th { vertical-align: top;  }
-  th.right  { text-align:center;  }
-  th.left   { text-align:center;   }
-  th.center { text-align:center; }
-  td.right  { text-align:right;  }
-  td.left   { text-align:left;   }
-  td.center { text-align:center; }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
   dt { font-weight: bold; }
-  div.figure { padding: 0.5em; }
-  div.figure p { text-align: center; }
-  div.inlinetask {
-    padding:10px;
-    border:2px solid gray;
-    margin:10px;
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
     background: #ffffcc;
   }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
   textarea { overflow-x: auto; }
-  .linenr { font-size:smaller }
-  .code-highlighted {background-color:#ffff00;}
-  .org-info-js_info-navigation { border-style:none; }
-  #org-info-js_console-label { font-size:10px; font-weight:bold;
-                               white-space:nowrap; }
-  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
-                                 font-weight:bold; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
   /*]]>*/-->
-</style>    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
+</style>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012  Free Software Foundation, Inc.
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -106,57 +134,8 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
-<script type="text/javascript" src="http://orgmode.org/mathjax/MathJax.js">
-/**
- *
- * @source: http://orgmode.org/mathjax/MathJax.js
- *
- * @licstart  The following is the entire license notice for the
- *  JavaScript code in http://orgmode.org/mathjax/MathJax.js.
- *
- * Copyright (C) 2012  MathJax
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @licend  The above is the entire license notice
- * for the JavaScript code in http://orgmode.org/mathjax/MathJax.js.
- *
- */
-
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code below.
-
-Copyright (C) 2012  Free Software Foundation, Inc.
-
-The JavaScript code below is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code below.
-*/
+<script type="text/javascript" src="http://orgmode.org/mathjax/MathJax.js"></script>
+<script type="text/javascript">
 <!--/*--><![CDATA[/*><!--*/
     MathJax.Hub.Config({
         // Only one of the two following lines, depending on user settings
@@ -199,58 +178,47 @@ for the JavaScript code below.
 </script>
 </head>
 <body>
-
-<div id="preamble">
-
-</div>
-
 <div id="content">
 <h1 class="title">Android Resource</h1>
-
-
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 Android Resource</a>
+<li><a href="#sec-1">1. Android Resource</a>
 <ul>
-<li><a href="#sec-1-1">1.1 android resource 分类</a></li>
-<li><a href="#sec-1-2">1.2 LoadedApk</a></li>
-<li><a href="#sec-1-3">1.3 Compile Resource</a></li>
-<li><a href="#sec-1-4">1.4 Get Resource</a></li>
-<li><a href="#sec-1-5">1.5 Overlay</a></li>
-<li><a href="#sec-1-6">1.6 Various resouce</a></li>
-<li><a href="#sec-1-7">1.7 Theme</a></li>
-<li><a href="#sec-1-8">1.8 misc</a></li>
+<li><a href="#sec-1-1">1.1. android resource 分类</a></li>
+<li><a href="#sec-1-2">1.2. LoadedApk</a></li>
+<li><a href="#sec-1-3">1.3. Compile Resource</a></li>
+<li><a href="#sec-1-4">1.4. Get Resource</a></li>
+<li><a href="#sec-1-5">1.5. Overlay</a></li>
+<li><a href="#sec-1-6">1.6. Various resouce</a></li>
+<li><a href="#sec-1-7">1.7. Theme</a></li>
+<li><a href="#sec-1-8">1.8. misc</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-
-<div id="outline-container-1" class="outline-2">
+<div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> Android Resource</h2>
 <div class="outline-text-2" id="text-1">
-
-
-</div>
-
-<div id="outline-container-1-1" class="outline-3">
+</div><div id="outline-container-sec-1-1" class="outline-3">
 <h3 id="sec-1-1"><span class="section-number-3">1.1</span> android resource 分类</h3>
 <div class="outline-text-3" id="text-1-1">
-
-<p>android/res 目录下定义了各种各样的 resource,  但写法与用法却有所区别,  从直接上
+<p>
+android/res 目录下定义了各种各样的 resource,  但写法与用法却有所区别,  从直接上
 看, 可以分为两类:
-</p><ol>
+</p>
+<ol class="org-ol">
 <li>静态的资源 (值是不变的)
 </li>
 </ol>
 
-
 <p>
 同时定义了 resID, type, value 的 resource, 例如:
 </p>
-<ul>
+
+<ul class="org-ul">
 <li>colors.xml 中定义的各种颜色
 </li>
 <li>strings.xml 中定义的各个字符串
@@ -269,24 +237,25 @@ for the JavaScript code below.
 </li>
 </ul>
 
-
 <p>
 id 是一类特殊的 resource, 它们没有值, 只是利用了它们的 resID 的唯一性. 如果
 把 resID 看做它们的值的话, 它们也属于静态的资源.
 </p>
-<ol>
+
+<ol class="org-ol">
 <li>动态的资源 (值是变化的)
 </li>
 </ol>
-
 
 <p>
 只定义了 resID 和 type, 没有定义值. 这种 resource 定义了一种 可配置的 "属性
 ".  例如 attrs.xml 中通过 declare-styleable 定义的 style 的各个 attribute.
 </p>
+
 <p>
 某些 resource 可以指定这些属性, 例如
-</p><ul>
+</p>
+<ul class="org-ul">
 <li>layout
 </li>
 <li>menu
@@ -295,83 +264,68 @@ id 是一类特殊的 resource, 它们没有值, 只是利用了它们的 resID 
 </li>
 </ul>
 
-
 <p>
 layout 可以通过 AttributeSet, TypedArray, obtainStyledAttributes 访问其
 attribute resource
 </p>
 </div>
-
 </div>
-
-<div id="outline-container-1-2" class="outline-3">
+<div id="outline-container-sec-1-2" class="outline-3">
 <h3 id="sec-1-2"><span class="section-number-3">1.2</span> LoadedApk</h3>
 <div class="outline-text-3" id="text-1-2">
-
-<p>ContextImpl 中有一个重要的成员叫 mPackageInfo, 是一个 LoadedApk 对象, 从名字就可
+<p>
+ContextImpl 中有一个重要的成员叫 mPackageInfo, 是一个 LoadedApk 对象, 从名字就可
 以看出来, 这个对象是代表着一个 `已加载` 的 APK, 而一个 APK 主要包含三部分信息:
 </p>
-<ol>
+
+<ol class="org-ol">
 <li>AndroidManifest, 这部分在 LoadedApk 中叫做 ApplicationInfo
 </li>
 <li>Assets 和 Resources, 这部分被称为 mResDir
 </li>
 <li>classes.dex,  这部分通过 LoadedApk 的 mClassLoader 让外部可以访问. 实际上,
-   ContextImpl.getClassLoader 返回的就是 LoadedApk.getClassLoader 即 mClassLoader
+ContextImpl.getClassLoader 返回的就是 LoadedApk.getClassLoader 即 mClassLoader
 </li>
 </ol>
-
-
-
 
 
 <div class="figure">
-<p><img src="1.png"  alt="1.png" /></p>
-<p>LoadedApk</p>
+<p><img src="1.png" alt="1.png" />
+</p>
 </div>
-
 </div>
-
 </div>
-
-<div id="outline-container-1-3" class="outline-3">
+<div id="outline-container-sec-1-3" class="outline-3">
 <h3 id="sec-1-3"><span class="section-number-3">1.3</span> Compile Resource</h3>
 <div class="outline-text-3" id="text-1-3">
-
-
-</div>
-
-<div id="outline-container-1-3-1" class="outline-4">
+</div><div id="outline-container-sec-1-3-1" class="outline-4">
 <h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> 编译后的 apk 的资源文件布局</h4>
 <div class="outline-text-4" id="text-1-3-1">
-
-<p>原 res 目录下的所有资源文件在通过 aapt 处理后有两种情况:
+<p>
+原 res 目录下的所有资源文件在通过 aapt 处理后有两种情况:
 </p>
-<ol>
-<li>values 下的所有文件, 包括 strings.xml, ids.xml, colors.xml &hellip; 都会被直接保存
-   到 resources.arsc 中, 因为这些资源只会对应一下简单的值, 而不需要对应一个 xml
-   文件.
+
+<ol class="org-ol">
+<li>values 下的所有文件, 包括 strings.xml, ids.xml, colors.xml &#x2026; 都会被直接保存
+到 resources.arsc 中, 因为这些资源只会对应一下简单的值, 而不需要对应一个 xml
+文件.
 </li>
 <li>res 中除 values 的其他资源文件会在 resources.arsc 中生成一些 resID 与 xml 路
-   径的对应信息, 用于 getResources 时的查找. 并且这些资源文件会被转换为 axml 格
-   式后打包到 apk 中.
+径的对应信息, 用于 getResources 时的查找. 并且这些资源文件会被转换为 axml 格
+式后打包到 apk 中.
 </li>
 </ol>
-
-
 </div>
-
 </div>
-
-<div id="outline-container-1-3-2" class="outline-4">
+<div id="outline-container-sec-1-3-2" class="outline-4">
 <h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> AXML</h4>
 <div class="outline-text-4" id="text-1-3-2">
-
-<p>axml 指通过 aapt 转换后的一种格式, 类似于 WBXML. 另外, axml 生成过程中也会做一些
+<p>
+axml 指通过 aapt 转换后的一种格式, 类似于 WBXML. 另外, axml 生成过程中也会做一些
 资源引用的预处理, 例如下面是被 AXMLPrinter2 dump 出来的 axml 的内容:
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-xml">&lt;<span style="color: #268bd2;">TextView</span>
     <span style="color: #859900;">android</span>:<span style="color: #268bd2;">id</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@7F050000</span><span style="color: #2aa198;">"</span>
@@ -381,7 +335,7 @@ attribute resource
     &gt;
 &lt;/<span style="color: #268bd2;">TextView</span>&gt;
 </pre>
-
+</div>
 
 <p>
 可见, "wrap<sub>content</sub>" 被替换为 -1, 而 android:id, android:text 等 resType 为
@@ -389,22 +343,17 @@ REFERENCE 的项其内容被提前解析为对应的 resID
 </p>
 </div>
 </div>
-
 </div>
-
-<div id="outline-container-1-4" class="outline-3">
+<div id="outline-container-sec-1-4" class="outline-3">
 <h3 id="sec-1-4"><span class="section-number-3">1.4</span> Get Resource</h3>
 <div class="outline-text-3" id="text-1-4">
-
-
+</div><div id="outline-container-sec-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> 资源文件 (arsc) 如何被加载到内存</h4>
 </div>
-
-<div id="outline-container-1-4-1" class="outline-4">
-<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> Context.getResources</h4>
-<div class="outline-text-4" id="text-1-4-1">
-
-
-
+<div id="outline-container-sec-1-4-2" class="outline-4">
+<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> Context.getResources</h4>
+<div class="outline-text-4" id="text-1-4-2">
+<div class="org-src-container">
 
 <pre class="src src-java">ContextImpl.getResources
   <span style="color: #859900;">return</span> mResources
@@ -434,22 +383,18 @@ ContextImpl.init
         am.addAssetPath();
       <span style="color: #859900;">return</span> <span style="color: #859900;">new</span> <span style="color: #b58900;">Resources</span>(assets,...);
 </pre>
-
+</div>
 
 <p>
 Note that: `Resources` is built on top of `Assets`, that is, `Resources` is a
 sort of `Assets`
 </p>
 </div>
-
 </div>
-
-<div id="outline-container-1-4-2" class="outline-4">
-<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> Resource.getText</h4>
-<div class="outline-text-4" id="text-1-4-2">
-
-
-
+<div id="outline-container-sec-1-4-3" class="outline-4">
+<h4 id="sec-1-4-3"><span class="section-number-4">1.4.3</span> Resource.getText</h4>
+<div class="outline-text-4" id="text-1-4-3">
+<div class="org-src-container">
 
 <pre class="src src-java">Resource.<span style="color: #b58900;">getText</span>
   mAssets.<span style="color: #268bd2;">getResourceText</span>(<span style="color: #b58900;">resID</span>);
@@ -509,58 +454,50 @@ sort of `Assets`
     <span style="color: #859900;">return</span> mStringBlocks[block].get(tmpValue.data);
   <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">getResourceTexte ends here</span>
 </pre>
-
-
 </div>
-
-<div id="outline-container-1-4-2-1" class="outline-5">
-<h5 id="sec-1-4-2-1"><span class="section-number-5">1.4.2.1</span> To summaries</h5>
-<div class="outline-text-5" id="text-1-4-2-1">
-
-<ul>
+</div>
+<div id="outline-container-sec-1-4-3-1" class="outline-5">
+<h5 id="sec-1-4-3-1"><span class="section-number-5">1.4.3.1</span> To summaries</h5>
+<div class="outline-text-5" id="text-1-4-3-1">
+<ul class="org-ul">
 <li>ResTable 是核心的数据结构, 它有两个任务:
-<ol>
+<ol class="org-ol">
 <li>解析 AssetManager 通过 addAssetPath 添加的所有 asset, 并形成一个由
-     PackageGroup -&gt; Package -&gt; Type -&gt; Entity ( &amp; Config) 组成的树形结构
+PackageGroup -&gt; Package -&gt; Type -&gt; Entity ( &amp; Config) 组成的树形结构
 </li>
 <li>通过在树形结构里查找, 获得和 resID 最匹配的资源
 </li>
 </ol>
-
 </li>
 </ul>
-
 </div>
 </div>
-
 </div>
 
-<div id="outline-container-1-4-3" class="outline-4">
-<h4 id="sec-1-4-3"><span class="section-number-4">1.4.3</span> LayoutInflater</h4>
-<div class="outline-text-4" id="text-1-4-3">
-
-
-
+<div id="outline-container-sec-1-4-4" class="outline-4">
+<h4 id="sec-1-4-4"><span class="section-number-4">1.4.4</span> LayoutInflater</h4>
+<div class="outline-text-4" id="text-1-4-4">
+<div class="org-src-container">
 
 <pre class="src src-java">LayoutInflater.inflate(id,rootView)
   <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">rootView: the view that the inflated view will be attached to, can be null</span>
   XmlResourceParser parser = getContext().getResources().getLayout(resource);
     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">Resources.java</span>
     loadXmlResourceParser(id,<span style="color: #2aa198;">"layout"</span>);
-      getValue(id, value, true);
+      getValue(id, value, <span style="color: #2aa198;">true</span>);
         mAssets.getResourceValue(id, 0, outValue, resolveRefs);
         <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">AssetManager.java</span>
           <span style="color: #b58900;">int</span> <span style="color: #268bd2;">block</span> = loadResourceValue(ident, (<span style="color: #b58900;">short</span>) density, outValue, resolveRefs);
           <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">similar with AssetManager.getResourceText</span>
           <span style="color: #859900;">if</span> (outValue.type != <span style="color: #2aa198;">TypedValue</span>.TYPE_STRING):
-            <span style="color: #859900;">return</span> true;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">true</span>;
           outValue.string = mStringBlocks[block].get(outValue.data);
       <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">getValue ends here</span>
       <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">now value.string contains the layout's xml path</span>
       <span style="color: #859900;">return</span> loadXmlResourceParser(value.string, id, value.assetCookie,type);
         <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">find the cached XmlBlock according to `ID`</span>
         <span style="color: #859900;">final</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">num</span> = mCachedXmlBlockIds.length;
-          <span style="color: #859900;">for</span> (<span style="color: #b58900;">int</span> <span style="color: #268bd2;">i</span>=0; i&lt;<span style="color: #b58900;">num</span>; i++):
+          <span style="color: #859900;">for</span> (<span style="color: #b58900;">int</span> <span style="color: #268bd2;">i</span>=0; i&lt;num; i++):
             <span style="color: #859900;">if</span> (mCachedXmlBlockIds[i] == id):
               <span style="color: #859900;">return</span> mCachedXmlBlocks[i].newParser();
         <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">cache miss</span>
@@ -582,10 +519,10 @@ sort of `Assets`
     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">get the root tag, e.g. &lt;include&gt; &lt;merge&gt; or &lt;view&gt; ... etc.</span>
     <span style="color: #859900;">if</span> (TAG_MERGE.equals(name)):
       <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">if this is a merge, a root view must be supplied</span>
-      <span style="color: #859900;">if</span> (root==null):
+      <span style="color: #859900;">if</span> (root==<span style="color: #2aa198;">null</span>):
         <span style="color: #859900;">throw</span> <span style="color: #859900;">new</span> <span style="color: #b58900;">InflateException</span>(<span style="color: #2aa198;">"&lt;merge /&gt; can be used only with a valid "</span>
           + <span style="color: #2aa198;">"ViewGroup root and attachToRoot=true"</span>);
-      rInflate(parser, root, attrs, false);
+      rInflate(parser, root, attrs, <span style="color: #2aa198;">false</span>);
     <span style="color: #859900;">else</span>:
       <span style="color: #859900;">if</span> (TAG_1995.equals(name)):
         <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">TAG_1995?</span>
@@ -594,14 +531,14 @@ sort of `Assets`
         temp = createViewFromTag(root, name, attrs);
           <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&lt;view class="xx.xx.xx"</span>
           <span style="color: #859900;">if</span> (name.equals(<span style="color: #2aa198;">"view"</span>)):
-            name = attrs.getAttributeValue(null, <span style="color: #2aa198;">"class"</span>);
+            name = attrs.getAttributeValue(<span style="color: #2aa198;">null</span>, <span style="color: #2aa198;">"class"</span>);
           <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">else, &lt;xx.xx.xx.xx</span>
           <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">LayoutInflater.setFactory() can set the mFactory, thought which</span>
           <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">user can intercept the LayoutInflater, typically, the mFactory is</span>
           <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">left unset.</span>
           view = mFactory.onCreateView(name, mContext, attrs);
           <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">mFactory doesn't work</span>
-          <span style="color: #859900;">if</span> (view == null):
+          <span style="color: #859900;">if</span> (view == <span style="color: #2aa198;">null</span>):
             <span style="color: #859900;">if</span> (-1 == name.indexOf(<span style="color: #2aa198;">'.'</span>)): <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">creating &lt;ListView ..? get it from framework</span>
               <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">name contains no `.`? means we are using the system widget, e.g.</span>
               <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&lt;ListView, &lt;Button ...</span>
@@ -613,21 +550,21 @@ sort of `Assets`
                     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">PhoneLayoutInflater as: {"android.widget.",</span>
                     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">"android.webkit."}</span>
                     View view = createView(name, prefix, attrs);
-                    <span style="color: #859900;">if</span> view!=null:
+                    <span style="color: #859900;">if</span> view!=<span style="color: #2aa198;">null</span>:
                       <span style="color: #859900;">return</span> view
             <span style="color: #859900;">else</span>: <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">creating &lt;com.xx.xx.view? leave prefix to null</span>
-              view = createView(name, null, attrs);
+              view = createView(name, <span style="color: #2aa198;">null</span>, attrs);
                 <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">* Low-level function for instantiating a view by name. This</span>
                 <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">* attempts toinstantiate a view class of the given &lt;var&gt;name&lt;/var&gt;</span>
                 <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">found in this LayoutInflater's ClassLoader.</span>
                 clazz = mContext.getClassLoader().loadClass(
-                          prefix != null ? (prefix + name) : name).asSubclass(View.<span style="color: #859900;">class</span>);
+                          prefix != <span style="color: #2aa198;">null</span> ? (prefix + name) : name).asSubclass(View.<span style="color: #859900;">class</span>);
                 <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">view class is inited by  mContext.getClassLoader(), and, because we can obtain a LayoutInflater</span>
                 <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">through LayoutInflater.from(Context), or through Context.getSystemService(),  we can</span>
                 <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">inflate view from other package</span>
 
                 <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">LayoutInflater.Filler ....</span>
-                <span style="color: #859900;">if</span> (mFilter != null &amp;&amp; clazz != null):
+                <span style="color: #859900;">if</span> (mFilter != <span style="color: #2aa198;">null</span> &amp;&amp; clazz != <span style="color: #2aa198;">null</span>):
                     <span style="color: #859900;">if</span> (mFilter.onLoadClass(clazz)):
                       failNotAllowed(name, prefix, attrs);
                 <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">view's ctor will be invoked with two args: context, AttrbuteSet</span>
@@ -653,7 +590,7 @@ sort of `Assets`
     params = root.generateLayoutParams(attrs);
     temp.setLayoutParams(params);
     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">recursively inflate all its children</span>
-    rInflate(parser, temp, attrs, true);
+    rInflate(parser, temp, attrs, <span style="color: #2aa198;">true</span>);
       <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">rInflate is very similar with inflate, except for that:</span>
       <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">1. parser, attrs is already there, no need to find and  re-parse the</span>
       <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">layout xml</span>
@@ -662,23 +599,19 @@ sort of `Assets`
     root.addView(temp, params);
     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">if MERGE ends here</span>
   <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">inflate ends here</span>
-
 </pre>
-
-
 </div>
-
-<div id="outline-container-1-4-3-1" class="outline-5">
-<h5 id="sec-1-4-3-1"><span class="section-number-5">1.4.3.1</span> To summaries</h5>
-<div class="outline-text-5" id="text-1-4-3-1">
-
-<ol>
+</div>
+<div id="outline-container-sec-1-4-4-1" class="outline-5">
+<h5 id="sec-1-4-4-1"><span class="section-number-5">1.4.4.1</span> To summaries</h5>
+<div class="outline-text-5" id="text-1-4-4-1">
+<ol class="org-ol">
 <li>get XmlResourceParser from Resource (maybe cached)
 </li>
 <li>get AttrbuteSet, obtainStyledAttributes, generateLayoutParams
 </li>
 <li>get the view name and kick off the ClassLoader
-<ul>
+<ul class="org-ul">
 <li>&lt;ListView&gt;
 </li>
 <li>&lt;xx.xx.xx&gt;
@@ -686,7 +619,6 @@ sort of `Assets`
 <li>&lt;View class=xx.xx.xx&gt;
 </li>
 </ul>
-
 </li>
 <li>rInflate: recursively inflate all the children
 </li>
@@ -695,74 +627,44 @@ sort of `Assets`
 <li>onFinishInflate
 </li>
 </ol>
-
-
 </div>
 </div>
-
 </div>
-
-<div id="outline-container-1-4-4" class="outline-4">
-<h4 id="sec-1-4-4"><span class="section-number-4">1.4.4</span> MenuInflater</h4>
-<div class="outline-text-4" id="text-1-4-4">
-
+<div id="outline-container-sec-1-4-5" class="outline-4">
+<h4 id="sec-1-4-5"><span class="section-number-4">1.4.5</span> MenuInflater</h4>
 </div>
-
+<div id="outline-container-sec-1-4-6" class="outline-4">
+<h4 id="sec-1-4-6"><span class="section-number-4">1.4.6</span> Preference Inflater</h4>
 </div>
-
-<div id="outline-container-1-4-5" class="outline-4">
-<h4 id="sec-1-4-5"><span class="section-number-4">1.4.5</span> Preference Inflater</h4>
-<div class="outline-text-4" id="text-1-4-5">
-
+<div id="outline-container-sec-1-4-7" class="outline-4">
+<h4 id="sec-1-4-7"><span class="section-number-4">1.4.7</span> Stub Inflater</h4>
 </div>
-
-</div>
-
-<div id="outline-container-1-4-6" class="outline-4">
-<h4 id="sec-1-4-6"><span class="section-number-4">1.4.6</span> Stub Inflater</h4>
-<div class="outline-text-4" id="text-1-4-6">
-
-</div>
-
-</div>
-
-<div id="outline-container-1-4-7" class="outline-4">
-<h4 id="sec-1-4-7"><span class="section-number-4">1.4.7</span> XMLPullParser, AttribteSet, TypedValue</h4>
-<div class="outline-text-4" id="text-1-4-7">
-
-
-</div>
-
-<div id="outline-container-1-4-7-1" class="outline-5">
-<h5 id="sec-1-4-7-1"><span class="section-number-5">1.4.7.1</span> XMLPullParser 负责解析 original-xml</h5>
-<div class="outline-text-5" id="text-1-4-7-1">
-
-
-<ul>
+<div id="outline-container-sec-1-4-8" class="outline-4">
+<h4 id="sec-1-4-8"><span class="section-number-4">1.4.8</span> XMLPullParser, AttribteSet, TypedValue</h4>
+<div class="outline-text-4" id="text-1-4-8">
+</div><div id="outline-container-sec-1-4-8-1" class="outline-5">
+<h5 id="sec-1-4-8-1"><span class="section-number-5">1.4.8.1</span> XMLPullParser 负责解析 original-xml</h5>
+<div class="outline-text-5" id="text-1-4-8-1">
+<ul class="org-ul">
 <li>parser.getAttributeName()
 </li>
 <li>parse.getAttributeValue()
 </li>
 <li>parset.getAttributeCount()
 </li>
-<li>&hellip;
+<li>&#x2026;
 </li>
 </ul>
-
 
 <p>
 但 parser 只能拿到 xml 这一层次的东西, 关于 resource id 等, 它是无能为
 力的, 这时需要资源相关的 api 来进一步处理. 
 </p>
 </div>
-
 </div>
-
-<div id="outline-container-1-4-7-2" class="outline-5">
-<h5 id="sec-1-4-7-2"><span class="section-number-5">1.4.7.2</span> AttribteSet 解析 compiled-xml</h5>
-<div class="outline-text-5" id="text-1-4-7-2">
-
-
+<div id="outline-container-sec-1-4-8-2" class="outline-5">
+<h5 id="sec-1-4-8-2"><span class="section-number-5">1.4.8.2</span> AttribteSet 解析 compiled-xml</h5>
+<div class="outline-text-5" id="text-1-4-8-2">
 <p>
 AttribteSet 兼有 XMLPullParser 和 resource id 相关的功能, 实际上,
 XmlResourceParser 就是 AttribteSet 的一个实例类. 它的功能不仅包含
@@ -770,47 +672,39 @@ XMLPullParser 的所有功能, 还有一部分和 resource id 相关的功能, �
 解析的是 compiled-xml, 像 resouce id 这类信息在 compiled-xml 存在, 但
 在 original-xml 中是不存在的. 
 </p>
-<ul>
+
+<ul class="org-ul">
 <li>attr.getAttributeResourceValue()
 </li>
 <li>attr.getAttributeNameResource()
 </li>
-<li>&hellip;
+<li>&#x2026;
 </li>
 </ul>
-
-
 </div>
-
 </div>
-
-<div id="outline-container-1-4-7-3" class="outline-5">
-<h5 id="sec-1-4-7-3"><span class="section-number-5">1.4.7.3</span> TypedValue 是最终的和资源相关的 value</h5>
-<div class="outline-text-5" id="text-1-4-7-3">
-
-
+<div id="outline-container-sec-1-4-8-3" class="outline-5">
+<h5 id="sec-1-4-8-3"><span class="section-number-5">1.4.8.3</span> TypedValue 是最终的和资源相关的 value</h5>
+<div class="outline-text-5" id="text-1-4-8-3">
 <p>
 AttribteSet 获取 resource id 后, 需要通过 resource (或 asset) 在资源中
 查找, 最终获取 TypedValue
 </p>
 </div>
-
 </div>
-
-<div id="outline-container-1-4-7-4" class="outline-5">
-<h5 id="sec-1-4-7-4"><span class="section-number-5">1.4.7.4</span> example</h5>
-<div class="outline-text-5" id="text-1-4-7-4">
-
-
-
+<div id="outline-container-sec-1-4-8-4" class="outline-5">
+<h5 id="sec-1-4-8-4"><span class="section-number-5">1.4.8.4</span> example</h5>
+<div class="outline-text-5" id="text-1-4-8-4">
+<div class="org-src-container">
 
 <pre class="src src-xml">&lt;<span style="color: #268bd2;">application</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">icon</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/icon</span><span style="color: #2aa198;">"</span>
              <span style="color: #859900;">android</span>:<span style="color: #268bd2;">label</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@string/app_name</span><span style="color: #2aa198;">"</span>
              <span style="color: #859900;">pluto</span>:<span style="color: #268bd2;">test</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@string/app_name2</span><span style="color: #2aa198;">"</span>&gt;
 &lt;/<span style="color: #268bd2;">application</span>&gt;
 </pre>
+</div>
 
-
+<div class="org-src-container">
 
 <pre class="src src-java"><span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#36820;&#22238;&#19968;&#20010;&#23383;&#31526;&#20018;: "@string/app_name2"</span>
 parser.getAttributeValue(<span style="color: #2aa198;">"http://www.w3.org/2001/pluto.html"</span>,<span style="color: #2aa198;">"test"</span>)
@@ -823,78 +717,70 @@ attrs.getAttributeValue(<span style="color: #2aa198;">"http://www.w3.org/2001/pl
 
 <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#36820;&#22238;&#26368;&#32456;&#24341;&#29992;&#30340; app_name2</span>
 <span style="color: #b58900;">TypedValue</span> <span style="color: #268bd2;">outValue</span>=<span style="color: #859900;">new</span> <span style="color: #b58900;">TypedValue</span>();
-res.getValue(testId, outValue, true);
-
-
+res.getValue(testId, outValue, <span style="color: #2aa198;">true</span>);
 </pre>
-
+</div>
+</div>
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-4-8" class="outline-4">
-<h4 id="sec-1-4-8"><span class="section-number-4">1.4.8</span> Configuration Qualifiers: Providing resources and supporting multiple screen.</h4>
-<div class="outline-text-4" id="text-1-4-8">
-
-
+<div id="outline-container-sec-1-4-9" class="outline-4">
+<h4 id="sec-1-4-9"><span class="section-number-4">1.4.9</span> Configuration Qualifiers: Providing resources and supporting multiple screen.</h4>
+<div class="outline-text-4" id="text-1-4-9">
 <p>
 <a href="http://developer.android.com/guide/topics/resources/providing-resources.html">http://developer.android.com/guide/topics/resources/providing-resources.html</a>
 <a href="http://developer.android.com/guide/practices/screens_support.html">http://developer.android.com/guide/practices/screens_support.html</a>
 </p>
+
 <p>
 选择合适的资源分为三步:
 </p>
-<ol>
+
+<ol class="org-ol">
 <li>match
-   把同一个 package 中所有 config 与 requestedConfig 进行 match, 不匹
-   配的直接去掉
+把同一个 package 中所有 config 与 requestedConfig 进行 match, 不匹
+配的直接去掉
 </li>
 <li>isBetterThan
-   对 match 剩下的 config 进行比较, 找到这个 package 中最合适的 config
+对 match 剩下的 config 进行比较, 找到这个 package 中最合适的 config
 </li>
 <li>isMoreSpecificThan
-   对多个 package 中最合适的 config 再进行比较, 找到所有 package 中最
-   合适的 config
+对多个 package 中最合适的 config 再进行比较, 找到所有 package 中最
+合适的 config
 </li>
 </ol>
-
-
-
 </div>
 
-<div id="outline-container-1-4-8-1" class="outline-5">
-<h5 id="sec-1-4-8-1"><span class="section-number-5">1.4.8.1</span> match</h5>
-<div class="outline-text-5" id="text-1-4-8-1">
-
-
+<div id="outline-container-sec-1-4-9-1" class="outline-5">
+<h5 id="sec-1-4-9-1"><span class="section-number-5">1.4.9.1</span> match</h5>
+<div class="outline-text-5" id="text-1-4-9-1">
 <p>
 density 在 match 阶段会被认为是都是 match 的, 因为系统对任何 density
 的图片都可以通过 scale 来和当前的屏幕匹配. 后续的 isBetterThan 会从各
 种 density 的图片中找到最合适的.
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-java"><span style="color: #b58900;">bool</span> <span style="color: #268bd2;">ResTable_config</span>::match(<span style="color: #859900;">const</span> <span style="color: #b58900;">ResTable_config</span>&amp; settings) <span style="color: #859900;">const</span> {
     <span style="color: #859900;">if</span> (imsi != 0) {
         <span style="color: #859900;">if</span> (mcc != 0 &amp;&amp; mcc != settings.mcc) {
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
         <span style="color: #859900;">if</span> (mnc != 0 &amp;&amp; mnc != settings.mnc) {
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
     }
     <span style="color: #859900;">if</span> (locale != 0) {
         <span style="color: #859900;">if</span> (language[0] != 0
             &amp;&amp; (language[0] != settings.language[0]
                 || language[1] != settings.language[1])) {
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
         <span style="color: #859900;">if</span> (country[0] != 0
             &amp;&amp; (country[0] != settings.country[0]
                 || country[1] != settings.country[1])) {
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
     }
     <span style="color: #859900;">if</span> (screenConfig != 0) {
@@ -903,49 +789,49 @@ density 在 match 阶段会被认为是都是 match 的, 因为系统对任何 d
         <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">Any screen sizes for larger screens than the setting do not</span>
         <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">match.</span>
         <span style="color: #859900;">if</span> (screenSize != 0 &amp;&amp; screenSize &gt; setScreenSize) {
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
 
         <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">screenLong</span> = screenLayout&amp;MASK_SCREENLONG;
         <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">setScreenLong</span> = settings.screenLayout&amp;MASK_SCREENLONG;
         <span style="color: #859900;">if</span> (screenLong != 0 &amp;&amp; screenLong != setScreenLong) {
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
 
         <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">uiModeType</span> = uiMode&amp;MASK_UI_MODE_TYPE;
         <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">setUiModeType</span> = settings.uiMode&amp;MASK_UI_MODE_TYPE;
         <span style="color: #859900;">if</span> (uiModeType != 0 &amp;&amp; uiModeType != setUiModeType) {
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
 
         <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">uiModeNight</span> = uiMode&amp;MASK_UI_MODE_NIGHT;
         <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">setUiModeNight</span> = settings.uiMode&amp;MASK_UI_MODE_NIGHT;
         <span style="color: #859900;">if</span> (uiModeNight != 0 &amp;&amp; uiModeNight != setUiModeNight) {
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
 
         <span style="color: #859900;">if</span> (smallestScreenWidthDp != 0
             &amp;&amp; smallestScreenWidthDp &gt; settings.smallestScreenWidthDp) {
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
     }
     <span style="color: #859900;">if</span> (screenSizeDp != 0) {
         <span style="color: #859900;">if</span> (screenWidthDp != 0 &amp;&amp; screenWidthDp &gt; settings.screenWidthDp) {
             <span style="color: #586e75; font-style: italic;">//</span><span style="color: #586e75; font-style: italic;">ALOGI("Filtering out width %d in requested %d", screenWidthDp, settings.screenWidthDp);</span>
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
         <span style="color: #859900;">if</span> (screenHeightDp != 0 &amp;&amp; screenHeightDp &gt; settings.screenHeightDp) {
             <span style="color: #586e75; font-style: italic;">//</span><span style="color: #586e75; font-style: italic;">ALOGI("Filtering out height %d in requested %d", screenHeightDp, settings.screenHeightDp);</span>
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
     }
     <span style="color: #859900;">if</span> (screenType != 0) {
         <span style="color: #859900;">if</span> (orientation != 0 &amp;&amp; orientation != settings.orientation) {
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
         <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">density always matches - we can scale it.  See isBetterThan</span>
         <span style="color: #859900;">if</span> (touchscreen != 0 &amp;&amp; touchscreen != settings.touchscreen) {
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
     }
     <span style="color: #859900;">if</span> (input != 0) {
@@ -958,93 +844,84 @@ density 在 match 阶段会被认为是都是 match 的, 因为系统对任何 d
             <span style="color: #586e75; font-style: italic;">//</span><span style="color: #586e75; font-style: italic;">ALOGI("Matching keysHidden: have=%d, config=%d\n", keysHidden, setKeysHidden);</span>
             <span style="color: #859900;">if</span> (keysHidden != KEYSHIDDEN_NO || setKeysHidden != KEYSHIDDEN_SOFT) {
                 <span style="color: #586e75; font-style: italic;">//</span><span style="color: #586e75; font-style: italic;">ALOGI("No match!");</span>
-                <span style="color: #859900;">return</span> false;
+                <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
             }
         }
         <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">navHidden</span> = inputFlags&amp;MASK_NAVHIDDEN;
         <span style="color: #859900;">const</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">setNavHidden</span> = settings.inputFlags&amp;MASK_NAVHIDDEN;
         <span style="color: #859900;">if</span> (navHidden != 0 &amp;&amp; navHidden != setNavHidden) {
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
         <span style="color: #859900;">if</span> (keyboard != 0 &amp;&amp; keyboard != settings.keyboard) {
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
         <span style="color: #859900;">if</span> (navigation != 0 &amp;&amp; navigation != settings.navigation) {
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
     }
     <span style="color: #859900;">if</span> (screenSize != 0) {
         <span style="color: #859900;">if</span> (screenWidth != 0 &amp;&amp; screenWidth &gt; settings.screenWidth) {
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
         <span style="color: #859900;">if</span> (screenHeight != 0 &amp;&amp; screenHeight &gt; settings.screenHeight) {
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
     }
     <span style="color: #859900;">if</span> (version != 0) {
         <span style="color: #859900;">if</span> (sdkVersion != 0 &amp;&amp; sdkVersion &gt; settings.sdkVersion) {
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
         <span style="color: #859900;">if</span> (minorVersion != 0 &amp;&amp; minorVersion != settings.minorVersion) {
-            <span style="color: #859900;">return</span> false;
+            <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
         }
     }
-    <span style="color: #859900;">return</span> true;
+    <span style="color: #859900;">return</span> <span style="color: #2aa198;">true</span>;
 }
-
 </pre>
-
-
 </div>
-
 </div>
-
-<div id="outline-container-1-4-8-2" class="outline-5">
-<h5 id="sec-1-4-8-2"><span class="section-number-5">1.4.8.2</span> isBetterThan</h5>
-<div class="outline-text-5" id="text-1-4-8-2">
-
-
+</div>
+<div id="outline-container-sec-1-4-9-2" class="outline-5">
+<h5 id="sec-1-4-9-2"><span class="section-number-5">1.4.9.2</span> isBetterThan</h5>
+<div class="outline-text-5" id="text-1-4-9-2">
 <p>
 isBetterThan(targetConfig, requestedConfig) is used to check `whether
 this config is better than targetConfig according to requestedConfig'
 </p>
+
 <p>
 其中density 的判断比较特殊, 基本上, 两个原则:
 </p>
-<ol>
+
+<ol class="org-ol">
 <li>接近的优先
 </li>
 <li>大的更优先
 </li>
 </ol>
 
-
 <p>
 具体的: 
 </p>
-<ol>
+
+<ol class="org-ol">
 <li>若 requestedConfig 比 thisConfig 和 targetConfig 都大, 则从
-   thisConfig 和 targetConfig 中选择大的
-
+thisConfig 和 targetConfig 中选择大的
 </li>
+
 <li>若 requestedConfig 比 thisConfig 和 targetConfig 都小, 则从
-   thisConfig 和 targetConfig 中选择小的
-
+thisConfig 和 targetConfig 中选择小的
 </li>
+
 <li>若 requestedConfig 位于 thisConfig 和 targetConfig 之间, 则系统会在
-   两者间选一个中间点 r, requestedConfig 位于 thisConfig 和 中间点之间
-   的,选择 thisConfig, 否则选择 targetConfig. 中间点 r 的选择不是简单的
-   取了个中间值, 而要使用了一个公式来获得:
+两者间选一个中间点 r, requestedConfig 位于 thisConfig 和 中间点之间
+的,选择 thisConfig, 否则选择 targetConfig. 中间点 r 的选择不是简单的
+取了个中间值, 而要使用了一个公式来获得:
 </li>
 </ol>
 
 
-
-
-<div style="text-align: center">
-
-
-
+<div class="center">
 </div>
 
 
@@ -1053,31 +930,35 @@ this config is better than targetConfig according to requestedConfig'
 </p>
 
 
-<p>
-<img src="plot.png"  alt="plot.png" />
+<div class="figure">
+<p><img src="plot.png" alt="plot.png" />
 </p>
+</div>
+
 <p>
 固定 h 为 100
 </p>
 
-<p>
-<img src="plot2.png"  alt="plot2.png" />
+<div class="figure">
+<p><img src="plot2.png" alt="plot2.png" />
 </p>
+</div>
+
 <p>
 r 始终偏向 l (h&gt;l), 且 h-l 越大, 越偏向 l
 </p>
+
 <p>
 例如:
-</p><ol>
+</p>
+<ol class="org-ol">
 <li>h=320, l=120, request=240, 则 r=160 (&lt;220), 选择 h
 </li>
 <li>h=240, l=120, request=160, 则 r=147 (&lt;180), 选择 h
 </li>
 </ol>
 
-
-
-
+<div class="org-src-container">
 
 <pre class="src src-java"><span style="color: #b58900;">bool</span> <span style="color: #268bd2;">ResTable_config</span>::isBetterThan(<span style="color: #859900;">const</span> <span style="color: #b58900;">ResTable_config</span>&amp; o,
                                    <span style="color: #859900;">const</span> <span style="color: #b58900;">ResTable_config</span>* requested) <span style="color: #859900;">const</span> {
@@ -1133,7 +1014,7 @@ r 始终偏向 l (h&gt;l), 且 h-l 越大, 越偏向 l
             <span style="color: #586e75; font-style: italic;">//    </span><span style="color: #586e75; font-style: italic;">screenWidthDp, screenHeightDp, o.screenWidthDp, o.screenHeightDp,</span>
             <span style="color: #586e75; font-style: italic;">//    </span><span style="color: #586e75; font-style: italic;">requested-&gt;screenWidthDp, requested-&gt;screenHeightDp, myDelta, otherDelta);</span>
             <span style="color: #859900;">if</span> (myDelta != otherDelta) {
-                <span style="color: #859900;">return</span> myDelta &lt; <span style="color: #b58900;">otherDelta</span>;
+                <span style="color: #859900;">return</span> myDelta &lt; otherDelta;
             }
         }
 
@@ -1158,8 +1039,8 @@ r 始终偏向 l (h&gt;l), 且 h-l 越大, 越偏向 l
                 <span style="color: #859900;">if</span> (fixedMySL == fixedOSL) {
                     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">If the two are the same, but 'this' is actually</span>
                     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">undefined, then the other is really a better match.</span>
-                    <span style="color: #859900;">if</span> (mySL == 0) <span style="color: #859900;">return</span> false;
-                    <span style="color: #859900;">return</span> true;
+                    <span style="color: #859900;">if</span> (mySL == 0) <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
+                    <span style="color: #859900;">return</span> <span style="color: #2aa198;">true</span>;
                 }
                 <span style="color: #859900;">if</span> (fixedMySL != fixedOSL) {
                     <span style="color: #859900;">return</span> fixedMySL &gt; fixedOSL;
@@ -1195,12 +1076,12 @@ r 始终偏向 l (h&gt;l), 且 h-l 越大, 越偏向 l
                 <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">TODO - remove 160 constants</span>
                 <span style="color: #b58900;">int</span> <span style="color: #268bd2;">h</span> = (density?density:160);
                 <span style="color: #b58900;">int</span> <span style="color: #268bd2;">l</span> = (o.density?o.density:160);
-                <span style="color: #b58900;">bool</span> <span style="color: #268bd2;">bImBigger</span> = true;
+                <span style="color: #b58900;">bool</span> <span style="color: #268bd2;">bImBigger</span> = <span style="color: #2aa198;">true</span>;
                 <span style="color: #859900;">if</span> (l &gt; h) {
                     <span style="color: #b58900;">int</span> <span style="color: #268bd2;">t</span> = h;
                     h = l;
                     l = t;
-                    bImBigger = false;
+                    bImBigger = <span style="color: #2aa198;">false</span>;
                 }
 
                 <span style="color: #b58900;">int</span> <span style="color: #268bd2;">reqValue</span> = (requested-&gt;density?requested-&gt;density:160);
@@ -1233,13 +1114,13 @@ r 始终偏向 l (h&gt;l), 且 h-l 越大, 越偏向 l
                     requested-&gt;inputFlags &amp; MASK_KEYSHIDDEN;
                 <span style="color: #859900;">if</span> (reqKeysHidden) {
 
-                    <span style="color: #859900;">if</span> (<span style="color: #dc322f;">!</span>keysHidden) <span style="color: #859900;">return</span> false;
-                    <span style="color: #859900;">if</span> (<span style="color: #dc322f;">!</span>oKeysHidden) <span style="color: #859900;">return</span> true;
+                    <span style="color: #859900;">if</span> (<span style="color: #dc322f;">!</span>keysHidden) <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
+                    <span style="color: #859900;">if</span> (<span style="color: #dc322f;">!</span>oKeysHidden) <span style="color: #859900;">return</span> <span style="color: #2aa198;">true</span>;
                     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">For compatibility, we count KEYSHIDDEN_NO as being</span>
                     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">the same as KEYSHIDDEN_SOFT.  Here we disambiguate</span>
                     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">these by making an exact match more specific.</span>
-                    <span style="color: #859900;">if</span> (reqKeysHidden == keysHidden) <span style="color: #859900;">return</span> true;
-                    <span style="color: #859900;">if</span> (reqKeysHidden == oKeysHidden) <span style="color: #859900;">return</span> false;
+                    <span style="color: #859900;">if</span> (reqKeysHidden == keysHidden) <span style="color: #859900;">return</span> <span style="color: #2aa198;">true</span>;
+                    <span style="color: #859900;">if</span> (reqKeysHidden == oKeysHidden) <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
                 }
             }
 
@@ -1250,8 +1131,8 @@ r 始终偏向 l (h&gt;l), 且 h-l 越大, 越偏向 l
                     requested-&gt;inputFlags &amp; MASK_NAVHIDDEN;
                 <span style="color: #859900;">if</span> (reqNavHidden) {
 
-                    <span style="color: #859900;">if</span> (<span style="color: #dc322f;">!</span>navHidden) <span style="color: #859900;">return</span> false;
-                    <span style="color: #859900;">if</span> (<span style="color: #dc322f;">!</span>oNavHidden) <span style="color: #859900;">return</span> true;
+                    <span style="color: #859900;">if</span> (<span style="color: #dc322f;">!</span>navHidden) <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
+                    <span style="color: #859900;">if</span> (<span style="color: #dc322f;">!</span>oNavHidden) <span style="color: #859900;">return</span> <span style="color: #2aa198;">true</span>;
                 }
             }
 
@@ -1283,7 +1164,7 @@ r 始终偏向 l (h&gt;l), 且 h-l 越大, 越偏向 l
                 otherDelta += requested-&gt;screenHeight - o.screenHeight;
             }
             <span style="color: #859900;">if</span> (myDelta != otherDelta) {
-                <span style="color: #859900;">return</span> myDelta &lt; <span style="color: #b58900;">otherDelta</span>;
+                <span style="color: #859900;">return</span> myDelta &lt; otherDelta;
             }
         }
 
@@ -1298,82 +1179,79 @@ r 始终偏向 l (h&gt;l), 且 h-l 越大, 越偏向 l
             }
         }
 
-        <span style="color: #859900;">return</span> false;
+        <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
     }
     <span style="color: #859900;">return</span> isMoreSpecificThan(o);
 }
 </pre>
-
-
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-4-9-3" class="outline-5">
+<h5 id="sec-1-4-9-3"><span class="section-number-5">1.4.9.3</span> isMoreSpecificThan'</h5>
+<div class="outline-text-5" id="text-1-4-9-3">
+<p>
+select more specific resource package from resource packages
+(e.g. when there are overlay packages)
+</p>
+</div>
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-4-8-3" class="outline-5">
-<h5 id="sec-1-4-8-3"><span class="section-number-5">1.4.8.3</span> isMoreSpecificThan'</h5>
-<div class="outline-text-5" id="text-1-4-8-3">
-
-<p>  select more specific resource package from resource packages
-  (e.g. when there are overlay packages)
-</p></div>
-</div>
-
-</div>
-
-<div id="outline-container-1-4-9" class="outline-4">
-<h4 id="sec-1-4-9"><span class="section-number-4">1.4.9</span> misc</h4>
-<div class="outline-text-4" id="text-1-4-9">
-
-
-</div>
-
-<div id="outline-container-1-4-9-1" class="outline-5">
-<h5 id="sec-1-4-9-1"><span class="section-number-5">1.4.9.1</span> get application resources?</h5>
-<div class="outline-text-5" id="text-1-4-9-1">
-
-<ol>
+<div id="outline-container-sec-1-4-10" class="outline-4">
+<h4 id="sec-1-4-10"><span class="section-number-4">1.4.10</span> misc</h4>
+<div class="outline-text-4" id="text-1-4-10">
+</div><div id="outline-container-sec-1-4-10-1" class="outline-5">
+<h5 id="sec-1-4-10-1"><span class="section-number-5">1.4.10.1</span> get application resources?</h5>
+<div class="outline-text-5" id="text-1-4-10-1">
+<ol class="org-ol">
 <li>use PackageContext
 
 <p>
-   Context.createPackageContext
-</p></li>
+Context.createPackageContext
+</p>
+</li>
 <li>use PackageManager
 
 <p>
-   PackageManager.getResourceForApplication
-   PackageManager.getText
-   &hellip;
-</p></li>
+PackageManager.getResourceForApplication
+PackageManager.getText
+&#x2026;
+</p>
+</li>
 </ol>
-
 
 <p>
 两种做法在底层的工作原理都是一样的:
 </p>
+
 <p>
 依赖于 <code>Resources r = mContext.mMainThread.getTopLevelResources</code>
-</p></div>
+</p>
+</div>
+</div>
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-5" class="outline-3">
+<div id="outline-container-sec-1-5" class="outline-3">
 <h3 id="sec-1-5"><span class="section-number-3">1.5</span> Overlay</h3>
 <div class="outline-text-3" id="text-1-5">
-
-<p>Overlay 是 ics 对 AssetManager 的一个扩展, 使得 app 其可以使用
+<p>
+Overlay 是 ics 对 AssetManager 的一个扩展, 使得 app 其可以使用
 `framework-res.apk 和 app 自身的 resource` 之外的 resource. 但是, 我们通过
 <code>AssetManager.addAssetPath()</code> 不是已经使 app 使用任意其他 resource package 了么?
 </p>
+
 <p>
 Yes, 但有一个问题:
 </p>
+
 <p>
 Q: 如何保证`任意其他`的 resource package 与 base package 使用的 resID 是一致的?
 即: 在 base package 和 resource package 中, R.string.foo 对应的 resID 必须是一样
 的.
 </p>
+
 <p>
 A: 由于 resID 是 aapt 根据 res/ 中总体的 resource 情况动态分配的, 所以如何想保证
 base package 和 resource package 生成的 resID 是一致的, 必须保证两个package 的
@@ -1381,58 +1259,50 @@ resource 的情况是一样的, 即 res 目录下除了各个 resource 的值可
 须是一致的, 包括定义的 resource 及 它们在资源文件中的位置等.
 </p>
 
+
 <p>
-Q: 如果我只是想在 resource package 中重新定义几个资源而不是所有资源&hellip;怎么办?
+Q: 如果我只是想在 resource package 中重新定义几个资源而不是所有资源&#x2026;怎么办?
 </p>
+
 <p>
 A: Overlay 就是为了解决这个问题, 换句话说, overlay 不是为了解决 app 使用其它
 resource package 的问题, 而是为了解决 app 如何使用一个 resID 与 base package 不
 一致的 resource package 的问题, 通过 overlay, resource package 的维护变得简单很
 多.
 </p>
-
 </div>
 
-<div id="outline-container-1-5-1" class="outline-4">
+<div id="outline-container-sec-1-5-1" class="outline-4">
 <h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> 生成 Overlay package</h4>
 <div class="outline-text-4" id="text-1-5-1">
-
-<p>Overlay package 与普通的 package 只有一点不同:
+<p>
+Overlay package 与普通的 package 只有一点不同:
 </p>
+
 <p>
 Overlay package 的所有 resID 都为0x00xxxxxx, 即: package id 为 0. 当用户调用
 addAssetPath 时, 系统会根据这个值判断它为 overlay package, 然后才会为它生成 idmap
 </p>
 </div>
-
 </div>
-
-<div id="outline-container-1-5-2" class="outline-4">
+<div id="outline-container-sec-1-5-2" class="outline-4">
 <h4 id="sec-1-5-2"><span class="section-number-4">1.5.2</span> idmap</h4>
-<div class="outline-text-4" id="text-1-5-2">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-5-3" class="outline-4">
+<div id="outline-container-sec-1-5-3" class="outline-4">
 <h4 id="sec-1-5-3"><span class="section-number-4">1.5.3</span> Overlay 的处理过程</h4>
 <div class="outline-text-4" id="text-1-5-3">
-
-<p>Overlay package 被使用之前, 需要确保 idmap 已经生成并且不是 stale 的, 一般情况下,
+<p>
+Overlay package 被使用之前, 需要确保 idmap 已经生成并且不是 stale 的, 一般情况下,
 PackageManager 会去处理这件事, 但也不排除 AssetManager 在 addAssetPath 时也会处
 理, 例如 AssetManager 在加载 framework-res.apk 时对 framework-res overlay 的处
 理:
 </p>
-
 </div>
 
-<div id="outline-container-1-5-3-1" class="outline-5">
+<div id="outline-container-sec-1-5-3-1" class="outline-5">
 <h5 id="sec-1-5-3-1"><span class="section-number-5">1.5.3.1</span> 加载</h5>
 <div class="outline-text-5" id="text-1-5-3-1">
-
-
-
+<div class="org-src-container">
 
 <pre class="src src-java"><span style="color: #859900;">if</span> (strncmp(path.string(), <span style="color: #2aa198;">"/system/framework/"</span>, 18) == 0):
   overlayPath=<span style="color: #2aa198;">"/vendor/overlay/system/framework-res.apk"</span>;
@@ -1443,25 +1313,23 @@ PackageManager 会去处理这件事, 但也不排除 AssetManager 在 addAssetP
     createIdmapFileLocked(ap.path, oap.path, oap.idmap);
   mAssetPaths.add(oap);
 </pre>
-
+</div>
 
 <p>
 overlay package 被加入到 mAssetPaths 后, AssetManager 在生成 ResTable 是就会根
 据 oap.idmap 知道这是一个 overlay package 了.
-</p></div>
-
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-5-3-2" class="outline-5">
+<div id="outline-container-sec-1-5-3-2" class="outline-5">
 <h5 id="sec-1-5-3-2"><span class="section-number-5">1.5.3.2</span> 解析</h5>
 <div class="outline-text-5" id="text-1-5-3-2">
-
-
-
+<div class="org-src-container">
 
 <pre class="src src-java"><span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">ResTable.add</span>
 ResTable::add(<span style="color: #859900;">const</span> <span style="color: #b58900;">void</span>* data, <span style="color: #b58900;">size_t</span> <span style="color: #268bd2;">size</span>, <span style="color: #b58900;">void</span>* cookie, Asset* asset, <span style="color: #b58900;">bool</span> <span style="color: #268bd2;">copyData</span>, <span style="color: #859900;">const</span> <span style="color: #b58900;">Asset</span>* idmap)
-  <span style="color: #859900;">if</span> idmap!=null:
+  <span style="color: #859900;">if</span> idmap!=<span style="color: #2aa198;">null</span>:
     header-&gt;resourceIDMap = idmap; <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">ResTable &#20013; package &#30340; header &#20445;&#23384;&#30528;&#35813; overlay package &#30340; idmap</span>
   ...
   <span style="color: #859900;">if</span> (idmap != NULL):
@@ -1469,23 +1337,21 @@ ResTable::add(<span style="color: #859900;">const</span> <span style="color: #b5
     parsePackage((ResTable_package*)chunk, header, idmap_id);
       pkg_id = idmap_id != 0 ? idmap_id : dtohl(pkg-&gt;id);
       <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">GOT IT! &#34429;&#28982; Overlay package &#20013;&#20445;&#23384;&#30340; pkg id &#26159; 0, &#20294; ResTable &#22312;&#35299;&#26512; overlay package &#26102;&#20250;&#25226;&#23427;&#21152;&#21040;&#23427;&#23545;&#24212;&#30340; base package &#30340; package group &#20013;!</span>
-
 </pre>
-
+</div>
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-5-3-3" class="outline-5">
+<div id="outline-container-sec-1-5-3-3" class="outline-5">
 <h5 id="sec-1-5-3-3"><span class="section-number-5">1.5.3.3</span> 查询</h5>
 <div class="outline-text-5" id="text-1-5-3-3">
-
-<p>因为 Overlay package 的 pkg id 在 ResTable::parsePackage 时被重写为 base
+<p>
+因为 Overlay package 的 pkg id 在 ResTable::parsePackage 时被重写为 base
 package 的 pkg id, 所以查找 base package 的 resID 时取得的 package group 也会包
 含该 overlay package, 在查找 resID 时, overlay package 与 base package 唯一不同
 的一点是:
 </p>
-
+<div class="org-src-container">
 
 <pre class="src src-java"><span style="color: #859900;">for</span> pacakge in pacakge_group:
   <span style="color: #859900;">if</span> (<span style="color: #859900;">package</span>-&gt;header-&gt;resourceIDMap):
@@ -1500,81 +1366,72 @@ package 的 pkg id, 所以查找 base package 的 resID 时取得的 package gro
         E = Res_GETENTRY(overlayResID);
   ...
 </pre>
-
+</div>
+</div>
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-5-4" class="outline-4">
+<div id="outline-container-sec-1-5-4" class="outline-4">
 <h4 id="sec-1-5-4"><span class="section-number-4">1.5.4</span> Overlay 机制的缺陷</h4>
 <div class="outline-text-4" id="text-1-5-4">
-
-<p>Overlay 机制主要是通过 idmap 完成 `original ID-&gt;overlay ID` 的映射而起作用的, 但
+<p>
+Overlay 机制主要是通过 idmap 完成 `original ID-&gt;overlay ID` 的映射而起作用的, 但
 是, 如果资源查找过程中涉及到 reference 时, idmap 提供的这种单向的 map 无法起作用,
 例如, 以 LayoutInflater 为例:
 </p>
+
 <p>
 假设通过 idmap 找到了这个 overlay package 中定义的 layout:
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-xml">&lt;<span style="color: #268bd2;">LinearLayout</span>
     <span style="color: #859900;">android</span>:<span style="color: #268bd2;">id</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@+id/orig_id</span><span style="color: #2aa198;">"</span>
     <span style="color: #859900;">android</span>:<span style="color: #268bd2;">style</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@R.style.orig_style</span><span style="color: #2aa198;">"</span>&gt;
   &lt;/<span style="color: #268bd2;">LinearLayout</span>&gt;
 </pre>
-
+</div>
 
 <p>
 由于 xml 中的引用在 aapt 编译阶段就会被翻译为对应的 resID, 则这个 xml 实际上为:
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-xml">&lt;<span style="color: #268bd2;">LinearLayout</span>
     <span style="color: #859900;">android</span>:<span style="color: #268bd2;">id</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@00yyyyyy</span><span style="color: #2aa198;">"</span>
     <span style="color: #859900;">android</span>:<span style="color: #268bd2;">style</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@00xxxxxx</span><span style="color: #2aa198;">"</span>&gt;
   &lt;/<span style="color: #268bd2;">LinearLayout</span>&gt;
 </pre>
-
+</div>
 
 <p>
 其中 @00xxxxxx 是 overlay package 中定义的 orig<sub>style</sub>, AssetManager 在尝试获取这
 个 resID 的值是直接失败, 因为这种 id 在 AssetManager 看来不是一个合法的 resID
-&hellip;
+&#x2026;
 </p>
+
 <p>
 更严重的问题是, orig package 中定义的 view id 和 overlay 中定义的 view id 不同,
 会导致 findViewById 失败.
 </p>
 </div>
 </div>
-
 </div>
-
-<div id="outline-container-1-6" class="outline-3">
+<div id="outline-container-sec-1-6" class="outline-3">
 <h3 id="sec-1-6"><span class="section-number-3">1.6</span> Various resouce</h3>
 <div class="outline-text-3" id="text-1-6">
-
-
-</div>
-
-<div id="outline-container-1-6-1" class="outline-4">
+</div><div id="outline-container-sec-1-6-1" class="outline-4">
 <h4 id="sec-1-6-1"><span class="section-number-4">1.6.1</span> attrs.xml, styles.xml, themes.xml</h4>
 <div class="outline-text-4" id="text-1-6-1">
-
-
-</div>
-
-<div id="outline-container-1-6-1-1" class="outline-5">
+</div><div id="outline-container-sec-1-6-1-1" class="outline-5">
 <h5 id="sec-1-6-1-1"><span class="section-number-5">1.6.1.1</span> R.attr</h5>
 <div class="outline-text-5" id="text-1-6-1-1">
-
-<p>attrs.xml 中定义一个资源的例子:
+<p>
+attrs.xml 中定义一个资源的例子:
 </p>
-
+<div class="org-src-container">
 
 <pre class="src src-xml">&lt;<span style="color: #268bd2;">attr</span> <span style="color: #268bd2;">name</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">colorForeground</span><span style="color: #2aa198;">"</span> <span style="color: #268bd2;">format</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">color</span><span style="color: #2aa198;">"</span> /&gt;
 &lt;<span style="color: #268bd2;">attr</span> <span style="color: #268bd2;">name</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">textAppearance</span><span style="color: #2aa198;">"</span> <span style="color: #268bd2;">format</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">reference</span><span style="color: #2aa198;">"</span> /&gt;
@@ -1583,21 +1440,24 @@ package 的 pkg id, 所以查找 base package 的 resID 时取得的 package gro
   &lt;<span style="color: #268bd2;">attr</span> <span style="color: #268bd2;">name</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">progressLayout</span><span style="color: #2aa198;">"</span> <span style="color: #268bd2;">format</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">reference</span><span style="color: #2aa198;">"</span> /&gt;
 &lt;/<span style="color: #268bd2;">declare-styleable</span>&gt;
 </pre>
-
+</div>
 
 <p>
 Q: 这个例子中定义的 `attr` (通过 R.attr 访问) 与 strings.xml 或 config.xml 中定义的
 R.string 有何不同?
 </p>
+
 <p>
 A: attr 统统没有定义值, 那访问 R.attr.textAppearance 时它对应的值是多少?  取决
 了 attr 使用的 `Context`
 </p>
+
 <p>
 attrs.xml 中 <code>declare-styleable</code> 其实就是定义了一个该 `attr` 能出现的
 `Context`,  例如 framework-res 中定义的 `Context` 有:
 </p>
-<ul>
+
+<ul class="org-ul">
 <li><b>Theme</b>
 </li>
 <li>ViewGroup<sub>Layout</sub>
@@ -1608,24 +1468,20 @@ attrs.xml 中 <code>declare-styleable</code> 其实就是定义了一个该 `att
 </li>
 <li>View
 </li>
-<li>&hellip;.
+<li>&#x2026;.
 </li>
 </ul>
-
-
 </div>
-
 </div>
-
-<div id="outline-container-1-6-1-2" class="outline-5">
+<div id="outline-container-sec-1-6-1-2" class="outline-5">
 <h5 id="sec-1-6-1-2"><span class="section-number-5">1.6.1.2</span> R.style</h5>
 <div class="outline-text-5" id="text-1-6-1-2">
-
-<p>所谓 Style, 不过是一群 <code>attr-&gt;value</code> 的集合, 这与高级语言的结构体很类似: Style
+<p>
+所谓 Style, 不过是一群 <code>attr-&gt;value</code> 的集合, 这与高级语言的结构体很类似: Style
 也是一种的 `value`
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-xml">  &lt;<span style="color: #268bd2;">style</span> <span style="color: #268bd2;">name</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">Widget.TextView.ListSeparator</span><span style="color: #2aa198;">"</span>&gt;
       &lt;<span style="color: #268bd2;">item</span> <span style="color: #268bd2;">name</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">android:background</span><span style="color: #2aa198;">"</span>&gt;@android:drawable/dark_header_dither&lt;/<span style="color: #268bd2;">item</span>&gt;
@@ -1642,13 +1498,11 @@ Style &#30340;&#21517;&#23383;&#20063;&#26263;&#31034;&#20102;&#36825;&#20010; s
 &#25552;&#20379;&#19968;&#31181;&#21487;&#20570;&#20026; List Seperator &#30340; TextView &#26679;&#24335;. &#20294; Style &#21517;&#23383;&#21482;&#26159;&#19968;&#20010;&#26263;&#31034;, &#24182;&#19981;&#26159;&#19968;&#20010;&#24378;&#21046;&#30340;&#35201;&#27714;, &#29992;&#25143;&#21487;&#20197;&#23558; ActionBar &#30340; style &#35774;&#20026;
 Widget.TextView.ListSeparator, &#20294;&#22240;&#20026; ActionBar &#26412;&#36523;&#26377;&#21487;&#33021;&#22312; obtainStyledAttributes &#26102;&#20174;&#35813; style &#20013;&#26681;&#25454;&#33719;&#21462;&#19981;&#21462;&#23427;&#24819;&#35201;&#30340;&#23646;&#24615;, &#25152;&#20197;&#21487;&#33021;
 &#23548;&#33268;&#36825;&#31181; style &#27809;&#26377;&#25928;&#26524;.
-
 </pre>
-
-<ul>
-<li id="sec-1-6-1-2-1">R.theme<br/>
-
-
+</div>
+</div>
+<ol class="org-ol"><li>R.theme<br  /><div class="outline-text-6" id="text-1-6-1-2-1">
+<div class="org-src-container">
 
 <pre class="src src-xml">&lt;<span style="color: #268bd2;">style</span> <span style="color: #268bd2;">name</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">Theme.Holo.Light.Dialog</span><span style="color: #2aa198;">"</span>&gt;
   &lt;<span style="color: #268bd2;">item</span> <span style="color: #268bd2;">name</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">android:windowFrame</span><span style="color: #2aa198;">"</span>&gt;@null&lt;/<span style="color: #268bd2;">item</span>&gt;
@@ -1674,38 +1528,32 @@ Widget.TextView.ListSeparator, &#20294;&#22240;&#20026; ActionBar &#26412;&#3652
   &lt;<span style="color: #268bd2;">item</span> <span style="color: #268bd2;">name</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">listPreferredItemPaddingRight</span><span style="color: #2aa198;">"</span>&gt;16dip&lt;/<span style="color: #268bd2;">item</span>&gt;
 &lt;/<span style="color: #268bd2;">style</span>&gt;
 </pre>
-
+</div>
 
 <p>
 themes.xml 是 styles.xml 的特例, 它有两点需要注意:
-</p><ol>
+</p>
+<ol class="org-ol">
 <li>解析 TYPE<sub>ATTRIBUTE</sub> 资源 (具体包括 解析 xml 中 ? 或 obtainStyledAttributes 中 defStyle)
 </li>
 <li>根据解析结果提供默认 style
 </li>
 </ol>
 
-
-
-<div style="text-align: center">
-<p>ListView, ImageView, TextView, ActionBar 等会在代码中或 xml 中会通过 TYPE<sub>ATTRIBUTE</sub> 类型的
+<div class="center">
+<p>
+ListView, ImageView, TextView, ActionBar 等会在代码中或 xml 中会通过 TYPE<sub>ATTRIBUTE</sub> 类型的
 资源引用一个默认的 style, 只有 theme 可以处理这种类型的资源的解析, 通过这种解析,
 theme 就可以给它们提供一个默认 style,
 </p>
 </div>
-
-</li>
-</ul>
 </div>
-
+</li></ol>
 </div>
-
-<div id="outline-container-1-6-1-3" class="outline-5">
+<div id="outline-container-sec-1-6-1-3" class="outline-5">
 <h5 id="sec-1-6-1-3"><span class="section-number-5">1.6.1.3</span> 访问 attr</h5>
 <div class="outline-text-5" id="text-1-6-1-3">
-
-
-
+<div class="org-src-container">
 
 <pre class="src src-xml">&lt;<span style="color: #268bd2;">ImageView</span>
     <span style="color: #859900;">android</span>:<span style="color: #268bd2;">style</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@style/my_style</span><span style="color: #2aa198;">"</span>
@@ -1717,13 +1565,13 @@ theme 就可以给它们提供一个默认 style,
        <span style="color: #859900;">android</span>:<span style="color: #268bd2;">layout_width</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">wrap_content</span><span style="color: #2aa198;">"</span>&gt;
 &lt;/<span style="color: #268bd2;">style</span>&gt;
 </pre>
-
+</div>
 
 <p>
 因为 style 只是 <code>attr-&gt;value</code> 的集合, 我们可以将 xml 展开为:
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-xml">&lt;<span style="color: #268bd2;">ImageView</span>
     <span style="color: #859900;">android</span>:<span style="color: #268bd2;">layout_height</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">wrap_content</span><span style="color: #2aa198;">"</span>
@@ -1731,41 +1579,45 @@ theme 就可以给它们提供一个默认 style,
     <span style="color: #859900;">android</span>:<span style="color: #268bd2;">src</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/test</span><span style="color: #2aa198;">"</span>&gt;
 &lt;/<span style="color: #268bd2;">ImageView</span>&gt;
 </pre>
-
+</div>
 
 <p>
 那么在该 ImageView 的 context 下, R.attr.src 的值为 <code>@drawable/test</code>, 而
 R.attr.layout<sub>width</sub> 的值为 <code>wrap_content</code>.
 </p>
+
 <p>
 在代码中, 获取 attr 的值是通过:
 </p>
+
 <p>
-<code>TypedArray obtainStyledAttributes(AttributeSet set,int[] attrs, int defStyleAttr, int defStyleRes)</code>
+<code>TypedArray obtainStyledAttributes(AttributeSet set,int[] attrs, int
+defStyleAttr, int defStyleRes)</code>
 </p>
+
 <p>
 其中:
 </p>
-<ul>
+
+<ul class="org-ul">
 <li>set
 </li>
 </ul>
 
-
 <p>
 作用类似于 `Context`, 因为它包含有该 xml tag 下所有的属性的key-value 对.
 </p>
-<ul>
+
+<ul class="org-ul">
 <li>defStyleAttr
 </li>
 </ul>
-
 
 <p>
 这个属性相当于将 xml 修改为:
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-xml">&lt;<span style="color: #268bd2;">ImageView</span>
     <span style="color: #859900;">android</span>:<span style="color: #268bd2;">style</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">?R.attr.defStyleAttr</span><span style="color: #2aa198;">"</span>
@@ -1774,19 +1626,18 @@ R.attr.layout<sub>width</sub> 的值为 <code>wrap_content</code>.
     <span style="color: #859900;">android</span>:<span style="color: #268bd2;">src</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/test</span><span style="color: #2aa198;">"</span>&gt;
 &lt;/<span style="color: #268bd2;">ImageView</span>&gt;
 </pre>
+</div>
 
-
-<ul>
+<ul class="org-ul">
 <li>defStyleRes
 </li>
 </ul>
-
 
 <p>
 这个属性相当于将 xml 修改为:
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-xml">&lt;<span style="color: #268bd2;">ImageView</span>
     <span style="color: #859900;">android</span>:<span style="color: #268bd2;">style</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@R.style.defStyleAttr</span><span style="color: #2aa198;">"</span>
@@ -1795,76 +1646,51 @@ R.attr.layout<sub>width</sub> 的值为 <code>wrap_content</code>.
     <span style="color: #859900;">android</span>:<span style="color: #268bd2;">src</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@drawable/test</span><span style="color: #2aa198;">"</span>&gt;
 &lt;/<span style="color: #268bd2;">ImageView</span>&gt;
 </pre>
-
+</div>
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-6-1-4" class="outline-5">
+<div id="outline-container-sec-1-6-1-4" class="outline-5">
 <h5 id="sec-1-6-1-4"><span class="section-number-5">1.6.1.4</span> ? vs. @</h5>
-<div class="outline-text-5" id="text-1-6-1-4">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-6-1-5" class="outline-5">
+<div id="outline-container-sec-1-6-1-5" class="outline-5">
 <h5 id="sec-1-6-1-5"><span class="section-number-5">1.6.1.5</span> How to define a STYLE</h5>
-<div class="outline-text-5" id="text-1-6-1-5">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-6-1-6" class="outline-5">
+<div id="outline-container-sec-1-6-1-6" class="outline-5">
 <h5 id="sec-1-6-1-6"><span class="section-number-5">1.6.1.6</span> To summaries:</h5>
 <div class="outline-text-5" id="text-1-6-1-6">
-
-<p>attr 是最特殊的一类 resouce:
-</p><ul>
+<p>
+attr 是最特殊的一类 resouce:
+</p>
+<ul class="org-ul">
 <li>它的值有上下文的区别,
 
 <p>
-  这个特性决定了它可以用来定义各种 xml tag 的 `属性`
-</p></li>
+这个特性决定了它可以用来定义各种 xml tag 的 `属性`
+</p>
+</li>
 <li>theme 可以通过 TYPE<sub>ATTRIBUTE</sub> 类型的资源提供默认 style
 </li>
 </ul>
-
 </div>
 </div>
-
 </div>
 
-<div id="outline-container-1-6-2" class="outline-4">
+<div id="outline-container-sec-1-6-2" class="outline-4">
 <h4 id="sec-1-6-2"><span class="section-number-4">1.6.2</span> config.xml</h4>
-<div class="outline-text-4" id="text-1-6-2">
-
 </div>
-
-</div>
-
-<div id="outline-container-1-6-3" class="outline-4">
+<div id="outline-container-sec-1-6-3" class="outline-4">
 <h4 id="sec-1-6-3"><span class="section-number-4">1.6.3</span> ids.xml</h4>
-<div class="outline-text-4" id="text-1-6-3">
-
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-7" class="outline-3">
+<div id="outline-container-sec-1-7" class="outline-3">
 <h3 id="sec-1-7"><span class="section-number-3">1.7</span> Theme</h3>
 <div class="outline-text-3" id="text-1-7">
-
-
-</div>
-
-<div id="outline-container-1-7-1" class="outline-4">
+</div><div id="outline-container-sec-1-7-1" class="outline-4">
 <h4 id="sec-1-7-1"><span class="section-number-4">1.7.1</span> Theme 三板斧:</h4>
 <div class="outline-text-4" id="text-1-7-1">
-
-<ul>
+<ul class="org-ul">
 <li>Theme.applyStyle
 </li>
 <li>Theme.obtainStyledAttributes
@@ -1872,20 +1698,18 @@ R.attr.layout<sub>width</sub> 的值为 <code>wrap_content</code>.
 <li>Theme.resolveAttribute
 </li>
 </ul>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-7-2" class="outline-4">
+<div id="outline-container-sec-1-7-2" class="outline-4">
 <h4 id="sec-1-7-2"><span class="section-number-4">1.7.2</span> Example</h4>
 <div class="outline-text-4" id="text-1-7-2">
-
-<p>MyView 想要获得当前默认 theme 下 attribute 为 R.attr.test<sub>style</sub> 的 style 中
+<p>
+MyView 想要获得当前默认 theme 下 attribute 为 R.attr.test<sub>style</sub> 的 style 中
    定义的 test<sub>attr</sub> 值.
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-xml">&lt;<span style="color: #268bd2;">resources</span>&gt;
   &lt;<span style="color: #268bd2;">style</span> <span style="color: #268bd2;">name</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">TestTheme</span><span style="color: #2aa198;">"</span> <span style="color: #268bd2;">parent</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">android:Theme.Holo</span><span style="color: #2aa198;">"</span>&gt;
@@ -1896,13 +1720,13 @@ R.attr.layout<sub>width</sub> 的值为 <code>wrap_content</code>.
   &lt;/<span style="color: #268bd2;">style</span>&gt;
 &lt;/<span style="color: #268bd2;">resources</span>&gt;
 </pre>
-
+</div>
 
 <p>
 或
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-xml">&lt;<span style="color: #268bd2;">resources</span>&gt;
   &lt;<span style="color: #268bd2;">style</span> <span style="color: #268bd2;">name</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">TestTheme</span><span style="color: #2aa198;">"</span> <span style="color: #268bd2;">parent</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">android:Theme.Holo</span><span style="color: #2aa198;">"</span>&gt;
@@ -1914,166 +1738,143 @@ R.attr.layout<sub>width</sub> 的值为 <code>wrap_content</code>.
   &lt;/<span style="color: #268bd2;">style</span>&gt;
 &lt;/<span style="color: #268bd2;">resources</span>&gt;
 </pre>
+</div>
 
-
-<ol>
+<ol class="org-ol">
 <li>方法一
-
-
+<div class="org-src-container">
 
 <pre class="src src-java"><span style="color: #b58900;">TypedValue</span> <span style="color: #268bd2;">outValue</span>;
-getTheme().resolveAttribute(R.attr.test_style, outValue, true);
+getTheme().resolveAttribute(R.attr.test_style, outValue, <span style="color: #2aa198;">true</span>);
 <span style="color: #b58900;">int</span> <span style="color: #268bd2;">resId</span>=outValue.resouce_id;
-getTheme().applyStyle(resId, true)
-getTheme().resolveAttribute(R.attr.test_attr, outValue2, true);
+getTheme().applyStyle(resId, <span style="color: #2aa198;">true</span>)
+getTheme().resolveAttribute(R.attr.test_attr, outValue2, <span style="color: #2aa198;">true</span>);
 <span style="color: #b58900;">int</span> <span style="color: #268bd2;">width</span>=outValue2.getDimension();
 </pre>
-
-
+</div>
 </li>
+
 <li>方法二
-
-
+<div class="org-src-container">
 
 <pre class="src src-java"><span style="color: #b58900;">TypedValue</span> <span style="color: #268bd2;">outValue</span>;
-getTheme().resolveAttribute(R.attr.test_style, outValue, true);
+getTheme().resolveAttribute(R.attr.test_style, outValue, <span style="color: #2aa198;">true</span>);
 <span style="color: #b58900;">int</span> <span style="color: #268bd2;">resId</span>=outValue.resouce_id;
-<span style="color: #b58900;">TypedArray</span> <span style="color: #268bd2;">array</span>=getTheme().obtainStyledAttributes(null, <span style="color: #859900;">new</span> <span style="color: #b58900;">int</span>[] {R.attr.test_attr}, 0, resId);
+<span style="color: #b58900;">TypedArray</span> <span style="color: #268bd2;">array</span>=getTheme().obtainStyledAttributes(<span style="color: #2aa198;">null</span>, <span style="color: #859900;">new</span> <span style="color: #b58900;">int</span>[] {R.attr.test_attr}, 0, resId);
 array.getDimension(0, <span style="color: #859900;">default</span>);
 </pre>
-
-
+</div>
 </li>
+
 <li>方法三
+<div class="org-src-container">
 
-
-
-<pre class="src src-java">array=getTheme().obtainStyledAttributes(null, <span style="color: #859900;">new</span> <span style="color: #b58900;">int</span>[] {R.attr.test_attr}, R.attr.test_style, 0);
+<pre class="src src-java">array=getTheme().obtainStyledAttributes(<span style="color: #2aa198;">null</span>, <span style="color: #859900;">new</span> <span style="color: #b58900;">int</span>[] {R.attr.test_attr}, R.attr.test_style, 0);
 array.getDimension(0, <span style="color: #859900;">default</span>);
 </pre>
-
+</div>
 </li>
 </ol>
-
 
 <p>
 `style-attr-style` 可以构成一种层次化的结构, 通过方法一总是可以遍历这种层次结构, 但
 是当层次为 \(2\) 时, 用方法三更方便一些.
 </p>
+
 <p>
 另外, 如方法一中所示, 在处理这种层次结构时, getTheme().applyStyle() 实际上采用了
 一种偷懒的做法: 通过 applyStyle(style), 层次结构被变为一种平面结构, 而平面结构必
 然会导致相同的 attr 的重叠, 所以 applyStyle() 的第二个 boolean 参数决定了相同的
 attr 的覆盖关系.
-</p></div>
-</div>
-
-</div>
-
-<div id="outline-container-1-8" class="outline-3">
-<h3 id="sec-1-8"><span class="section-number-3">1.8</span> misc</h3>
-<div class="outline-text-3" id="text-1-8">
-
-
-</div>
-
-<div id="outline-container-1-8-1" class="outline-4">
-<h4 id="sec-1-8-1"><span class="section-number-4">1.8.1</span> aapt &amp; AXMLPrinter2</h4>
-<div class="outline-text-4" id="text-1-8-1">
-
-</div>
-
-</div>
-
-<div id="outline-container-1-8-2" class="outline-4">
-<h4 id="sec-1-8-2"><span class="section-number-4">1.8.2</span> aapt</h4>
-<div class="outline-text-4" id="text-1-8-2">
-
-<p>Android Asset Packaging Tool
 </p>
 </div>
+</div>
+</div>
 
-<div id="outline-container-1-8-2-1" class="outline-5">
+<div id="outline-container-sec-1-8" class="outline-3">
+<h3 id="sec-1-8"><span class="section-number-3">1.8</span> misc</h3>
+<div class="outline-text-3" id="text-1-8">
+</div><div id="outline-container-sec-1-8-1" class="outline-4">
+<h4 id="sec-1-8-1"><span class="section-number-4">1.8.1</span> aapt &amp; AXMLPrinter2</h4>
+</div>
+<div id="outline-container-sec-1-8-2" class="outline-4">
+<h4 id="sec-1-8-2"><span class="section-number-4">1.8.2</span> aapt</h4>
+<div class="outline-text-4" id="text-1-8-2">
+<p>
+Android Asset Packaging Tool
+</p>
+</div>
+<div id="outline-container-sec-1-8-2-1" class="outline-5">
 <h5 id="sec-1-8-2-1"><span class="section-number-5">1.8.2.1</span> basic usage</h5>
 <div class="outline-text-5" id="text-1-8-2-1">
-
 <blockquote>
-
-<p>aapt 不仅可以操作 resource,  实际上, 它可以操作 apk 中除了代码以外其它部分, 如
+<p>
+aapt 不仅可以操作 resource,  实际上, 它可以操作 apk 中除了代码以外其它部分, 如
 Manifest, Asset, Resource
 </p>
 </blockquote>
 
-
-<ul>
+<ul class="org-ul">
 <li>aapt package -S res/ -M AndroidManifest.xml -I android.jar -J ./
 
 <p>
-  在当前目录下根据 res/ 生成 R.java
+在当前目录下根据 res/ 生成 R.java
 </p>
 </li>
+
 <li>aapt package -S res/ -A ./asset -M AndroidManifest.xml -I android.jar -F
-  ./1.apk
+./1.apk
 
 <p>
-  生成 apk (不包含 classes.dex)
+生成 apk (不包含 classes.dex)
 </p>
 </li>
+
 <li>aapt package -S res/ -c mdpi,en -A ./asset -M AndroidManifest.xml -I android.jar -F
-  ./1.apk
+./1.apk
 
 <p>
-  生成 apk (不包含 classes.dex), 但只包含 mdpi 和 en 的资源 (对应于
-  Android.mk 中的 LOCAL<sub>AAPT</sub><sub>FLAG</sub>)
+生成 apk (不包含 classes.dex), 但只包含 mdpi 和 en 的资源 (对应于
+Android.mk 中的 LOCAL<sub>AAPT</sub><sub>FLAG</sub>)
 </p>
 </li>
+
 <li>aapt package -S res/ -A ./asset -M AndroidManifest.xml -I
-  android.jar -F ./1.apk -c zh -c mdpi
+android.jar -F ./1.apk -c zh -c mdpi
 
 <p>
-  生成的 apk 只包含 resource qualifiers 为 zh 或 mdpi 的资源
+生成的 apk 只包含 resource qualifiers 为 zh 或 mdpi 的资源
 </p>
 </li>
+
 <li>aapt dump resources xxx.apk
 
 <p>
-  显示 ResTable
-</p></li>
+显示 ResTable
+</p>
+</li>
 </ul>
-
-
 </div>
-
 </div>
-
-<div id="outline-container-1-8-2-2" class="outline-5">
+<div id="outline-container-sec-1-8-2-2" class="outline-5">
 <h5 id="sec-1-8-2-2"><span class="section-number-5">1.8.2.2</span> internal</h5>
-<div class="outline-text-5" id="text-1-8-2-2">
-
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-8-3" class="outline-4">
+<div id="outline-container-sec-1-8-3" class="outline-4">
 <h4 id="sec-1-8-3"><span class="section-number-4">1.8.3</span> framework-res.apk</h4>
 <div class="outline-text-4" id="text-1-8-3">
-
-
-</div>
-
-<div id="outline-container-1-8-3-1" class="outline-5">
+</div><div id="outline-container-sec-1-8-3-1" class="outline-5">
 <h5 id="sec-1-8-3-1"><span class="section-number-5">1.8.3.1</span> android 和 com.android.internal</h5>
 <div class="outline-text-5" id="text-1-8-3-1">
-
-<p>framework-res.apk 中包含 framework/base/core/res 下所有的 resources, 但生成的 R
+<p>
+framework-res.apk 中包含 framework/base/core/res 下所有的 resources, 但生成的 R
 文件有两个, 一个是 android.R, 一个是 com.android.internal.R, 区分的依据是
 framework/base/core/res/res/values/public.xml, 这个文件大致为:
 </p>
 
-
-
-<pre class="example">&lt;resources&gt;
+<pre class="example">
+&lt;resources&gt;
   &lt;private-symbols package="com.android.internal" /&gt;
 
 &lt;!-- ===============================================================
@@ -2091,75 +1892,74 @@ framework/base/core/res/res/values/public.xml, 这个文件大致为:
   ...
 </pre>
 
-
 <p>
 即, framework-res.apk 包含了 public 和 private 的 resources:
 </p>
-<ul>
+
+<ul class="org-ul">
 <li>public resouce
 </li>
 </ul>
-
 
 <p>
 public.xml 中包含了各个版本的 SDK 中定义的 resource , 这些 resource 的 id 不是通
 过 aapt 生成的, 而且事先在 public.xml 中指定的, 并且这些 id 被置于 android.R 中
 并被包含在 SDK 的 android.jar 中
 </p>
-<ul>
+
+<ul class="org-ul">
 <li>private resouce
 </li>
 </ul>
 
-
 <p>
 其它未在public.xml 中指定的 resource 的 ID 被置于 com.android.internal.R 中, 这
 个类在 SDK 中不存在, 只存在 framework.jar 中并被标为 <code>@hide</code>
-</p></div>
+</p>
+</div>
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-8-4" class="outline-4">
+<div id="outline-container-sec-1-8-4" class="outline-4">
 <h4 id="sec-1-8-4"><span class="section-number-4">1.8.4</span> get application resources?</h4>
 <div class="outline-text-4" id="text-1-8-4">
-
-<ol>
+<ol class="org-ol">
 <li>use PackageContext
 
 <p>
-   Context.createPackageContext
-</p></li>
+Context.createPackageContext
+</p>
+</li>
 <li>use PackageManager
 
 <p>
-   PackageManager.getResourceForApplication
-   PackageManager.getText
-   &hellip;
-</p></li>
+PackageManager.getResourceForApplication
+PackageManager.getText
+&#x2026;
+</p>
+</li>
 </ol>
-
 
 <p>
 两种做法在底层的工作原理都是一样的:
 </p>
+
 <p>
 依赖于 <code>Resources r = mContext.mMainThread.getTopLevelResources</code>
-</p></div>
-
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-8-5" class="outline-4">
+<div id="outline-container-sec-1-8-5" class="outline-4">
 <h4 id="sec-1-8-5"><span class="section-number-4">1.8.5</span> official Android README about `resource and overlay`</h4>
 <div class="outline-text-4" id="text-1-8-5">
-
-<p>This official document resides in `framework/base/libs/utils/README`
+<p>
+This official document resides in `framework/base/libs/utils/README`
 </p>
 
 
-
-
-<pre class="example">Android Utility Function Library
+<pre class="example">
+Android Utility Function Library
 ================================
 
 
@@ -2448,33 +2248,29 @@ or, formatted differently
 0x00000001  # header_block for integer; overlay IDs span 1 element
 0x00000000  #   offset == 0
 0x7f020000  #   target 0x7f030000 -&gt; overlay 0x7f020000
-
 </pre>
-
-
 </div>
-
 </div>
-
-<div id="outline-container-1-8-6" class="outline-4">
+<div id="outline-container-sec-1-8-6" class="outline-4">
 <h4 id="sec-1-8-6"><span class="section-number-4">1.8.6</span> resources.arsc</h4>
 <div class="outline-text-4" id="text-1-8-6">
-
-<p>resources.arsc 与 ResourceType.cpp 中的 ResTable 类有些对应关系: 一个 ResTable 包含多个
+<p>
+resources.arsc 与 ResourceType.cpp 中的 ResTable 类有些对应关系: 一个 ResTable 包含多个
 已经载入的 resources.arsc, 并通过 package 加以区分.
 </p>
 
 
-<p>
-<img src="2.png"  alt="2.png" />
+<div class="figure">
+<p><img src="2.png" alt="2.png" />
 </p>
+</div>
+
 <p>
 使用 <code>aapt dump resources xxx.{apk,jar}</code> 可以很直观的看到 ResTable 的树形结构:
 </p>
 
-
-
-<pre class="example">Package Groups (1)
+<pre class="example">
+Package Groups (1)
 Package Group 0 id=127 packageCount=1 name=com.sunway.test
   Package 0 id=127 name=com.sunway.test typeCount=5
     type 0 configCount=0 entryCount=0
@@ -2502,100 +2298,95 @@ Package Group 0 id=127 packageCount=1 name=com.sunway.test
         resource 0x7f040000 com.sunway.test:string/app_name: t=0x03 d=0x00000006 (s=0x0008 r=0x00)
         resource 0x7f040001 com.sunway.test:string/test: t=0x03 d=0x00000008 (s=0x0008 r=0x00)
 </pre>
-
-
 </div>
-
 </div>
-
-<div id="outline-container-1-8-7" class="outline-4">
+<div id="outline-container-sec-1-8-7" class="outline-4">
 <h4 id="sec-1-8-7"><span class="section-number-4">1.8.7</span> Preload Drawable</h4>
 <div class="outline-text-4" id="text-1-8-7">
-
-<p>Preload Drawable 机制是 zygote 针对图片内存使用的一个优化. 
+<p>
+Preload Drawable 机制是 zygote 针对图片内存使用的一个优化. 
 Zygote 进程是所有 java 进程的父进程, 在开机的早些阶段启动, 它启动后会
 调用 preloadDrawable 预先加载一些系统图片, 这些图片会置于 zygote 的
 AssetManager 的管理之下. 
 </p>
+
 <p>
 AssetManager 不是一个集中式的 service, 相反, 对于每个进程, 都会有一个
 AssetManager
 </p>
+
 <p>
 每个进程都有 AssetManager, 会导致每个应用都需要各自加载各自的资源, 但这
 种机制对于系统资源来说, 会造成内存的浪费, 因为所有系统资源对所有进程其
 实都是一样的.
 </p>
+
 <p>
 preloadDrawable 可以解决这种针对系统资源的浪费, 因为 zygote 是所有
 java 进程的父进程, linux kernel 里的 COW (copy on write) 机制决定了
 preloadDrawable 加载的资源是可以被所有 java 进程共享的. 
 </p>
+
 <p>
 UUI 中将 preloadDrawable 禁用了, 是因为 drawable cache 的存在.
 AssetManager 会维护一个 drawable cache, 通过 preloadDrawable 加载进来
 的图片会一直放在 cache 中, 导致 UUI 无法在运行时替换到系统的图片. 
 </p>
-<ul>
+
+<ul class="org-ul">
 <li>UUI 若禁用 preloadDrawable, 会导致每个进程的 AssetManager 都去加载一
-  份系统资源,浪费内存
+份系统资源,浪费内存
 </li>
 <li>UUI 若不禁用 preloadDrawable, 会导致运行时系统图片无法被 UUI 替换. 
 </li>
 </ul>
-
 
 <p>
 我们可以调整 zygote, 让它在启动预先加载 UUI 定义的图片, 而不是系统
 默认的图片, 这样似乎是可以的, 但这样无法满足 UUI 的另一个 feature: 运
 行时的主题切换. 
 </p>
+
 <p>
 当运行时切换主题时, 必定要将所有进程的 AssetManager 中的系统资源替换掉,
 而对每一个进程的`write`会触发 `copy-on-write` 中的 copy, 还是无法共享
 资源.
 </p>
 
+
 <p>
 综上, zygote 使用 `copy-on-write` 这种 trick 来共享系统资源, 但 UUI 的
 动态切换主题功能使这种 trick 无法工作. 
 </p>
+
 <p>
 解决方法
 </p>
+
 <p>
 不使用 `copy-on-write' 这种 trick, 而是使用显式的 shared mmap 来共享系
 统图片, 不过这种方式可能难以实现, 因为 dvm 是在 dalvik heap 中分配图片
 内存的, 我们可能没有办法让它工作在其他的 vma. 
 </p>
-
 </div>
 
-<div id="outline-container-1-8-7-1" class="outline-5">
+<div id="outline-container-sec-1-8-7-1" class="outline-5">
 <h5 id="sec-1-8-7-1"><span class="section-number-5">1.8.7.1</span> Resource drawable cache</h5>
-<div class="outline-text-5" id="text-1-8-7-1">
-
 </div>
 </div>
 
-</div>
-
-<div id="outline-container-1-8-8" class="outline-4">
+<div id="outline-container-sec-1-8-8" class="outline-4">
 <h4 id="sec-1-8-8"><span class="section-number-4">1.8.8</span> mipmap drawable</h4>
-<div class="outline-text-4" id="text-1-8-8">
-
 </div>
 </div>
 </div>
 </div>
-</div>
-
-<div id="postamble">
-<p class="date">Date: 2013-07-16T14:52+0800</p>
-<p class="author">Author: sunway</p>
-<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 24</p>
-<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
-
+<div id="postamble" class="status">
+<p class="author">Author: wei.sun</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2014-01-22 Wed 16:05</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.2 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

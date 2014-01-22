@@ -4,10 +4,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>JVM</title>
-<!-- 2013-12-24 Tue 14:13 -->
+<!-- 2014-01-22 Wed 16:04 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
-<meta  name="author" content="sunway" />
+<meta  name="author" content="wei.sun" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
   .title  { text-align: center; }
@@ -55,6 +55,8 @@
   pre.src-sql:before   { content: 'SQL'; }
 
   table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
   td, th { vertical-align:top;  }
   th.right  { text-align: center;  }
   th.left   { text-align: center;   }
@@ -140,19 +142,20 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. Java VM Specification</a>
+<li><a href="#sec-1">1. Java VM</a>
 <ul>
 <li><a href="#sec-1-1">1.1. String.intern()</a></li>
 <li><a href="#sec-1-2">1.2. Constant Pool</a></li>
 <li><a href="#sec-1-3">1.3. Class Loader</a></li>
 <li><a href="#sec-1-4">1.4. invokeXXX</a></li>
+<li><a href="#sec-1-5">1.5. GC</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 <div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> Java VM Specification</h2>
+<h2 id="sec-1"><span class="section-number-2">1</span> Java VM</h2>
 <div class="outline-text-2" id="text-1">
 </div><div id="outline-container-sec-1-1" class="outline-3">
 <h3 id="sec-1-1"><span class="section-number-3">1.1</span> String.intern()</h3>
@@ -571,13 +574,149 @@ contant-pool would be iterated to find the interface method, since an object can
 </div>
 </div>
 </div>
+
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> GC</h3>
+<div class="outline-text-3" id="text-1-5">
+</div><div id="outline-container-sec-1-5-1" class="outline-4">
+<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> 分代 GC</h4>
+<div class="outline-text-4" id="text-1-5-1">
+</div><div id="outline-container-sec-1-5-1-1" class="outline-5">
+<h5 id="sec-1-5-1-1"><span class="section-number-5">1.5.1.1</span> young gen</h5>
+<div class="outline-text-5" id="text-1-5-1-1">
+</div><ol class="org-ol"><li>eden<br  /></li>
+<li>survior<br  /></li></ol>
+</div>
+
+<div id="outline-container-sec-1-5-1-2" class="outline-5">
+<h5 id="sec-1-5-1-2"><span class="section-number-5">1.5.1.2</span> old gen</h5>
+<div class="outline-text-5" id="text-1-5-1-2">
+<p>
+大对象直接进入 old gen
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5-1-3" class="outline-5">
+<h5 id="sec-1-5-1-3"><span class="section-number-5">1.5.1.3</span> perm gen</h5>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5-2" class="outline-4">
+<h4 id="sec-1-5-2"><span class="section-number-4">1.5.2</span> GC 算法</h4>
+<div class="outline-text-4" id="text-1-5-2">
+</div><div id="outline-container-sec-1-5-2-1" class="outline-5">
+<h5 id="sec-1-5-2-1"><span class="section-number-5">1.5.2.1</span> mark and sweep</h5>
+<div class="outline-text-5" id="text-1-5-2-1">
+<p>
+young gen 通常使用 copy 算法
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5-2-2" class="outline-5">
+<h5 id="sec-1-5-2-2"><span class="section-number-5">1.5.2.2</span> copy</h5>
+<div class="outline-text-5" id="text-1-5-2-2">
+<p>
+old gen 通常使用 mark and sweep 算法
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5-3" class="outline-4">
+<h4 id="sec-1-5-3"><span class="section-number-4">1.5.3</span> Finalizer And Reference</h4>
+<div class="outline-text-4" id="text-1-5-3">
+</div><div id="outline-container-sec-1-5-3-1" class="outline-5">
+<h5 id="sec-1-5-3-1"><span class="section-number-5">1.5.3.1</span> finalize() 导致两次 GC</h5>
+<div class="outline-text-5" id="text-1-5-3-1">
+<p>
+<a href="http://www.fasterj.com/articles/finalizer1.shtml">http://www.fasterj.com/articles/finalizer1.shtml</a>
+</p>
+
+<ol class="org-ol">
+<li>对于有 finalize() 的类, jvm 会给每个类生成一个 FinalizerReference
+</li>
+<li>GC 时, 每个 FinalizerReference 会被检查, 若 referent 已经被
+unmarked, 则
+<ol class="org-ol">
+<li>将 referent 重新置为 marked
+</li>
+<li>将 referent enqueue 到 FinalizerQueue 中, 后面 Finalizer Thread
+会负责调用 finalize(), 并再次 unmark 该 referent
+</li>
+<li>再次 GC 时, referent 才会真正被 GC
+</li>
+</ol>
+</li>
+</ol>
+
+<p>
+Finalizer 的具体实现和使用 PhantomReference 避免 finalizer 非常类似, 只
+不过是由 jvm 维护着一个 FinalizerReference 以及一个 FinalizerQueue,并且
+调度 Finalizer Thread 在 FinalizerQueue 上阻塞(通过 remove) 以便调用
+finalizer
+</p>
+</div>
+
+<ol class="org-ol"><li>FinalizerReference<br  /></li>
+<li>Finalizer Thread<br  /></li></ol>
+</div>
+
+<div id="outline-container-sec-1-5-3-2" class="outline-5">
+<h5 id="sec-1-5-3-2"><span class="section-number-5">1.5.3.2</span> 使用 PhantomReference 避免 finalize()</h5>
+<div class="outline-text-5" id="text-1-5-3-2">
+<p>
+<a href="http://java.dzone.com/articles/finalization-and-phantom">http://java.dzone.com/articles/finalization-and-phantom</a>
+</p>
+</div>
+
+<ol class="org-ol"><li>使用 WeakReference 是否也可以?<br  /><div class="outline-text-6" id="text-1-5-3-2-1">
+<p>
+好像不行, dvm 里 GC 时处理各处 reference 的代码:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-java"><span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">clearWhiteReferences &#26159;&#23558; references &#25968;&#32452;&#20013;&#27599;&#20010; reference</span>
+<span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#36827;&#34892;&#22914;&#19979;&#22788;&#29702;: &#33509; referent &#20026; unmarked, &#21017;&#23558; reference enqueue &#21040;</span>
+<span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#30456;&#24212;&#30340; queue &#20013;</span>
+clearWhiteReferences(softReferences);
+clearWhiteReferences(weakReferences);
+
+<span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">enqueueFinalizerReferences &#20250;&#36127;&#36131;&#23558; finalizerReferences &#20013; unmarked</span>
+<span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#30340; reference &#32622;&#20110; FinalizerQueue &#20013;, &#20197;&#35843;&#24230; finalize()</span>
+enqueueFinalizerReferences(finalizerReferences);
+
+<span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#30001;&#20110; enqueueFinalizerReferences &#20250;&#35843;&#29992; referent &#34987; mark, &#36827;&#32780;</span>
+<span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#23548;&#33268;&#21487;&#33021;&#26377;&#26032;&#30340; weak, soft, phantom reference &#23545;&#35937;&#21464;&#20026; marked, &#25152;&#20197;</span>
+<span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#37325;&#26032;&#35843;&#29992;&#19968;&#20010; clearWhiteXxx</span>
+clearWhiteReferences(softReferences);
+clearWhiteReferences(weakReferences);
+
+<span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#28165;&#29702; phantomReferences</span>
+clearWhiteReferences(phantomReferences);
+</pre>
+</div>
+<p>
+由以上代码可知, weakReferences, softReferences 在 enqueue 时, 后续的
+enqueueFinalizerReferences 有可能导致 weakReferences 的 referent 重新
+变为 marked, 结果就是 weakReferences 的 queue 读取出来的
+weakReferences 有可能其 referent 并没有被 finalize &#x2026;. 不过, 若
+referent 本身并不是 finalizable, 则 enqueueFinalizerReferences 并不能
+对其产生影响, 所以这时 weakReferences, phantomReferences 应该是一样的
+</p>
+</div>
+</li></ol>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="author">Author: sunway</p>
-<p class="email">Email: <a href="mailto:sunwayforever@gmail.com">sunwayforever@gmail.com</a></p>
-<p class="date">Created: 2013-12-24 Tue 14:13</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.2 (<a href="http://orgmode.org">Org</a> mode 8.2.4)</p>
+<p class="author">Author: wei.sun</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2014-01-22 Wed 16:04</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.2 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

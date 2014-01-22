@@ -3,11 +3,11 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Android Root</title>
-<!-- 2014-01-22 Wed 16:04 -->
+<title>Android Debug</title>
+<!-- 2014-01-22 Wed 16:05 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
-<meta  name="author" content="wei.sun" />
+<meta  name="author" content="Wei Sun (孙伟)" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
   .title  { text-align: center; }
@@ -137,69 +137,154 @@ for the JavaScript code in this tag.
 </head>
 <body>
 <div id="content">
-<h1 class="title">Android Root</h1>
+<h1 class="title">Android Debug</h1>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. Android Root Howto</a>
+<li><a href="#sec-1">1. Android Debug Internals</a>
 <ul>
-<li><a href="#sec-1-1">1.1. SuperUser</a></li>
-<li><a href="#sec-1-2">1.2. Rooting tookit</a></li>
-<li><a href="#sec-1-3">1.3. After rooted, we can</a></li>
+<li><a href="#sec-1-1">1.1. hierachyviewer</a></li>
+<li><a href="#sec-1-2">1.2. ddms</a></li>
+<li><a href="#sec-1-3">1.3. adb</a></li>
+<li><a href="#sec-1-4">1.4. monkey</a></li>
+<li><a href="#sec-1-5">1.5. tombstone</a></li>
+<li><a href="#sec-1-6">1.6. uiautomator</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 <div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> Android Root Howto</h2>
+<h2 id="sec-1"><span class="section-number-2">1</span> Android Debug Internals</h2>
 <div class="outline-text-2" id="text-1">
 </div><div id="outline-container-sec-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> SuperUser</h3>
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> hierachyviewer</h3>
 <div class="outline-text-3" id="text-1-1">
-</div><div id="outline-container-sec-1-1-1" class="outline-4">
-<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> SuperUser.apk</h4>
-</div>
-<div id="outline-container-sec-1-1-2" class="outline-4">
-<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> The malicious `su'</h4>
+<p>
+hierachyviewer 在 host 端通过 socket 与手机端的 ViewServer 通信.
+ViewServer 并非开机启动, 而是需要由 host 端的 hierachyviewer 的
+startViewServer 通过 "adb shell service call window 1 i32 port" 调用
+WMS 的 startViewServer 来启动,
+</p>
+
+<p>
+ViewServer 会负责调用 ViewDebug 的相关方法来 DUMP 或 CAPTURE 等
+</p>
 </div>
 </div>
 
 <div id="outline-container-sec-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Rooting tookit</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> ddms</h3>
 <div class="outline-text-3" id="text-1-2">
-</div><div id="outline-container-sec-1-2-1" class="outline-4">
-<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> zergRush</h4>
+<p>
+ddms 通过 jdwp 控制 java 进程
+</p>
+</div>
+<div id="outline-container-sec-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> method tracing</h4>
+</div>
+<div id="outline-container-sec-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> hprof</h4>
+<div class="outline-text-4" id="text-1-2-2">
+<ul class="org-ul">
+<li>在代码中生成
+Debug.dumpHprofData()
+</li>
+<li>使用信号on-demand生成
+<pre class="example">
+$ chmod 777 /data/misc -R
+$ ps # 找到进程号
+$ kill -10 进程号 # 发送SIGQUIT信事信号给该进程，此时生成hprof信息
+$ ls /data/misc/*.hprof
+</pre>
+</li>
+<li>为了能让MAT识别android的hprof格式,需要用hprof-conv转换一下
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-1-2-3" class="outline-4">
+<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> gc</h4>
 </div>
 </div>
 
 <div id="outline-container-sec-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> After rooted, we can</h3>
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> adb</h3>
 <div class="outline-text-3" id="text-1-3">
-</div><div id="outline-container-sec-1-3-1" class="outline-4">
-<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> refrain notification</h4>
+<p>
+adb 通过 host 上的 adb 与手机端的 adbd 通信
+</p>
 </div>
+<div id="outline-container-sec-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> logcat</h4>
+<div class="outline-text-4" id="text-1-3-1">
+<p>
+adb shell setprop log.tag.mytag verbose
+</p>
+</div>
+<div id="outline-container-sec-1-3-1-1" class="outline-5">
+<h5 id="sec-1-3-1-1"><span class="section-number-5">1.3.1.1</span> event log</h5>
+</div>
+</div>
+
 <div id="outline-container-sec-1-3-2" class="outline-4">
-<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> refrain broadcast (include BOOT<sub>COMPLETED</sub>)</h4>
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> logwrapper</h4>
 </div>
 <div id="outline-container-sec-1-3-3" class="outline-4">
-<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> silently install package</h4>
-<div class="outline-text-4" id="text-1-3-3">
-<blockquote>
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> am</h4>
+</div>
+<div id="outline-container-sec-1-3-4" class="outline-4">
+<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> pm</h4>
+</div>
+<div id="outline-container-sec-1-3-5" class="outline-4">
+<h4 id="sec-1-3-5"><span class="section-number-4">1.3.5</span> dumpsys</h4>
+</div>
+<div id="outline-container-sec-1-3-6" class="outline-4">
+<h4 id="sec-1-3-6"><span class="section-number-4">1.3.6</span> input</h4>
+</div>
+<div id="outline-container-sec-1-3-7" class="outline-4">
+<h4 id="sec-1-3-7"><span class="section-number-4">1.3.7</span> procrank</h4>
+</div>
+<div id="outline-container-sec-1-3-8" class="outline-4">
+<h4 id="sec-1-3-8"><span class="section-number-4">1.3.8</span> procmem</h4>
+</div>
+<div id="outline-container-sec-1-3-9" class="outline-4">
+<h4 id="sec-1-3-9"><span class="section-number-4">1.3.9</span> getprop</h4>
+</div>
+<div id="outline-container-sec-1-3-10" class="outline-4">
+<h4 id="sec-1-3-10"><span class="section-number-4">1.3.10</span> dumpstate</h4>
+</div>
+<div id="outline-container-sec-1-3-11" class="outline-4">
+<h4 id="sec-1-3-11"><span class="section-number-4">1.3.11</span> setprop</h4>
+</div>
+<div id="outline-container-sec-1-3-12" class="outline-4">
+<h4 id="sec-1-3-12"><span class="section-number-4">1.3.12</span> service</h4>
+<div class="outline-text-4" id="text-1-3-12">
 <p>
-$&gt; am install
+例如 hierachyviewer 启动 ViewServer 就是使用 "service call window 1
+i32 port" 命令
 </p>
-</blockquote>
 </div>
 </div>
+</div>
+
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> monkey</h3>
+</div>
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> tombstone</h3>
+</div>
+<div id="outline-container-sec-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> uiautomator</h3>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="author">Author: wei.sun</p>
+<p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-01-22 Wed 16:04</p>
+<p class="date">Created: 2014-01-22 Wed 16:05</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.2 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

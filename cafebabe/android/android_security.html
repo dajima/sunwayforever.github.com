@@ -1,71 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Android Security</title>
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="Android Security"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-07-16T14:46+0800"/>
-<meta name="author" content="sunway"/>
-<meta name="description" content=""/>
-<meta name="keywords" content=""/>
+<!-- 2014-01-22 Wed 16:05 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="wei.sun" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
-  html { font-family: Times, serif; font-size: 12pt; }
   .title  { text-align: center; }
-  .todo   { color: red; }
+  .todo   { font-family: monospace; color: red; }
   .done   { color: green; }
-  .tag    { background-color: #add8e6; font-weight:normal }
-  .target { }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
-  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
-  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
-  .center {margin-left:auto; margin-right:auto; text-align:center;}
-  p.verse { margin-left: 3% }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
   pre {
-	border: 1pt solid #AEBDCC;
-	background-color: #F3F5F7;
-	padding: 5pt;
-	font-family: courier, monospace;
-        font-size: 90%;
-        overflow:auto;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
   }
-  table { border-collapse: collapse; }
-  td, th { vertical-align: top;  }
-  th.right  { text-align:center;  }
-  th.left   { text-align:center;   }
-  th.center { text-align:center; }
-  td.right  { text-align:right;  }
-  td.left   { text-align:left;   }
-  td.center { text-align:center; }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
   dt { font-weight: bold; }
-  div.figure { padding: 0.5em; }
-  div.figure p { text-align: center; }
-  div.inlinetask {
-    padding:10px;
-    border:2px solid gray;
-    margin:10px;
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
     background: #ffffcc;
   }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
   textarea { overflow-x: auto; }
-  .linenr { font-size:smaller }
-  .code-highlighted {background-color:#ffff00;}
-  .org-info-js_info-navigation { border-style:none; }
-  #org-info-js_console-label { font-size:10px; font-weight:bold;
-                               white-space:nowrap; }
-  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
-                                 font-weight:bold; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
   /*]]>*/-->
-</style>    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
+</style>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012  Free Software Foundation, Inc.
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -106,64 +134,83 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
+<script type="text/javascript" src="http://orgmode.org/mathjax/MathJax.js"></script>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+    MathJax.Hub.Config({
+        // Only one of the two following lines, depending on user settings
+        // First allows browser-native MathML display, second forces HTML/CSS
+        //  config: ["MMLorHTML.js"], jax: ["input/TeX"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+        extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js",
+                     "TeX/noUndefined.js"],
+        tex2jax: {
+            inlineMath: [ ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"], ["\\begin{displaymath}","\\end{displaymath}"] ],
+            skipTags: ["script","noscript","style","textarea","pre","code"],
+            ignoreClass: "tex2jax_ignore",
+            processEscapes: false,
+            processEnvironments: true,
+            preview: "TeX"
+        },
+        showProcessingMessages: true,
+        displayAlign: "center",
+        displayIndent: "2em",
 
+        "HTML-CSS": {
+             scale: 100,
+             availableFonts: ["STIX","TeX"],
+             preferredFont: "TeX",
+             webFont: "TeX",
+             imageFont: "TeX",
+             showMathMenu: true,
+        },
+        MMLorHTML: {
+             prefer: {
+                 MSIE:    "MML",
+                 Firefox: "MML",
+                 Opera:   "HTML",
+                 other:   "HTML"
+             }
+        }
+    });
+/*]]>*///-->
+</script>
 </head>
 <body>
-
-<div id="preamble">
-
-</div>
-
 <div id="content">
 <h1 class="title">Android Security</h1>
-
-
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 Android Security</a>
+<li><a href="#sec-1">1. Android Security</a>
 <ul>
-<li><a href="#sec-1-1">1.1 Android Permission</a></li>
-<li><a href="#sec-1-2">1.2 Traditional linux security config</a></li>
-<li><a href="#sec-1-3">1.3 ASEC</a></li>
-<li><a href="#sec-1-4">1.4 Signature &amp; Certificate</a></li>
+<li><a href="#sec-1-1">1.1. Android Permission</a></li>
+<li><a href="#sec-1-2">1.2. Traditional linux security config</a></li>
+<li><a href="#sec-1-3">1.3. ASEC</a></li>
+<li><a href="#sec-1-4">1.4. Signature &amp; Certificate</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-
-<div id="outline-container-1" class="outline-2">
+<div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> Android Security</h2>
 <div class="outline-text-2" id="text-1">
-
-
-</div>
-
-<div id="outline-container-1-1" class="outline-3">
+</div><div id="outline-container-sec-1-1" class="outline-3">
 <h3 id="sec-1-1"><span class="section-number-3">1.1</span> Android Permission</h3>
 <div class="outline-text-3" id="text-1-1">
-
-
-</div>
-
-<div id="outline-container-1-1-1" class="outline-4">
+</div><div id="outline-container-sec-1-1-1" class="outline-4">
 <h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> declare</h4>
 <div class="outline-text-4" id="text-1-1-1">
-
-
-</div>
-
-<div id="outline-container-1-1-1-1" class="outline-5">
+</div><div id="outline-container-sec-1-1-1-1" class="outline-5">
 <h5 id="sec-1-1-1-1"><span class="section-number-5">1.1.1.1</span> protection level</h5>
 <div class="outline-text-5" id="text-1-1-1-1">
-
-<ul>
+<ul class="org-ul">
 <li>normal
 </li>
 </ul>
-
 
 <p>
 The default value. A lower-risk permission that gives requesting
@@ -174,11 +221,11 @@ application at installation, without asking for the user's explicit
 approval (though the user always has the option to review these
 permissions before installing).
 </p>
-<ul>
+
+<ul class="org-ul">
 <li>dangerous
 </li>
 </ul>
-
 
 <p>
 A higher-risk permission that would give a requesting application
@@ -190,11 +237,11 @@ requested by an application may be displayed to the user and require
 confirmation before proceeding, or some other approach may be taken to
 avoid the user automatically allowing the use of such facilities.
 </p>
-<ul>
+
+<ul class="org-ul">
 <li>signature
 </li>
 </ul>
-
 
 <p>
 A permission that the system grants only if the requesting application
@@ -203,11 +250,11 @@ the permission. If the certificates match, the system automatically
 grants the permission without notifying the user or asking for the
 user's explicit approval.
 </p>
-<ul>
+
+<ul class="org-ul">
 <li>signatureOrSystem
 </li>
 </ul>
-
 
 <p>
 A permission that the system grants only to applications that are in
@@ -220,114 +267,102 @@ where multiple vendors have applications built into a system image and
 need to share specific features explicitly because they are being
 built together.
 </p>
+
 <p>
 e.g. 
 </p>
 
-
+<div class="org-src-container">
 
 <pre class="src src-xml">&lt;<span style="color: #268bd2;">permission</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">name</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">android.permission.INSTALL_PACKAGES</span><span style="color: #2aa198;">"</span>
     <span style="color: #859900;">android</span>:<span style="color: #268bd2;">label</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@string/permlab_installPackages</span><span style="color: #2aa198;">"</span>
     <span style="color: #859900;">android</span>:<span style="color: #268bd2;">description</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">@string/permdesc_installPackages</span><span style="color: #2aa198;">"</span>
     <span style="color: #859900;">android</span>:<span style="color: #268bd2;">protectionLevel</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">signature|system</span><span style="color: #2aa198;">"</span> /&gt;
 </pre>
-
-
 </div>
 </div>
-
 </div>
-
-<div id="outline-container-1-1-2" class="outline-4">
+</div>
+<div id="outline-container-sec-1-1-2" class="outline-4">
 <h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> grant</h4>
 <div class="outline-text-4" id="text-1-1-2">
-
-<p>pm.grantPermissions
+<p>
+pm.grantPermissions
 </p>
-
+<div class="org-src-container">
 
 <pre class="src src-java">scanPackageLI()
   grantPermissionsLPw()
-
 </pre>
-
-
 </div>
-
 </div>
-
-<div id="outline-container-1-1-3" class="outline-4">
+</div>
+<div id="outline-container-sec-1-1-3" class="outline-4">
 <h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> check</h4>
 <div class="outline-text-4" id="text-1-1-3">
-
-
-</div>
-
-<div id="outline-container-1-1-3-1" class="outline-5">
+</div><div id="outline-container-sec-1-1-3-1" class="outline-5">
 <h5 id="sec-1-1-3-1"><span class="section-number-5">1.1.3.1</span> component permission (or binder permission?)</h5>
 <div class="outline-text-5" id="text-1-1-3-1">
-
-<p>see also <a href="#Binder.getCallingPid-Binder.getCallingUid">getCallingPid</a>
-</p><ul>
-<li>check `component permission` when access certain component: startService, sendBroadcast, startActivity
-</li>
-</ul>
-
-<p>see <a href="#startService">startService</a>, <a href="#sendBroadcast">sendBroadcast</a>, <a href="#startActivity">startActivity</a>
-note: sendBroadcast will make sure both the sender and the receiver
-has gained the requiredPermission imposed by the counterpart.
+<p>
+see also <i>getCallingPid</i>
 </p>
-<ul>
-<li>check `application permission` when access application's any component
+<ul class="org-ul">
+<li>check `component permission` when access certain component:
+<ul class="org-ul">
+<li>startService
+</li>
+<li>startActivity 
+</li>
+<li>sendBroadcast 
+
+<p>
+note that sendBroadcast will make sure both the sender and the
+receiver has gained the requiredPermission imposed by the
+counterpart.
+</p>
 </li>
 </ul>
+</li>
 
-
-
-
-<pre class="example">&lt;application ... android:permission="xxx"&gt;  &lt;/application&gt;
+<li>check `application permission` when access application's any component
+<pre class="example">
+&lt;application ... android:permission="xxx"&gt;  &lt;/application&gt;
 </pre>
+</li>
 
+<li>ams.checkPermission
+<div class="org-src-container">
 
-<ul>
-<li id="sec-1-1-3-1-1">ams.checkPermission<br/>
-ams.checkComponentPermission(perm, pid, uid, &hellip;)
-  ams.checkPermission(String permission, int calling<sub>pid</sub>, int calling<sub>uid</sub>) 
+<pre class="src src-text">ams.checkComponentPermission(perm, pid, uid, ...)
+  ams.checkPermission(String permission, int calling_pid, int calling_uid) 
     ams.enforceCallingPermission(perm)
     ams.checkCallingPermission(perm)
+</pre>
+</div>
 </li>
-</ul>
-<ul>
-<li id="sec-1-1-3-1-2">pms.checkUridPermission<br/>
-see also <a href="#sec-1-1-2">grant</a>
-</li>
-</ul>
-<ul>
-<li id="sec-1-1-3-1-3">Other<br/>
+
+<li>pms.checkUridPermission
+see also <a href="#sec-1-1-2">1.1.2</a>
+
+<p>
 Note that component permission may be checked by framework, or by app themselves.
-
+</p>
 </li>
 </ul>
 </div>
-
 </div>
-
-<div id="outline-container-1-1-3-2" class="outline-5">
+<div id="outline-container-sec-1-1-3-2" class="outline-5">
 <h5 id="sec-1-1-3-2"><span class="section-number-5">1.1.3.2</span> api or os permission (e.g. file permission..)</h5>
 <div class="outline-text-5" id="text-1-1-3-2">
-
-
 <p>
 /system/etc/permissions/platform.xml reads:
 </p>
-
-
-<pre class="example">&lt;permission name="android.permission.INTERNET" &gt;
+<pre class="example">
+&lt;permission name="android.permission.INTERNET" &gt;
     &lt;group gid="inet" /&gt;
 &lt;/permission&gt;
 ...
 </pre>
-
 
 <p>
 The above tags are associating low-level group IDs with permission
@@ -336,57 +371,49 @@ process granted the given permission will also be running with the given
 group ID attached to its process, so it can perform any filesystem (read,
 write, execute) operations allowed for that group.
 </p>
+
 <p>
 with this kind of permission setting, low level c api, e.g. sqlite, luni
 </p>
 </div>
 </div>
-
 </div>
-
-<div id="outline-container-1-1-4" class="outline-4">
+<div id="outline-container-sec-1-1-4" class="outline-4">
 <h4 id="sec-1-1-4"><span class="section-number-4">1.1.4</span> PermissionController Service</h4>
 <div class="outline-text-4" id="text-1-1-4">
-
-<p>see also <a href="#sec-1-1-3">check</a>
+<p>
+see also <a href="#sec-1-1-3">1.1.3</a>
 </p>
+
 <p>
 PermissionController Service is a service added by
 ActivityManagerService though addService("permission"), it's only a
 encapsulation of AMS.checkPermission() and further
 PMS.checkUidPermission(), thus native code can also check permission.
 </p>
+
 <p>
 android::checkCallingPermission() in native code use
 PermissionController service to check permission in native code:
 </p>
 
-
-
-<pre class="example">binder = defaultServiceManager()-&gt;checkService("permission");
+<pre class="example">
+binder = defaultServiceManager()-&gt;checkService("permission");
 pc = interface_cast&lt;IPermissionController&gt;(binder);
 pc.checkPermission()
 </pre>
-
-
 </div>
-
 </div>
-
-<div id="outline-container-1-1-5" class="outline-4">
+<div id="outline-container-sec-1-1-5" class="outline-4">
 <h4 id="sec-1-1-5"><span class="section-number-4">1.1.5</span> Other</h4>
 <div class="outline-text-4" id="text-1-1-5">
-
-
-</div>
-
-<div id="outline-container-1-1-5-1" class="outline-5">
+</div><div id="outline-container-sec-1-1-5-1" class="outline-5">
 <h5 id="sec-1-1-5-1"><span class="section-number-5">1.1.5.1</span> mappings between uid/gid and permission</h5>
 <div class="outline-text-5" id="text-1-1-5-1">
-
-<p>platform.xml reads:
+<p>
+platform.xml reads:
 </p>
-
+<div class="org-src-container">
 
 <pre class="src src-xml">&lt;<span style="color: #268bd2;">permissions</span>&gt;
 
@@ -440,32 +467,28 @@ pc.checkPermission()
             <span style="color: #268bd2;">file</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">/system/framework/javax.obex.jar</span><span style="color: #2aa198;">"</span>/&gt;
 
 &lt;/<span style="color: #268bd2;">permissions</span>&gt;
-
 </pre>
-
+</div>
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-1-5-2" class="outline-5">
+<div id="outline-container-sec-1-1-5-2" class="outline-5">
 <h5 id="sec-1-1-5-2"><span class="section-number-5">1.1.5.2</span> PendingIntent / IntentSender</h5>
 <div class="outline-text-5" id="text-1-1-5-2">
-
-<p>when A's PendingIntent is delivered to B, B calls PendingIntent.send()
+<p>
+when A's PendingIntent is delivered to B, B calls PendingIntent.send()
 to send the underlying intent <b>on behalf of</b> A, A's permission is also
 delegated to B
 </p>
 </div>
-
 </div>
-
-<div id="outline-container-1-1-5-3" class="outline-5">
+<div id="outline-container-sec-1-1-5-3" class="outline-5">
 <h5 id="sec-1-1-5-3"><span class="section-number-5">1.1.5.3</span> uri permission</h5>
 <div class="outline-text-5" id="text-1-1-5-3">
-
-<p>ContentProvider has special permission settings for uri
+<p>
+ContentProvider has special permission settings for uri
 </p>
-
+<div class="org-src-container">
 
 <pre class="src src-xml">&lt;<span style="color: #268bd2;">provider</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">name</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">ContactsProvider2</span><span style="color: #2aa198;">"</span>
           <span style="color: #859900;">android</span>:<span style="color: #268bd2;">grantUriPermissions</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">false</span><span style="color: #2aa198;">"</span>
@@ -483,51 +506,51 @@ delegated to B
   &lt;<span style="color: #268bd2;">grant-uri-permission</span> <span style="color: #859900;">android</span>:<span style="color: #268bd2;">pathPattern</span>=<span style="color: #2aa198;">"</span><span style="color: #2aa198;">.*</span><span style="color: #2aa198;">"</span> /&gt;
 &lt;/<span style="color: #268bd2;">provider</span>&gt;
 </pre>
+</div>
 
-
-<ul>
+<ul class="org-ul">
 <li>&lt;path-permission&gt;
 </li>
 </ul>
 
-
 <p>
 指定拥有哪个 permission 的包可以访问该 path
 </p>
-<ul>
+
+<ul class="org-ul">
 <li>&lt;grant-uri-permissions&gt;
 </li>
 </ul>
-
 
 <p>
 若为 true, 则所有 path 都可以通过
 Context.grantUriPermission(pkg,uri,mode) 使 pkg 对该 path 获得权限
 </p>
-<ul>
+
+<ul class="org-ul">
 <li>&lt;grant-uri-permission&gt;
 </li>
 </ul>
-
 
 <p>
 若 grant-uri-permissions 为 false, 则该属于才起作用, 它指定了哪些
 path 可以被 grant permission
 </p>
-<ul>
-<li id="sec-1-1-5-3-1">grant uri permission<br/>
+</div>
+
+<ol class="org-ol"><li>grant uri permission<br  /><div class="outline-text-6" id="text-1-1-5-3-1">
+<p>
 已经获得权限的应用可以通过两种方法使另一个 package 获得对特定 uri 的权
 限 (即使该 package 本身就没有相应的权限)
-<ul>
+</p>
+<ul class="org-ul">
 <li>Context.grantUriPermission
 </li>
 <li>startActivity
 </li>
 </ul>
 
-
-
-
+<div class="org-src-container">
 
 <pre class="src src-java"><span style="color: #b58900;">Intent</span> <span style="color: #268bd2;">i</span>=<span style="color: #859900;">new</span> <span style="color: #b58900;">Intent</span>(xxx);
   <span style="color: #586e75; font-style: italic;">/**</span>
@@ -542,23 +565,20 @@ i.setFlag((FLAG_GRANT_READ_URI_PERMISSION))
 i.setData(uri)
 startActivity(i)
 </pre>
-
-
-</li>
-</ul>
+</div>
+</div>
+</li></ol>
 </div>
 </div>
 </div>
-
-</div>
-
-<div id="outline-container-1-2" class="outline-3">
+<div id="outline-container-sec-1-2" class="outline-3">
 <h3 id="sec-1-2"><span class="section-number-3">1.2</span> Traditional linux security config</h3>
 <div class="outline-text-3" id="text-1-2">
-
-<p>Traditionally, linux using  some config files to enforce security:
+<p>
+Traditionally, linux using  some config files to enforce security:
 </p>
-<ul>
+
+<ul class="org-ul">
 <li>/etc/password
 </li>
 <li>/etc/shadow
@@ -567,55 +587,56 @@ startActivity(i)
 </li>
 </ul>
 
-
 <p>
 But, android simply doesn't have the counterpart. 
 </p>
+
 <p>
 Take a look at:
-</p><ul>
+</p>
+<ul class="org-ul">
 <li>system/core/include/private/android<sub>filesystem</sub><sub>config</sub>.h
 </li>
 <li>/bionic/libc/bionic/stubs.c
 </li>
 </ul>
 
-
 <p>
 We will realize that:
-</p><ol>
+</p>
+<ol class="org-ol">
 <li>users is not listed in /etc/password, but hard-coded in `android<sub>filesystem</sub><sub>config</sub>.h'
 </li>
-<li>this is not /etc/group &hellip;  
-   in fact, process gid is assigned at run-time according to
-   `permission', Typically, when user A launch a linux program, the
-   program uid/gid/groups will be set according to user A's
-   uid/gid/groups, but progress can also call setuid/gid/groups
-   manually (with enough privilege) to reset the uid/gid/groups
-   (zygote adopts the later approach to restrict user progress's
-   privilege). 
+<li>this is not /etc/group &#x2026;  
+in fact, process gid is assigned at run-time according to
+`permission', Typically, when user A launch a linux program, the
+program uid/gid/groups will be set according to user A's
+uid/gid/groups, but progress can also call setuid/gid/groups
+manually (with enough privilege) to reset the uid/gid/groups
+(zygote adopts the later approach to restrict user progress's
+privilege). 
 
 <p>
-   e.g. progresses granted "EXTERNAL<sub>STORAGE</sub>" permission can
-   read/write sdcard, because these progresses will be put into
-   `sdcard<sub>rw`</sub> group. but this doesn't mean that the file's owner is
-   added into the `sdcard<sub>rw`</sub> group beforehand, in fact, PM will
-   maintain the group info, when forking the process from zygote,
-   zygote will invoke setgroups to add the process to `sdcard<sub>rw`</sub>
-   group.
-</p></li>
+e.g. progresses granted "EXTERNAL<sub>STORAGE</sub>" permission can
+read/write sdcard, because these progresses will be put into
+`sdcard<sub>rw`</sub> group. but this doesn't mean that the file's owner is
+added into the `sdcard<sub>rw`</sub> group beforehand, in fact, PM will
+maintain the group info, when forking the process from zygote,
+zygote will invoke setgroups to add the process to `sdcard<sub>rw`</sub>
+group.
+</p>
+</li>
 </ol>
-
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-3" class="outline-3">
+<div id="outline-container-sec-1-3" class="outline-3">
 <h3 id="sec-1-3"><span class="section-number-3">1.3</span> ASEC</h3>
 <div class="outline-text-3" id="text-1-3">
-
-<p>Android Security Executable Cache
+<p>
+Android Security Executable Cache
 </p>
+
 <p>
 When apk are installed to sdcard, for security reason, it must not be
 placed in the sdcard directly , instead, a security container is used
@@ -624,53 +645,50 @@ MountService) the security container to a cached directory (/mnt/asec)
 to get the decrypted apk (pkg.apk)
 </p>
 </div>
-
-<div id="outline-container-1-3-1" class="outline-4">
+<div id="outline-container-sec-1-3-1" class="outline-4">
 <h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> ASEC</h4>
 <div class="outline-text-4" id="text-1-3-1">
-
-<p>ASEC handle two things: 
-</p><ol>
+<p>
+ASEC handle two things: 
+</p>
+<ol class="org-ol">
 <li>when installing to sdcard, encrypt the orig `apk' to `asec'
 </li>
 <li>when booting, mount the `asec' as `apk' using `sks'
 </li>
 </ol>
-
-
-
 </div>
 
-<div id="outline-container-1-3-1-1" class="outline-5">
+<div id="outline-container-sec-1-3-1-1" class="outline-5">
 <h5 id="sec-1-3-1-1"><span class="section-number-5">1.3.1.1</span> /mnt/secure/asec/com.xxx.xxx.asec</h5>
 <div class="outline-text-5" id="text-1-3-1-1">
-
-<p>the secure container (encrypted apk), /mnt/asec/xxx/pkg.apk is
+<p>
+the secure container (encrypted apk), /mnt/asec/xxx/pkg.apk is
 extracted from this file in run-time
 </p>
-<p>    
+
+<p>
 secure container is created, mounted, umounted by MountService, which
 relies on `asec` executable binary to perform
 `mount,umount,create,delete..` of the secure containers:
 </p>
+
 <p>
 To create a secure container of 1.apk:
 </p>
-
+<div class="org-src-container">
 
 <pre class="src src-text">asec create cid
 asec mount cid /mnt/asec/xxxix
 cp 1.apk /mnt/asec/xxxx/pkg.apk
 asec umount cid
 </pre>
+</div>
+</div>
 
-
-<ul>
-<li id="sec-1-3-1-1-1">More details:<br/>
-
-
-
-<pre class="example">$&gt;mount
+<ol class="org-ol"><li>More details:<br  /><div class="outline-text-6" id="text-1-3-1-1-1">
+<pre class="example">
+$&gt;mount
 1      tmpfs /mnt/asec tmpfs rw,relatime,mode=755,gid=1000 0 0
 2      /dev/block/vold/179:1 /mnt/sdcard vfat rw,dirsync,nosuid,nodev,noexec,relatime,uid=1000,gid=1015,fmask=0702,dmask=0702,allow_utime=0020,codepage=cp437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro 0 0
 3      /dev/block/vold/179:1 /mnt/secure/asec vfat rw,dirsync,nosuid,nodev,noexec,relatime,uid=1000,gid=1015,fmask=0702,dmask=0702,allow_utime=0020,codepage=cp437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro 0 0
@@ -678,20 +696,22 @@ asec umount cid
 5      /dev/block/dm-0 /mnt/asec/com.sunway.testwebview-1 vfat ro,dirsync,nosuid,nodev,noexec,relatime,uid=1000,fmask=0222,dmask=0222,codepage=cp437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro 0 0
 </pre>
 
-
 <p>
 That is,
-</p><ol>
+</p>
+<ol class="org-ol">
 <li>sdcard is mounted as two part:
-<ol>
-<li>the entire sdcard is mounted to <i>mnt/sdcard (line 2)   2. sdcard</i>.android<sub>secure</sub> is <b>bind-mount</b> to <i>mnt/secure/asec (line 3)      *note*: android mount the sdcard</i>.android<sub>secure</sub> to tmpfs (line 4) to obscure the actual asec data on sdcard, so that normal operations
-     on sdcard won't touch asec data at run-time.
+<ol class="org-ol">
+<li>the entire sdcard is mounted to /mnt/sdcard (line 2)
+</li>
+<li>sdcard/.android<sub>secure</sub> is <b>bind-mount</b> to <i>mnt/secure/asec (line 3)
+<b>note</b>: android mount the sdcard</i>.android<sub>secure</sub> to tmpfs (line 4) to obscure the actual asec data on sdcard, so that normal operations
+on sdcard won't touch asec data at run-time.
 </li>
 </ol>
-
 </li>
 <li>/mnt/secure/asec/xxx.asec is mounted as loop device, e.g.:
-   mount /mnt/secure/asec/xxx.asec -o loop=/dev/loop0
+mount /mnt/secure/asec/xxx.asec -o loop=/dev/loop0
 </li>
 <li>cryptsetup key /dev/block/dm-0 /dev/loop0
 </li>
@@ -699,145 +719,211 @@ That is,
 </li>
 </ol>
 
-
-<p>         
+<p>
 Step 3 is essential: android use `device-mapper crypto` as the
 `encrypt file system` behind secure container, which can mount a
 encrypted image file to a mapped device (dm-0)
-</p></li>
-</ul>
+</p>
+</div>
+</li></ol>
 </div>
 
-</div>
-
-<div id="outline-container-1-3-1-2" class="outline-5">
+<div id="outline-container-sec-1-3-1-2" class="outline-5">
 <h5 id="sec-1-3-1-2"><span class="section-number-5">1.3.1.2</span> /mnt/asec/com.xx xx.xxxx/pkg.apk</h5>
 <div class="outline-text-5" id="text-1-3-1-2">
-
-<p>As is shown is init.rc:
+<p>
+As is shown is init.rc:
 </p>
 
-
-
-<pre class="example"># from init.rc
+<pre class="example">
+# from init.rc
 # Secure container public mount points.
 mkdir /mnt/asec  0700 root system
 mount tmpfs tmpfs /mnt/asec mode=0755,gid=1000
 </pre>
 
-
 <p>
 that is, <i>mnt/asec</i> is actually mounted from a tmpfs, it's content
 (com.xxx.xx/pkg.apk) actually is the run-time decryption of
 /mnt/secure/asec/com.xxx.asec
-</p></div>
-
+</p>
+</div>
 </div>
 
-<div id="outline-container-1-3-1-3" class="outline-5">
+<div id="outline-container-sec-1-3-1-3" class="outline-5">
 <h5 id="sec-1-3-1-3"><span class="section-number-5">1.3.1.3</span> /data/misc/systemkeys/AppsOnSD.sks</h5>
 <div class="outline-text-5" id="text-1-3-1-3">
-
-<p>the <b>AES</b> key to encrypt pkg.apk and decrypt xxx.asec, all the secure container share the same key.
+<p>
+the <b>AES</b> key to encrypt pkg.apk and decrypt xxx.asec, all the secure container share the same key.
 </p>
 </div>
 </div>
-
 </div>
-
-<div id="outline-container-1-3-2" class="outline-4">
-<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> device mapper (dm<sub>crypt</sub>)</h4>
+<div id="outline-container-sec-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> device mapper ( &amp; dm-crypt)</h4>
 <div class="outline-text-4" id="text-1-3-2">
+<p>
+device mapper (dm)  是 linux 2.6 提供的一种块设备映射机制, 可以将一个
+设备映射为另一个 target device, 目前提供的 target device 主要有:
+</p>
 
+<ol class="org-ol">
+<li>linear
+</li>
+<li>mirror
+</li>
+<li>multipath
+</li>
+<li>snapshot
+</li>
+<li>raid
+</li>
+<li>crypt
+</li>
+</ol>
+
+<p>
+等, 例如, 通过将设备映射为 target device , 可以提供原设备不具备的功能,
+比如IO负载均衡, 加密等&#x2026;.
+</p>
+
+<p>
+dm-crypt 就是用来实现设备加密的 target device. 理论上, 所有块设备都可以
+通过 dm 映射为 dm-crypt 从而具备加密功能, 但实际上一般把 dm-crypt 用作
+loop device (也就是文件) 加密的居多, 比如 android ASEC
+</p>
 </div>
 
-</div>
+<div id="outline-container-sec-1-3-2-1" class="outline-5">
+<h5 id="sec-1-3-2-1"><span class="section-number-5">1.3.2.1</span> 在 linux 下使用 dm-crypt 加密文件</h5>
+<div class="outline-text-5" id="text-1-3-2-1">
+<ol class="org-ol">
+<li>dd if=/dev/zero of=secret.img bs=1024 count=1024
+</li>
+<li>losetup /dev/loop0 secret.img
+</li>
+<li>cryptsetup -y create dm /dev/loop0
+</li>
+<li>mkfs.ext4 /dev/mapper/dm
+</li>
+<li>mount /dev/mapper/dm ~/mp
+</li>
+</ol>
 
-<div id="outline-container-1-3-3" class="outline-4">
+<p>
+取消 dm 映射方法为:
+</p>
+
+<ol class="org-ol">
+<li>umount /dev/mapper/dm
+</li>
+<li>cryptsetup remove dm
+</li>
+<li>losetup -d /dev/loop0
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-3-3" class="outline-4">
 <h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> To summarize:</h4>
 <div class="outline-text-4" id="text-1-3-3">
-
-<p>secure container is analogous to the `encrypt file system`.
-</p></div>
-</div>
-
-</div>
-
-<div id="outline-container-1-4" class="outline-3">
-<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Signature &amp; Certificate</h3>
-<div class="outline-text-3" id="text-1-4">
-
-<p>see also <a href="#keytool-jarsigner">keytool &amp; jarsigner</a>
+<p>
+secure container is analogous to the `encrypt file system`.
 </p>
 </div>
+</div>
+</div>
 
-<div id="outline-container-1-4-1" class="outline-4">
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Signature &amp; Certificate</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+see also <i>keytool &amp; jarsigner</i>
+</p>
+</div>
+<div id="outline-container-sec-1-4-1" class="outline-4">
 <h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> Android APK 签名比对</h4>
 <div class="outline-text-4" id="text-1-4-1">
-
-
 <p>
 <a href="http://www.blogjava.net/zh-weir/archive/2011/07/19/354663.html">Android APK 签名比对</a>
 </p>
-<p>                                                                                                                       
+
+<p>
 发布过Android应用的朋友们应该都知道，Android APK的发布是需要签名的。签名机制在Android应用和框架中有着十分重要的作用。
 </p>
+
 <p>
 例如，Android系统禁止更新安装签名不一致的APK；如果应用需要使用system权限，必须保证APK签名与Framework签名一致，等等。在
 《APK Crack》一文中，我们了解到，要破解一个APK，必然需要重新对APK进行签名。而这个签名，一般情况无法再与APK原先的签名保
 持一致。（除非APK原作者的私钥泄漏，那已经是另一个层次的软件安全问题了。）
 </p>
+
 <p>
 简单地说，签名机制标明了APK的发行机构。因此，站在软件安全的角度，我们就可以通过比对APK的签名情况，判断此APK是否由“官方”
 发行，而不是被破解篡改过重新签名打包的“盗版软件”。
 </p>
+
 <p>
 Android签名机制
 </p>
+
 <p>
     为了说明APK签名比对对软件安全的有效性，我们有必要了解一下Android APK的签名机制。为了更易于大家理解，我们从Auto-Sign
 工具的一条批处理命令说起。
 </p>
+
 <p>
 在《APK Crack》一文中，我们了解到，要签名一个没有签名过的APK，可以使用一个叫作Auto-sign的工具。Auto-sign工具实际运行的
 是一个叫做Sign.bat的批处理命令。用文本编辑器打开这个批处理文件，我们可以发现，实现签名功能的命令主要是这一行命令：
 </p>
+
 <p>
-    java -jar signapk.jar testkey.x509.pem testkey.pk8 update.apk update<sub>signed</sub>.apk
+java -jar signapk.jar testkey.x509.pem testkey.pk8 update.apk update<sub>signed</sub>.apk
 </p>
+
 <p>
     这条命令的意义是：通过signapk.jar这个可执行jar包，以“testkey.x509.pem”这个公钥文件和“testkey.pk8”这个私钥文件对“
 update.apk”进行签名，签名后的文件保存为“update<sub>signed</sub>.apk”。
 </p>
+
 <p>
     对于此处所使用的私钥和公钥的生成方式，这里就不做进一步介绍了。这方面的资料大家可以找到很多。我们这里要讲的是
 signapk.jar到底做了什么。
 </p>
+
 <p>
     signapk.jar是Android源码包中的一个签名工具。由于Android是个开源项目，所以，很高兴地，我们可以直接找到signapk.jar的
 源码！路径为/build/tools/signapk/SignApk.java。
 </p>
+
 <p>
 对比一个没有签名的APK和一个签名好的APK，我们会发现，签名好的APK包中多了一个叫做META-INF的文件夹。里面有三个文件，分别名
 为MANIFEST.MF、CERT.SF和CERT.RSA。signapk.jar就是生成了这几个文件（其他文件没有任何改变。因此我们可以很容易去掉原有签名
 信息）。
 </p>
+
 <p>
-    通过阅读signapk源码，我们可以理清签名APK包的整个过程。
+通过阅读signapk源码，我们可以理清签名APK包的整个过程。
 </p>
+
 <p>
 1、 生成MANIFEST.MF文件：
 </p>
+
 <p>
 程序遍历update.apk包中的所有文件(entry)，对非文件夹非签名文件的文件，逐个生成SHA1的数字签名信息，再用Base64进行编码。具
 体代码见这个方法：
 </p>
+
 <p>
-    private static Manifest addDigestsToManifest(JarFile jar)
+private static Manifest addDigestsToManifest(JarFile jar)
 </p>
+
 <p>
 关键代码如下：
 </p>
+
 <p>
  1     for (JarEntry entry: byName.values()) {
  2         String name = entry.getName();
@@ -856,9 +942,11 @@ signapk.jar到底做了什么。
 15           }
 16     }
 </p>
+
 <p>
-    之后将生成的签名写入MANIFEST.MF文件。关键代码如下：
+之后将生成的签名写入MANIFEST.MF文件。关键代码如下：
 </p>
+
 <p>
 1     Manifest manifest = addDigestsToManifest(inputJar);
 2     je = new JarEntry(JarFile.MANIFEST<sub>NAME</sub>);
@@ -866,18 +954,22 @@ signapk.jar到底做了什么。
 4     outputJar.putNextEntry(je);
 5     manifest.write(outputJar);
 </p>
+
 <p>
     这里简单介绍下SHA1数字签名。简单地说，它就是一种安全哈希算法，类似于MD5算法。它把任意长度的输入，通过散列算法变成固
 定长度的输出（这里我们称作“摘要信息”）。你不能仅通过这个摘要信息复原原来的信息。另外，它保证不同信息的摘要信息彼此不同
 。因此，如果你改变了apk包中的文件，那么在apk安装校验时，改变后的文件摘要信息与MANIFEST.MF的检验信息不同，于是程序就不能
 成功安装。
 </p>
+
 <p>
 2、 生成CERT.SF文件：
 </p>
+
 <p>
 对前一步生成的Manifest，使用SHA1-RSA算法，用私钥进行签名。关键代码如下：
 </p>
+
 <p>
 1     Signature signature = Signature.getInstance("SHA1withRSA");
 2     signature.initSign(privateKey);
@@ -887,29 +979,36 @@ signapk.jar到底做了什么。
 6     writeSignatureFile(manifest,
 7     new SignatureOutputStream(outputJar, signature));
 </p>
+
 <p>
     RSA是一种非对称加密算法。用私钥通过RSA算法对摘要信息进行加密。在安装时只能使用公钥才能解密它。解密之后，将它与未加
 密的摘要信息进行对比，如果相符，则表明内容没有被异常修改。
 </p>
+
 <p>
 3、 生成CERT.RSA文件：
 </p>
+
 <p>
 生成MANIFEST.MF没有使用密钥信息，生成CERT.SF文件使用了私钥文件。那么我们可以很容易猜测到，CERT.RSA文件的生成肯定和公钥
 相关。
 </p>
+
 <p>
 CERT.RSA文件中保存了公钥、所采用的加密算法等信息。核心代码如下：
 </p>
+
 <p>
 1     je = new JarEntry(CERT<sub>RSA</sub><sub>NAME</sub>);
 2     je.setTime(timestamp);
 3     outputJar.putNextEntry(je);
 4     writeSignatureBlock(signature, publicKey, outputJar);
 </p>
+
 <p>
-    其中writeSignatureBlock的代码如下：
+其中writeSignatureBlock的代码如下：
 </p>
+
 <p>
  1     private static void writeSignatureBlock(
  2         Signature signature, X509Certificate publicKey, OutputStream out)
@@ -930,34 +1029,43 @@ CERT.RSA文件中保存了公钥、所采用的加密算法等信息。核心代
 17         pkcs7.encodeSignedData(out);
 18     }
 </p>
+
 <p>
-    好了，分析完APK包的签名流程，我们可以清楚地意识到：
+好了，分析完APK包的签名流程，我们可以清楚地意识到：
 </p>
+
 <p>
 1、 Android签名机制其实是对APK包完整性和发布机构唯一性的一种校验机制。
 </p>
+
 <p>
 2、 Android签名机制不能阻止APK包被修改，但修改后的再签名无法与原先的签名保持一致。（拥有私钥的情况除外）。
 </p>
+
 <p>
 3、 APK包加密的公钥就打包在APK包内，且不同的私钥对应不同的公钥。换句话言之，不同的私钥签名的APK公钥也必不相同。所以我们
 可以根据公钥的对比，来判断私钥是否一致。
 </p>
+
 <p>
 APK签名比对的实现方式
 </p>
+
 <p>
     好了，通过Android签名机制的分析，我们从理论上证明了通过APK公钥的比对能判断一个APK的发布机构。并且这个发布机构是很难
 伪装的，我们暂时可以认为是不可伪装的。
 </p>
+
 <p>
     有了理论基础后，我们就可以开始实践了。那么如何获取到APK文件的公钥信息呢？因为Android系统安装程序肯定会获取APK信息进
 行比对，所以我们可以通过Android源码获得一些思路和帮助。
 </p>
+
 <p>
     源码中有一个隐藏的类用于APK包的解析。这个类叫PackageParser，路径为frameworks\base\core\java\android\content&plusmn;\
 PackageParser.java。当我们需要获取APK包的相关信息时，可以直接使用这个类，下面代码就是一个例子函数：
 </p>
+
 <p>
  1     private PackageInfo parsePackage(String archiveFilePath, int flags){
  2         
@@ -976,19 +1084,23 @@ PackageParser.java。当我们需要获取APK包的相关信息时，可以直�
 15         return PackageParser.generatePackageInfo(pkg, null, flags, 0, 0);
 16     }
 </p>
+
 <p>
-    其中参数archiveFilePath指定APK文件路径；flags需设置PackageManager.GET<sub>SIGNATURES位，以保证返回证书签名信息。</sub>
+其中参数archiveFilePath指定APK文件路径；flags需设置PackageManager.GET<sub>SIGNATURES位，以保证返回证书签名信息。</sub>
 </p>
+
 <p>
     具体如何通过PackageParser获取签名信息在此处不做详述，具体代码请参考PackageParser中的
 public boolean collectCertificates(Package pkg, int flags)和private Certificate[] loadCertificates
 (JarFile jarFile, JarEntry je, byte[] readBuffer)方法。至于如何在Android应用开发中使用隐藏的类及方法，可以参看我的这篇
 文章：《Android应用开发中如何使用隐藏API》。
 </p>
+
 <p>
     紧接着，我们就可以通过packageInfo.signatures来访问到APK的签名信息。还需要说明的是 Android中Signature和Java中
 Certificate的对应关系。它们的关系如下面代码所示：
 </p>
+
 <p>
 1     pkg.mSignatures = new Signature[certs.length];
 2     for (int i=0; i&lt;N; i++) {
@@ -996,13 +1108,16 @@ Certificate的对应关系。它们的关系如下面代码所示：
 4         certs[i].getEncoded());
 5     }
 </p>
+
 <p>
     也就是说signature = new Signature(certificate.getEncoded()); certificate证书中包含了公钥和证书的其他基本信息。公钥
 不同，证书肯定互不相同。我们可以通过certificate的getPublicKey方法获取公钥信息。所以比对签名证书本质上就是比对公钥信息。
 </p>
+
 <p>
-    OK，获取到APK签名证书之后，就剩下比对了。这个简单，功能函数如下所示:
+OK，获取到APK签名证书之后，就剩下比对了。这个简单，功能函数如下所示:
 </p>
+
 <p>
  1     private boolean IsSignaturesSame(Signature[] s1, Signature[] s2) {
  2             if (s1 == null) {
@@ -1026,59 +1141,69 @@ Certificate的对应关系。它们的关系如下面代码所示：
 20             return false;
 21         }
 </p>
+
 <p>
 APK签名比对的应用场景
 </p>
+
 <p>
-    经过以上的论述，想必大家已经明白签名比对的原理和我的实现方式了。那么什么时候什么情况适合使用签名对比来保障
+经过以上的论述，想必大家已经明白签名比对的原理和我的实现方式了。那么什么时候什么情况适合使用签名对比来保障
 Android APK的软件安全呢？
 </p>
+
 <p>
-    个人认为主要有以下三种场景：
+个人认为主要有以下三种场景：
 </p>
+
+<ol class="org-ol">
+<li>程序自检测。在程序运行时，自我进行签名比对。比对样本可以存放在APK包内，也可存放于云端。缺点是程序被破解时，自检测功
+</li>
+</ol>
 <p>
-1、 程序自检测。在程序运行时，自我进行签名比对。比对样本可以存放在APK包内，也可存放于云端。缺点是程序被破解时，自检测功
 能同样可能遭到破坏，使其失效。
 </p>
+
+<ol class="org-ol">
+<li>可信赖的第三方检测。由可信赖的第三方程序负责APK的软件安全问题。对比样本由第三方收集，放在云端。这种方式适用于杀毒安
+</li>
+</ol>
 <p>
-2、 可信赖的第三方检测。由可信赖的第三方程序负责APK的软件安全问题。对比样本由第三方收集，放在云端。这种方式适用于杀毒安
 全软件或者APP Market之类的软件下载市场。缺点是需要联网检测，在无网络情况下无法实现功能。（不可能把大量的签名数据放在移
 动设备本地）。
 </p>
+
+<ol class="org-ol">
+<li>系统限定安装。这就涉及到改Android系统了。限定仅能安装某些证书的APK。软件发布商需要向系统发布上申请证书。如果发现问
+</li>
+</ol>
 <p>
-3、 系统限定安装。这就涉及到改Android系统了。限定仅能安装某些证书的APK。软件发布商需要向系统发布上申请证书。如果发现问
 题，能追踪到是哪个软件发布商的责任。适用于系统提供商或者终端产品生产商。缺点是过于封闭，不利于系统的开放性。
 </p>
+
 <p>
 以上三种场景，虽然各有缺点，但缺点并不是不能克服的。例如，我们可以考虑程序自检测的功能用native method的方法实现等等。软
 件安全是一个复杂的课题，往往需要多种技术联合使用，才能更好的保障软件不被恶意破坏。
 </p>
 </div>
-
 </div>
-
-<div id="outline-container-1-4-2" class="outline-4">
+<div id="outline-container-sec-1-4-2" class="outline-4">
 <h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> Android 证书文件位置</h4>
 <div class="outline-text-4" id="text-1-4-2">
-
-<ul>
+<ul class="org-ul">
 <li>build/target/product/security/
 </li>
 </ul>
-
-
 </div>
 </div>
 </div>
 </div>
 </div>
-
-<div id="postamble">
-<p class="date">Date: 2013-07-16T14:46+0800</p>
-<p class="author">Author: sunway</p>
-<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 24</p>
-<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
-
+<div id="postamble" class="status">
+<p class="author">Author: wei.sun</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2014-01-22 Wed 16:05</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.2 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

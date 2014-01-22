@@ -1,71 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Android ContentProvider</title>
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="Android ContentProvider"/>
-<meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-05-22T10:03+0800"/>
-<meta name="author" content="sunway"/>
-<meta name="description" content=""/>
-<meta name="keywords" content=""/>
+<!-- 2014-01-22 Wed 16:05 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="wei.sun" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
-  html { font-family: Times, serif; font-size: 12pt; }
   .title  { text-align: center; }
-  .todo   { color: red; }
+  .todo   { font-family: monospace; color: red; }
   .done   { color: green; }
-  .tag    { background-color: #add8e6; font-weight:normal }
-  .target { }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
-  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
-  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
-  .center {margin-left:auto; margin-right:auto; text-align:center;}
-  p.verse { margin-left: 3% }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
   pre {
-	border: 1pt solid #AEBDCC;
-	background-color: #F3F5F7;
-	padding: 5pt;
-	font-family: courier, monospace;
-        font-size: 90%;
-        overflow:auto;
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
   }
-  table { border-collapse: collapse; }
-  td, th { vertical-align: top;  }
-  th.right  { text-align:center;  }
-  th.left   { text-align:center;   }
-  th.center { text-align:center; }
-  td.right  { text-align:right;  }
-  td.left   { text-align:left;   }
-  td.center { text-align:center; }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
   dt { font-weight: bold; }
-  div.figure { padding: 0.5em; }
-  div.figure p { text-align: center; }
-  div.inlinetask {
-    padding:10px;
-    border:2px solid gray;
-    margin:10px;
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
     background: #ffffcc;
   }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
   textarea { overflow-x: auto; }
-  .linenr { font-size:smaller }
-  .code-highlighted {background-color:#ffff00;}
-  .org-info-js_info-navigation { border-style:none; }
-  #org-info-js_console-label { font-size:10px; font-weight:bold;
-                               white-space:nowrap; }
-  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
-                                 font-weight:bold; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
   /*]]>*/-->
-</style>    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
+</style>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012  Free Software Foundation, Inc.
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -106,54 +134,34 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
-
 </head>
 <body>
-
-<div id="preamble">
-
-</div>
-
 <div id="content">
 <h1 class="title">Android ContentProvider</h1>
-
-
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 ContentProvider</a>
+<li><a href="#sec-1">1. ContentProvider</a>
 <ul>
-<li><a href="#sec-1-1">1.1 Publish &amp; Install</a></li>
-<li><a href="#sec-1-2">1.2 </a></li>
-<li><a href="#sec-1-3">1.3 Usage</a></li>
-<li><a href="#sec-1-4">1.4 Others</a></li>
+<li><a href="#sec-1-1">1.1. Publish &amp; Install</a></li>
+<li><a href="#sec-1-2">1.2. Usage</a></li>
+<li><a href="#sec-1-3">1.3. Others</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-
-<div id="outline-container-1" class="outline-2">
+<div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> ContentProvider</h2>
 <div class="outline-text-2" id="text-1">
-
-
-</div>
-
-<div id="outline-container-1-1" class="outline-3">
+</div><div id="outline-container-sec-1-1" class="outline-3">
 <h3 id="sec-1-1"><span class="section-number-3">1.1</span> Publish &amp; Install</h3>
 <div class="outline-text-3" id="text-1-1">
-
-
-</div>
-
-<div id="outline-container-1-1-1" class="outline-4">
+</div><div id="outline-container-sec-1-1-1" class="outline-4">
 <h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> single-process providers are installed during app bring up</h4>
 <div class="outline-text-4" id="text-1-1-1">
-
-
-
+<div class="org-src-container">
 
 <pre class="src src-java">ActivityThread.main
   thread.<span style="color: #b58900;">attach</span>
@@ -171,7 +179,7 @@ for the JavaScript code in this tag.
               foreach (providers):
                 installProvider(provider)
                   <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">during app bring up, the holder.provider must be null</span>
-                  <span style="color: #859900;">if</span> (holder.provider == null):
+                  <span style="color: #859900;">if</span> (holder.provider == <span style="color: #2aa198;">null</span>):
                     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">the provider is not installed yet, create it</span>
                     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">localProvider...LOCAL?</span>
                     localProvider = (<span style="color: #b58900;">ContentProvider</span>)cl.loadClass(info.name).newInstance();
@@ -181,20 +189,15 @@ for the JavaScript code in this tag.
                 foreach (providers):
                   mProvidersByName.put(authority, provider);
           <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">handleBindApplication</span>
-      <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">attachApplicationLocked        </span>
+      <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">attachApplicationLocked</span>
 </pre>
-
-
 </div>
-
 </div>
-
-<div id="outline-container-1-1-2" class="outline-4">
+</div>
+<div id="outline-container-sec-1-1-2" class="outline-4">
 <h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> multi-process providers are installed on demand</h4>
 <div class="outline-text-4" id="text-1-1-2">
-
-
-
+<div class="org-src-container">
 
 <pre class="src src-java">ContentResolver.query()
   ContentResolver.acquireProvider(uri);
@@ -203,7 +206,7 @@ for the JavaScript code in this tag.
         thread.acquireProvider()
           IContentProvider provider = acquireExistingProvider(c, name);
             <span style="color: #b58900;">ProviderClientRecord</span> <span style="color: #268bd2;">pr</span> = mProviderMap.get(name);
-            <span style="color: #859900;">if</span> pr.mProvider != null:
+            <span style="color: #859900;">if</span> pr.mProvider != <span style="color: #2aa198;">null</span>:
               <span style="color: #859900;">return</span> pr.mProvider;
           holder = ActivityManagerNative.getDefault().getContentProvider(name);
             AMS.getContentProviderImpl()
@@ -215,7 +218,7 @@ for the JavaScript code in this tag.
           <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">installed during app bring up .. so it is a multi-process</span>
           <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">provider, install it locally</span>
           provider = installProvider(c, holder.provider, holder.info,..)
-            <span style="color: #859900;">if</span> (holder.provider == null):
+            <span style="color: #859900;">if</span> (holder.provider == <span style="color: #2aa198;">null</span>):
               <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">the provider is not installed yet, create it</span>
               <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">localProvider...LOCAL?</span>
               localProvider = (<span style="color: #b58900;">ContentProvider</span>)cl.loadClass(info.name).newInstance();
@@ -225,25 +228,22 @@ for the JavaScript code in this tag.
             mProviderMap.put(names, provider);
         <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">thread.acquireProvider</span>
 </pre>
-
+</div>
+</div>
 </div>
 
-</div>
-
-<div id="outline-container-1-1-3" class="outline-4">
+<div id="outline-container-sec-1-1-3" class="outline-4">
 <h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> To summaries</h4>
 <div class="outline-text-4" id="text-1-1-3">
-
-
 <p>
 ContentProvider is maintained both in AMS and in ActivityThread for
 different purpose. 
 </p>
-<ul>
+
+<ul class="org-ul">
 <li>AMS
 </li>
 </ul>
-
 
 <p>
 it maintains the `HashMap&lt;String, ContentProviderRecord&gt;
@@ -251,129 +251,121 @@ mProvidersByName`, which caches all the ContentProvider published by
 apps.  The ContentProvider.provider is a IContentProvider
 (ContentProvider.Transport) for IPC. 
 </p>
+
 <p>
 That is, AMS is a central IContentProvider cache
 </p>
-<ul>
+
+<ul class="org-ul">
 <li>ActivityThread
 </li>
 </ul>
-
 
 <p>
 ActivityThread maintains a `HashMap&lt;String, ProviderClientRecord&gt;
 mProviderMap' for cache purpose. 
 </p>
+
 <p>
 ActivityThread need to maintains the cache because of `multi-process'
 provider , since they can not be cached by AMS because they are process-local. 
 </p>
 </div>
 </div>
-
 </div>
-
-<div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> </h3>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Usage</h3>
 <div class="outline-text-3" id="text-1-2">
-
+</div><div id="outline-container-sec-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> query</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<p>
+see also <i>Cursor</i>
+</p>
+</div>
 </div>
 
+<div id="outline-container-sec-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> openFile</h4>
+</div>
 </div>
 
-<div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Usage</h3>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Others</h3>
 <div class="outline-text-3" id="text-1-3">
-
-
-</div>
-
-<div id="outline-container-1-3-1" class="outline-4">
-<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> query</h4>
+</div><div id="outline-container-sec-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> withYieldAllowed</h4>
 <div class="outline-text-4" id="text-1-3-1">
-
-</div>
-
-</div>
-
-<div id="outline-container-1-3-2" class="outline-4">
-<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> openFile</h4>
-<div class="outline-text-4" id="text-1-3-2">
-
-</div>
-</div>
-
-</div>
-
-<div id="outline-container-1-4" class="outline-3">
-<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Others</h3>
-<div class="outline-text-3" id="text-1-4">
-
-
-</div>
-
-<div id="outline-container-1-4-1" class="outline-4">
-<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> withYieldAllowed</h4>
-<div class="outline-text-4" id="text-1-4-1">
-
-
 <p>
 <a href="http://stackoverflow.com/questions/9599809/does-yieldifcontendedsafely-lose-the-benefits-of-a-transaction">Does yieldIfContendedSafely() lose the benefits of a transaction?</a>
 </p>
+
 <p>
 From stackoverflow:
 </p>
+
 <p>
 Q:
 </p>
+
 <p>
 I have a long-running operation which I perform in a background thread. As it is
 important for the operation to either complete successfully or not at all, I am
 wrapping the entire operation in a transaction.
 </p>
+
 <p>
 Aspects of the UI need read-only access to the database during this time. To
 avoid blocking the UI, I am experimenting with inserting calls to
 db.yieldIfContendedSafely() in the main loop of the background operation.
 </p>
+
 <p>
 This does what I want in that the UI is no longer blocked, but it's not
 completely clear to me if this is risking a loss of data integrity.
 </p>
+
 <p>
 The javadoc for yieldIfContendedSafely() says:
 </p>
+
 <p>
-    Temporarily end the transaction to let other threads run.  The transaction
-    is assumed to be successful so far. Do not call setTransactionSuccessful
-    before calling this. When this returns a new transaction will have been
-    created but not marked as successful. This assumes that there are no nested
-    transactions (beginTransaction has only been called once) and will throw an
-    exception if that is not the case.
+Temporarily end the transaction to let other threads run.  The transaction
+is assumed to be successful so far. Do not call setTransactionSuccessful
+before calling this. When this returns a new transaction will have been
+created but not marked as successful. This assumes that there are no nested
+transactions (beginTransaction has only been called once) and will throw an
+exception if that is not the case.
 </p>
+
 <p>
 Does this mean that my long-running operation is actually being committed to the
 database in separate chunks, or is the overall transaction maintaining enough
 state to commit the whole lot in one go at the end, thus preserving
 data-integrity?
 </p>
+
 <p>
 A:
 </p>
+
 <p>
-    Does this mean that my long-running operation is actually being committed to
-    the database in separate chunks
+Does this mean that my long-running operation is actually being committed to
+the database in separate chunks
 </p>
+
 <p>
 Yes. Within yieldIfContendedSafely(), Android calls setTransactionSuccessful(),
-endTransaction(), and begins a new transaction &ndash; committing your statements in
+endTransaction(), and begins a new transaction &#x2013; committing your statements in
 the process. There is no mechanism to rollback the "real" transaction after it
 ends.
 </p>
+
 <p>
 This behavior only occurs if there is another thread waiting on the database,
 otherwise yieldIfContendedSafely() does nothing.
 </p>
+
 <p>
 I checked this with the following scenario. I started two threads: one inserted
 data into a table using a transaction, another read data out of the same
@@ -381,34 +373,35 @@ table. The transaction didn't call setTransactionSuccessful() so normally
 everything is rolled back at the end, leaving the table empty. I added a call to
 yieldIfContendedSafely(), and afterwards the table was not empty and had data
 from the transaction.
-</p></div>
-
-</div>
-
-<div id="outline-container-1-4-2" class="outline-4">
-<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> ContentProviderNative</h4>
-<div class="outline-text-4" id="text-1-4-2">
-
-</div>
-
-</div>
-
-<div id="outline-container-1-4-3" class="outline-4">
-<h4 id="sec-1-4-3"><span class="section-number-4">1.4.3</span> ContentProvider.Transport</h4>
-<div class="outline-text-4" id="text-1-4-3">
-
-</div>
-</div>
-</div>
+</p>
 </div>
 </div>
 
-<div id="postamble">
-<p class="date">Date: 2013-05-22T10:03+0800</p>
-<p class="author">Author: sunway</p>
-<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.1 with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 23</p>
-<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
-
+<div id="outline-container-sec-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> ContentProviderNative</h4>
+<div class="outline-text-4" id="text-1-3-2">
+<p>
+The binder stub/proxy
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> ContentProvider.Transport</h4>
+<div class="outline-text-4" id="text-1-3-3">
+<p>
+The binder that extends the binder stub;
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: wei.sun</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2014-01-22 Wed 16:05</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.2 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

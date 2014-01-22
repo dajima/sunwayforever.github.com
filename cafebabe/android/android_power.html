@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Android Power Management</title>
+<!-- 2014-01-22 Wed 16:05 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="wei.sun" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Android Power Management</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Android Power Management</a>
+<ul>
+<li><a href="#sec-1-1">1.1. files</a></li>
+<li><a href="#sec-1-2">1.2. early-suspend</a></li>
+<li><a href="#sec-1-3">1.3. late-resume</a></li>
+<li><a href="#sec-1-4">1.4. wakelock</a></li>
+<li><a href="#sec-1-5">1.5. alarm</a></li>
+<li><a href="#sec-1-6">1.6. PowerManagerService</a></li>
+<li><a href="#sec-1-7">1.7. KeyGuard</a></li>
+<li><a href="#sec-1-8">1.8. misc</a></li>
+<li><a href="#sec-1-9">1.9. references</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Android Power Management</h2>
+<div class="outline-text-2" id="text-1">
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> files</h3>
+<div class="outline-text-3" id="text-1-1">
+<ul class="org-ul">
+<li>kernel/power/main.c
+<ul class="org-ul">
+<li>state<sub>store</sub>()
+</li>
+</ul>
+</li>
+
+<li>kernel/power/earlysuspend.c
+<ul class="org-ul">
+<li>request<sub>suspend</sub><sub>state</sub>()
+</li>
+<li>wake<sub>unlock</sub>()
+</li>
+</ul>
+</li>
+
+<li>kernel/power/wakelock.c
+<ul class="org-ul">
+<li>suspend()
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> early-suspend</h3>
+</div>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> late-resume</h3>
+</div>
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> wakelock</h3>
+<div class="outline-text-3" id="text-1-4">
+<ul class="org-ul">
+<li>dumpsys power 
+显示 PowerManagerService 持有的 wakelock
+<pre class="example">
+mLocks.size=1:
+    PARTIAL_WAKE_LOCK              'sunway' activated (minState=0, uid=10074, pid=2422)
+</pre>
+<p>
+这里显示的 `sunway` 只是 PMS 持有的 wakelock, 实际上系统还有其他的 wakelock
+</p>
+</li>
+<li>dmesg
+显示所有的 wakelock
+<pre class="example">
+&lt;6&gt;0[ 1324.940905] active wake lock pm_message_wakelock
+&lt;6&gt;0[ 1324.940914] active wake lock PowerManagerService
+&lt;6&gt;0[ 1324.940924] active wake lock main
+&lt;6&gt;0[ 1324.940932] active wake lock usb_work
+</pre>
+</li>
+
+<li>wakelock 的种类:
+<ul class="org-ul">
+<li>partial<sub>wake</sub><sub>lock</sub>
+
+<p>
+这种 wakelock 是最重要的 wakelock: 它可以保证 cpu 一直处于运行状态,
+(但屏幕不亮), 不论用户是否主动要求 goToSleep (通过 power 键或超时灭
+屏)
+</p>
+
+<blockquote>
+<p>
+If you hold a partial wakelock, the CPU will continue to run, irrespective of any timers 
+and even after the user presses the power button.  In all other wakelocks, the CPU will run, but
+the user can still put the device to sleep using the power button.    
+</p>
+</blockquote>
+</li>
+
+<li>screen<sub>dim</sub><sub>wake</sub><sub>lock</sub>
+</li>
+<li>screen<sub>bright</sub><sub>wake</sub><sub>lock</sub>
+</li>
+<li>full<sub>wake</sub><sub>lock</sub>
+
+<p>
+这三种 wakelock 可以使屏幕dim或常亮, 但当用户 goToSleep 时 cpu 也
+会休眠. 
+</p>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> alarm</h3>
+<div class="outline-text-3" id="text-1-5">
+</div><div id="outline-container-sec-1-5-1" class="outline-4">
+<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> alarm 如何唤醒已经休眠的进程</h4>
+<div class="outline-text-4" id="text-1-5-1">
+<p>
+中断. 不仅是 RTC 中断, 网络, power key 等都是通过中断将系统唤醒.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> PowerManagerService</h3>
+<div class="outline-text-3" id="text-1-6">
+</div><div id="outline-container-sec-1-6-1" class="outline-4">
+<h4 id="sec-1-6-1"><span class="section-number-4">1.6.1</span> goToSleep</h4>
+<div class="outline-text-4" id="text-1-6-1">
+<p>
+按 powerkey, 超时自动灭屏等, 最终都会调用 goToSleep, 这个函数本质是就是
+`echo "mem" &gt; /sys/power/state`.
+</p>
+
+<p>
+goToSleep 后, 无论当前 wakelock 如何, 屏幕总是被灭掉 (early-suspend),
+但 cpu 不一定:
+</p>
+<ul class="org-ul">
+<li>partial wakelock 会阻止 cpu 休眠
+</li>
+<li>dim/bright 无法阻止cpu 休眠
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1-6-2" class="outline-4">
+<h4 id="sec-1-6-2"><span class="section-number-4">1.6.2</span> userActivity</h4>
+<div class="outline-text-4" id="text-1-6-2">
+<p>
+userActivity 是 PMS 中与 goToSleep 对应的函数, 用来唤醒系统或点亮屏幕. 
+其中, POWER<sub>KEY</sub> 实现上是调用 userActivity(BUTTON<sub>EVENT</sub>), 可以唤醒系统
+并点亮屏幕, 而 PowerManager 提供的 userActivity 实际上是
+userActivity(OTHER<sub>EVENT</sub>), 只能在系统未休眠时点亮屏幕. 
+</p>
+
+<p>
+userActivity 本质上调用了 setPowerState
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-6-3" class="outline-4">
+<h4 id="sec-1-6-3"><span class="section-number-4">1.6.3</span> newWakeLock</h4>
+<div class="outline-text-4" id="text-1-6-3">
+<ul class="org-ul">
+<li>ACQUIRE<sub>CAUSES</sub><sub>WAKEUP</sub>
+</li>
+<li>ON<sub>AFTER</sub><sub>RELEASE</sub>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-7" class="outline-3">
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> KeyGuard</h3>
+<div class="outline-text-3" id="text-1-7">
+</div><div id="outline-container-sec-1-7-1" class="outline-4">
+<h4 id="sec-1-7-1"><span class="section-number-4">1.7.1</span> 点亮屏幕并禁用 KeyGuard</h4>
+<div class="outline-text-4" id="text-1-7-1">
+<div class="org-src-container">
+
+<pre class="src src-java">wakeLock = pm.newWakeLock(<span style="color: #2aa198;">PowerManager</span>.ACQUIRE_CAUSES_WAKEUP | <span style="color: #2aa198;">PowerManager</span>.SCREEN_DIM_WAKE_LOCK, <span style="color: #2aa198;">"tag"</span>);
+wakeLock.acquire();
+mKeyguardLock = mKeyguardManager.newKeyguardLock(<span style="color: #2aa198;">""</span>);  
+mKeyguardLock.disableKeyguard();
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-8" class="outline-3">
+<h3 id="sec-1-8"><span class="section-number-3">1.8</span> misc</h3>
+<div class="outline-text-3" id="text-1-8">
+</div><div id="outline-container-sec-1-8-1" class="outline-4">
+<h4 id="sec-1-8-1"><span class="section-number-4">1.8.1</span> /sys 文件系统接口</h4>
+<div class="outline-text-4" id="text-1-8-1">
+<ul class="org-ul">
+<li>/sys/power/state
+</li>
+</ul>
+
+<p>
+echo "mem" &gt; /sys/power/state
+echo "on" &gt; /sys/power/state
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-8-2" class="outline-4">
+<h4 id="sec-1-8-2"><span class="section-number-4">1.8.2</span> suspend 后 wifi 如何唤醒进程</h4>
+<div class="outline-text-4" id="text-1-8-2">
+<div class="org-src-container">
+
+<pre class="src src-java"><span style="color: #859900;">new</span> <span style="color: #b58900;">Thread</span>() {
+    <span style="color: #859900;">public</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">run</span>() {
+        <span style="color: #859900;">while</span> (<span style="color: #2aa198;">true</span>) {
+            counter++;
+            <span style="color: #859900;">try</span> {
+                Thread.sleep(5000);
+            } <span style="color: #859900;">catch</span> (<span style="color: #b58900;">Exception</span> <span style="color: #268bd2;">e</span>) {
+            }
+        }
+    }
+}.start();
+
+<span style="color: #859900;">new</span> <span style="color: #b58900;">Thread</span>() {
+    <span style="color: #859900;">public</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">run</span>() {
+        <span style="color: #859900;">try</span> {
+            <span style="color: #b58900;">ServerSocket</span> <span style="color: #268bd2;">serverSocket</span> = <span style="color: #859900;">new</span> <span style="color: #b58900;">ServerSocket</span>(1234);
+            <span style="color: #b58900;">Socket</span> <span style="color: #268bd2;">socket</span> = serverSocket.accept();
+            <span style="color: #b58900;">BufferedReader</span> <span style="color: #268bd2;">is</span>=<span style="color: #859900;">new</span> <span style="color: #b58900;">BufferedReader</span>(<span style="color: #859900;">new</span> <span style="color: #b58900;">InputStreamReader</span>(socket.getInputStream()));
+            <span style="color: #b58900;">BufferedWriter</span> <span style="color: #268bd2;">os</span>=<span style="color: #859900;">new</span> <span style="color: #b58900;">BufferedWriter</span>(<span style="color: #859900;">new</span> <span style="color: #b58900;">FileWriter</span>(<span style="color: #2aa198;">"/storage/sdcard1/test_socket.txt"</span>));
+            <span style="color: #b58900;">String</span> <span style="color: #268bd2;">line</span>=is.readLine();
+            <span style="color: #859900;">while</span> (line!=<span style="color: #2aa198;">null</span>) {
+                Log.e(<span style="color: #2aa198;">"sunway"</span>,<span style="color: #2aa198;">"got line: "</span>+line);
+                os.write (Long.toString(System.currentTimeMillis()/1000)+<span style="color: #2aa198;">" : counter: "</span>+counter+<span style="color: #2aa198;">" / "</span>);
+                os.write(line);
+                os.newLine();
+                os.flush();
+                <span style="color: #859900;">try</span> {
+                    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">Thread.sleep(20000);</span>
+                    line=is.readLine();
+                } <span style="color: #859900;">catch</span> (<span style="color: #b58900;">Exception</span> <span style="color: #268bd2;">e</span>) {
+                }
+            }
+            Log.e(<span style="color: #2aa198;">"sunway"</span>,<span style="color: #2aa198;">"conn close"</span>);
+            is.close();
+            os.close();
+        } <span style="color: #859900;">catch</span> (<span style="color: #b58900;">Exception</span> <span style="color: #268bd2;">e</span>) {
+            e.printStackTrace();
+        }
+    }
+}.start();
+</pre>
+</div>
+
+<p>
+使用上面的测试程序可以得出结论:
+</p>
+<ol class="org-ol">
+<li>ingress 数据可以唤醒整个系统.
+</li>
+<li>保持 ingress 数据不处理可以阻止系统休眠. (去掉 Thread.sleep 试试)
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-1-8-3" class="outline-4">
+<h4 id="sec-1-8-3"><span class="section-number-4">1.8.3</span> 插入 usb 线会阻止 suspend ?</h4>
+<div class="outline-text-4" id="text-1-8-3">
+<p>
+因为 usb 会持有一个 wakelock. (通过 dmesg 可以看到, 但通过 PMS 看不到)
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-9" class="outline-3">
+<h3 id="sec-1-9"><span class="section-number-3">1.9</span> references</h3>
+<div class="outline-text-3" id="text-1-9">
+<p>
+<a href="https://community.freescale.com/thread/261901">Linux Kernel and Android Suspend/Resume -blog archive</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: wei.sun</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2014-01-22 Wed 16:05</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.2 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

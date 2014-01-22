@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>My Linux Desktop</title>
+<!-- 2014-01-22 Wed 16:04 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Wei Sun (孙伟)" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">My Linux Desktop</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. My Linux Desktop</a>
+<ul>
+<li><a href="#sec-1-1">1.1. i3 wm</a></li>
+<li><a href="#sec-1-2">1.2. emacs</a></li>
+<li><a href="#sec-1-3">1.3. screen</a></li>
+<li><a href="#sec-1-4">1.4. dropbox</a></li>
+<li><a href="#sec-1-5">1.5. workrave</a></li>
+<li><a href="#sec-1-6">1.6. zeal</a></li>
+<li><a href="#sec-1-7">1.7. 软件开发相关的工具</a></li>
+<li><a href="#sec-1-8">1.8. 其他</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> My Linux Desktop</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+工欲善其事，必先利其器 &#x2013; 《论语》
+</p>
+</div>
+
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> i3 wm</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+i3 wm 是一个 tiling window manager (平铺式窗口管理器), 与常见的
+floating window manager (重叠式窗口管理器) 如 windows 默认的窗口管理器
+或 gnome 默认的 metacity 不同的是, i3 不允许窗口重叠, 通常把桌面划分为
+不相交的区域来显示各个窗口, 较少注意窗口装饰, 尽量铺满整个屏幕, 有丰富
+的快捷键支持, 可以不用鼠标就能完全控制它, 提高工作效率.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> emacs</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+emacs 是一个具有很强扩展性文本编辑器, 虽然我使用它已经超过十年了, 但它
+仍能时不时的给我一些惊喜. 除了它的基本的编辑功能, 我平时主要用下面这些
+扩展功能:
+</p>
+</div>
+<div id="outline-container-sec-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> magit</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<p>
+magit 是一个 git 插件, 有了它, 我再也不敲 git 命令了.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> my-desktop</h4>
+<div class="outline-text-4" id="text-1-2-2">
+<p>
+我自己写的针对 desktop-mode 扩展, 用于切换不同的 project, 比如当前打开
+了 200 多个 4.1 仓库下的文件, 临时需要解决 4.4 的一个 bug, 我可以用
+my-desktop 把当前所有工作状态保存下来, 包含打开的文件, 命令的历史,甚至
+具体到某个变量, 以便以后能快速恢复之前的工作环境.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-2-3" class="outline-4">
+<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> org-mode</h4>
+<div class="outline-text-4" id="text-1-2-3">
+<p>
+我使用 org-mode 来做 GTD 和写一些工作笔记. 除此以外, 我使用 org-mode 来
+写任何的文档, 甚至我的所有密码和个人信息也是 org-mode 箮理的(当然, 是加
+密的).
+</p>
+
+<ol class="org-ol">
+<li>它编辑的文件是纯文本的, 可以方便的使用版本控制
+</li>
+<li>它可以导出成 pdf, html 等
+</li>
+<li>它内置的 org-babel 功能可以使我以纯文本的方式插入其他程序源码, 并在
+导出时执行这些源码生成最终的文档. 这个功能实际上就是 knuth 构想的"文
+学编程", 你想过使用代码来写文档么? 听起来很玄, 目前我用 org-babel主
+要是插入 graphviz 或 plantuml 代码, 用来在文档中插入图片.
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-1-2-4" class="outline-4">
+<h4 id="sec-1-2-4"><span class="section-number-4">1.2.4</span> dired-mode</h4>
+<div class="outline-text-4" id="text-1-2-4">
+<p>
+在 emacs 中操作文件, 可以代替其他文件管理器.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-2-5" class="outline-4">
+<h4 id="sec-1-2-5"><span class="section-number-4">1.2.5</span> tramp-mode</h4>
+<div class="outline-text-4" id="text-1-2-5">
+<p>
+编辑远程文件, 支持 ssh, ftp, samba, nfs 等
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> screen</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+screen 是一个 terminal multiplexer, 它可以使用一个 terminal 模拟多个
+terminal, 并且它的 attach/detach 功能尤其适合在远程终端上使用.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> dropbox</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+dropbox 可能是唯一一个支持 linux 的云存储工具. 
+我使用 dropbox 来保存:
+</p>
+<ol class="org-ol">
+<li>各种配置文件和 org-mode GTD 信息, 因为我需要不同机器和平台上
+同步
+</li>
+<li>重要文件的备份
+比如未提交的代码, ssh 私钥等
+</li>
+<li>一些旧的文件的存档
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> workrave</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+定时提醒并锁定屏幕, 提醒我需要活动活动了.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> zeal</h3>
+<div class="outline-text-3" id="text-1-6">
+<p>
+一个离线文档浏览器, 内置了许多项目的文档的下载, 例如 android, stl,
+ruby 等
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-7" class="outline-3">
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> 软件开发相关的工具</h3>
+<div class="outline-text-3" id="text-1-7">
+</div><div id="outline-container-sec-1-7-1" class="outline-4">
+<h4 id="sec-1-7-1"><span class="section-number-4">1.7.1</span> droid</h4>
+<div class="outline-text-4" id="text-1-7-1">
+<p>
+我自己写的 android 小工具的集合, 可以省去许多繁琐的操作, 例如:
+</p>
+<ul class="org-ul">
+<li>droid push 
+找到当前 git 仓库编译输出的文件, 并 push 到手机对应的位置, 省去自己
+去 out 目录找.
+</li>
+<li>droid sniffer 
+在 PC 里直接对手机进行 tcpdump.
+</li>
+<li>droid debug java/exec/attach
+使用 gdb 和 gdbserver 直接 debug native 代码.
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-1-7-2" class="outline-4">
+<h4 id="sec-1-7-2"><span class="section-number-4">1.7.2</span> profiling</h4>
+<div class="outline-text-4" id="text-1-7-2">
+<ul class="org-ul">
+<li>mat
+</li>
+<li>valgrind
+</li>
+<li>traceview
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-1-7-3" class="outline-4">
+<h4 id="sec-1-7-3"><span class="section-number-4">1.7.3</span> 反编译</h4>
+<div class="outline-text-4" id="text-1-7-3">
+<p>
+分析代码时经常需要对 apk 进行反编译, 以下工具是必备的:
+</p>
+<ul class="org-ul">
+<li>dex2jar
+</li>
+<li>jd-gui
+</li>
+<li>apktool
+</li>
+<li>AXMLPrinter2
+</li>
+<li>baksmali.jar &amp; smali.jar
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-1-7-4" class="outline-4">
+<h4 id="sec-1-7-4"><span class="section-number-4">1.7.4</span> portecle</h4>
+<div class="outline-text-4" id="text-1-7-4">
+<p>
+android app 或网络相关的程序经常与非对称密钥以及各种 key store 有关,
+这个工具可以代替复杂的 openssh 或 keytool 命令.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-7-5" class="outline-4">
+<h4 id="sec-1-7-5"><span class="section-number-4">1.7.5</span> charles web debugging proxy</h4>
+<div class="outline-text-4" id="text-1-7-5">
+<p>
+调试 https 程序的利器, 通过它, 你可以查看 ssl 加密的数据.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-7-6" class="outline-4">
+<h4 id="sec-1-7-6"><span class="section-number-4">1.7.6</span> ack</h4>
+<div class="outline-text-4" id="text-1-7-6">
+<p>
+比 grep 更快. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-7-7" class="outline-4">
+<h4 id="sec-1-7-7"><span class="section-number-4">1.7.7</span> beagrep</h4>
+<div class="outline-text-4" id="text-1-7-7">
+<p>
+索引工具, 使用它在整个 android 仓库中查找一个字符串只需几秒钟.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-7-8" class="outline-4">
+<h4 id="sec-1-7-8"><span class="section-number-4">1.7.8</span> ctags</h4>
+</div>
+</div>
+
+<div id="outline-container-sec-1-8" class="outline-3">
+<h3 id="sec-1-8"><span class="section-number-3">1.8</span> 其他</h3>
+<div class="outline-text-3" id="text-1-8">
+</div><div id="outline-container-sec-1-8-1" class="outline-4">
+<h4 id="sec-1-8-1"><span class="section-number-4">1.8.1</span> solarized color theme</h4>
+<div class="outline-text-4" id="text-1-8-1">
+<p>
+长时间盯着电脑屏幕需要选择一个低对比度的 color theme, solarized dark 是
+一个不错的选择. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-8-2" class="outline-4">
+<h4 id="sec-1-8-2"><span class="section-number-4">1.8.2</span> 字体</h4>
+<div class="outline-text-4" id="text-1-8-2">
+<ul class="org-ul">
+<li>英文
+
+<p>
+terminus
+</p>
+</li>
+<li>中文
+
+<p>
+文泉驿 bitmap song
+</p>
+</li>
+</ul>
+
+<p>
+这两个都是点阵字体, 相对于更"现代"的矢量字体, 我觉得点阵字体更适合写代码用. 
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Wei Sun (孙伟)</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2014-01-22 Wed 16:04</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.2 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

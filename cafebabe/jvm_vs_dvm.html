@@ -3,11 +3,11 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Android Root</title>
+<title>JVM Vs DVM</title>
 <!-- 2014-01-22 Wed 16:04 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
-<meta  name="author" content="wei.sun" />
+<meta  name="author" content="Wei Sun (孙伟)" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
   .title  { text-align: center; }
@@ -137,67 +137,81 @@ for the JavaScript code in this tag.
 </head>
 <body>
 <div id="content">
-<h1 class="title">Android Root</h1>
+<h1 class="title">JVM Vs DVM</h1>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. Android Root Howto</a>
+<li><a href="#sec-1">1. JVM Vs DVM</a>
 <ul>
-<li><a href="#sec-1-1">1.1. SuperUser</a></li>
-<li><a href="#sec-1-2">1.2. Rooting tookit</a></li>
-<li><a href="#sec-1-3">1.3. After rooted, we can</a></li>
+<li><a href="#sec-1-1">1.1. GC</a></li>
+<li><a href="#sec-1-2">1.2. 常量池</a></li>
+<li><a href="#sec-1-3">1.3. 文件格式</a></li>
+<li><a href="#sec-1-4">1.4. 执行</a></li>
+<li><a href="#sec-1-5">1.5. 字节码</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 <div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> Android Root Howto</h2>
+<h2 id="sec-1"><span class="section-number-2">1</span> JVM Vs DVM</h2>
 <div class="outline-text-2" id="text-1">
 </div><div id="outline-container-sec-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> SuperUser</h3>
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> GC</h3>
 <div class="outline-text-3" id="text-1-1">
-</div><div id="outline-container-sec-1-1-1" class="outline-4">
-<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> SuperUser.apk</h4>
+<ul class="org-ul">
+<li>JVM 使用逐代 GC, 并支持各种 GC 算法如 serial (mark &amp; sweep), copying,
+parallel (parnew, parold), cms 等,
+</li>
+<li>DVM 不使用逐代 GC, 默认只支持 mark &amp; sweep, 通过编译开发可以支持 copying
+</li>
+<li>JVM 使用对象头的 mark work 有标记是否 mark
+</li>
+<li>DVM 使用 markbits 内存位图来保存 mark 信, 节省内存.
+</li>
+</ul>
 </div>
-<div id="outline-container-sec-1-1-2" class="outline-4">
-<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> The malicious `su'</h4>
 </div>
-</div>
-
 <div id="outline-container-sec-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Rooting tookit</h3>
-<div class="outline-text-3" id="text-1-2">
-</div><div id="outline-container-sec-1-2-1" class="outline-4">
-<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> zergRush</h4>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 常量池</h3>
+</div>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 文件格式</h3>
+<div class="outline-text-3" id="text-1-3">
+<ul class="org-ul">
+<li>dex vs. class
+</li>
+</ul>
 </div>
 </div>
 
-<div id="outline-container-sec-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> After rooted, we can</h3>
-<div class="outline-text-3" id="text-1-3">
-</div><div id="outline-container-sec-1-3-1" class="outline-4">
-<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> refrain notification</h4>
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> 执行</h3>
+<div class="outline-text-3" id="text-1-4">
+<ul class="org-ul">
+<li>DVM 通过 odex 在编译时进行 class 的解析 (解析符号引用, 指令替换等)
+</li>
+<li>DVM 通过 zygote 加快 java 进程的创建, 并节省内存.
+</li>
+</ul>
 </div>
-<div id="outline-container-sec-1-3-2" class="outline-4">
-<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> refrain broadcast (include BOOT<sub>COMPLETED</sub>)</h4>
 </div>
-<div id="outline-container-sec-1-3-3" class="outline-4">
-<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> silently install package</h4>
-<div class="outline-text-4" id="text-1-3-3">
-<blockquote>
-<p>
-$&gt; am install
-</p>
-</blockquote>
+
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> 字节码</h3>
+<div class="outline-text-3" id="text-1-5">
+</div><div id="outline-container-sec-1-5-1" class="outline-4">
+<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> JVM 基于栈</h4>
 </div>
+<div id="outline-container-sec-1-5-2" class="outline-4">
+<h4 id="sec-1-5-2"><span class="section-number-4">1.5.2</span> DVM 基于寄存器</h4>
 </div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="author">Author: wei.sun</p>
+<p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
 <p class="date">Created: 2014-01-22 Wed 16:04</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.2 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
