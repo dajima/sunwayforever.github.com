@@ -4,90 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Android Memory</title>
-<!-- 2014-01-22 Wed 16:05 -->
+<!-- 2014-01-30 Thu 13:54 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="wei.sun" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
-  .title  { text-align: center; }
-  .todo   { font-family: monospace; color: red; }
-  .done   { color: green; }
-  .tag    { background-color: #eee; font-family: monospace;
-            padding: 2px; font-size: 80%; font-weight: normal; }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .center { margin-left: auto; margin-right: auto; text-align: center; }
-  .underline { text-decoration: underline; }
-  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
-  p.verse { margin-left: 3%; }
-  pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
-    padding: 8pt;
-    font-family: monospace;
-    overflow: auto;
-    margin: 1.2em;
-  }
-  pre.src {
-    position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
-  }
-  pre.src:before {
-    display: none;
-    position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
-    padding: 3px;
-    border: 1px solid black;
-  }
-  pre.src:hover:before { display: inline;}
-  pre.src-sh:before    { content: 'sh'; }
-  pre.src-bash:before  { content: 'sh'; }
-  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-R:before     { content: 'R'; }
-  pre.src-perl:before  { content: 'Perl'; }
-  pre.src-java:before  { content: 'Java'; }
-  pre.src-sql:before   { content: 'SQL'; }
-
-  table { border-collapse:collapse; }
-  caption.t-above { caption-side: top; }
-  caption.t-bottom { caption-side: bottom; }
-  td, th { vertical-align:top;  }
-  th.right  { text-align: center;  }
-  th.left   { text-align: center;   }
-  th.center { text-align: center; }
-  td.right  { text-align: right;  }
-  td.left   { text-align: left;   }
-  td.center { text-align: center; }
-  dt { font-weight: bold; }
-  .footpara:nth-child(2) { display: inline; }
-  .footpara { display: block; }
-  .footdef  { margin-bottom: 1em; }
-  .figure { padding: 1em; }
-  .figure p { text-align: center; }
-  .inlinetask {
-    padding: 10px;
-    border: 2px solid gray;
-    margin: 10px;
-    background: #ffffcc;
-  }
-  #org-div-home-and-up
-   { text-align: right; font-size: 70%; white-space: nowrap; }
-  textarea { overflow-x: auto; }
-  .linenr { font-size: smaller }
-  .code-highlighted { background-color: #ffff00; }
-  .org-info-js_info-navigation { border-style: none; }
-  #org-info-js_console-label
-    { font-size: 10px; font-weight: bold; white-space: nowrap; }
-  .org-info-js_search-highlight
-    { background-color: #ffff00; color: #000000; font-weight: bold; }
-  /*]]>*/-->
-</style>
+<link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -151,6 +72,7 @@ for the JavaScript code in this tag.
 <li><a href="#sec-1-5">1.5. java memory</a></li>
 <li><a href="#sec-1-6">1.6. misc</a></li>
 <li><a href="#sec-1-7">1.7. Reference</a></li>
+<li><a href="#sec-1-8">1.8. About GC heap, growthLimit and OOM</a></li>
 </ul>
 </li>
 </ul>
@@ -526,13 +448,180 @@ consume 50MB rss.
 </ul>
 </div>
 </div>
+
+<div id="outline-container-sec-1-8" class="outline-3">
+<h3 id="sec-1-8"><span class="section-number-3">1.8</span> About GC heap, growthLimit and OOM</h3>
+<div class="outline-text-3" id="text-1-8">
+<p>
+一直以来 android 都流传着一个说法:
+`android 的 GC heap 有一个 growthLimit 参数, 可以控制 GC heap 的大小,
+而且 external 分配的内存也会算在 growthLimit 里, 当 GC heap 大小到达
+growthLimit 时, 会 OOM`
+</p>
+
+<p>
+我觉得这有些不可思议: 难道我在 jni 里 mmap 的内存也会受 growthLimit 的
+限制? 以下是我的调查:
+</p>
+</div>
+<div id="outline-container-sec-1-8-1" class="outline-4">
+<h4 id="sec-1-8-1"><span class="section-number-4">1.8.1</span> 第一阶段 &#x2026;</h4>
+<div class="outline-text-4" id="text-1-8-1">
+<ul class="org-ul">
+<li>为什么 OOM?
+<ul class="org-ul">
+<li>代码抛出来的 &#x2026;
+<ul class="org-ul">
+<li>用户自己故意通过 java 代码或 jni 抛出 OOM 异常
+</li>
+<li>dalvik 自己抛出 OOM 异常
+<ul class="org-ul">
+<li>dvmMalloc
+dalvik在构造一切 java 对象时都会使用 dvmMalloc 在 GC heap 上分
+配内存.
+<ul class="org-ul">
+<li>Heap.tryMalloc
+<ul class="org-ul">
+<li>dvmHeapSourceAlloc
+</li>
+<li>dvmHeapSourceAllocAndGrow
+当 grow 完了还是分配失败 dalvik 会主动抛出 OOM
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>malloc/mmap/&#x2026;
+dalvik 有时有会需要使用 malloc/mmap 直接从 GC heap 之外分配内存,
+例如 jni 里的 GetStringUTFChars:
+<pre class="example">
+GetStringUTFChars
+  char* newStr = (char*) malloc(byteLen+1);            
+  convertUtf16ToUtf8(newStr, data, len);
+  if (newStr == NULL):
+    /* assume memory failure */
+    dvmThrowOutOfMemoryError("native heap string alloc failed");
+</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+
+<li>OOM 不一定是 GC heap 不足, dalvik 可以把任何形式的内存分配失败上报 为
+OOM, 可以说某些 mmap/malloc/brk 操作会导致 OOM, 但不能说这些 OOM 是因
+为 growthLimit 导致的. growthLimit 只会导致 dvmMalloc 抛出 OOM
+</li>
+
+<li>ps
+<ul class="org-ul">
+<li>GC heap 实际上是使用 mmap 一次性从 ashmem map 出 growthLimit 大小
+的内存区域, 然后每次 dvmMalloc 是在这块大的区域上使用 ptmalloc 再
+分配.
+</li>
+<li>我看了一眼 ByteBuffer.allocateDirect 方法, 在 dalvik 里它是分配在
+GC heap 上的&#x2026;但在 hotspot 是用 mmap 分配的, 不太一样.
+</li>
+<li>bitmap 是分配在 GC heap 里, 但通过 binder 传输时会使用 ashmem, 因
+为直接传的话 binder 放不下.
+</li>
+<li>CursorWindow 直接就是放在 ashmem 里的, 原因同 bitmap
+</li>
+<li>heapGrowthLimit 真的可以影响非 dvmMalloc 分配的内存(或者说非 GC
+heap) 么?  求代码求真相, 反正我是没找到&#x2026;
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-1-8-2" class="outline-4">
+<h4 id="sec-1-8-2"><span class="section-number-4">1.8.2</span> 第二阶段 &#x2026;</h4>
+<div class="outline-text-4" id="text-1-8-2">
+<p>
+2.3.5 的代码中除了一个类似于 growthLimit 的 absoluteMaxSize 外, 还维护
+了一个 externalBytesAllocated 的变量, 初始为0.
+</p>
+
+<p>
+2.3.5 代码创建 bitmap 时使用的是 HeapAllocator (现在都改成
+JavaAllocator 了), 它会先调用 malloc 分配内存, 然后调用
+GraphicsJNI::setJavaPixelRef, 这个函数最终会调到 davlik 的 HeapSource里
+的 externalAlloc(), 这个 externalAlloc 实际上并不分配内存, 只是更新了一
+个 externalBytesAllocated 的值.
+</p>
+
+<p>
+当 dalvik 调用 dvmAlloc 从 GC heap 分配 java 对象时, 会有一个额外的判断:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-java"><span style="color: #859900;">if</span> (max &gt; hs-&gt;externalBytesAllocated) {
+    max -= hs-&gt;externalBytesAllocated;
+
+    mspace_set_max_allowed_footprint(heap-&gt;msp, max);
+    ptr = dvmHeapSourceAlloc(n);
+    ...
+</pre>
+</div>
+
+<p>
+可见, 虽然 bitmap 并没有分配在 GC heap, 却可以通过
+externalBytesAllocated 这个值影响 GC heap 能使用的大小 &#x2026; Orz
+</p>
+
+<p>
+同样的情况还出现在 ByteBuffer.allocateDirect 方法中:
+</p>
+
+<p>
+ByteBuffer.allocateDirect() 分配内存时使用以下方法:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-java"><span style="color: #859900;">static</span> <span style="color: #b58900;">jint</span> <span style="color: #268bd2;">OSMemory_malloc</span>(JNIEnv* env, <span style="color: #b58900;">jclass</span>, <span style="color: #b58900;">jint</span> <span style="color: #268bd2;">size</span>) {
+    <span style="color: #b58900;">jboolean</span> <span style="color: #268bd2;">allowed</span> = env-&gt;CallBooleanMethod(gIDCache.runtimeInstance,
+                                              gIDCache.method_trackExternalAllocation, static_cast&lt;jlong&gt;(size));
+    <span style="color: #859900;">if</span> (<span style="color: #dc322f;">!</span>allowed) {
+        LOGW(<span style="color: #2aa198;">"External allocation of %d bytes was rejected\n"</span>, size);
+        jniThrowException(env, <span style="color: #2aa198;">"java/lang/OutOfMemoryError"</span>, NULL);
+        <span style="color: #859900;">return</span> 0;
+    }
+
+    LOGV(<span style="color: #2aa198;">"OSMemory alloc %d\n"</span>, size);
+    <span style="color: #b58900;">void</span>* block = malloc(size + sizeof(jlong));
+    ...
+</pre>
+</div>
+
+<p>
+综上, 在 2.3.5, 分配 bitmap 和 ByteBuffer 时确实会影响可用的 GC heap,
+但到了现在 (4.x), 以上两种情况都已经不成立了:
+</p>
+
+<ol class="org-ol">
+<li>bitmap 改成在 GC heap 上分配了.
+</li>
+<li>DirectBuffer 也改成 GC heap 上分配了.
+</li>
+<li>HeapSource 中 external allocation 相关的代码都已经不存在了.
+</li>
+</ol>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: wei.sun</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-01-22 Wed 16:05</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.2 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
+<p class="date">Created: 2014-01-30 Thu 13:54</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

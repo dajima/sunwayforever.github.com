@@ -4,90 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>ActivityManagerService</title>
-<!-- 2014-01-22 Wed 16:05 -->
+<!-- 2014-01-30 Thu 13:54 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="wei.sun" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
-  .title  { text-align: center; }
-  .todo   { font-family: monospace; color: red; }
-  .done   { color: green; }
-  .tag    { background-color: #eee; font-family: monospace;
-            padding: 2px; font-size: 80%; font-weight: normal; }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .center { margin-left: auto; margin-right: auto; text-align: center; }
-  .underline { text-decoration: underline; }
-  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
-  p.verse { margin-left: 3%; }
-  pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
-    padding: 8pt;
-    font-family: monospace;
-    overflow: auto;
-    margin: 1.2em;
-  }
-  pre.src {
-    position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
-  }
-  pre.src:before {
-    display: none;
-    position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
-    padding: 3px;
-    border: 1px solid black;
-  }
-  pre.src:hover:before { display: inline;}
-  pre.src-sh:before    { content: 'sh'; }
-  pre.src-bash:before  { content: 'sh'; }
-  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-R:before     { content: 'R'; }
-  pre.src-perl:before  { content: 'Perl'; }
-  pre.src-java:before  { content: 'Java'; }
-  pre.src-sql:before   { content: 'SQL'; }
-
-  table { border-collapse:collapse; }
-  caption.t-above { caption-side: top; }
-  caption.t-bottom { caption-side: bottom; }
-  td, th { vertical-align:top;  }
-  th.right  { text-align: center;  }
-  th.left   { text-align: center;   }
-  th.center { text-align: center; }
-  td.right  { text-align: right;  }
-  td.left   { text-align: left;   }
-  td.center { text-align: center; }
-  dt { font-weight: bold; }
-  .footpara:nth-child(2) { display: inline; }
-  .footpara { display: block; }
-  .footdef  { margin-bottom: 1em; }
-  .figure { padding: 1em; }
-  .figure p { text-align: center; }
-  .inlinetask {
-    padding: 10px;
-    border: 2px solid gray;
-    margin: 10px;
-    background: #ffffcc;
-  }
-  #org-div-home-and-up
-   { text-align: right; font-size: 70%; white-space: nowrap; }
-  textarea { overflow-x: auto; }
-  .linenr { font-size: smaller }
-  .code-highlighted { background-color: #ffff00; }
-  .org-info-js_info-navigation { border-style: none; }
-  #org-info-js_console-label
-    { font-size: 10px; font-weight: bold; white-space: nowrap; }
-  .org-info-js_search-highlight
-    { background-color: #ffff00; color: #000000; font-weight: bold; }
-  /*]]>*/-->
-</style>
+<link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -151,7 +72,8 @@ for the JavaScript code in this tag.
 <li><a href="#sec-1-5">1.5. ProcessRecord</a></li>
 <li><a href="#sec-1-6">1.6. AppDeathRecipient</a></li>
 <li><a href="#sec-1-7">1.7. ActivityThread</a></li>
-<li><a href="#sec-1-8">1.8. What's the `system` process?</a></li>
+<li><a href="#sec-1-8">1.8. misc</a></li>
+<li><a href="#sec-1-9">1.9. What's the `system` process?</a></li>
 </ul>
 </li>
 </ul>
@@ -2547,8 +2469,47 @@ process has gone.
 </div>
 </div>
 <div id="outline-container-sec-1-8" class="outline-3">
-<h3 id="sec-1-8"><span class="section-number-3">1.8</span> What's the `system` process?</h3>
+<h3 id="sec-1-8"><span class="section-number-3">1.8</span> misc</h3>
 <div class="outline-text-3" id="text-1-8">
+</div><div id="outline-container-sec-1-8-1" class="outline-4">
+<h4 id="sec-1-8-1"><span class="section-number-4">1.8.1</span> AMS.closeSystemDialogs</h4>
+<div class="outline-text-4" id="text-1-8-1">
+<p>
+AMS.closeSystemDialogs 所做的并不只是关闭某些窗口 &#x2026; 而是通知某些人
+当前需要关闭一些窗口, AMS.closeSystemDialogs 会做以下几件事:
+</p>
+<ol class="org-ol">
+<li>发送一个特定的 broadcast
+</li>
+<li>调用 WMS.closeSystemDialogs, 而 WMS.closeSystemDialogs 会通过
+ViewRootImpl 调用到 DecorView 的 onCloseSystemDialogs, 进而调用
+DecorView 的 closeAllPanels 导致各种 panel (实际上只有 options menu
+这一个 panel &#x2026;, context menu, action bar 等都不是 panel) 被关闭,
+所以 closeSystemDialogs 似乎更应该叫 closeAllOptionsMenu &#x2026;
+
+<p>
+因为 View 的 onCloseSystemDialogs 目前为空操作, 所以popupWindow 不会
+响应 closeSystemDialogs, 因为它的顶层 view 不是DecorView
+</p>
+</li>
+
+<li>调用 activityStack.closeSystemDialogs, 带有
+FLAG<sub>FINISH</sub><sub>ON</sub><sub>CLOSE</sub><sub>SYSTEM</sub><sub>DIALOGS</sub> 标志的 activity 会被 finish
+</li>
+</ol>
+
+<p>
+AMS.closeSystemDialogs 一方面可以由应用主动调用, 例如 launcher 或
+keyguard, 用来关闭一个窗口. 一方面会因为 KeyEvent 被触发, 目前长按电源
+关机, 或按 HOME 启动 launcher 或长按 HOME 启动 recentapp 都会触发
+closeSystemDialogs, 应用可以根本这一点获得关机或按 HOME 的通知. 
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-9" class="outline-3">
+<h3 id="sec-1-9"><span class="section-number-3">1.9</span> What's the `system` process?</h3>
+<div class="outline-text-3" id="text-1-9">
 <p>
 简单的说:
 </p>
@@ -2569,9 +2530,9 @@ process has gone.
 </div>
 
 
-<div id="outline-container-sec-1-8-1" class="outline-4">
-<h4 id="sec-1-8-1"><span class="section-number-4">1.8.1</span> system 进程及 ActivityThread 的初始化</h4>
-<div class="outline-text-4" id="text-1-8-1">
+<div id="outline-container-sec-1-9-1" class="outline-4">
+<h4 id="sec-1-9-1"><span class="section-number-4">1.9.1</span> system 进程及 ActivityThread 的初始化</h4>
+<div class="outline-text-4" id="text-1-9-1">
 <ol class="org-ol">
 <li>system<sub>server</sub> 通过 app<sub>process</sub> 被启动 (参考 zygote init)
 </li>
@@ -2617,8 +2578,8 @@ mSelf.mProcessNames.put(app.processName, app.uid, app);
 <div id="postamble" class="status">
 <p class="author">Author: wei.sun</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-01-22 Wed 16:05</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.2 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
+<p class="date">Created: 2014-01-30 Thu 13:54</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
