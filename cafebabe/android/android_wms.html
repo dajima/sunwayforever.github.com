@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Android WindowManager</title>
-<!-- 2014-01-22 Wed 16:05 -->
+<!-- 2014-01-30 Thu 13:23 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="wei.sun" />
@@ -216,8 +216,8 @@ LinearLayout
 <h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> Window</h4>
 <div class="outline-text-4" id="text-1-1-3">
 <p>
-对于ViewRoot来说,顶层的`Window`就是一个普通的View, 但有些和`Window`有关
-的操作,如:
+对于 activity 和 dialog 来说, 其 DecorView 与一个 PhoneWindow 一一对应,
+有一些和 `Window` 相关的操作, 如:
 </p>
 
 <ul class="org-ul">
@@ -230,8 +230,10 @@ LinearLayout
 </ul>
 
 <p>
-因为, 提供了一个Window类, 用来处理这些和`Window`有关的操作, 但从WMS及
-ViewRoot的角度看,并没有`Window`的概念.
+因此, 提供了一个Window类, 用来处理这些和`Window`有关的操作. 一个Window
+对应一个 DecorView 及 ViewRoot (例如 activity 或 dialog 的 DecorView),
+但因为 window 会管理各种 panel, 所以它也会管理着 panel 的 ViewRoot 及顶
+层 view. 
 </p>
 
 <p>
@@ -240,9 +242,9 @@ Window的inner class), 所以只有Activity,Dialog有window的概念
 </p>
 
 <p>
-在 WMS 一侧也有一个 `window` 的概念, 因为它是 `WindowManager` 嘛, 不
-过 WMS 的 `window` 是叫 WindowState, 而不是 PhoneWindow, 它侧重的是
-Window 的管理, 例如:
+在 WMS 一侧也有一个 `window` 的概念, 因为它是 `WindowManager` 嘛, 不过
+WMS 的 `window` 是叫 WindowState, 对应于 ViewRoot 和 DecorView, 而不是
+PhoneWindow, 它侧重的是Window 的管理, 例如:
 </p>
 
 <ol class="org-ol">
@@ -775,8 +777,8 @@ see also <i>Android Event Dispatching</i>
 <div id="postamble" class="status">
 <p class="author">Author: wei.sun</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-01-22 Wed 16:05</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.2 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
+<p class="date">Created: 2014-01-30 Thu 13:23</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
