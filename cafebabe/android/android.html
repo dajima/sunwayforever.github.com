@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Android</title>
-<!-- 2014-01-30 Thu 13:54 -->
+<!-- 2014-03-06 Thu 17:30 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="wei.sun" />
@@ -866,7 +866,46 @@ A: android<sub>server</sub>.so:init1() is needed because it will call `joinThrea
 </p>
 </div>
 </div>
+
+<div id="outline-container-sec-1-22-4" class="outline-4">
+<h4 id="sec-1-22-4"><span class="section-number-4">1.22.4</span> app<sub>process</sub> init</h4>
+<div class="outline-text-4" id="text-1-22-4">
+<p>
+zygote 本身就是通过 app<sub>process</sub> 启动的, 另外, 除了通过 zygote 来启动
+java 程序外, android 还可以通过 app<sub>process</sub> 来启动 java 程序.
+</p>
+
+<p>
+例如, adb shell am, adb shell pm, monkey 等都是通过 app<sub>process</sub> 启动的. 
+</p>
+
+<p>
+与 zygote init 的过程一样, app<sub>process</sub> 启动一般 java 程序的过程大致是:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">app_main.cpp::main(className)
+  AndroidRuntime.cpp::runtime.start("com.android.internal.os.RuntimeInit")
+    AndroidRuntime.cpp::start(const char* className, const char* options)
+      // &#25214;&#21040; RuntimeInit &#31867;&#30340; main &#24182;&#35843;&#29992;
+      jmethodID startMeth = env-&gt;GetStaticMethodID(startClass, "main"...
+      env-&gt;CallStaticVoidMethod(startClass, startMeth, strArray);
+        RuntimeInit.java::nativeFinishInit();
+          app_main.cpp::runtime.onStarted()
+            // &#21551;&#21160;&#19968;&#20010;&#21333;&#29420;&#30340; binder &#32447;&#31243;
+            proc-&gt;startThreadPool();
+            // &#35843;&#21040; app_process &#21629;&#20196;&#25351;&#23450;&#30340;&#31867;&#30340; main &#20989;&#25968;
+            ar-&gt;callMain(mClassName, mClass, mArgC, mArgV);
+            // app_process &#21629;&#20196;&#25351;&#23450;&#30340;&#31867;&#30340; main &#20989;&#25968;&#36820;&#22238;, &#25972;&#20010;
+            // app_main::main() &#32467;&#26463;, &#36827;&#31243;&#32456;&#27490;
+            IPCThreadState::self()-&gt;stopProcess();
+</pre>
 </div>
+</div>
+</div>
+</div>
+
 <div id="outline-container-sec-1-23" class="outline-3">
 <h3 id="sec-1-23"><span class="section-number-3">1.23</span> Input Method Framework</h3>
 </div>
@@ -1989,7 +2028,7 @@ see also <a href="#sec-1-22-2">1.22.2</a>
 <div id="postamble" class="status">
 <p class="author">Author: wei.sun</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-01-30 Thu 13:54</p>
+<p class="date">Created: 2014-03-06 Thu 17:30</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

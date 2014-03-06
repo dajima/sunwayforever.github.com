@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Android Debug</title>
-<!-- 2014-01-30 Thu 13:54 -->
+<!-- 2014-03-06 Thu 17:30 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -69,8 +69,10 @@ for the JavaScript code in this tag.
 <li><a href="#sec-1-2">1.2. ddms</a></li>
 <li><a href="#sec-1-3">1.3. adb</a></li>
 <li><a href="#sec-1-4">1.4. monkey</a></li>
-<li><a href="#sec-1-5">1.5. tombstone</a></li>
-<li><a href="#sec-1-6">1.6. uiautomator</a></li>
+<li><a href="#sec-1-5">1.5. uiautomator</a></li>
+<li><a href="#sec-1-6">1.6. tombstone / debuggerd</a></li>
+<li><a href="#sec-1-7">1.7. watchdog</a></li>
+<li><a href="#sec-1-8">1.8. anr trace</a></li>
 </ul>
 </li>
 </ul>
@@ -113,12 +115,6 @@ ddms 通过 jdwp 控制 java 进程
 Debug.dumpHprofData()
 </li>
 <li>使用信号on-demand生成
-<pre class="example">
-$ chmod 777 /data/misc -R
-$ ps # 找到进程号
-$ kill -10 进程号 # 发送SIGQUIT信事信号给该进程，此时生成hprof信息
-$ ls /data/misc/*.hprof
-</pre>
 </li>
 <li>为了能让MAT识别android的hprof格式,需要用hprof-conv转换一下
 </li>
@@ -146,7 +142,13 @@ adb shell setprop log.tag.mytag verbose
 </p>
 </div>
 <div id="outline-container-sec-1-3-1-1" class="outline-5">
-<h5 id="sec-1-3-1-1"><span class="section-number-5">1.3.1.1</span> event log</h5>
+<h5 id="sec-1-3-1-1"><span class="section-number-5">1.3.1.1</span> events log</h5>
+<div class="outline-text-5" id="text-1-3-1-1">
+<ul class="org-ul">
+<li>content<sub>query</sub><sub>sample</sub>
+</li>
+</ul>
+</div>
 </div>
 </div>
 
@@ -195,17 +197,124 @@ i32 port" 命令
 <h3 id="sec-1-4"><span class="section-number-3">1.4</span> monkey</h3>
 </div>
 <div id="outline-container-sec-1-5" class="outline-3">
-<h3 id="sec-1-5"><span class="section-number-3">1.5</span> tombstone</h3>
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> uiautomator</h3>
 </div>
 <div id="outline-container-sec-1-6" class="outline-3">
-<h3 id="sec-1-6"><span class="section-number-3">1.6</span> uiautomator</h3>
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> tombstone / debuggerd</h3>
+<div class="outline-text-3" id="text-1-6">
+<p>
+tombstone 的生成由两方面配合: 
+</p>
+<ol class="org-ol">
+<li>一个 stand-alone 的基于 local socket 的 server: debuggerd.c
+</li>
+<li>bionic 中通过 linker 嵌入到每一个可执行程序的代码: debugger.c
+</li>
+</ol>
+</div>
+
+<div id="outline-container-sec-1-6-1" class="outline-4">
+<h4 id="sec-1-6-1"><span class="section-number-4">1.6.1</span> debuggerd.c</h4>
+<div class="outline-text-4" id="text-1-6-1">
+<p>
+debuggerd 由 init 启动, 在一个 local socket 上监听, 每一个进程当收到
+SIG<sub>ABORT</sub> 等信号时, 会因为 debugger.c 的原因向 debuggerd.c 发送通知,
+debuggerd.c 负责 dump tombstone 文件, dump 完成后向原进程再次发送同样
+的信号, 这时进程才真正退出. 
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-6-2" class="outline-4">
+<h4 id="sec-1-6-2"><span class="section-number-4">1.6.2</span> debugger.c</h4>
+<div class="outline-text-4" id="text-1-6-2">
+<p>
+debugger.c 由 bionic 的 linker 负责嵌入到每一个 elf 文件的 _start 段,
+所以每一个进程都会自动执行该代码. 它的作用主要是 catch 住所有会导致退
+出的信号, 例如 SIG<sub>ABRT</sub>, SIG<sub>SEGV</sub> 等 (但不包括 SIG<sub>KILL</sub>). 对应的
+signal handler 就是向 debuggerd.c 发送消息, 请求 dump tombstone, 同时,
+为了收到 debuggerd 再次发送的信号能退出, debugger.c 会把这些信号的
+handler 置为 default.
+</p>
+
+<p>
+因为 SIG<sub>KILL</sub> 无法被 catch, 所以 tombstone 无法处理 java crash, 因为
+java crash 是通过 dalvik 向自己发送 SIG<sub>KILL</sub> 实现的.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-7" class="outline-3">
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> watchdog</h3>
+</div>
+<div id="outline-container-sec-1-8" class="outline-3">
+<h3 id="sec-1-8"><span class="section-number-3">1.8</span> anr trace</h3>
+<div class="outline-text-3" id="text-1-8">
+</div><div id="outline-container-sec-1-8-1" class="outline-4">
+<h4 id="sec-1-8-1"><span class="section-number-4">1.8.1</span> AMS 发送 SIGQUIT (3)</h4>
+<div class="outline-text-4" id="text-1-8-1">
+<div class="org-src-container">
+
+<pre class="src src-java"><span style="color: #2aa198;">AMS</span>:<span style="color: #b58900;">appNotResponding</span>
+  <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">for the pid, or other related pids, send SIG_QUIT (3)</span>
+  Process.<span style="color: #268bd2;">sendSignal</span>(<span style="color: #b58900;">pid</span>, <span style="color: #2aa198;">Process</span>.<span style="color: #b58900;">SIGNAL_QUIT</span>);
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-8-2" class="outline-4">
+<h4 id="sec-1-8-2"><span class="section-number-4">1.8.2</span> SignalCatcher Thread</h4>
+<div class="outline-text-4" id="text-1-8-2">
+<p>
+每个 java 进程初始时会启动一个 SignalCatcher Thread, 用来接收 SIG<sub>QUIT</sub>
+</p>
+<div class="org-src-container">
+
+<pre class="src src-java"><span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">start signal catcher thread that dumps stacks on SIGQUIT */</span>
+<span style="color: #859900;">if</span> (<span style="color: #dc322f;">!</span>gDvm.reduceSignals &amp;&amp; <span style="color: #dc322f;">!</span>gDvm.noQuitHandler) {
+    <span style="color: #859900;">if</span> (<span style="color: #dc322f;">!</span>dvmSignalCatcherStartup())
+        <span style="color: #859900;">return</span> <span style="color: #2aa198;">false</span>;
+}
+</pre>
+</div>
+
+<p>
+SIG<sub>QUIT</sub> 的 handler 如下:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-java">dvmSuspendAllThreads(SUSPEND_FOR_STACK_DUMP);
+dvmDumpLoaderStats(<span style="color: #2aa198;">"sig"</span>);
+dvmDumpJniStats(&amp;target);
+dvmDumpAllThreadsEx(&amp;target, <span style="color: #2aa198;">true</span>);
+</pre>
+</div>
+
+<p>
+其中 dvmSuspendAllThreads 会负责将每一个 thread 的 suspendCount 置 1,
+导致:
+</p>
+
+<ol class="org-ol">
+<li>status 为 RUNNING 的 thread 将来运行到 safepoint 时会调用
+dvmCheckSuspendPending(self), 进而被 suspend, 变为 SUSPEND 状态.
+</li>
+
+<li>status 为 NATIVE, MONITOR, WAIT, SUSPEND 等的 thread 在从 jni 返回,
+从 monitor 返回, 从 WAIT 返回等之前, 会调用 dvmChangeStatus 尝试将
+status 变成最初的状态 (如 RUNNING), 此时会因为 suspendCount 为 1
+而被 block (仅仅是 block , 不会改变状态)
+</li>
+</ol>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-01-30 Thu 13:54</p>
+<p class="date">Created: 2014-03-06 Thu 17:30</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
