@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Dalvik</title>
+<!-- 2014-03-21 Fri 19:32 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Wei Sun (孙伟)" />
+<link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Dalvik</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Dalvik</a>
+<ul>
+<li><a href="#sec-1-1">1.1. dalvik 命令及 dvm 预览</a></li>
+<li><a href="#sec-1-2">1.2. Dalvik Virtual Machine</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Dalvik</h2>
+<div class="outline-text-2" id="text-1">
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> dalvik 命令及 dvm 预览</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+dalvik 是 android 编译出来的一个位于 out/host/linux-x86/ 下的一个脚本,
+可以用来在 linux host 上启动一个 dalvik 进程. 和 linux 上的 java 命令
+类似. 实际上, 它只是一个针对 dalvikvm 命令的 wrapper, 负责设置一些调用
+dalvikvm 的参数
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-sh">mkdir -p /tmp/android-data/dalvik-cache
+<span style="color: #268bd2;">ANDROID_PRINTF_LOG</span>=tag <span style="color: #2aa198;">\</span>
+<span style="color: #268bd2;">ANDROID_LOG_TAGS</span>=<span style="color: #2aa198;">""</span> <span style="color: #2aa198;">\</span>
+<span style="color: #268bd2;">ANDROID_DATA</span>=/tmp/android-data <span style="color: #2aa198;">\</span>
+<span style="color: #268bd2;">ANDROID_ROOT</span>=$<span style="color: #268bd2;">ANDROID_BUILD_TOP</span>/out/host/linux-x86 <span style="color: #2aa198;">\</span>
+<span style="color: #268bd2;">LD_LIBRARY_PATH</span>=$<span style="color: #268bd2;">ANDROID_BUILD_TOP</span>/out/host/linux-x86/lib <span style="color: #2aa198;">\</span>
+<span style="color: #859900;">exec</span> $<span style="color: #268bd2;">ANDROID_BUILD_TOP</span>/out/host/linux-x86/bin/dalvikvm <span style="color: #2aa198;">\</span>
+-Xbootclasspath<span style="color: #2aa198;">\</span>
+:$<span style="color: #268bd2;">ANDROID_BUILD_TOP</span>/out/host/linux-x86/framework/core-hostdex.jar<span style="color: #2aa198;">\</span>
+:$<span style="color: #268bd2;">ANDROID_BUILD_TOP</span>/out/host/linux-x86/framework/conscrypt-hostdex.jar<span style="color: #2aa198;">\</span>
+:$<span style="color: #268bd2;">ANDROID_BUILD_TOP</span>/out/host/linux-x86/framework/okhttp-hostdex.jar<span style="color: #2aa198;">\</span>
+:$<span style="color: #268bd2;">ANDROID_BUILD_TOP</span>/out/host/linux-x86/framework/bouncycastle-hostdex.jar<span style="color: #2aa198;">\</span>
+:$<span style="color: #268bd2;">ANDROID_BUILD_TOP</span>/out/host/linux-x86/framework/apache-xml-hostdex.jar <span style="color: #2aa198;">\</span>
+$<span style="color: #268bd2;">*</span>
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> dalvikvm</h4>
+<div class="outline-text-4" id="text-1-1-1">
+<p>
+dalvikvm 是一个由 dalvikvm.cc 编译出来的可执行文件, 与 java 命令类似
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-java"><span style="color: #859900;">static</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">dalvikvm</span>(<span style="color: #b58900;">int</span> <span style="color: #268bd2;">argc</span>, <span style="color: #b58900;">char</span>** argv):
+  UniquePtr&lt;JavaVMOption[]&gt; options(<span style="color: #859900;">new</span> <span style="color: #b58900;">JavaVMOption</span>[option_count]());
+  <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">JavaVMOption &#19968;&#20250;&#20799;&#22312; vm init &#26102; (vm/Init.cpp) &#26102;&#20250;&#34987;&#22788;&#29702;.</span>
+  <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">dalvikvm &#36825;&#37324;&#21482;&#36127;&#36131;&#23558;&#21629;&#20196;&#34892;&#21442;&#25968;&#20013;&#30340; -Xxxx &#20570;&#20026; Java &#34394;&#25311;&#26426;&#21442;&#25968;&#21152;</span>
+  <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#21040; JavaVMOption &#20013;, &#20294;&#26377;&#19968;&#20010;&#21442;&#25968;&#20363;&#22806;:</span>
+  <span style="color: #859900;">if</span> (strncmp(argv[arg_idx], <span style="color: #2aa198;">"-XXlib:"</span>, strlen(<span style="color: #2aa198;">"-XXlib:"</span>)) == 0):
+    lib = argv[arg_idx] + strlen(<span style="color: #2aa198;">"-XXlib:"</span>);
+  <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">-XXlib &#25351;&#23450;&#30340;&#26159; Java &#34394;&#25311;&#26426;&#20195;&#30721;&#25152;&#22312;&#30340; lib, &#24517;&#39035;&#30001; dalvikvm &#22788;&#29702;.</span>
+  <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#21518;&#32493;&#30340; jni_invocation.Init(lib) &#20250;&#36127;&#36131; dlopen(lib) &#26469;&#25214;&#21040;&#21551;&#21160; vm</span>
+  <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#30340;&#20195;&#30721;</span>
+  <span style="color: #b58900;">JniInvocation</span> <span style="color: #268bd2;">jni_invocation</span>;
+  <span style="color: #2aa198;">jni_invocation</span>.Init(lib)
+    <span style="color: #b58900;">char</span>* default_library = <span style="color: #2aa198;">"libdvm.so"</span>
+      <span style="color: #859900;">if</span> (lib == NULL) {
+        library = default_library;
+    handle_ = dlopen(library, RTLD_NOW);        
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#20174;&#29616;&#22312;&#24320;&#22987;, libdvm.so &#20013;&#25552;&#20379;&#30340;&#20989;&#25968;&#23601;&#26159;&#21487;&#29992;&#30340;&#20102;, &#21253;&#25324;:</span>
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">JNICreateJavaVM, JNI_GetCreatedJavaVMs, JNI_GetDefaultJavaVMInitArgs</span>
+    <span style="color: #b58900;">JavaVMInitArgs</span> <span style="color: #268bd2;">init_args</span>;
+    init_args.options = options.get();
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">JavaVM &#23545;&#27599;&#19968;&#20010;&#36827;&#31243;&#21482;&#26377;&#19968;&#20010;</span>
+    JavaVM* vm = NULL;
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">JNIEnv &#23545;&#27599;&#19968;&#20010;&#32447;&#31243;&#37117;&#26377;&#19968;&#20010;</span>
+    JNIEnv* env = NULL;
+    JNI_CreateJavaVM(&amp;vm, &amp;env, &amp;init_args);
+    InvokeMain(env, &amp;argv[arg_idx]);
+    vm-&gt;DestroyJavaVM();
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> JNI<sub>CreateJavaVM</sub></h4>
+<div class="outline-text-4" id="text-1-1-2">
+<p>
+JNI<sub>CreateJavaVM</sub> 是 libdvm.so 提供的一个函数, 负责:
+</p>
+<ol class="org-ol">
+<li>生成 JavaVM 及 JNIEnv, 做为上层调用后续 jni 调用的接口. 
+</li>
+<li>启动虚拟机, 这里的 "启动" 主要是指设置一些执行环境, 启动
+HeapWorker 等线程等. 详同 dvmStartup
+</li>
+</ol>
+</div>
+<div id="outline-container-sec-1-1-2-1" class="outline-5">
+<h5 id="sec-1-1-2-1"><span class="section-number-5">1.1.2.1</span> 关于 JavaVM</h5>
+<div class="outline-text-5" id="text-1-1-2-1">
+<p>
+JavaVM 本身很简单, 只是提供了一个函数表 (JNIInvokeInterface), 以提供以
+下函数:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #859900;">struct</span> <span style="color: #b58900;">JNIInvokeInterface</span> {
+    jint        (*DestroyJavaVM)(<span style="color: #b58900;">JavaVM</span>*);
+    jint        (*AttachCurrentThread)(<span style="color: #b58900;">JavaVM</span>*, <span style="color: #b58900;">JNIEnv</span>**, <span style="color: #b58900;">void</span>*);
+    jint        (*DetachCurrentThread)(<span style="color: #b58900;">JavaVM</span>*);
+    jint        (*GetEnv)(<span style="color: #b58900;">JavaVM</span>*, <span style="color: #b58900;">void</span>**, jint);
+    jint        (*AttachCurrentThreadAsDaemon)(<span style="color: #b58900;">JavaVM</span>*, <span style="color: #b58900;">JNIEnv</span>**, <span style="color: #b58900;">void</span>*);
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-1-2-2" class="outline-5">
+<h5 id="sec-1-1-2-2"><span class="section-number-5">1.1.2.2</span> 关于 JNIEnv</h5>
+<div class="outline-text-5" id="text-1-1-2-2">
+<p>
+JNIEnv 与 JavaVM 类似, 主要也只是一个函数表
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-1-2-3" class="outline-5">
+<h5 id="sec-1-1-2-3"><span class="section-number-5">1.1.2.3</span> dvmStartup</h5>
+<div class="outline-text-5" id="text-1-1-2-3">
+<p>
+JNICreateJavaVM 主要通过 dvmStartup 启动虚拟机. 此时正式进入 vm 相关的
+代码, 而不是 Jni 的代码.
+</p>
+</div>
+<ol class="org-ol"><li>processOptions<br  /><div class="outline-text-6" id="text-1-1-2-3-1">
+<p>
+vm/Init.cpp::dvmStartup 先调用 processOptions 处理上层传入的参数, 具体
+包括:
+</p>
+<ol class="org-ol">
+<li>-classpath
+</li>
+<li>-Xbootclasspath
+</li>
+<li>-D
+java properties
+</li>
+<li>-jar
+</li>
+<li>-Xms, -Xmx
+</li>
+<li>-XX:HeapGrowthLimit
+</li>
+<li>-XX:HeapMinFree
+</li>
+<li>-XX:HeapMaxFree
+</li>
+<li>-XX:LowMemoryMode
+</li>
+<li>-Xss
+</li>
+<li>-XX:mainThreadStackSize
+</li>
+<li>-XX:+DisableExplicitGC
+</li>
+<li>-verbose:jni
+</li>
+<li>-verbose:gc
+</li>
+<li>-enableassertions
+</li>
+<li>-Xrs
+reduceSignals
+</li>
+<li>-Xzygote
+</li>
+<li>-Xint
+</li>
+<li>-Xstacktracefile
+</li>
+<li>-Xgc
+</li>
+<li>&#x2026;
+</li>
+</ol>
+
+<p>
+在 processOptions 之前, dvmStartup 会通过 setCommandLineDefaults 给
+dvm 设置一些默认值.
+</p>
+</div>
+</li>
+<li>dvmStartup<br  /><div class="outline-text-6" id="text-1-1-2-3-2">
+<p>
+设置好 options 后, dvmStartup 开始初始化许多组件
+</p>
+</div>
+<ol class="org-ol"><li>blockSignals<br  /><div class="outline-text-7" id="text-1-1-2-3-2-1">
+<p>
+在启动任何其他 thread 之前, dvm 先通过 blockSignals 设置主线程的忽略掉
+SIG<sub>QUIT</sub> (通过 sigprocmask)
+</p>
+
+<p>
+之所以这样, 是因为 dvm 后面会启动一个单独的 SignalCatcherThread, 并且
+通过 sigwait 的方式在 SIG<sub>QUIT</sub> 上等待, 以便生成 trace 文件. 
+</p>
+
+<p>
+一般情况下, 我们会使用 signal 及 signal handler 来处理信号, 但涉及到多
+线程时, 一般都使用 sigprocmask 及 sigwait 方式. 
+</p>
+
+<p>
+具体区别见 <a href="http://blog.csdn.net/hunanchenxingyu/article/details/12073685">http://blog.csdn.net/hunanchenxingyu/article/details/12073685</a>
+</p>
+</div>
+</li>
+<li>dvmAllocTrackerStartup<br  /></li>
+<li>dvmGcStartup<br  /><div class="outline-text-7" id="text-1-1-2-3-2-3">
+<p>
+dvmGcStartup 指的是初始化 GC heap, 即 Java 堆. 
+</p>
+<div class="org-src-container">
+
+<pre class="src src-text">Alloc::dvmGcStartup
+  dvmHeapStartup()
+    dvmHeapSourceStartup(gDvm.heapStartingSize,
+             gDvm.heapMaximumSize, gDvm.heapGrowthLimit);
+      // dvmHeapSourceStartup &#36127;&#36131;&#21021;&#22987;&#21270; GC &#22534;, &#26681;&#25454;&#32534;&#35793;&#26102;&#30340;&#37197;&#32622;, &#20250;
+      // &#36873; HeapSource.cpp &#20013;&#30340;&#29256;&#26412; (&#23545;&#24212; MarkSweep GC) &#25110; Copying.cpp
+      // &#20013;&#30340;&#29256;&#26412; (&#23545;&#24212; Copying GC), &#40664;&#35748;&#20026; MarkSweep GC
+      // &#20351;&#29992; asheme &#26144;&#23556;&#30340;&#19968;&#22359;&#20869;&#23384;&#20570;&#20026; GC &#22534;
+      base = dvmAllocRegion("dalvik-heap");
+      // &#22312; GC &#22534;&#19978;&#24314;&#31435;&#19968;&#20010; dlmalloc mspace
+      msp = createMspace(base, kInitialMorecoreStart, startSize);
+      // &#38500;&#20102; GC heap &#22806;, dvm &#36824;&#20250;&#20998;&#37197;&#19968;&#20010; live-bits &#22534;, &#19968;&#20010;
+      // mark-bits &#22534;, &#36825;&#19977;&#20010;&#22534;&#32479;&#19968;&#30001; HeapSource &#31649;&#29702;.
+      HeapSource * hs = (HeapSource *)calloc(1, sizeof(*hs));
+      hs-&gt;heapBase = (char *)base;
+      hs-&gt;heapLength = length;
+      hs-&gt;startSize = startSize;
+      hs-&gt;maximumSize = maximumSize;
+      hs-&gt;growthLimit = growthLimit;
+      // ...
+      dvmHeapBitmapInit(&amp;hs-&gt;liveBits, base, length, "dalvik-bitmap-1");
+      dvmHeapBitmapInit(&amp;hs-&gt;markBits, base, length, "dalvik-bitmap-2");
+      allocMarkStack(&amp;gcHeap-&gt;markContext.stack, hs-&gt;maximumSize);
+      gcHeap-&gt;markContext.bitmap = &amp;hs-&gt;markBits;
+      gcHeap-&gt;heapSource = hs;
+    // &#21021;&#22987;&#21270; card table, &#26242;&#26102;&#19981;&#26126;&#30333;&#24847;&#20041;
+    dvmCardTableStartup(gDvm.heapMaximumSize, gDvm.heapGrowthLimit);
+</pre>
+</div>
+</div>
+<ol class="org-ol"><li>hs-&gt;liveBits 与 hs-&gt;markBits<br  /><div class="outline-text-8" id="text-1-1-2-3-2-3-1">
+<p>
+liveBits 与 markBits 是关于 GC Heap 的两个位图, 比例均为 8 bytes / 1
+bit, 即 GC heap 中每 8 个字节由 liveBits 中 1 位来表示. 
+</p>
+
+<p>
+liveBits 记录 GC 堆分配的的情况. markBits 在 MarkSweep 阶段被使用, 记
+录对象扫描时被 mark 的情况
+</p>
+</div>
+</li>
+<li>gcHeap-&gt;markContext.stack<br  /><div class="outline-text-8" id="text-1-1-2-3-2-3-2">
+<p>
+markStack 与 markBits 相同, 也是在 MarkSweep 的 mark 阶段被使用. 最简
+单的 mark 实现是使用递归, 但递归容易栈溢出, 所以 dvm 并没有使用递归来
+mark, 而是使用 mark stack 模拟递归的调用栈, 防止溢出.
+</p>
+</div>
+</li></ol>
+</li>
+<li>dvmThreadStartup<br  /><div class="outline-text-7" id="text-1-1-2-3-2-4">
+<p>
+Initialize thread list and main thread's environment.  We need to set
+up some basic stuff so that dvmThreadSelf() will work when we start
+loading classes (e.g. to check for exceptions).
+</p>
+</div>
+</li>
+
+<li>dvmInlineNativeStartup<br  /></li>
+
+<li>dvmRegisterMapStartup<br  /></li>
+
+<li>dvmInstanceofStartup<br  /><div class="outline-text-7" id="text-1-1-2-3-2-7">
+<div class="org-src-container">
+
+<pre class="src src-java">gDvm.instanceofCache = dvmAllocAtomicCache(INSTANCEOF_CACHE_SIZE);
+</pre>
+</div>
+
+<p>
+instanceof 是有一个 cache 的&#x2026;
+</p>
+</div>
+</li>
+
+<li>dvmClassStartup<br  /><div class="outline-text-7" id="text-1-1-2-3-2-8">
+<div class="org-src-container">
+
+<pre class="src src-text">dvmClassStartup()
+  /*
+  * Create the initial class instances. These consist of the class
+  * Class and all of the classes representing primitive types.
+  */
+  createInitialClasses()
+    // &#22312;&#20195;&#30721;&#20013;&#30452;&#25509;&#23450;&#20041; Class &#31867;
+    ClassObject* clazz = (ClassObject*)
+    dvmMalloc(classObjectSize(CLASS_SFIELD_SLOTS), ALLOC_NON_MOVING);
+    DVM_OBJECT_INIT(clazz, clazz);
+    SET_CLASS_FLAG(clazz, ACC_PUBLIC | ACC_FINAL | CLASS_ISCLASS);
+    clazz-&gt;descriptor = "Ljava/lang/Class;";
+    gDvm.classJavaLangClass = clazz;
+    // &#23450;&#20041;&#21508;&#31181; primitive type
+    createPrimitiveType(PRIM_VOID, &amp;gDvm.typeVoid);
+    createPrimitiveType(PRIM_BOOLEAN, &amp;gDvm.typeBoolean);
+    // ...
+  processClassPath(gDvm.bootClassPathStr, true);
+    // &#23558; bootclasspath &#20013;&#25351;&#23450;&#30340;&#23383;&#31526;&#20018;&#36716;&#25442;&#20026;&#20869;&#37096;&#30340; ClassPathEntry (cpe)
+    // &#24182;&#19988;&#22312;&#36716;&#25442;&#30340;&#36807;&#31243;&#20013;, dex &#25991;&#20214;&#20250;&#34987;&#36716;&#25442;&#20026; odex, &#24182;&#34987; mmap, &#21516;&#26102;
+    // mmap &#36820;&#22238;&#30340;&#22320;&#22336;&#20250;&#20570;&#20026; cpe-&gt;ptr &#20445;&#23384;&#36215;&#26469;. &#20197;&#21518;&#21152;&#36733;&#31867;&#26102;&#20250;&#30452;&#25509;&#20351;&#29992; cpe-&gt;ptr
+    // &#26469;&#35835;&#21462;&#25968;&#25454;
+</pre>
+</div>
+</div>
+</li>
+
+<li>dvmFindRequiredClassesAndMembers<br  /><div class="outline-text-7" id="text-1-1-2-3-2-9">
+<p>
+这个函数会提前将常用的类的 ClassObject, Method, offset 等从 java 类中
+取出, 并赋给 gDvm 相关的成员.
+</p>
+</div>
+</li>
+
+<li>dvmStringInternStartup<br  /><div class="outline-text-7" id="text-1-1-2-3-2-10">
+<p>
+初始化 string intern 使用的 hashmap
+</p>
+</div>
+</li>
+
+<li>dvmNativeStartup<br  /></li>
+
+<li>dvmInternalNativeStartup<br  /></li>
+
+<li>dvmJniStartup<br  /><div class="outline-text-7" id="text-1-1-2-3-2-13">
+<p>
+初始化 jni 的 reference table
+</p>
+</div>
+</li>
+
+<li>dvmProfilingStartup<br  /></li>
+
+<li>dvmPrepMainForJni<br  /></li>
+
+<li>registerSystemNatives<br  /></li>
+
+<li>dvmCreateStockExceptions<br  /></li>
+
+<li>dvmPrepMainThread<br  /></li>
+
+<li>dvmDebuggerStartup<br  /></li>
+
+<li>dvmInitAfterZygote<br  /><div class="outline-text-7" id="text-1-1-2-3-2-20">
+<div class="org-src-container">
+
+<pre class="src src-text">dvmInitAfterZygote
+  dvmGcStartupAfterZygote()
+    // &#21551;&#21160; alloc &#20013;&#30340; HeapWorker
+  dvmSignalCatcherStartup()
+  if (gDvm.logStdio):
+    dvmStdioConverterStartup()
+  initJdwp()
+</pre>
+</div>
+</div>
+</li></ol>
+</li></ol>
+</div>
+</div>
+<div id="outline-container-sec-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> InvokeMain</h4>
+<div class="outline-text-4" id="text-1-1-3">
+<p>
+dalvikvm 中的 InvokeMain 是对 CALL<sub>STATIC</sub><sub>xx</sub> 的简单封装
+</p>
+<div class="org-src-container">
+
+<pre class="src src-text">jmethodID method = env-&gt;GetStaticMethodID(klass.get(), "main","([Ljava/lang/String;)V");
+env-&gt;CallStaticVoidMethod(klass.get(), method, args.get());
+  // CallStaticVoidMethod &#26159;&#36890;&#36807; CALL_STATIC &#23439;&#20135;&#29983;&#30340;
+  dvmCallMethodV(ts.self(), (Method*)methodID, NULL, true, &amp;result, args);
+    dvmInterpret(self, method, pResult);
+    // &#33258;&#27492;&#36827;&#20837; interp &#30456;&#20851;&#20195;&#30721;
+      Interp::dvmMterpStd(self)
+      // &#36827;&#20837; mterp
+        Mterp::dvmMterpStdRun();
+        // &#36827;&#20837;&#27719;&#32534;&#20195;&#30721;, &#20197; x86 &#20026;&#20363;:
+          InterpAsm-x86.S::dvmMterpStdRun
+            push    %ebp                 # save caller base pointer
+            // ...
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Dalvik Virtual Machine</h3>
+<div class="outline-text-3" id="text-1-2">
+</div><div id="outline-container-sec-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> 代码结构</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<ul class="org-ul">
+<li>Jni.cpp
+
+<p>
+主要包含各种 Jni 函数的实现, 包括JNI<sub>CreateJavaVM等启动</sub> dvm 的函数以
+及 GetStringChars 等 Jni 函数. Jni部分是启动 dvm 的入口
+</p>
+</li>
+
+<li>Init.cpp
+由 Jni 调用, 负责 dvm 初始化
+</li>
+
+<li>alloc/
+
+<p>
+主要包含 HeapSource, 用来实现 Java 的内存分配及 GC
+</p>
+</li>
+
+<li>interp/ &amp; mterp/
+
+<p>
+dvm 的解释器
+</p>
+</li>
+
+<li>Sync.cpp &amp; Thread.cpp
+
+<p>
+和同步及 Java Thread 相关的代码
+</p>
+</li>
+
+<li>oo/
+和 Java 的 OO 相关的实现, 例如继承, 接口, 权限检查等
+</li>
+
+<li>LinearAlloc.cpp
+</li>
+
+<li>IndirectRefTable.cpp
+</li>
+
+<li>arch/
+JNI Call Bridge
+</li>
+
+<li>DvmDex.cpp &amp; RawDexFile.cpp &amp; JarFile.cpp
+</li>
+
+<li>其他
+
+<ul class="org-ul">
+<li>SignalCatcher.cpp
+</li>
+
+<li>jdwp/ &amp; ddm.cpp
+</li>
+
+<li>hprof/
+</li>
+
+<li>AllocTracker.cpp
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Wei Sun (孙伟)</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2014-03-21 Fri 19:32</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

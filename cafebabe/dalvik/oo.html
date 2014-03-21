@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>OO</title>
+<!-- 2014-03-21 Fri 19:32 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Wei Sun (孙伟)" />
+<link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">OO</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. OO</a>
+<ul>
+<li><a href="#sec-1-1">1.1. ClassObject 与 Object</a></li>
+<li><a href="#sec-1-2">1.2. ArrayObject</a></li>
+<li><a href="#sec-1-3">1.3. Class Loading</a></li>
+<li><a href="#sec-1-4">1.4. 各种函数的实现</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> OO</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Java 本身并没有规定 Object 的内存布局, 例如在 class 文件, 引用某个
+instance filed 时完全通过 constant pool 来指定, 不涉及任何实现细节. 但
+具体实现 vm 时, 内存布局是必须要考虑的.
+</p>
+
+<p>
+Dalvik 的 Object Model 定义起来比较简单: 它是用 C++ 语言来描述的. 所以
+`一般`不需要关注内存布局中的细节, 但如果涉及到 fast mterp, 还是需要从内
+存布局的角度描述 Object Model.
+</p>
+
+<p>
+Dalvik 使用 C++ 定义了五种对象:
+</p>
+<ol class="org-ol">
+<li>Object
+</li>
+<li>ArrayObject
+</li>
+<li>ClassObject
+</li>
+<li>StringObject
+</li>
+<li>DataObject
+</li>
+</ol>
+
+<p>
+其中 Object 是其它四种对象的基类.
+</p>
+</div>
+
+
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> ClassObject 与 Object</h3>
+<div class="outline-text-3" id="text-1-1">
+<div class="org-src-container">
+
+<pre class="src src-c++"><span style="color: #859900;">struct</span> <span style="color: #b58900;">Object</span> {
+    <span style="color: #b58900;">ClassObject</span>*    <span style="color: #268bd2;">clazz</span>;
+    <span style="color: #b58900;">u4</span>              <span style="color: #268bd2;">lock</span>;
+};
+
+<span style="color: #859900;">struct</span> <span style="color: #b58900;">ClassObject</span> : <span style="color: #b58900;">Object</span> {
+    <span style="color: #b58900;">u4</span>              <span style="color: #268bd2;">instanceData</span>[CLASS_FIELD_SLOTS];
+    <span style="color: #859900;">const</span> <span style="color: #b58900;">char</span>*     <span style="color: #268bd2;">descriptor</span>;
+    <span style="color: #b58900;">u4</span>              <span style="color: #268bd2;">accessFlags</span>;
+    <span style="color: #b58900;">size_t</span>          <span style="color: #268bd2;">objectSize</span>;
+    <span style="color: #b58900;">ClassObject</span>*    <span style="color: #268bd2;">super</span>;
+    <span style="color: #b58900;">Object</span>*         <span style="color: #268bd2;">classLoader</span>;
+    <span style="color: #b58900;">int</span>             <span style="color: #268bd2;">interfaceCount</span>;
+    <span style="color: #b58900;">ClassObject</span>**   <span style="color: #268bd2;">interfaces</span>;
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">directMethod, &#21253;&#25324; private, final, &lt;init&gt; &#31561;</span>
+    <span style="color: #b58900;">int</span>             <span style="color: #268bd2;">directMethodCount</span>;
+    <span style="color: #b58900;">Method</span>*         <span style="color: #268bd2;">directMethods</span>;
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#34394;&#20989;&#25968;, &#21363;&#38750; directMethods, &#36825;&#20123;&#20989;&#25968;&#19981;&#20250;&#30452;&#25509;&#34987;&#35843;&#29992;:</span>
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#23427;&#20204;&#20250;&#36890;&#36807;&#21518;&#38754;&#30340; vtable &#34987;&#35843;&#29992;</span>
+    <span style="color: #b58900;">int</span>             <span style="color: #268bd2;">virtualMethodCount</span>;
+    <span style="color: #b58900;">Method</span>*         <span style="color: #268bd2;">virtualMethods</span>;
+    <span style="color: #586e75; font-style: italic;">/*</span>
+<span style="color: #586e75; font-style: italic;">     * Virtual method table (vtable), for use by "invoke-virtual".  The</span>
+<span style="color: #586e75; font-style: italic;">     * vtable from the superclass is copied in, and virtual methods from</span>
+<span style="color: #586e75; font-style: italic;">     * our class either replace those from the super or are appended.</span>
+<span style="color: #586e75; font-style: italic;">     */</span>
+    <span style="color: #b58900;">int</span>             <span style="color: #268bd2;">vtableCount</span>;
+    <span style="color: #b58900;">Method</span>**        <span style="color: #268bd2;">vtable</span>;
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#25104;&#21592;&#21464;&#37327;</span>
+    <span style="color: #b58900;">int</span>             <span style="color: #268bd2;">ifieldCount</span>;
+    <span style="color: #b58900;">InstField</span>*      <span style="color: #268bd2;">ifields</span>;
+
+    <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">static fields */</span>
+    <span style="color: #b58900;">int</span>             <span style="color: #268bd2;">sfieldCount</span>;
+    <span style="color: #b58900;">StaticField</span>     <span style="color: #268bd2;">sfields</span>[0]; <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">MUST be last item */</span>
+};
+</pre>
+</div>
+
+<p>
+从两个类的定义中, 可以看出:
+</p>
+<ol class="org-ol">
+<li>Object 本身并没有太多的数据, 数据都存在于 ClassObject 中, 实际上,
+只有 InstField 会被保存在 Object 中.
+</li>
+</ol>
+
+<p>
+以下面的代码为例:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-java"><span style="color: #859900;">class</span> <span style="color: #b58900;">Base</span> {
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">base</span>;
+}
+<span style="color: #859900;">class</span> <span style="color: #b58900;">Foo</span> <span style="color: #859900;">extends</span> <span style="color: #b58900;">Base</span> {
+    <span style="color: #859900;">public</span> <span style="color: #859900;">static</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">xxx</span>;
+    <span style="color: #859900;">public</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">bcd</span>;
+    <span style="color: #859900;">public</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">abc</span>;
+
+    <span style="color: #859900;">public</span> <span style="color: #859900;">static</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">main</span>(<span style="color: #b58900;">String</span>[] <span style="color: #268bd2;">args</span>) {
+        <span style="color: #b58900;">Foo</span> <span style="color: #268bd2;">f</span> = <span style="color: #859900;">new</span> <span style="color: #b58900;">Foo</span>();
+        f.abc= 0x1234;
+        System.out.println(<span style="color: #2aa198;">"Hello, foo"</span>+f.abc);
+    }
+}
+</pre>
+</div>
+
+<p>
+这段代码执行时会生成一个 Object 对象代表 Foo 对象, 以及一个
+ClassObject 代表 Foo 类, 一个 ClassObject 代表 Base 类. 其中
+ClassObject 的内存布局与 C++ 定义的一致.而 Object 的布局会有一点
+tricky:
+</p>
+
+<pre class="example">
+ Object
+-+-------------+      ClassObject
+ | ClassObject-+----&gt;+-------------------+
+-+-------------+     | ClassObject (NULL)|
+ | lock        |    -+-------------------+
+-+-------------+     | lock              |
+ | base field  |    -+-------------------+
+-+-------------+     | instance data     |
+ | abc field   |    -+-------------------+
+-+-------------+     | descriptor        |
+ | bcd field   |    -+-------------------+
+-+-------------+     | ....              |
+                    -+-------------------+
+</pre>
+
+<p>
+上面的示意图有几点要注意:
+</p>
+<ol class="org-ol">
+<li>instance field 是直接放在 Object 中的, 并按照字母顺序. 虽然 Object
+本身并没有定义一个类似于 InstField 的字段.
+</li>
+<li>基类的 InstField 会插入到 Object 自身的 InstField 之前.
+</li>
+<li>ClassObject 的开头 8 个字节与 Object 结构相同, 因为它继承自 Object,
+这一点要参考 C++ Object Model
+</li>
+<li>Object 中定义的 lock 字与 hotspot 中的 mark word作用类似, 但与 mark
+word 不同的是, lock 并不包含对象的年代信息以及 GC 信息.
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> ArrayObject</h3>
+<div class="outline-text-3" id="text-1-2">
+<div class="org-src-container">
+
+<pre class="src src-java"><span style="color: #b58900;">struct</span> <span style="color: #268bd2;">ArrayObject</span> : Object {
+    <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">number of elements; immutable after init */</span>
+    <span style="color: #b58900;">u4</span>              <span style="color: #268bd2;">length</span>;
+
+    <span style="color: #586e75; font-style: italic;">/*</span>
+<span style="color: #586e75; font-style: italic;">     * Array contents; actual size is (length * sizeof(type)).  This is</span>
+<span style="color: #586e75; font-style: italic;">     * declared as u8 so that the compiler inserts any necessary padding</span>
+<span style="color: #586e75; font-style: italic;">     * (e.g. for EABI); the actual allocation may be smaller than 8 bytes.</span>
+<span style="color: #586e75; font-style: italic;">     */</span>
+    <span style="color: #b58900;">u8</span>              <span style="color: #268bd2;">contents</span>[1];
+};
+</pre>
+</div>
+<p>
+可见, 
+</p>
+<ol class="org-ol">
+<li>ArrayObject offset 为 8 的 int 值保存着 Array 的长度. 
+</li>
+<li>Array 的数据部分保存在它的变长的 contents 区域.
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Class Loading</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+java 类加载的过程包含一般包括加载, 解析, 初始化等过程.  特别的, dvm 加
+载类的过程基本上就是:
+</p>
+<ol class="org-ol">
+<li>加载
+
+<p>
+从 odex 中加载类 (loadClassFromDex), 此后 ClassObject 的多数成员已经
+被初始化
+</p>
+</li>
+
+<li>解析 (link)
+
+<p>
+通过 dvmLinkClass, 将 ClassObject 中的存在的 symbolic references
+resolve 为 direct pointer (对于 vtable, superclass, iftable 等) 或
+offset (对于 sfields, ifields)
+</p>
+
+<p>
+需要注意的是, 在最初的 ClassLoader 初始化阶段, dexopt 会负责将 dex
+转换为 odex, 这时会做一些类似于 resolve 的工作, 但这些工作影响的主
+要是 dex 中的代码部分: 即 xxx 指令会被转换为 xxx<sub>quick</sub> 指令, 使代码
+由使用 symbolic references 的方式变为使用 direct pointer 或 offset
+的方式. 所以, 即使有 odex, dvmLinkClass 时还是需要做 resolve 的动作. 
+</p>
+</li>
+</ol>
+
+<p>
+Class Loading 的入口是 findClassNoInit
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">ClassObject* findClassNoInit(descriptor, loader, pDvmDex)
+  clazz = loadClassFromDex(pDvmDex, pClassDef, loader);
+    newClass = (ClassObject*) dvmMalloc(size, ALLOC_NON_MOVING);
+    newClass-&gt;descriptor = descriptor;
+    newClass-&gt;interfaceCount = pInterfacesList-&gt;size;
+    // &#35835;&#21462; ifaces
+    newClass-&gt;interfaces = (ClassObject**) dvmLinearAlloc(classLoader,
+    newClass-&gt;interfaceCount * sizeof(ClassObject*));
+
+    for (i = 0; i &lt; newClass-&gt;interfaceCount; i++):
+      const DexTypeItem* pType = dexGetTypeItem(pInterfacesList, i);
+      newClass-&gt;interfaces[i] = (ClassObject*)(u4) pType-&gt;typeIdx;
+
+    // &#35835;&#21462; sfield  
+    newClass-&gt;sfieldCount = count;
+    for (i = 0; i &lt; count; i++):
+      dexReadClassDataField(&amp;pEncodedData, &amp;field, &amp;lastIndex);
+      loadSFieldFromDex(newClass, &amp;field, &amp;newClass-&gt;sfields[i]);
+    // &#35835;&#21462; ifield, direct methods, virtual methods ...
+  dvmLinkClass(clazz)
+    // resolve superclass &#20026; direct pointer
+    ClassObject* super = dvmResolveClass(clazz, superclassIdx, false);
+    dvmSetFieldObject(clazz,  OFFSETOF_MEMBER(ClassObject,super),super);
+    // resolve ifaces
+    for (i = 0; i &lt; clazz-&gt;interfaceCount; i++) {
+      clazz-&gt;interfaces[i] = dvmResolveClass(clazz,interfaceIdxArray[i], false);
+    // &#26681;&#25454; virtualMethods &#21450; superclass, ifaces &#29983;&#25104; vtable
+    createVtable(clazz)
+      clazz-&gt;vtable = (Method**) dvmLinearAlloc(clazz-&gt;classLoader, maxCount);
+      // &#23558; super &#30340; vtable &#19982; clazz &#33258;&#24049;&#30340; virtualMethods &#36827;&#34892;&#27604;&#36739;,
+      // &#29983;&#25104;&#26368;&#32456;&#30340; clazz-&gt;vtable
+      // ...
+    // &#29983;&#25104; iftable
+    // &#19978;&#19968;&#27493;&#30340; vtable &#20013;&#21253;&#21547;&#20102;&#25152;&#26377;&#30340;&#34394;&#20989;&#25968;, &#21253;&#25324;&#32487;&#25215;&#33258; super &#30340;&#21644;&#33258;&#24049;
+    // &#23454;&#29616;&#30340;, &#20294;&#33258;&#24049;&#23454;&#29616;&#30340;&#25509;&#21475;&#20013;&#30340;&#34394;&#20989;&#25968;&#38656;&#35201;&#36890;&#36807; iftable &#36827;&#34892;&#32034;&#24341;, &#22240;
+    // &#20026; invoke-interface &#21644; invoke-virtual &#26159;&#19981;&#21516;&#30340;, &#21069;&#32773;&#38656;&#35201;
+    // iftable &#25165;&#33021;&#24037;&#20316;, &#20855;&#20307;&#35265;
+    // http://stackoverflow.com/questions/1504633/what-is-the-point-of-invokeinterface
+    createIftable(clazz)
+    // &#35745;&#31639;&#25152;&#26377; filed &#30340; offset, &#21518;&#38754;&#30340; GetFieldID &#31561;&#38656;&#35201;&#20351;&#29992;
+    computeFieldOffsets(clazz)
+</pre>
+</div>
+
+<p>
+至此 ClassObject 已经准备完毕:
+</p>
+<ol class="org-ol">
+<li>clazz-&gt;super 指向了父类的 ClassObject
+</li>
+<li>clazz-&gt;virtualMethods 包含了所有该类实现的虚函数 Method, 而
+Method-&gt;insns 又指向了 mmap 的 odex 中真正的代码部分
+</li>
+<li>clazz-&gt;vtable 包含该类, 父类中定义的所有虚函数 Method 的引用.
+</li>
+<li>clazz-&gt;iftable 包含该类实现的接口函数在 vtable 中的引用.
+</li>
+<li>clazz-&gt;ifield 中所有的 InstField 在 Object 中的 offset 被计算出来
+</li>
+<li>&#x2026;
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> 各种函数的实现</h3>
+<div class="outline-text-3" id="text-1-4">
+</div><div id="outline-container-sec-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> iget / iset</h4>
+<div class="outline-text-4" id="text-1-4-1">
+</div><div id="outline-container-sec-1-4-1-1" class="outline-5">
+<h5 id="sec-1-4-1-1"><span class="section-number-5">1.4.1.1</span> Jni version</h5>
+<div class="outline-text-5" id="text-1-4-1-1">
+<p>
+第一步, 获得 jfieldID, 这个 jfieldID 实际上是 InstField *, 其
+byteOffset 保存着 Object 中保存该 ifield 的偏移量. 
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-java"><span style="color: #859900;">static</span> <span style="color: #b58900;">jfieldID</span> <span style="color: #268bd2;">GetFieldID</span>(JNIEnv* env, <span style="color: #b58900;">jclass</span> <span style="color: #268bd2;">jclazz</span>, <span style="color: #859900;">const</span> <span style="color: #b58900;">char</span>* name, <span style="color: #859900;">const</span> <span style="color: #b58900;">char</span>* sig) {
+    <span style="color: #b58900;">ScopedJniThreadState</span> <span style="color: #268bd2;">ts</span>(<span style="color: #b58900;">env</span>);
+    ClassObject* clazz = (ClassObject*) dvmDecodeIndirectRef(ts.self(), jclazz);
+
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">jfieldID &#19982; jmethodID &#31561;&#19968;&#26679;, &#23454;&#38469;&#31867;&#22411;&#37117;&#26159;&#19968;&#20010; opaque pointer</span>
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#36825;&#37324; jfieldID &#30340;&#23454;&#38469;&#31867;&#22411;&#20026; InstField*</span>
+    <span style="color: #b58900;">jfieldID</span> <span style="color: #268bd2;">id</span> = (<span style="color: #b58900;">jfieldID</span>) dvmFindInstanceFieldHier(clazz, name, sig);
+    <span style="color: #859900;">return</span> id;
+}
+</pre>
+</div>
+
+<p>
+第二步, 调用 GetField##<sub>jname</sub>, 以 byte 为例
+</p>
+<div class="org-src-container">
+
+<pre class="src src-text">INLINE s1 dvmGetFieldByte(const Object* obj, int offset) {
+    return ((JValue*)BYTE_OFFSET(obj, offset))-&gt;b;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4-1-2" class="outline-5">
+<h5 id="sec-1-4-1-2"><span class="section-number-5">1.4.1.2</span> interpreter version</h5>
+<div class="outline-text-5" id="text-1-4-1-2">
+<p>
+与下面 sget / sset 类似, 根据 dex 中的 id 获得 name, 然后根据 name 找
+到 InstField*, 然后根据偏移量得到 ifield 的值. 
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-4-2" class="outline-4">
+<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> sget / sset</h4>
+<div class="outline-text-4" id="text-1-4-2">
+<p>
+sget/sset 比 iget/iset 要复杂, 因为 static 变量可以存在于 interface 中
+</p>
+</div>
+<div id="outline-container-sec-1-4-2-1" class="outline-5">
+<h5 id="sec-1-4-2-1"><span class="section-number-5">1.4.2.1</span> jni version</h5>
+<div class="outline-text-5" id="text-1-4-2-1">
+<p>
+首先, GetStaticFieldID 得到 jfieldID, 这个 jfieldID 实现上是
+StaticField *, 其 value 值即为所求. 
+</p>
+<div class="org-src-container">
+
+<pre class="src src-text">jfieldID GetStaticFieldID(env, jclazz, char* name, char* sig)
+  jfieldID id = dvmFindStaticFieldHier(clazz, name, sig);
+    // search in current clazz
+    pField = dvmFindStaticField(clazz, fieldName, signature);
+      // &#36890;&#36807;&#36941;&#21382; clazz-&gt;sfields &#26597;&#25214;
+      pField = &amp;clazz-&gt;sfields[0];
+      for (i = 0; i &lt; clazz-&gt;sfieldCount; i++, pField++):
+        if (strcmp(fieldName, pField-&gt;name) == 0 &amp;&amp;
+          strcmp(signature, pField-&gt;signature) == 0)
+          return (StaticField*) pField;
+      // &#33509; clazz &#20013;&#27809;&#25214;&#21040;, &#21017;&#26597;&#25214;&#25152;&#26377;&#25509;&#21475;
+      for ( ; i &lt; clazz-&gt;iftableCount; i++) {
+        ClassObject* iface = clazz-&gt;iftable[i].clazz;
+        pField = dvmFindStaticField(iface, fieldName, signature);
+        if (pField != NULL):
+          return pField;
+      // &#33509;&#25152;&#26377;&#25509;&#21475;&#20013;&#37117;&#27809;&#26377;&#25214;&#21040;, &#21017;&#26597;&#25214;&#29238;&#31867;
+      if (clazz-&gt;super != NULL):
+        return dvmFindStaticFieldHier(clazz-&gt;super, fieldName, signature);
+      else
+        return NULL;
+</pre>
+</div>
+
+<p>
+第二步, GetStaticField##<sub>jname</sub>, 这个函数直接从 jfieldID (即
+StaticField* ) 中取出 value 字段即可. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4-2-2" class="outline-5">
+<h5 id="sec-1-4-2-2"><span class="section-number-5">1.4.2.2</span> interface version</h5>
+<div class="outline-text-5" id="text-1-4-2-2">
+<div class="org-src-container">
+
+<pre class="src src-text">// ref &#26159;&#19968;&#20010;&#25972;&#25968;, odex &#20195;&#30721;&#20013;&#19981;&#26159;&#20351;&#29992; name &#26597;&#25214; filed &#30340;, &#32780;&#26159;&#24050;
+// &#32463;&#35745;&#31639;&#20986;&#20102; sfield &#22312; sfields &#20013;&#30340; offset, &#25152;&#20197;&#31532;&#19968;&#27493;&#38656;&#35201;&#26681;&#25454; ref &#25214;
+// &#21040;&#21407;&#26469;&#30340; name
+
+StaticField* sfield = dvmResolveStaticField(clazz, ref);
+  DexFieldId pFieldId = dexGetFieldId(pDvmDex-&gt;pDexFile, ref);
+  // &#36890;&#36807; dexStringById &#21518;&#21040; name &#21518;, &#21518;&#38754;&#30340;&#35843;&#29992;&#21644; jni &#30456;&#21516;
+  return dvmFindStaticFieldHier(resClass,
+           dexStringById(pDvmDex-&gt;pDexFile, pFieldId-&gt;nameIdx),
+           dexStringByTypeIdx(pDvmDex-&gt;pDexFile, pFieldId-&gt;typeIdx));
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4-3" class="outline-4">
+<h4 id="sec-1-4-3"><span class="section-number-4">1.4.3</span> invoke-direct</h4>
+</div>
+<div id="outline-container-sec-1-4-4" class="outline-4">
+<h4 id="sec-1-4-4"><span class="section-number-4">1.4.4</span> invoke-virtual</h4>
+</div>
+<div id="outline-container-sec-1-4-5" class="outline-4">
+<h4 id="sec-1-4-5"><span class="section-number-4">1.4.5</span> invoke-static</h4>
+</div>
+<div id="outline-container-sec-1-4-6" class="outline-4">
+<h4 id="sec-1-4-6"><span class="section-number-4">1.4.6</span> invoke-interface</h4>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Wei Sun (孙伟)</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2014-03-21 Fri 19:32</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
