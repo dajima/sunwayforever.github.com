@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>OO</title>
-<!-- 2014-03-21 Fri 19:32 -->
+<!-- 2014-03-28 Fri 11:24 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -92,6 +92,7 @@ Dalvik 的 Object Model 定义起来比较简单: 它是用 C++ 语言来描述�
 <p>
 Dalvik 使用 C++ 定义了五种对象:
 </p>
+
 <ol class="org-ol">
 <li>Object
 </li>
@@ -109,7 +110,6 @@ Dalvik 使用 C++ 定义了五种对象:
 其中 Object 是其它四种对象的基类.
 </p>
 </div>
-
 
 <div id="outline-container-sec-1-1" class="outline-3">
 <h3 id="sec-1-1"><span class="section-number-3">1.1</span> ClassObject 与 Object</h3>
@@ -130,11 +130,11 @@ Dalvik 使用 C++ 定义了五种对象:
     <span style="color: #b58900;">Object</span>*         <span style="color: #268bd2;">classLoader</span>;
     <span style="color: #b58900;">int</span>             <span style="color: #268bd2;">interfaceCount</span>;
     <span style="color: #b58900;">ClassObject</span>**   <span style="color: #268bd2;">interfaces</span>;
-    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">directMethod, &#21253;&#25324; private, final, &lt;init&gt; &#31561;</span>
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">directMethod, &#21253;&#25324; private, static, &lt;init&gt; &#31561;</span>
     <span style="color: #b58900;">int</span>             <span style="color: #268bd2;">directMethodCount</span>;
     <span style="color: #b58900;">Method</span>*         <span style="color: #268bd2;">directMethods</span>;
     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#34394;&#20989;&#25968;, &#21363;&#38750; directMethods, &#36825;&#20123;&#20989;&#25968;&#19981;&#20250;&#30452;&#25509;&#34987;&#35843;&#29992;:</span>
-    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#23427;&#20204;&#20250;&#36890;&#36807;&#21518;&#38754;&#30340; vtable &#34987;&#35843;&#29992;</span>
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#23427;&#20204;&#20250;&#36890;&#36807;&#21518;&#38754;&#30340; vtable &#34987;&#35843;&#29992;. &#21478;&#22806;, virtualMethods &#21482;&#21253;&#21547;&#26412; class &#23454;&#29616;&#30340;&#34394;&#20989;&#25968;.</span>
     <span style="color: #b58900;">int</span>             <span style="color: #268bd2;">virtualMethodCount</span>;
     <span style="color: #b58900;">Method</span>*         <span style="color: #268bd2;">virtualMethods</span>;
     <span style="color: #586e75; font-style: italic;">/*</span>
@@ -147,6 +147,10 @@ Dalvik 使用 C++ 定义了五种对象:
     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#25104;&#21592;&#21464;&#37327;</span>
     <span style="color: #b58900;">int</span>             <span style="color: #268bd2;">ifieldCount</span>;
     <span style="color: #b58900;">InstField</span>*      <span style="color: #268bd2;">ifields</span>;
+
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">interface table</span>
+    <span style="color: #b58900;">int</span>             <span style="color: #268bd2;">iftableCount</span>;
+    <span style="color: #b58900;">InterfaceEntry</span>* <span style="color: #268bd2;">iftable</span>;
 
     <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">static fields */</span>
     <span style="color: #b58900;">int</span>             <span style="color: #268bd2;">sfieldCount</span>;
@@ -296,6 +300,9 @@ offset (对于 sfields, ifields)
 Class Loading 的入口是 findClassNoInit
 </p>
 
+<p>
+findClassNoInit:
+</p>
 <div class="org-src-container">
 
 <pre class="src src-text">ClassObject* findClassNoInit(descriptor, loader, pDvmDex)
@@ -343,8 +350,53 @@ Class Loading 的入口是 findClassNoInit
 </div>
 
 <p>
+loadClassFromDex
+</p>
+<div class="org-src-container">
+
+<pre class="src src-text">DexClassDef* pClassDef;
+pClassDef = dexFindClass(pDvmDex-&gt;pDexFile, descriptor);
+  // DexClassDef &#23454;&#38469;&#19978;&#23601;&#26159; dex &#25991;&#20214;&#20013; Class Definition Table &#20013;&#30340;&#19968;&#39033;
+  // pLookup &#26159; odex &#21253;&#21547;&#30340;&#19968;&#20010;&#23545;&#20110;&#21152;&#36895;&#26597;&#25214;&#30340;&#25968;&#25454;&#32467;&#26500;
+  // ...
+  return (const DexClassDef*)
+    (pDexFile-&gt;baseAddr + pLookup-&gt;table[idx].classDefOffset);
+
+clazz = loadClassFromDex(pDvmDex, pClassDef, loader);
+  // class data &#26159; class definition &#30340;&#19968;&#39033;, &#21253;&#21547;&#20102;&#21508;&#31181; fields, methods
+  // &#30340;&#32034;&#24341;&#21644;&#26435;&#38480;&#20449;&#24687;
+  pEncodedData = dexGetClassData(pDexFile, pClassDef);
+  dexReadClassDataHeader(&amp;pEncodedData, &amp;header);
+    pHeader-&gt;staticFieldsSize = readUnsignedLeb128(pData);
+    pHeader-&gt;instanceFieldsSize = readUnsignedLeb128(pData);
+    pHeader-&gt;directMethodsSize = readUnsignedLeb128(pData);
+    pHeader-&gt;virtualMethodsSize = readUnsignedLeb128(pData);
+  // pDvmDex &#26159; dex file
+  // pClassDef &#26159; dex file &#20013;&#30340; Class Definition Table &#20013;&#30340;&#19968;&#39033;
+  // header &#26159; class &#30340;&#21508;&#31181; field, methods &#22312; dex file &#20013;&#30340;&#32034;&#24341;
+  // pEncodedData &#26159; pClassDef &#30340; data &#37096;&#20998;
+  loadClassFromDex0(pDvmDex, pClassDef, &amp;header, pEncodedData, classLoader);
+    pDexFile = pDvmDex-&gt;pDexFile;
+    descriptor = dexGetClassDescriptor(pDexFile, pClassDef);
+      // &#20351;&#29992; pClassDef-&gt;classIdx &#25195;&#25551; String Table &#33719;&#24471; descriptor
+      dexStringByTypeIdx(pDexFile, pClassDef-&gt;classIdx);
+    newClass-&gt;descriptor = descriptor;
+    //... &#35835;&#21462;&#20854;&#23427;&#30340; field, methods, interface ...
+    // &#21253;&#25324;&#22312; LinearAlloc &#19978;&#20998;&#37197;&#30456;&#24212;&#30340; Field, Method &#23545;&#35937;, &#20174; dex file
+    // &#20013;&#35835;&#21462;&#30456;&#24212;&#30340;&#25968;&#25454;, &#36825;&#37324;&#35835;&#21040;&#30340;&#25968;&#25454;&#38656;&#35201;&#34987;&#21518;&#32493;&#30340; dvmLinkClass &#22788;&#29702;
+    // &#21518;&#25165;&#33021;&#20351;&#29992;, &#21253;&#25324;:
+    // 1. ifield &#38656;&#35201;&#36890;&#36807; link &#24471;&#21040;&#22312; Object &#20013;&#30340;&#32034;&#24341;.
+    // 2. super &#38656;&#35201;&#36890;&#36807; link &#23558; idx &#21464;&#20026;&#23454;&#38469;&#30340; ClassObject*
+    // 3. iftable &#38656;&#35201;&#36890;&#36807; link &#23558; idx &#21464;&#20026; ClassObject*
+    // 4. vtable &#38656;&#35201;&#36890;&#36807; link &#29983;&#25104;
+    // 5. ...
+</pre>
+</div>
+
+<p>
 至此 ClassObject 已经准备完毕:
 </p>
+
 <ol class="org-ol">
 <li>clazz-&gt;super 指向了父类的 ClassObject
 </li>
@@ -360,6 +412,14 @@ Method-&gt;insns 又指向了 mmap 的 odex 中真正的代码部分
 <li>&#x2026;
 </li>
 </ol>
+
+<p>
+注意: ClassObject 本身分配在 GC Heap, 但它的 ifield, sfield,
+virtualMethods 等成员却分配在 LinearAlloc. 分配在 GC Heap 可能主要是考
+虑到 ClassObject 也要参与到 GC 扫描, 而 GC 扫描通过 liveBits, markBits
+进行的, 必须要求 ClassObject 本身分配在 GC Heap 上 (因为 liveBits,
+markBits 是针对 GC Heap 的 bitmap)
+</p>
 </div>
 </div>
 <div id="outline-container-sec-1-4" class="outline-3">
@@ -461,7 +521,7 @@ StaticField* ) 中取出 value 字段即可.
 </div>
 
 <div id="outline-container-sec-1-4-2-2" class="outline-5">
-<h5 id="sec-1-4-2-2"><span class="section-number-5">1.4.2.2</span> interface version</h5>
+<h5 id="sec-1-4-2-2"><span class="section-number-5">1.4.2.2</span> interpreter version</h5>
 <div class="outline-text-5" id="text-1-4-2-2">
 <div class="org-src-container">
 
@@ -482,16 +542,393 @@ StaticField* sfield = dvmResolveStaticField(clazz, ref);
 </div>
 
 <div id="outline-container-sec-1-4-3" class="outline-4">
-<h4 id="sec-1-4-3"><span class="section-number-4">1.4.3</span> invoke-direct</h4>
+<h4 id="sec-1-4-3"><span class="section-number-4">1.4.3</span> iget-quick/iset-quick</h4>
+<div class="outline-text-4" id="text-1-4-3">
+<p>
+由于 iget/iset 本质是操作 Object 的一个 offset, 所以 odex 提供 quick 版
+本的iget/iset, 直接以 offset 做为操作数. 
+</p>
+
+<p>
+但 sget/sset 并不存在 quick 版本, 因为接口也可以包含 static 变量, 无法
+通过一个 offset 简单的搞定. 
+</p>
+</div>
 </div>
 <div id="outline-container-sec-1-4-4" class="outline-4">
-<h4 id="sec-1-4-4"><span class="section-number-4">1.4.4</span> invoke-virtual</h4>
+<h4 id="sec-1-4-4"><span class="section-number-4">1.4.4</span> invoke</h4>
+<div class="outline-text-4" id="text-1-4-4">
+<p>
+所有 invoke 类调用都分为两步:
+</p>
+<ol class="org-ol">
+<li>查找真正的 Method (dvmResolveMethod)
+</li>
+<li>调用 Method (处理参数, 返回值, 栈帧等)
+</li>
+</ol>
+
+<p>
+dalvik 的 invoke 类调用共分为五种, 主要原因是查找 Method 的方法不同,
+例如, invoke-direct 是从 Object 的 directMethods 中找, 而
+invoke-virtual 需要从 Object-&gt;vtable 和 Object-&gt;virtualMethods 中找.
+更复杂的 invoke-interface 需要从 Object-&gt;iftable, Object-&gt;vtable 和
+Object-&gt;virtualMethods 中找到.
+</p>
 </div>
-<div id="outline-container-sec-1-4-5" class="outline-4">
-<h4 id="sec-1-4-5"><span class="section-number-4">1.4.5</span> invoke-static</h4>
+
+<div id="outline-container-sec-1-4-4-1" class="outline-5">
+<h5 id="sec-1-4-4-1"><span class="section-number-5">1.4.4.1</span> 五种 invoke</h5>
+<div class="outline-text-5" id="text-1-4-4-1">
+<div class="org-src-container">
+
+<pre class="src src-java"><span style="color: #859900;">interface</span> <span style="color: #b58900;">I</span> {
+    <span style="color: #b58900;">void</span> <span style="color: #268bd2;">i</span>();
+}
+
+<span style="color: #859900;">class</span> <span style="color: #b58900;">Base</span> {
+    <span style="color: #859900;">public</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">b</span>() {};
+}
+
+<span style="color: #859900;">class</span> <span style="color: #b58900;">Foo</span> <span style="color: #859900;">extends</span> <span style="color: #b58900;">Base</span> <span style="color: #859900;">implements</span> <span style="color: #b58900;">I</span> {
+    <span style="color: #859900;">public</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">b</span>() {
+        <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">invoke-super</span>
+        <span style="color: #859900;">super</span>.b();
+    }
+    <span style="color: #859900;">public</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">i</span>() {
+
+    }
+
+    <span style="color: #b58900;">void</span> <span style="color: #268bd2;">v</span>() {}
+    <span style="color: #859900;">static</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">s</span>() {}
+
+    <span style="color: #859900;">private</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">p</span>() {}
+    <span style="color: #859900;">final</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">f</span>() {}
+
+    <span style="color: #859900;">public</span> <span style="color: #859900;">static</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">main</span>(<span style="color: #b58900;">String</span>[] <span style="color: #268bd2;">args</span>) {
+        <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">invoke-static</span>
+        Foo.s();
+
+        <span style="color: #b58900;">Foo</span> <span style="color: #268bd2;">f</span> =  <span style="color: #859900;">new</span> <span style="color: #b58900;">Foo</span>();
+        <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">invoke-virtual</span>
+        f.v();
+        f.i();
+        f.f();
+        <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">invoke-interface</span>
+        ((<span style="color: #b58900;">I</span>)f).i();
+        <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">invoke-direct</span>
+        f.p();
+    }
+}
+</pre>
 </div>
-<div id="outline-container-sec-1-4-6" class="outline-4">
-<h4 id="sec-1-4-6"><span class="section-number-4">1.4.6</span> invoke-interface</h4>
+
+<p>
+对应的 dalvik 字节码为:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-text">.class LFoo;
+.super LBase;
+.source "Foo.java"
+
+# interfaces
+.implements LI;
+
+
+# direct methods
+.method constructor &lt;init&gt;()V
+    .locals 0
+
+    .prologue
+    .line 10
+    invoke-direct {p0}, LBase;-&gt;&lt;init&gt;()V
+
+    return-void
+.end method
+
+.method public static main([Ljava/lang/String;)V
+    .locals 1
+    .parameter
+
+    .prologue
+    .line 27
+    invoke-static {}, LFoo;-&gt;s()V
+
+    .line 29
+    new-instance v0, LFoo;
+
+    invoke-direct {v0}, LFoo;-&gt;&lt;init&gt;()V
+
+    .line 31
+    invoke-virtual {v0}, LFoo;-&gt;v()V
+
+    .line 33
+    invoke-virtual {v0}, LFoo;-&gt;i()V
+
+    .line 34
+    invoke-virtual {v0}, LFoo;-&gt;f()V
+
+    .line 36
+    invoke-interface {v0}, LI;-&gt;i()V
+
+    .line 38
+    invoke-direct {v0}, LFoo;-&gt;p()V
+
+    .line 39
+    return-void
+.end method
+
+.method private p()V
+    .locals 0
+
+    .prologue
+    .line 22
+    return-void
+.end method
+
+.method static s()V
+    .locals 0
+
+    .prologue
+    .line 20
+    return-void
+.end method
+
+
+# virtual methods
+.method public b()V
+    .locals 0
+
+    .prologue
+    .line 13
+    invoke-super {p0}, LBase;-&gt;b()V
+
+    .line 14
+    return-void
+.end method
+
+.method final f()V
+    .locals 0
+
+    .prologue
+    .line 23
+    return-void
+.end method
+
+.method public i()V
+    .locals 0
+
+    .prologue
+    .line 17
+    return-void
+.end method
+
+.method v()V
+    .locals 0
+
+    .prologue
+    .line 19
+    return-void
+.end method
+</pre>
+</div>
+
+<p>
+虽然 invoke 分为五种, 但实际上根据查找的表的不同又分为两大类:
+</p>
+
+<ol class="org-ol">
+<li>查找 Object-&gt;directMethods
+<ul class="org-ul">
+<li>invoke-static
+</li>
+<li>invoke-direct
+</li>
+</ul>
+</li>
+<li>查找 Object-&gt;virtualMethods
+<ul class="org-ul">
+<li>invoke-super
+</li>
+<li>invoke-virtual
+</li>
+<li>invoke-interface
+</li>
+</ul>
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4-4-2" class="outline-5">
+<h5 id="sec-1-4-4-2"><span class="section-number-5">1.4.4.2</span> dvmResolveMethod</h5>
+<div class="outline-text-5" id="text-1-4-4-2">
+<p>
+任何一种 invoke 的第一步都是调用 dvmResolveMethod 来查找真正的 Method,
+不过不同的 invoke 会使用不同的参数
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">Method* dvmResolveMethod(const ClassObject* referrer, u4 methodIdx,MethodType methodType)
+  // &#26681;&#25454; nameIdx &#20174; dex &#20013;&#33719;&#24471; method name
+  char* name = dexStringById(pDvmDex-&gt;pDexFile, pMethodId-&gt;nameIdx);
+  if (methodType == METHOD_DIRECT):
+    resMethod = dvmFindDirectMethod(resClass, name, &amp;proto);
+  else if (methodType == METHOD_STATIC):
+    resMethod = dvmFindDirectMethodHier(resClass, name, &amp;proto);
+  else:
+    resMethod = dvmFindVirtualMethodHier(resClass, name, &amp;proto);
+
+// ------------------- for direct
+Method* dvmFindDirectMethod(clazz, methodName, proto)
+  // &#20174; Object-&gt;directMethods &#20013;&#26597;&#25214;, &#20294;&#20351;&#29992;&#19968;&#20010; false &#21442;&#25968;&#34920;&#31034;&#19981;&#38656;&#35201;
+  // &#20174;&#29238;&#31867;&#20013;&#26597;&#25214;
+  findMethodInListByProto(clazz, METHOD_DIRECT, false, methodName,proto);
+    while (clazz != NULL) {
+      int i;
+      if (wantedType == METHOD_VIRTUAL || wantedType == METHOD_UNKNOWN):
+        for (i = 0; i &lt; clazz-&gt;virtualMethodCount; i++):
+          Method* method = &amp;clazz-&gt;virtualMethods[i];
+            // &#22522;&#20110;&#23383;&#31526;&#20018;&#30340;&#21305;&#37197;
+            if (dvmCompareNameProtoAndMethod(name, proto, method) == 0) {
+              return method;
+      if (wantedType == METHOD_DIRECT || wantedType == METHOD_UNKNOWN):
+        for (i = 0; i &lt; clazz-&gt;directMethodCount; i++):
+          Method* method = &amp;clazz-&gt;directMethods[i];
+            if (dvmCompareNameProtoAndMethod(name, proto, method) == 0):
+              return method;
+      if (! isHier):
+        break;
+
+      clazz = clazz-&gt;super;
+    // end while
+
+// -------------------- for STATIC
+Method* dvmFindDirectMethod(clazz, methodName, proto)
+  findMethodInListByProto(clazz, METHOD_DIRECT, true, methodName, proto)
+
+// -------------------- for VIRTUAL (mainly SUPER)
+Method* dvmFindVirtualMethodHier(clazz,methodName,proto)
+  findMethodInListByProto(clazz, METHOD_VIRTUAL, true, methodName,proto);
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-4-4-3" class="outline-5">
+<h5 id="sec-1-4-4-3"><span class="section-number-5">1.4.4.3</span> invoke-static</h5>
+<div class="outline-text-5" id="text-1-4-4-3">
+<div class="org-src-container">
+
+<pre class="src src-text">methodToCall = dvmResolveMethod(curMethod-&gt;clazz, ref, METHOD_STATIC);
+// &#25214;&#21040; methodToCall &#21518;&#30452;&#25509;&#35843;&#29992;&#21363;&#21487;
+GOTO_invokeMethod(methodCallRange, methodToCall, vsrc1, vdst);
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4-4-4" class="outline-5">
+<h5 id="sec-1-4-4-4"><span class="section-number-5">1.4.4.4</span> invoke-direct</h5>
+<div class="outline-text-5" id="text-1-4-4-4">
+<div class="org-src-container">
+
+<pre class="src src-text">methodToCall = dvmResolveMethod(curMethod-&gt;clazz, ref,METHOD_DIRECT);
+// &#19982; invokeStatic &#19968;&#26679;, &#30452;&#25509;&#35843;&#29992;, &#21482;&#19981;&#36807;&#22240;&#20026;&#23427;&#29992;&#30340;&#21442;&#25968;&#26159;METHOD_DIRECT
+// &#23548;&#33268;&#22312; clazz-&gt;directMethods &#26597;&#25214;&#26102;&#19981;&#20250;&#26597;&#25214;&#21040;&#29238;&#31867;
+GOTO_invokeMethod(methodCallRange, methodToCall, vsrc1, vdst);
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4-4-5" class="outline-5">
+<h5 id="sec-1-4-4-5"><span class="section-number-5">1.4.4.5</span> invoke-super</h5>
+<div class="outline-text-5" id="text-1-4-4-5">
+<div class="org-src-container">
+
+<pre class="src src-text">// &#26597;&#25214; base method &#26102;, &#21487;&#20197;&#22312;&#24403;&#21069; class &#25214;&#21040;, &#20063;&#21487;&#33021;&#22312;&#29238;&#31867;&#20013;&#25214;&#21040;
+// &#20294;&#19981;&#24433;&#21709;&#26368;&#32456;&#30340;&#32467;&#26524;, &#21363; baseMethod-&gt;methodIndex
+baseMethod = dvmResolveMethod(curMethod-&gt;clazz, ref,METHOD_VIRTUAL);
+if (baseMethod-&gt;methodIndex &gt;= curMethod-&gt;clazz-&gt;super-&gt;vtableCount):
+   // error
+// &#36825;&#37324;&#38656;&#35201;&#22312; super-&gt;vtable &#20013;&#26597;&#25214;, &#26159;&#22240;&#20026;&#26377;&#21487;&#33021; baseMethod &#26159;&#22312;&#24403;&#21069;&#31867;
+// &#20013;&#25214;&#21040;&#30340;, &#25105;&#20204;&#38656;&#35201;&#35843;&#29992;&#30340;&#26159;&#29238;&#31867;&#30340;&#29256;&#26412;.
+methodToCall = curMethod-&gt;clazz-&gt;super-&gt;vtable[baseMethod-&gt;methodIndex];
+GOTO_invokeMethod(methodCallRange, methodToCall, vsrc1, vdst);
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4-4-6" class="outline-5">
+<h5 id="sec-1-4-4-6"><span class="section-number-5">1.4.4.6</span> invoke-virtual</h5>
+<div class="outline-text-5" id="text-1-4-4-6">
+<div class="org-src-container">
+
+<pre class="src src-text">baseMethod = dvmResolveMethod(curMethod-&gt;clazz, ref,METHOD_VIRTUAL);
+// &#36825;&#37324;&#27809;&#26377;&#30452;&#25509;&#20351;&#29992; baseMethod, &#26159;&#22240;&#20026;&#26377;&#21487;&#33021; baseMethod &#26159;&#20174;&#29238;&#31867;&#20013;&#24320;&#22987;
+// &#26597;&#25214;&#30340;, &#25105;&#20204;&#35201;&#29992;&#30340;&#26159;&#23376;&#31867;&#20013;&#30340;&#29256;&#26412;
+methodToCall = thisPtr-&gt;clazz-&gt;vtable[baseMethod-&gt;methodIndex];
+GOTO_invokeMethod(methodCallRange, methodToCall, vsrc1, vdst);
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4-4-7" class="outline-5">
+<h5 id="sec-1-4-4-7"><span class="section-number-5">1.4.4.7</span> invoke-interface</h5>
+<div class="outline-text-5" id="text-1-4-4-7">
+<p>
+invoke-interface 与 invoke-virtual 不同:
+</p>
+
+<p>
+invoke-interface 时使用的 ref 参数是和 interface 相关的, 无法通过调用
+dvmResolveMethod 直接找到 clazz-&gt;virtualMethods 中对应的虚函数. 必须通过它
+先找到接口类, 然后根据接口类在 clazz-&gt;iftable 中找到对应于该接口的
+methodIndexArray, 然后才能从 clazz-&gt;vtable 中找到真正的 virtual
+methods. 
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">methodToCall = dvmFindInterfaceMethodInCache(thisClass, ref,curMethod,methodClassDex);
+  dvmInterpFindInterfaceMethod(thisClass, methodIdx,method,methodClassDex)
+    // &#20174;&#25509;&#21475;&#31867;&#20013;&#25214;&#21040; absMethod, &#36825;&#20010; absMethod &#24182;&#19981;&#33021;&#25191;&#34892;, &#30452;&#25509;&#30340;&#21487;&#25191;&#34892;&#30340; method
+    // &#22312; thisClass &#30340; virtualMethods &#20013;
+    // &#36825;&#37324;&#30340; method-&gt;clazz &#25351;&#30340;&#26159;&#25509;&#21475;&#31867;&#26412;&#36523;
+    absMethod = dvmResolveInterfaceMethod(method-&gt;clazz, methodIdx);
+      Method* dvmFindInterfaceMethodHier(iface,methodName,proto)
+    for (i = 0; i &lt; thisClass-&gt;iftableCount; i++):
+      if (thisClass-&gt;iftable[i].clazz == absMethod-&gt;clazz):
+        break;
+    // iftable[i] &#27492;&#26102;&#20195;&#34920;&#30456;&#24212;&#30340;&#25509;&#21475;&#31867;
+    vtableIndex =
+      thisClass-&gt;iftable[i].methodIndexArray[absMethod-&gt;methodIndex];
+    methodToCall = thisClass-&gt;vtable[vtableIndex];    
+GOTO_invokeMethod(methodCallRange, methodToCall, vsrc1, vdst);
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4-4-8" class="outline-5">
+<h5 id="sec-1-4-4-8"><span class="section-number-5">1.4.4.8</span> invoke-virtual-quick 与 invoke-super-quick</h5>
+<div class="outline-text-5" id="text-1-4-4-8">
+<p>
+odex 对 dex 优化时, 会将原来的 invoke-virtual 或 invoke-super 替换为相
+应的 quick 版本, 相应的指令参数也会变: 由原来的 ref 直接变为 vtable
+index, 这样可以节省一个 dvmResolveMethod 的过程. 
+</p>
+
+<p>
+但是, invoke-direct, invoke-static 和 invoke-interface 并没有相应的
+quick 版本. 因为这是不可能的&#x2026;
+</p>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -499,7 +936,7 @@ StaticField* sfield = dvmResolveStaticField(clazz, ref);
 <div id="postamble" class="status">
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-03-21 Fri 19:32</p>
+<p class="date">Created: 2014-03-28 Fri 11:24</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

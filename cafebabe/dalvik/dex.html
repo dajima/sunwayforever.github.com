@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Dex</title>
+<!-- 2014-03-28 Fri 11:24 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Wei Sun (孙伟)" />
+<link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Dex</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Dex</a>
+<ul>
+<li><a href="#sec-1-1">1.1. dex 文件结构</a></li>
+<li><a href="#sec-1-2">1.2. odex 文件结构</a></li>
+<li><a href="#sec-1-3">1.3. class 文件结构</a></li>
+<li><a href="#sec-1-4">1.4. tools</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Dex</h2>
+<div class="outline-text-2" id="text-1">
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> dex 文件结构</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+<a href="http://www.retrodev.com/android/dexformat.html">http://www.retrodev.com/android/dexformat.html</a>
+<a href="http://stackoverflow.com/questions/7750448/dex-file-in-android">http://stackoverflow.com/questions/7750448/dex-file-in-android</a>
+<a href="http://source.android.com/devices/tech/dalvik/dex-format.html">http://source.android.com/devices/tech/dalvik/dex-format.html</a>
+<a href="http://blog.csdn.net/hlchou/article/details/6303566">http://blog.csdn.net/hlchou/article/details/6303566</a>
+<a href="http://www.2cto.com/Article/201308/236054.html">http://www.2cto.com/Article/201308/236054.html</a>
+</p>
+
+<p>
+dex 文件主要由一个 dex header, 多个表(ids, defs)和数据 (data) 部分组成.
+构成一个复杂的索引关系, 这些表和数据的位置大约是:
+</p>
+
+<ol class="org-ol">
+<li>dex header
+</li>
+<li>dex string ids
+</li>
+<li>dex type ids
+</li>
+<li>dex field ids
+</li>
+<li>dex method ids
+</li>
+<li>dex class defs
+</li>
+<li>data
+</li>
+<li>dex map list
+</li>
+</ol>
+</div>
+
+<div id="outline-container-sec-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> dex header</h4>
+<div class="outline-text-4" id="text-1-1-1">
+<p>
+dex header 中主要下面提到的各个 ids, defs 的 size 和 offset, 以便能找
+到这些 table, 例如:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #859900;">struct</span> <span style="color: #b58900;">header_item</span> {
+    <span style="color: #859900;">struct</span> <span style="color: #b58900;">dex_magic</span> {
+        <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">dex.. </span><span style="color: #586e75; font-style: italic;">*/</span>
+    };
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">checksum</span>;
+    <span style="color: #b58900;">char</span> <span style="color: #268bd2;">signature</span>[20];
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">file_size</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">header_size</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">endian_tag</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">link_size</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">link_off</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">map_off</span>;               <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">map list offset </span><span style="color: #586e75; font-style: italic;">*/</span>
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">string_ids_size</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">string_ids_off</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">type_ids_size</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">type_ids_off</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">proto_ids_size</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">proto_ids_off</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">field_ids_size</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">field_ids_off</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">method_ids_size</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">mehtod_ids_off</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">class_defs_size</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">class_defs_off</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">data_size</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">data_off</span>;              <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">data_off &#21487;&#33021;&#20027;&#35201;&#29992;&#26469;&#26816;&#26597; </span><span style="color: #586e75; font-style: italic;">*/</span>
+};
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> dex string ids</h4>
+<div class="outline-text-4" id="text-1-1-2">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #859900;">struct</span> <span style="color: #b58900;">string_id_list</span> {
+    <span style="color: #859900;">struct</span> <span style="color: #b58900;">string_id_item</span> {
+        <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">string_data_off</span>;
+    } [string_ids_size];
+};
+</pre>
+</div>
+
+<p>
+通过这个 string<sub>data</sub><sub>off</sub>, 可以在 data 部分找到这个 string 对应的
+string<sub>item</sub> 结构.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> dex type ids</h4>
+<div class="outline-text-4" id="text-1-1-3">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #859900;">struct</span> <span style="color: #b58900;">type_id_list</span> {
+    <span style="color: #859900;">struct</span> <span style="color: #b58900;">type_id_item</span> {
+        <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">descriptor_idx</span>;    <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">=&gt; string_id_item </span><span style="color: #586e75; font-style: italic;">*/</span>
+    } [type_ids_size];
+};
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-1-4" class="outline-4">
+<h4 id="sec-1-1-4"><span class="section-number-4">1.1.4</span> dex proto ids</h4>
+<div class="outline-text-4" id="text-1-1-4">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #859900;">struct</span> <span style="color: #b58900;">proto_id_list</span> {
+    <span style="color: #859900;">struct</span> <span style="color: #b58900;">proto_id_item</span> {
+        <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">shorty_idx</span>;            <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">=&gt; string_id_item </span><span style="color: #586e75; font-style: italic;">*/</span>
+        <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">reture_type_idx</span>;       <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">=&gt; type_id_item </span><span style="color: #586e75; font-style: italic;">*/</span>
+        <span style="color: #b58900;">unit</span> <span style="color: #268bd2;">parameters_off</span>;
+    } [proto_ids_size];
+};
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-sec-1-1-4-1" class="outline-5">
+<h5 id="sec-1-1-4-1"><span class="section-number-5">1.1.4.1</span> prarameters<sub>off</sub></h5>
+<div class="outline-text-5" id="text-1-1-4-1">
+<p>
+parameters<sub>off</sub> 表示该函数的参数情况, 指向 data 部分的一个
+type<sub>item</sub><sub>list</sub> 结构
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #859900;">struct</span> <span style="color: #b58900;">type_item_list</span> {
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">size</span>;                  <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">&#21442;&#25968;&#30340;&#20010;&#25968; </span><span style="color: #586e75; font-style: italic;">*/</span>
+    <span style="color: #859900;">struct</span> <span style="color: #b58900;">type_item</span> [size];
+};
+<span style="color: #859900;">struct</span> <span style="color: #b58900;">type_item</span> {
+    <span style="color: #b58900;">ushort</span> <span style="color: #268bd2;">type_idx</span>;            <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">&#25351;&#21521; string ids </span><span style="color: #586e75; font-style: italic;">*/</span>
+};
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-1-5" class="outline-4">
+<h4 id="sec-1-1-5"><span class="section-number-4">1.1.5</span> dex field ids</h4>
+<div class="outline-text-4" id="text-1-1-5">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #859900;">struct</span> <span style="color: #b58900;">field_id_list</span> {
+    <span style="color: #859900;">struct</span> <span style="color: #b58900;">field_id_item</span> {
+        <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">class_idx</span>;             <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">=&gt; type_id_item </span><span style="color: #586e75; font-style: italic;">*/</span>
+        <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">type_idx</span>;              <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">=&gt; type_id_item </span><span style="color: #586e75; font-style: italic;">*/</span>
+        <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">name_idx</span>;              <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">=&gt; string_id_item </span><span style="color: #586e75; font-style: italic;">*/</span>
+    } [field_ids_size];
+};
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-1-6" class="outline-4">
+<h4 id="sec-1-1-6"><span class="section-number-4">1.1.6</span> dex method ids</h4>
+<div class="outline-text-4" id="text-1-1-6">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #859900;">struct</span> <span style="color: #b58900;">method_id_list</span> {
+    <span style="color: #859900;">struct</span> <span style="color: #b58900;">method_id_item</span> {
+        <span style="color: #b58900;">ushort</span> <span style="color: #268bd2;">class_idx</span>;           <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">=&gt; type_id_item </span><span style="color: #586e75; font-style: italic;">*/</span>
+        <span style="color: #b58900;">ushort</span> <span style="color: #268bd2;">proto_idx</span>;           <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">=&gt; proto_id_item </span><span style="color: #586e75; font-style: italic;">*/</span>
+        <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">name_idx</span>;              <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">=&gt; string_id_item </span><span style="color: #586e75; font-style: italic;">*/</span>
+    } [method_ids_size];
+};
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-1-7" class="outline-4">
+<h4 id="sec-1-1-7"><span class="section-number-4">1.1.7</span> dex class defs</h4>
+<div class="outline-text-4" id="text-1-1-7">
+<p>
+class defs 是这些表中是复杂的一个表.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #859900;">struct</span> <span style="color: #b58900;">class_def_item_list</span> {
+    <span style="color: #859900;">struct</span> <span style="color: #b58900;">class_def_item</span> {
+        <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">class_idx</span>;             <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">=&gt; type_id_item </span><span style="color: #586e75; font-style: italic;">*/</span>
+        <span style="color: #859900;">enum</span> <span style="color: #b58900;">ACCESS_FLAGS</span>;
+        <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">superclass_idx</span>;        <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">=&gt; type_id_item </span><span style="color: #586e75; font-style: italic;">*/</span>
+        <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">interface_off</span>;
+        <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">source_file_idx</span>;       <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">=&gt; string_id_item </span><span style="color: #586e75; font-style: italic;">*/</span>
+        <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">annotation_off</span>;
+        <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">class_data_off</span>;
+        <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">static_value_off</span>;
+    } [class_defs_size];
+};
+</pre>
+</div>
+
+<p>
+与 string<sub>id</sub><sub>item</sub> 中的 string<sub>data</sub><sub>off</sub> 及 proto<sub>id</sub><sub>item</sub> 中的
+parameters<sub>off</sub> 类似, class<sub>def</sub><sub>item</sub> 中包含四项 off 也存在到 data 部分,
+</p>
+</div>
+
+
+<div id="outline-container-sec-1-1-7-1" class="outline-5">
+<h5 id="sec-1-1-7-1"><span class="section-number-5">1.1.7.1</span> interface<sub>off</sub></h5>
+<div class="outline-text-5" id="text-1-1-7-1">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #859900;">struct</span> <span style="color: #b58900;">type_item_list</span> {
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">size</span>;
+    <span style="color: #859900;">struct</span> <span style="color: #b58900;">type_item</span>[size];
+};
+
+<span style="color: #859900;">struct</span> <span style="color: #b58900;">type_item</span> {
+    <span style="color: #b58900;">ushort</span> <span style="color: #268bd2;">type_index</span>;          <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">=&gt; type_id_item </span><span style="color: #586e75; font-style: italic;">*/</span>
+};
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-1-7-2" class="outline-5">
+<h5 id="sec-1-1-7-2"><span class="section-number-5">1.1.7.2</span> static<sub>value</sub><sub>off</sub></h5>
+</div>
+
+<div id="outline-container-sec-1-1-7-3" class="outline-5">
+<h5 id="sec-1-1-7-3"><span class="section-number-5">1.1.7.3</span> class<sub>data</sub><sub>off</sub></h5>
+<div class="outline-text-5" id="text-1-1-7-3">
+<p>
+class<sub>data</sub><sub>off</sub> 是 class<sub>def</sub><sub>item</sub> 中最复杂的. 
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #859900;">struct</span> <span style="color: #b58900;">class_data_item</span> {
+    <span style="color: #b58900;">uleb128</span> <span style="color: #268bd2;">static_fields_size</span>;
+    <span style="color: #b58900;">uleb128</span> <span style="color: #268bd2;">instance_fields_size</span>;
+    <span style="color: #b58900;">uleb128</span> <span style="color: #268bd2;">direct_methods_size</span>;
+    <span style="color: #b58900;">uleb128</span> <span style="color: #268bd2;">virtual_methods_size</span>;
+
+    <span style="color: #859900;">struct</span> <span style="color: #b58900;">encoded_field_list</span> {
+        <span style="color: #859900;">struct</span> <span style="color: #b58900;">encoded_field</span> {
+            <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">field_idx_diff &#19982;&#21069;&#38754;&#25552;&#21040;&#30340; xxx_idx &#19981;&#21516;:</span>
+<span style="color: #586e75; font-style: italic;">               actual_idx[i]= sum_{0}^{i}(field_idx_diff[x]d(x))</span>
+<span style="color: #586e75; font-style: italic;">             ,</span><span style="color: #586e75; font-style: italic;">*/</span>
+            <span style="color: #b58900;">uleb128</span> <span style="color: #268bd2;">field_idx_diff</span>; <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">=&gt; field_id_item </span><span style="color: #586e75; font-style: italic;">*/</span>
+        } [static_fields_size];
+    } <span style="color: #268bd2;">static_fields</span>;
+
+    <span style="color: #859900;">struct</span> <span style="color: #b58900;">encoded_field_list</span> {
+        <span style="color: #859900;">struct</span> <span style="color: #b58900;">encoded_field</span> {
+            <span style="color: #b58900;">uleb128</span> <span style="color: #268bd2;">field_idx_diff</span>; <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">=&gt; field_id_item </span><span style="color: #586e75; font-style: italic;">*/</span>
+            <span style="color: #b58900;">uleb128</span> <span style="color: #268bd2;">access_flags</span>;
+        } [instance_fields_size];
+    } <span style="color: #268bd2;">instance_fields</span>;
+
+    <span style="color: #859900;">struct</span> <span style="color: #b58900;">encoded_methods_list</span> {
+        <span style="color: #859900;">struct</span> <span style="color: #b58900;">encoded_method</span> {
+            <span style="color: #b58900;">uleb128</span> <span style="color: #268bd2;">method_idx_diff</span>; <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">=&gt; method_id_item </span><span style="color: #586e75; font-style: italic;">*/</span>
+            <span style="color: #b58900;">uleb128</span> <span style="color: #268bd2;">access_flags</span>;
+            <span style="color: #b58900;">uleb128</span> <span style="color: #268bd2;">code_off</span>;
+        } [direct_methods_size];
+    } <span style="color: #268bd2;">direct_methods</span>;
+
+    <span style="color: #859900;">struct</span> <span style="color: #b58900;">encoded_methods_list</span> {
+        <span style="color: #859900;">struct</span> <span style="color: #b58900;">encoded_method</span> {
+            <span style="color: #b58900;">uleb128</span> <span style="color: #268bd2;">method_idx_diff</span>; <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">=&gt; method_id_item </span><span style="color: #586e75; font-style: italic;">*/</span>
+            <span style="color: #b58900;">uleb128</span> <span style="color: #268bd2;">access_flags</span>;
+            <span style="color: #b58900;">uleb128</span> <span style="color: #268bd2;">code_off</span>;
+        } [virtual_methods_size];
+    } <span style="color: #268bd2;">virtual_methods</span>;
+};
+</pre>
+</div>
+</div>
+
+<ol class="org-ol"><li>code off<br  /><div class="outline-text-6" id="text-1-1-7-3-1">
+<p>
+encoded<sub>method</sub> 中包含一个 code<sub>off</sub> 的指针, 指向真正的 code<sub>item</sub>
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #859900;">struct</span> <span style="color: #b58900;">code_item</span> {
+    <span style="color: #b58900;">ushort</span> <span style="color: #268bd2;">register_size</span>;       <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">&#20351;&#29992;&#22810;&#23569;&#20010; register, &#21253;&#25324;&#21442;&#25968;, &#23616;&#22495;</span>
+<span style="color: #586e75; font-style: italic;">                                 * &#21464;&#37327;&#31561; </span><span style="color: #586e75; font-style: italic;">*/</span>
+    <span style="color: #b58900;">ushort</span> <span style="color: #268bd2;">ins_size</span>;            <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">&#21442;&#25968;&#29992;&#21040;&#30340; register &#20010;&#25968; </span><span style="color: #586e75; font-style: italic;">*/</span>
+    <span style="color: #b58900;">ushort</span> <span style="color: #268bd2;">outs_size</span>;           <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">&#35843;&#29992;&#20854;&#20182;&#20989;&#25968;&#38656;&#35201;&#29992;&#21040;&#30340; register &#20010;</span>
+<span style="color: #586e75; font-style: italic;">                                 * &#25968; </span><span style="color: #586e75; font-style: italic;">*/</span>
+    <span style="color: #b58900;">ushort</span> <span style="color: #268bd2;">tries_size</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">debug_info_off</span>;
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">insns_size</span>;            <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">instruction size, &#20197; 16 bits &#20026;&#21333;&#20301; </span><span style="color: #586e75; font-style: italic;">*/</span>
+    <span style="color: #b58900;">ushort</span> <span style="color: #268bd2;">insns</span>[insns_size];   <span style="color: #586e75; font-style: italic;">/*  </span><span style="color: #586e75; font-style: italic;">&#30495;&#27491;&#30340; byte code</span><span style="color: #586e75; font-style: italic;">*/</span>
+};
+</pre>
+</div>
+</div>
+</li></ol>
+</div>
+</div>
+
+<div id="outline-container-sec-1-1-8" class="outline-4">
+<h4 id="sec-1-1-8"><span class="section-number-4">1.1.8</span> dex map list</h4>
+<div class="outline-text-4" id="text-1-1-8">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #859900;">struct</span> <span style="color: #b58900;">map_list_type</span> {
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">size</span>;
+    <span style="color: #859900;">struct</span> <span style="color: #b58900;">map_item_list</span> {
+        <span style="color: #859900;">struct</span> <span style="color: #b58900;">map_item</span> {
+            <span style="color: #859900;">enum</span> <span style="color: #b58900;">type</span>;
+            <span style="color: #b58900;">ushort</span> <span style="color: #268bd2;">unused</span>;
+            <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">size</span>;
+            <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">offset</span>;
+        } [size];
+    };
+};
+</pre>
+</div>
+
+<p>
+`This is a list of the entire contents of a file, in order. It contains
+some redundancy with respect to the header<sub>item</sub> but is intended to be
+an easy form to use to iterate over an entire file.`
+</p>
+
+<p>
+map<sub>list</sub> 中保存着许多不同类型的 entry 对应的 offset, 与 header<sub>item有些重复</sub>,
+例如以下类型的 entry 在 header<sub>item</sub> 中也是存在的
+</p>
+
+<ul class="org-ul">
+<li>TYPE<sub>TYPE</sub><sub>ID</sub><sub>ITEM</sub>
+</li>
+<li>TYPE<sub>PROTO</sub><sub>ID</sub><sub>ITEM</sub>
+</li>
+<li>TYPE<sub>FIELD</sub><sub>ID</sub><sub>ITEM</sub>
+</li>
+<li>&#x2026;
+</li>
+</ul>
+
+<p>
+但它也可以包含以下类型:
+</p>
+
+<ul class="org-ul">
+<li>TYPE<sub>CLASS</sub><sub>DATA</sub><sub>ITEM</sub>
+</li>
+<li>TYPE<sub>CODE</sub><sub>ITEM</sub>
+</li>
+<li>TYPE<sub>STRING</sub><sub>DATA</sub><sub>ITEM</sub>
+</li>
+<li>&#x2026;
+</li>
+</ul>
+
+<p>
+这些数据在 header<sub>item</sub> 是不存在的, 以 CLASS<sub>DATA</sub><sub>ITEM</sub> 为例, 如果不使用
+中 map<sub>list</sub>, 必须通过 header<sub>item</sub> -&gt; class<sub>def</sub><sub>item</sub> -&gt; class<sub>data</sub><sub>item</sub>
+这条路径才能找到. 有了 map<sub>list</sub>, 代码可以用一种更简单一致的方法来遍历
+整个 dex 文件.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> odex 文件结构</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+odex 文件对 dex 做了如下的修改:
+</p>
+<ol class="org-ol">
+<li>文件开头加入一个 odex header
+</li>
+<li>dex 文件本身会被修改, 例如 xxx =&gt; xxx<sub>quick</sub>
+</li>
+<li>在文件末尾加入两个数据结构: classLookup 与 registerMapPool
+</li>
+</ol>
+</div>
+<div id="outline-container-sec-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> classLookup</h4>
+</div>
+<div id="outline-container-sec-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> registerMap</h4>
+<div class="outline-text-4" id="text-1-2-2">
+<p>
+register map 主要用来帮助 dvm 知道当前各个寄存器中哪些保存着 java 对象.
+以便 GC 时这些会被做为 GC Root. 
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> class 文件结构</h3>
+</div>
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> tools</h3>
+<div class="outline-text-3" id="text-1-4">
+<ul class="org-ul">
+<li>androguard
+</li>
+<li>010 editor
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Wei Sun (孙伟)</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2014-03-28 Fri 11:24</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
