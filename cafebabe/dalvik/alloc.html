@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Alloc</title>
-<!-- 2014-03-21 Fri 19:32 -->
+<!-- 2014-04-02 Wed 16:33 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -66,6 +66,8 @@ for the JavaScript code in this tag.
 <li><a href="#sec-1">1. Alloc</a>
 <ul>
 <li><a href="#sec-1-1">1.1. Glossary</a></li>
+<li><a href="#sec-1-2">1.2. dvmAllocObject</a></li>
+<li><a href="#sec-1-3">1.3. dvmCollectGarbageInternal</a></li>
 </ul>
 </li>
 </ul>
@@ -101,12 +103,325 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> dvmAllocObject</h3>
+<div class="outline-text-3" id="text-1-2">
+<div class="org-src-container">
+
+<pre class="src src-text">Object* dvmAllocObject(ClassObject* clazz, int flags)
+  newObj = (Object*)dvmMalloc(clazz-&gt;objectSize, flags);
+    ptr = tryMalloc(size);
+      ptr = dvmHeapSourceAlloc(size);
+      if (ptr != NULL):
+        return ptr;
+      // &#20998;&#37197;&#22833;&#36133;, &#24320;&#22987; GC, false &#34920;&#31034; SoftReferences &#19981;&#34987; GC
+      gcForMalloc(false);
+        dvmCollectGarbageInternal(GC_FOR_MALLOC);
+      // &#31532;&#20108;&#27425; malloc  
+      ptr = dvmHeapSourceAlloc(size);
+        ptr = mspace_malloc(heap-&gt;msp, n);
+        // countAllocation &#20250;&#23558; hs-&gt;liveBits &#23545;&#24212;&#30340;&#32622; 1
+        countAllocation(heap, ptr);
+      if (ptr != NULL): return ptr;
+      // &#31532;&#19977;&#27425; ...
+      ptr = dvmHeapSourceAllocAndGrow(size);
+      if (ptr != NULL): return ptr;
+      // &#21363;&#20351; Heap Grow &#20102;&#36824;&#26159;&#19981;&#34892;, &#20877;&#27425; GC, true &#34920;&#31034; SoftReferences &#20063;&#34987; GC
+      gcForMalloc(true);
+      // &#31532;&#22235;&#27425; ...
+      ptr = dvmHeapSourceAllocAndGrow(size);
+      if (ptr != NULL): return ptr;
+      return null;
+    if (ptr == NULL):
+      throwOOME();
+  DVM_OBJECT_INIT(newObj, clazz);
+    dvmSetFieldObject(obj, OFFSETOF_MEMBER(Object, clazz), clazz_)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> dvmCollectGarbageInternal</h3>
+<div class="outline-text-3" id="text-1-3">
+<div class="org-src-container">
+
+<pre class="src src-text">dvmCollectGarbageInternal(spec)
+  // &#19968;&#20849;&#26377;&#22235;&#31181;&#31867;&#22411;&#30340; GC:
+  // 1. GC_FOR_MALLOC, &#23545;&#24212;&#20110; dvmMalloc &#26102;&#30340;&#31532;&#19968;&#27425; GC (&#19981;&#28165;&#29702; SoftReferences)
+  // 2. GC_CONCURRENT, &#30001; HeapWorker &#21457;&#36215;&#30340; GC
+  // 3. GC_EXPLICIT, &#30001; System.gc() &#21457;&#36215;&#30340; GC
+  // 4. GC_BEFORE_OOM, &#23545;&#24212;&#20110; dvmMalloc &#26102;&#31532;&#20108;&#27425; GC (&#28165;&#29702; SoftReferences)
+  if (spec == GC_FOR_MALLOC):
+    ATRACE_BEGIN("GC (Alic)");
+  else if (spec == GC_CONCURRENT):
+    ATRACE_BEGIN("GC (concurrent)");
+  else if (spec == GC_EXPLICIT):
+    ATRACE_BEGIN("GC (explicit)");
+  else if (spec == GC_BEFORE_OOM):
+    ATRACE_BEGIN("GC (before OOM)");
+  else:
+    ATRACE_BEGIN("GC (unknown)");
+  // &#21442;&#32771;: dalvik thread dvmSuspendAllThreads
+  dvmSuspendAllThreads(SUSPEND_FOR_GC);
+  // mark &#38454;&#27573;
+  /* Mark the set of objects that are strongly reachable from the roots.
+  */
+  dvmHeapMarkRootSet();
+  /* Recursively mark any objects that marked objects point to strongly.
+  * If we're not collecting soft references, soft-reachable
+  * objects will also be marked.
+  */
+  dvmHeapScanMarkedObjects();
+  /*
+  * All strongly-reachable objects have now been marked.  Process
+  * weakly-reachable objects discovered while tracing.
+  */
+  dvmHeapProcessReferences();
+  // sweep &#38454;&#27573;
+  dvmHeapSweepSystemWeaks();
+  /*
+  * Live objects have a bit set in the mark bitmap, swap the mark
+  * and live bitmaps.  The sweep can proceed concurrently viewing
+  * the new live bitmap as the old mark bitmap, and vice versa.
+  */
+  dvmHeapSourceSwapBitmaps();
+  dvmHeapSweepUnmarkedObjects();
+  dvmEnqueueClearedReferences(&amp;gDvm.gcHeap-&gt;clearedReferences);
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> dvmHeapMarkRootSet</h4>
+<div class="outline-text-4" id="text-1-3-1">
+<div class="org-src-container">
+
+<pre class="src src-text">rootMarkObjectVisitor(void *addr, u4 thread, ...)
+  markObjectNonNull(obj, ctx, false);
+
+dvmHeapMarkRootSet
+  // rootMarkObjectVisitor &#26159;&#19968;&#20010; callback, &#23545;&#27599;&#19968;&#20010; gc root &#20013;&#30340;&#23545;&#35937;
+  // &#37117;&#20250;&#35843;&#29992;&#36825;&#20010; visitor
+  dvmVisitRoots(rootMarkObjectVisitor, &amp;gcHeap-&gt;markContext);
+    visitHashTable(visitor, gDvm.loadedClasses, ROOT_STICKY_CLASS, arg);
+    visitPrimitiveTypes(visitor, arg);
+    visitHashTable(visitor, gDvm.literalStrings, ROOT_INTERNED_STRING, arg);
+    visitIndirectRefTable(visitor, &amp;gDvm.jniGlobalRefTable, 0, ROOT_JNI_GLOBAL, arg);
+    visitReferenceTable(visitor, &amp;gDvm.jniPinRefTable, 0, ROOT_VM_INTERNAL, arg);
+    // visitThreads &#26159;&#26368;&#20027;&#35201;&#30340;&#19968;&#36807; scan &#36807;&#31243;: GC root &#22823;&#37096;&#20998;&#20363;&#22914; static &#23545;&#35937;,
+    // &#23616;&#37096;&#23545;&#35937;&#31561;&#37117;&#21253;&#21547;&#22312; stack frame &#20013;, visitThreads &#36127;&#36131;&#25195;&#25551;&#25152;&#26377;
+    // stack frame
+    visitThreads(visitor, arg);
+      for each thread:
+        (*visitor)(&amp;thread-&gt;threadObj, threadId, ROOT_THREAD_OBJECT, arg);
+        (*visitor)(&amp;thread-&gt;exception, threadId, ROOT_NATIVE_STACK, arg);
+        visitIndirectRefTable(visitor, &amp;thread-&gt;jniLocalRefTable, threadId, ...);
+        // visitThreadStack &#36127;&#36131;&#25195;&#25551;&#25152;&#26377;&#30340; stack frame, &#24182;&#26681;&#25454; stack
+        // frame &#20013; register &#30340;&#20351;&#29992;&#24773;&#20917;&#26469;&#21028;&#26029;&#26159;&#21542;&#35201; mark
+        visitThreadStack(visitor, thread, arg);
+          // &#36941;&#21382;&#25152;&#26377; frame
+          for (u4 *fp = (u4 *)thread-&gt;interpSave.curFrame;
+                fp != NULL;
+                fp = (u4 *)saveArea-&gt;prevFrame):
+            // &#33509;&#27492;&#26102;&#23384;&#22312; register map, &#21017;&#26681;&#25454; register map &#24471;&#21040;
+            // register &#20351;&#29992;&#24773;&#20917;, &#21542;&#21017;, &#25195;&#25551;&#25152;&#26377;&#30340; register
+            // &#23545;&#27599;&#19968;&#20010;&#21487;&#33021;&#20351;&#29992;&#30340; register, &#36890;&#36807; liveBits &#21487;&#20197;&#21028;&#26029;
+            // &#20986;&#36825;&#20010; register &#23545;&#24212;&#30340;&#22320;&#22336;&#26159;&#21542;&#26159;&#19968;&#20010; java &#23545;&#35937;
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3-1-1" class="outline-5">
+<h5 id="sec-1-3-1-1"><span class="section-number-5">1.3.1.1</span> 关于 bitmap 的操作</h5>
+<div class="outline-text-5" id="text-1-3-1-1">
+<p>
+对于 markBits 和 liveBits 一样
+</p>
+
+<p>
+markObjectNonNull 的过程是: 根据 addr 换算出对象在 bitmap 中的 bit
+index, 将 bitmap 该bit 置 1, 因为 dalvik 中所有的对象都是 8 bytes 对齐
+的, 所以 bitmap 中每 bit 代表 heap 的 8 bytes.
+</p>
+
+<p>
+假设 gc heap 大小为 32 bytes, 则 markBits 的大小为 4 bits, 假设一共有两
+个对象需要 mark, 地址相对于 heap-&gt;base 的 offset 分别为 0, 16, 则
+markBits 的值为 1010, 即 markBits 只标记对象的地址, 和对象的大小无关.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> dvmHeapScanMarkedObjects</h4>
+<div class="outline-text-4" id="text-1-3-2">
+<div class="org-src-container">
+
+<pre class="src src-text">dvmHeapScanMarkedObjects
+  /* The bitmaps currently have bits set for the root set.
+  * Walk across the bitmaps and scan each object.
+  */
+  // dvmHeapBitmapScanWalk &#36127;&#36131;&#25195;&#25551; markBits, &#23545;&#30452;&#25509;&#24341;&#29992;&#30340;
+  // filed &#31561;&#36827;&#34892; mark, &#24182;&#25918;&#21040; markStack &#20013;
+  dvmHeapBitmapScanWalk(ctx-&gt;bitmap, scanBitmapCallback, ctx);
+  processMarkStack(ctx);
+    // &#22312; scanObject &#36807;&#31243;&#20013;, markStack &#20250;&#22686;&#38271;, &#36890;&#36807; markStack, &#23558;&#36882;&#24402;
+    // &#36807;&#31243;&#21464;&#20026;&#36845;&#20195;
+    GcMarkStack *stack = &amp;ctx-&gt;stack;
+    while (stack-&gt;top &gt; stack-&gt;base):
+      const Object *obj = markStackPop(stack);
+      scanObject(obj, ctx);
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> dvmHeapProcessReferences</h4>
+<div class="outline-text-4" id="text-1-3-3">
+<p>
+到此, 所有 strong references 的对象都被 mark 了, 但 soft, weak,
+phantom references 并没有被 mark. 
+</p>
+
+<p>
+dvmHeapProcessReferences 负责将 reference 放到 reference queue 中, 另
+外, 对 soft reference, 会根据上层 dvmCollectGarbageInternal 使用的
+spec, 决定是否将 soft reference 也进行 mark
+</p>
+
+<p>
+gcHeap 本身对所有 soft, weak, phantom reference对象都维护着一个列表, 保
+存着这些 Reference 对象, 以便这里可以方便的遍历. 每次 GC 时在 scan 阶段
+都会重新生成这些列表, 这些列表中保存的 reference 对象本身肯定是 marked.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">scanObject
+  scanDataObject(obj, ctx);
+    if (IS_CLASS_FLAG_SET(obj-&gt;clazz, CLASS_ISREFERENCE)):
+      delayReferenceReferent((Object *)obj, ctx);
+        enqueuePendingReference(obj, list);
+</pre>
+</div>
+
+<p>
+另外, gcHeap 还维护着一个 finalizerReferences 列表, 这个队列中的成员不
+是用户通过 new 生成的 reference, 而是一些那些定义了 finalize 函数的对
+象. 
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">dvmHeapProcessReferences
+  if (!gDvm.zygote &amp;&amp; !clearSoftRefs):
+    preserveSomeSoftReferences(softReferences);
+      while (*list != NULL) {
+        Object *ref = dequeuePendingReference(list);
+        // referent &#26159; Reference &#31867;&#30340;&#19968;&#20010;&#25104;&#21592;, &#25351;&#21521; reference &#24341;&#29992;&#30340;&#23545;&#35937;
+        // &#20363;&#22914; new WeakReference&lt;Object&gt;(o), &#21017; referent &#25351;&#21521; o
+        Object *referent = dvmGetFieldObject(ref, referentOffset);
+        bool marked = isMarked(referent, ctx);
+        if (!marked &amp;&amp; ((++counter) &amp; 1)):
+          /* Referent is white and biased toward saving, mark it. */
+          markObject(referent, ctx);
+          marked = true;
+        if (!marked):
+          /* Referent is white, queue it for clearing. */
+          enqueuePendingReference(ref, &amp;clear);
+  // &#25152;&#35859;&#30340; white reference, &#26159;&#21542; referent &#27809;&#26377;&#34987; mark &#30340; reference       
+  clearWhiteReferences(softReferences);
+  clearWhiteReferences(weakReferences);
+  // &#33509; finalizerReferences &#20013;&#30340; reference &#30340; referent &#27809;&#26377; mark, &#21017;
+  // &#23558;&#36825;&#20010; reference &#25918;&#21040; f-queue &#20013;, HeapWorker &#20250;&#36127;&#36131;&#25191;&#34892;&#23427;&#30340;
+  // finalize &#20989;&#25968;. &#20294;&#26159;&#27491;&#22240;&#20026; HeapWorker &#36824;&#38656;&#35201;&#35775;&#38382; referent, &#25152;&#20197;
+  // referent &#20250;&#34987;&#37325;&#26032;&#32622;&#20026; marked
+  enqueueFinalizerReferences(finalizerReferences);
+
+  /*
+  * Clear all f-reachable soft and weak references with white
+  * referents.
+  */
+  // &#36825;&#20004;&#21477;&#21448;&#34987;&#35843;&#29992;&#19968;&#27425;? &#22240;&#20026; enqueueFinalizerReferences &#21487;&#33021;&#23548;&#33268;
+  // &#26032;&#30340; referent &#21464;&#20026; unmarked, &#36827;&#32780;&#23548;&#33268;&#36825;&#20123; referent &#20013;&#30340;
+  // reference &#25104;&#21592;&#20063;&#21464;&#20026; unmarked, &#36827;&#32780;&#34987;&#21152;&#20837; references &#21015;&#34920;&#20013;, &#25152;&#20197;&#38656;
+  // &#35201;&#23545;&#36825;&#20123;&#26032;&#21152;&#20837;&#30340; reference &#23545;&#35937;&#26412;&#36523;&#20877; clear &#19968;&#27425;. 
+
+  clearWhiteReferences(softReferences);
+  clearWhiteReferences(weakReferences);
+
+  // phantom &#22312;&#26368;&#21518;&#34987; clear, &#32780;&#19981;&#26159;&#20687; weak, soft &#37027;&#26679;&#22312;
+  // enqueueFinalizerReferences &#21069;&#23601;&#36827;&#34892;&#19968;&#27425; clear. &#20026;&#21861; weak, soft &#30340;
+  // &#19981;&#33021;&#20687; phantom &#19968;&#26679;&#21482;&#22312; enqueueFinalizerReferences &#21518;&#36827;&#34892;&#19968;&#27425;?
+  // &#22240;&#20026; soft, weak &#23545;&#35937;&#26412;&#36523;&#26377;&#19968;&#20010; referent &#24341;&#29992;...&#32780; phantom &#26159;&#19981;&#21253;
+  // &#25324;&#36825;&#20010;&#25104;&#21592;&#30340;: &#33509;&#26032; enqueueFinalizerReferences &#20877; clear weak
+  // references, &#26377;&#21487;&#33021;&#20250;&#21457;&#29983;&#26412;&#35813; clear &#30340; weak reference &#27809;&#26377; clear:
+  // &#22240;&#20026; enqueueFinalizerReferences &#23558;&#26576;&#20010; weak reference &#30340; referent
+  // &#21464;&#20026; marked &#20102;...
+
+  // phantom &#30340;&#36825;&#20010;&#29305;&#28857;&#20063;&#20351;&#23427;&#36866;&#21512;&#29992;&#26469;&#20195;&#26367; finalize &#20989;&#25968;
+  // &#21442;&#32771; jvm &#20351;&#29992; PhantomReference &#36991;&#20813; finalize()
+  clearWhiteReferences(phantomReferences);
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3-4" class="outline-4">
+<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> dvmHeapSourceSwapBitmaps</h4>
+<div class="outline-text-4" id="text-1-3-4">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #b58900;">HeapBitmap</span> <span style="color: #268bd2;">tmp</span> = gHs-&gt;liveBits;
+gHs-&gt;liveBits = gHs-&gt;markBits;
+gHs-&gt;markBits = tmp;
+</pre>
+</div>
+<p>
+简单的交换一下 liveBits 与 markBits, 以便进行下次 GC.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3-5" class="outline-4">
+<h4 id="sec-1-3-5"><span class="section-number-4">1.3.5</span> dvmHeapSweepUnmarkedObjects</h4>
+<div class="outline-text-4" id="text-1-3-5">
+<p>
+Walk through the list of objects that haven't been marked and free
+them.  Assumes the bitmaps have been swapped.
+</p>
+
+<p>
+真正的 sweep 阶段
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">dvmHeapSweepUnmarkedObjects
+  // &#23545;&#27599;&#19968;&#20010; garbage object &#25191;&#34892;
+  // &#22914;&#20309;&#25214;&#21040; garbage object? (liveBits &amp; ~markBits) = 1 &#34920;&#31034; garbage object
+  // &#27880;&#24847;&#36825;&#37324;&#30340; markBits, liveBits &#25351;&#30340;&#26159; swap &#21069;&#30340; bitmap, &#32780;&#19988;&#36825;&#20010;&#25805;&#20316;&#24182;
+  // &#19981;&#31561;&#20215;&#20110; "&#24322;&#25110;" &#25805;&#20316;.
+  dvmHeapBitmapSweepWalk(sweepBitmapCallback,...)
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre class="src src-text">sweepBitmapCallback(size_t numPtrs, void **ptrs, void *arg)
+  dvmHeapSourceFreeList(numPtrs, ptrs);
+    mspace_bulk_free(msp, ptrs, numPtrs);
+</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-03-21 Fri 19:32</p>
+<p class="date">Created: 2014-04-02 Wed 16:33</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

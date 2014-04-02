@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>JVM</title>
-<!-- 2014-03-21 Fri 19:32 -->
+<!-- 2014-04-02 Wed 16:33 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="wei.sun" />
@@ -608,9 +608,11 @@ clearWhiteReferences(weakReferences);
 <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#30340; reference &#32622;&#20110; FinalizerQueue &#20013;, &#20197;&#35843;&#24230; finalize()</span>
 enqueueFinalizerReferences(finalizerReferences);
 
-<span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#30001;&#20110; enqueueFinalizerReferences &#20250;&#35843;&#29992; referent &#34987; mark, &#36827;&#32780;</span>
-<span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#23548;&#33268;&#21487;&#33021;&#26377;&#26032;&#30340; weak, soft, phantom reference &#23545;&#35937;&#21464;&#20026; marked, &#25152;&#20197;</span>
-<span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#37325;&#26032;&#35843;&#29992;&#19968;&#20010; clearWhiteXxx</span>
+<span style="color: #586e75; font-style: italic;">/*</span>
+<span style="color: #586e75; font-style: italic;"> * Clear all f-reachable soft and weak references with white</span>
+<span style="color: #586e75; font-style: italic;"> * referents.</span>
+<span style="color: #586e75; font-style: italic;"> */</span>
+
 clearWhiteReferences(softReferences);
 clearWhiteReferences(weakReferences);
 
@@ -636,7 +638,7 @@ referent 本身并不是 finalizable, 则 enqueueFinalizerReferences 并不能
 <div id="postamble" class="status">
 <p class="author">Author: wei.sun</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-03-21 Fri 19:32</p>
+<p class="date">Created: 2014-04-02 Wed 16:33</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
