@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>OO</title>
-<!-- 2014-03-28 Fri 11:24 -->
+<!-- 2014-04-09 Wed 13:46 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -67,8 +67,9 @@ for the JavaScript code in this tag.
 <ul>
 <li><a href="#sec-1-1">1.1. ClassObject 与 Object</a></li>
 <li><a href="#sec-1-2">1.2. ArrayObject</a></li>
-<li><a href="#sec-1-3">1.3. Class Loading</a></li>
-<li><a href="#sec-1-4">1.4. 各种函数的实现</a></li>
+<li><a href="#sec-1-3">1.3. StringObject</a></li>
+<li><a href="#sec-1-4">1.4. Class Loading</a></li>
+<li><a href="#sec-1-5">1.5. 各种函数的实现</a></li>
 </ul>
 </li>
 </ul>
@@ -263,8 +264,57 @@ word 不同的是, lock 并不包含对象的年代信息以及 GC 信息.
 </div>
 
 <div id="outline-container-sec-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Class Loading</h3>
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> StringObject</h3>
 <div class="outline-text-3" id="text-1-3">
+</div><div id="outline-container-sec-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> intern</h4>
+<div class="outline-text-4" id="text-1-3-1">
+<p>
+OP<sub>CONST</sub><sub>STRING</sub>:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #268bd2;">HANDLE_OPCODE</span>(OP_CONST_STRING <span style="color: #586e75; font-style: italic;">/*</span><span style="color: #586e75; font-style: italic;">vAA, string@BBBB</span><span style="color: #586e75; font-style: italic;">*/</span>)
+{
+    <span style="color: #b58900;">StringObject</span>* <span style="color: #268bd2;">strObj</span>;
+
+    vdst = INST_AA(inst);
+    ref = FETCH(1);
+    ILOGV(<span style="color: #2aa198;">"|const-string v%d string@0x%04x"</span>, vdst, ref);
+    strObj = dvmDexGetResolvedString(methodClassDex, ref);
+    <span style="color: #859900;">if</span> (strObj == <span style="color: #2aa198;">NULL</span>) {
+        EXPORT_PC();
+        strObj = dvmResolveString(curMethod-&gt;clazz, ref);
+        <span style="color: #859900;">if</span> (strObj == <span style="color: #2aa198;">NULL</span>)
+            GOTO_exceptionThrown();
+    }
+    SET_REGISTER(vdst, (<span style="color: #b58900;">u4</span>) strObj);
+}
+FINISH(2);
+OP_END
+</pre>
+</div>
+
+<p>
+dvmResolveString:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">StringObject* dvmResolveString(const ClassObject* referrer, u4 stringIdx)
+  utf8 = dexStringAndSizeById(pDvmDex-&gt;pDexFile, stringIdx, &amp;utf16Size);
+  strObj = dvmCreateStringFromCstrAndLength(utf8, utf16Size);
+  internStrObj = dvmLookupImmortalInternedString(strObj);
+  return internStrObj;
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Class Loading</h3>
+<div class="outline-text-3" id="text-1-4">
 <p>
 java 类加载的过程包含一般包括加载, 解析, 初始化等过程.  特别的, dvm 加
 载类的过程基本上就是:
@@ -346,6 +396,10 @@ findClassNoInit:
     createIftable(clazz)
     // &#35745;&#31639;&#25152;&#26377; filed &#30340; offset, &#21518;&#38754;&#30340; GetFieldID &#31561;&#38656;&#35201;&#20351;&#29992;
     computeFieldOffsets(clazz)
+    // precacheReferenceOffsets &#20250;&#36127;&#36131;&#23558; referent filed &#20174; ifields
+    // &#31227;&#38500;, &#20197;&#20415; GC &#26102; scanDataObject &#26102;&#19981;&#20250;&#25195;&#25551;&#21040; referent &#23545;&#35937;.
+    if (strcmp(clazz-&gt;descriptor, "Ljava/lang/ref/Reference;") == 0):
+      precacheReferenceOffsets(clazz)
 </pre>
 </div>
 
@@ -422,15 +476,15 @@ markBits 是针对 GC Heap 的 bitmap)
 </p>
 </div>
 </div>
-<div id="outline-container-sec-1-4" class="outline-3">
-<h3 id="sec-1-4"><span class="section-number-3">1.4</span> 各种函数的实现</h3>
-<div class="outline-text-3" id="text-1-4">
-</div><div id="outline-container-sec-1-4-1" class="outline-4">
-<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> iget / iset</h4>
-<div class="outline-text-4" id="text-1-4-1">
-</div><div id="outline-container-sec-1-4-1-1" class="outline-5">
-<h5 id="sec-1-4-1-1"><span class="section-number-5">1.4.1.1</span> Jni version</h5>
-<div class="outline-text-5" id="text-1-4-1-1">
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> 各种函数的实现</h3>
+<div class="outline-text-3" id="text-1-5">
+</div><div id="outline-container-sec-1-5-1" class="outline-4">
+<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> iget / iset</h4>
+<div class="outline-text-4" id="text-1-5-1">
+</div><div id="outline-container-sec-1-5-1-1" class="outline-5">
+<h5 id="sec-1-5-1-1"><span class="section-number-5">1.5.1.1</span> Jni version</h5>
+<div class="outline-text-5" id="text-1-5-1-1">
 <p>
 第一步, 获得 jfieldID, 这个 jfieldID 实际上是 InstField *, 其
 byteOffset 保存着 Object 中保存该 ifield 的偏移量. 
@@ -463,9 +517,9 @@ byteOffset 保存着 Object 中保存该 ifield 的偏移量.
 </div>
 </div>
 
-<div id="outline-container-sec-1-4-1-2" class="outline-5">
-<h5 id="sec-1-4-1-2"><span class="section-number-5">1.4.1.2</span> interpreter version</h5>
-<div class="outline-text-5" id="text-1-4-1-2">
+<div id="outline-container-sec-1-5-1-2" class="outline-5">
+<h5 id="sec-1-5-1-2"><span class="section-number-5">1.5.1.2</span> interpreter version</h5>
+<div class="outline-text-5" id="text-1-5-1-2">
 <p>
 与下面 sget / sset 类似, 根据 dex 中的 id 获得 name, 然后根据 name 找
 到 InstField*, 然后根据偏移量得到 ifield 的值. 
@@ -473,16 +527,16 @@ byteOffset 保存着 Object 中保存该 ifield 的偏移量.
 </div>
 </div>
 </div>
-<div id="outline-container-sec-1-4-2" class="outline-4">
-<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> sget / sset</h4>
-<div class="outline-text-4" id="text-1-4-2">
+<div id="outline-container-sec-1-5-2" class="outline-4">
+<h4 id="sec-1-5-2"><span class="section-number-4">1.5.2</span> sget / sset</h4>
+<div class="outline-text-4" id="text-1-5-2">
 <p>
 sget/sset 比 iget/iset 要复杂, 因为 static 变量可以存在于 interface 中
 </p>
 </div>
-<div id="outline-container-sec-1-4-2-1" class="outline-5">
-<h5 id="sec-1-4-2-1"><span class="section-number-5">1.4.2.1</span> jni version</h5>
-<div class="outline-text-5" id="text-1-4-2-1">
+<div id="outline-container-sec-1-5-2-1" class="outline-5">
+<h5 id="sec-1-5-2-1"><span class="section-number-5">1.5.2.1</span> jni version</h5>
+<div class="outline-text-5" id="text-1-5-2-1">
 <p>
 首先, GetStaticFieldID 得到 jfieldID, 这个 jfieldID 实现上是
 StaticField *, 其 value 值即为所求. 
@@ -520,9 +574,9 @@ StaticField* ) 中取出 value 字段即可.
 </div>
 </div>
 
-<div id="outline-container-sec-1-4-2-2" class="outline-5">
-<h5 id="sec-1-4-2-2"><span class="section-number-5">1.4.2.2</span> interpreter version</h5>
-<div class="outline-text-5" id="text-1-4-2-2">
+<div id="outline-container-sec-1-5-2-2" class="outline-5">
+<h5 id="sec-1-5-2-2"><span class="section-number-5">1.5.2.2</span> interpreter version</h5>
+<div class="outline-text-5" id="text-1-5-2-2">
 <div class="org-src-container">
 
 <pre class="src src-text">// ref &#26159;&#19968;&#20010;&#25972;&#25968;, odex &#20195;&#30721;&#20013;&#19981;&#26159;&#20351;&#29992; name &#26597;&#25214; filed &#30340;, &#32780;&#26159;&#24050;
@@ -541,9 +595,9 @@ StaticField* sfield = dvmResolveStaticField(clazz, ref);
 </div>
 </div>
 
-<div id="outline-container-sec-1-4-3" class="outline-4">
-<h4 id="sec-1-4-3"><span class="section-number-4">1.4.3</span> iget-quick/iset-quick</h4>
-<div class="outline-text-4" id="text-1-4-3">
+<div id="outline-container-sec-1-5-3" class="outline-4">
+<h4 id="sec-1-5-3"><span class="section-number-4">1.5.3</span> iget-quick/iset-quick</h4>
+<div class="outline-text-4" id="text-1-5-3">
 <p>
 由于 iget/iset 本质是操作 Object 的一个 offset, 所以 odex 提供 quick 版
 本的iget/iset, 直接以 offset 做为操作数. 
@@ -555,9 +609,9 @@ StaticField* sfield = dvmResolveStaticField(clazz, ref);
 </p>
 </div>
 </div>
-<div id="outline-container-sec-1-4-4" class="outline-4">
-<h4 id="sec-1-4-4"><span class="section-number-4">1.4.4</span> invoke</h4>
-<div class="outline-text-4" id="text-1-4-4">
+<div id="outline-container-sec-1-5-4" class="outline-4">
+<h4 id="sec-1-5-4"><span class="section-number-4">1.5.4</span> invoke</h4>
+<div class="outline-text-4" id="text-1-5-4">
 <p>
 所有 invoke 类调用都分为两步:
 </p>
@@ -577,9 +631,9 @@ Object-&gt;virtualMethods 中找到.
 </p>
 </div>
 
-<div id="outline-container-sec-1-4-4-1" class="outline-5">
-<h5 id="sec-1-4-4-1"><span class="section-number-5">1.4.4.1</span> 五种 invoke</h5>
-<div class="outline-text-5" id="text-1-4-4-1">
+<div id="outline-container-sec-1-5-4-1" class="outline-5">
+<h5 id="sec-1-5-4-1"><span class="section-number-5">1.5.4.1</span> 五种 invoke</h5>
+<div class="outline-text-5" id="text-1-5-4-1">
 <div class="org-src-container">
 
 <pre class="src src-java"><span style="color: #859900;">interface</span> <span style="color: #b58900;">I</span> {
@@ -761,9 +815,9 @@ Object-&gt;virtualMethods 中找到.
 </div>
 </div>
 
-<div id="outline-container-sec-1-4-4-2" class="outline-5">
-<h5 id="sec-1-4-4-2"><span class="section-number-5">1.4.4.2</span> dvmResolveMethod</h5>
-<div class="outline-text-5" id="text-1-4-4-2">
+<div id="outline-container-sec-1-5-4-2" class="outline-5">
+<h5 id="sec-1-5-4-2"><span class="section-number-5">1.5.4.2</span> dvmResolveMethod</h5>
+<div class="outline-text-5" id="text-1-5-4-2">
 <p>
 任何一种 invoke 的第一步都是调用 dvmResolveMethod 来查找真正的 Method,
 不过不同的 invoke 会使用不同的参数
@@ -816,9 +870,9 @@ Method* dvmFindVirtualMethodHier(clazz,methodName,proto)
 </div>
 </div>
 </div>
-<div id="outline-container-sec-1-4-4-3" class="outline-5">
-<h5 id="sec-1-4-4-3"><span class="section-number-5">1.4.4.3</span> invoke-static</h5>
-<div class="outline-text-5" id="text-1-4-4-3">
+<div id="outline-container-sec-1-5-4-3" class="outline-5">
+<h5 id="sec-1-5-4-3"><span class="section-number-5">1.5.4.3</span> invoke-static</h5>
+<div class="outline-text-5" id="text-1-5-4-3">
 <div class="org-src-container">
 
 <pre class="src src-text">methodToCall = dvmResolveMethod(curMethod-&gt;clazz, ref, METHOD_STATIC);
@@ -829,9 +883,9 @@ GOTO_invokeMethod(methodCallRange, methodToCall, vsrc1, vdst);
 </div>
 </div>
 
-<div id="outline-container-sec-1-4-4-4" class="outline-5">
-<h5 id="sec-1-4-4-4"><span class="section-number-5">1.4.4.4</span> invoke-direct</h5>
-<div class="outline-text-5" id="text-1-4-4-4">
+<div id="outline-container-sec-1-5-4-4" class="outline-5">
+<h5 id="sec-1-5-4-4"><span class="section-number-5">1.5.4.4</span> invoke-direct</h5>
+<div class="outline-text-5" id="text-1-5-4-4">
 <div class="org-src-container">
 
 <pre class="src src-text">methodToCall = dvmResolveMethod(curMethod-&gt;clazz, ref,METHOD_DIRECT);
@@ -843,9 +897,9 @@ GOTO_invokeMethod(methodCallRange, methodToCall, vsrc1, vdst);
 </div>
 </div>
 
-<div id="outline-container-sec-1-4-4-5" class="outline-5">
-<h5 id="sec-1-4-4-5"><span class="section-number-5">1.4.4.5</span> invoke-super</h5>
-<div class="outline-text-5" id="text-1-4-4-5">
+<div id="outline-container-sec-1-5-4-5" class="outline-5">
+<h5 id="sec-1-5-4-5"><span class="section-number-5">1.5.4.5</span> invoke-super</h5>
+<div class="outline-text-5" id="text-1-5-4-5">
 <div class="org-src-container">
 
 <pre class="src src-text">// &#26597;&#25214; base method &#26102;, &#21487;&#20197;&#22312;&#24403;&#21069; class &#25214;&#21040;, &#20063;&#21487;&#33021;&#22312;&#29238;&#31867;&#20013;&#25214;&#21040;
@@ -862,9 +916,9 @@ GOTO_invokeMethod(methodCallRange, methodToCall, vsrc1, vdst);
 </div>
 </div>
 
-<div id="outline-container-sec-1-4-4-6" class="outline-5">
-<h5 id="sec-1-4-4-6"><span class="section-number-5">1.4.4.6</span> invoke-virtual</h5>
-<div class="outline-text-5" id="text-1-4-4-6">
+<div id="outline-container-sec-1-5-4-6" class="outline-5">
+<h5 id="sec-1-5-4-6"><span class="section-number-5">1.5.4.6</span> invoke-virtual</h5>
+<div class="outline-text-5" id="text-1-5-4-6">
 <div class="org-src-container">
 
 <pre class="src src-text">baseMethod = dvmResolveMethod(curMethod-&gt;clazz, ref,METHOD_VIRTUAL);
@@ -877,9 +931,9 @@ GOTO_invokeMethod(methodCallRange, methodToCall, vsrc1, vdst);
 </div>
 </div>
 
-<div id="outline-container-sec-1-4-4-7" class="outline-5">
-<h5 id="sec-1-4-4-7"><span class="section-number-5">1.4.4.7</span> invoke-interface</h5>
-<div class="outline-text-5" id="text-1-4-4-7">
+<div id="outline-container-sec-1-5-4-7" class="outline-5">
+<h5 id="sec-1-5-4-7"><span class="section-number-5">1.5.4.7</span> invoke-interface</h5>
+<div class="outline-text-5" id="text-1-5-4-7">
 <p>
 invoke-interface 与 invoke-virtual 不同:
 </p>
@@ -914,9 +968,9 @@ GOTO_invokeMethod(methodCallRange, methodToCall, vsrc1, vdst);
 </div>
 </div>
 
-<div id="outline-container-sec-1-4-4-8" class="outline-5">
-<h5 id="sec-1-4-4-8"><span class="section-number-5">1.4.4.8</span> invoke-virtual-quick 与 invoke-super-quick</h5>
-<div class="outline-text-5" id="text-1-4-4-8">
+<div id="outline-container-sec-1-5-4-8" class="outline-5">
+<h5 id="sec-1-5-4-8"><span class="section-number-5">1.5.4.8</span> invoke-virtual-quick 与 invoke-super-quick</h5>
+<div class="outline-text-5" id="text-1-5-4-8">
 <p>
 odex 对 dex 优化时, 会将原来的 invoke-virtual 或 invoke-super 替换为相
 应的 quick 版本, 相应的指令参数也会变: 由原来的 ref 直接变为 vtable
@@ -936,7 +990,7 @@ quick 版本. 因为这是不可能的&#x2026;
 <div id="postamble" class="status">
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-03-28 Fri 11:24</p>
+<p class="date">Created: 2014-04-09 Wed 13:46</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

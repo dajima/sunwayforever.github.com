@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Alloc</title>
-<!-- 2014-04-02 Wed 16:33 -->
+<!-- 2014-04-09 Wed 13:47 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -68,6 +68,9 @@ for the JavaScript code in this tag.
 <li><a href="#sec-1-1">1.1. Glossary</a></li>
 <li><a href="#sec-1-2">1.2. dvmAllocObject</a></li>
 <li><a href="#sec-1-3">1.3. dvmCollectGarbageInternal</a></li>
+<li><a href="#sec-1-4">1.4. Daemons 与 ReferenceQueue</a></li>
+<li><a href="#sec-1-5">1.5. HeapWorker</a></li>
+<li><a href="#sec-1-6">1.6. Concurrent GC</a></li>
 </ul>
 </li>
 </ul>
@@ -167,11 +170,20 @@ for the JavaScript code in this tag.
   /* Mark the set of objects that are strongly reachable from the roots.
   */
   dvmHeapMarkRootSet();
+  // &#33509; spec &#34920;&#26126;&#35813; gc &#30001; HeapWorker &#21457;&#36215;, &#21017; dvmHeapScanMarkedObjects
+  // &#26102;&#24182;&#19981; stop the world. &#36825;&#20063;&#26159; Concurrent GC &#30340;&#26412;&#24847;.
+  if (spec-&gt;isConcurrent):
+    dvmClearCardTable();
+    dvmResumeAllThreads(SUSPEND_FOR_GC);
   /* Recursively mark any objects that marked objects point to strongly.
   * If we're not collecting soft references, soft-reachable
   * objects will also be marked.
   */
   dvmHeapScanMarkedObjects();
+  if (spec-&gt;isConcurrent):
+    dvmSuspendAllThreads(SUSPEND_FOR_GC);
+    dvmHeapReMarkRootSet();
+    dvmHeapReScanMarkedObjects();
   /*
   * All strongly-reachable objects have now been marked.  Process
   * weakly-reachable objects discovered while tracing.
@@ -186,6 +198,8 @@ for the JavaScript code in this tag.
   */
   dvmHeapSourceSwapBitmaps();
   dvmHeapSweepUnmarkedObjects();
+  // &#23558;&#26412;&#27425; GC &#20135;&#29983;&#30340; white reference &#21644; finalizer reference &#36890;&#30693;&#32473;
+  // java &#23618;&#30340; ReferenceQueueDaemon
   dvmEnqueueClearedReferences(&amp;gDvm.gcHeap-&gt;clearedReferences);
 </pre>
 </div>
@@ -365,8 +379,20 @@ gcHeap 本身对所有 soft, weak, phantom reference对象都维护着一个列�
 </pre>
 </div>
 </div>
-</div>
 
+<div id="outline-container-sec-1-3-3-1" class="outline-5">
+<h5 id="sec-1-3-3-1"><span class="section-number-5">1.3.3.1</span> FinalizerReference</h5>
+<div class="outline-text-5" id="text-1-3-3-1">
+<p>
+FinalizerReference 是一个 java 类, 但在 java 层并不可见: dalvik 在初始
+化一个 Object 时, 若发现该对象实现了 finalize() 方法, 则会通过
+dvmSetFinalizable (通过 FinalizerReference.add) 方法添加一个
+FinalizerReference 对象对 FinalizerReference 的一个静态成员. 后续 GC
+scan 时一定会找到这个 FinalizerReference.
+</p>
+</div>
+</div>
+</div>
 <div id="outline-container-sec-1-3-4" class="outline-4">
 <h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> dvmHeapSourceSwapBitmaps</h4>
 <div class="outline-text-4" id="text-1-3-4">
@@ -416,12 +442,286 @@ them.  Assumes the bitmaps have been swapped.
 </div>
 </div>
 </div>
+
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Daemons 与 ReferenceQueue</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+clearWhiteReferences 和 enqueueFinalizerReferences 最终会将 reference
+对象放在 gDvm.gcHeap-&gt;clearedReferences 这个列表中. 
+</p>
+
+<p>
+对于 FinalizerReference, 其 referent 对应的 finalize() 函数需要被调用.对
+于 weak, soft, phantom reference, 其 ReferenceQueue 的 poll 或remove 需
+要结束阻塞并返回该 reference. 如何做到?
+</p>
+
+<p>
+在 GC 的最后阶段, dvmEnqueueClearedReferences 会负责将这些 reference
+通知给 java 层的 ReferenceQueueDaemon:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">dvmEnqueueClearedReferences
+  Method *meth = gDvm.methJavaLangRefReferenceQueueAdd;
+  dvmCallMethod(self, meth, NULL, &amp;unused, reference);
+</pre>
+</div>
+
+<p>
+实际上就是调用了 ReferenceQueue 的静态方法: add
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-java"><span style="color: #859900;">static</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">add</span>(Reference&lt;?&gt; list) {
+    <span style="color: #859900;">synchronized</span> (ReferenceQueue.<span style="color: #859900;">class</span>) {
+        <span style="color: #859900;">if</span> (unenqueued == <span style="color: #2aa198;">null</span>) {
+            unenqueued = list;
+        } <span style="color: #859900;">else</span> {
+            Reference&lt;?&gt; next = unenqueued.pendingNext;
+            unenqueued.pendingNext = list.pendingNext;
+            list.pendingNext = next;
+        }
+        ReferenceQueue.<span style="color: #859900;">class</span>.notifyAll();
+    }
+}
+</pre>
+</div>
+
+<p>
+静态的 ReferenceQueue 拿到了所有的 white reference 和 finalize
+reference, 但是 notifyAll 是通知谁?
+</p>
+
+<p>
+答案就是 ReferenceQueueDaemon !
+</p>
+
+<p>
+Daemons 是一个 java 类, 实际上就是对 Thread 的一个简单包装. 
+当 zygote fork 后, 会通过 Daemons.start 启动如下的线程:
+</p>
+
+<ol class="org-ol">
+<li>ReferenceQueueDaemon
+</li>
+<li>FinalizerDaemon
+</li>
+<li>FinalizerWatchdogDaemon
+</li>
+</ol>
+
+<p>
+ReferenceQueueDaemon 负责在 ReferenceQueue 上 wait, 等待 dalvik 的通知,
+一旦拿到 reference, 会把消息分发给各个 reference
+</p>
+
+<ol class="org-ol">
+<li>对于 weak, soft, phantom 等 white reference 来说, 就是通知各自的 ReferenceQueue 对象.
+</li>
+<li>对于 FinalizerReference 来说, 就是通知 FinalizerDaemon 开始工作: 调
+用 finalize() 函数.
+</li>
+</ol>
+
+<p>
+还有一个 FinalizerWatchdogDaemon 是负责监视 finalize 函数的执行的, 执
+行过久的进程会被 kill. 
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> HeapWorker</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+dalvik 启动时会启动 HeapWorker 线程, 负责 concurrent GC.
+</p>
+
+<p>
+HeapWorker 对应于这个 native thread:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #859900;">static</span> <span style="color: #b58900;">void</span> *<span style="color: #268bd2;">gcDaemonThread</span>(<span style="color: #b58900;">void</span>* <span style="color: #268bd2;">arg</span>)
+{
+    dvmChangeStatus(<span style="color: #2aa198;">NULL</span>, THREAD_VMWAIT);
+    <span style="color: #b58900;">bool</span> <span style="color: #268bd2;">trim</span> = <span style="color: #2aa198;">false</span>;
+    <span style="color: #859900;">if</span> (gHs-&gt;gcThreadTrimNeeded) {
+        <span style="color: #b58900;">int</span> <span style="color: #268bd2;">result</span> = dvmRelativeCondWait(&amp;gHs-&gt;gcThreadCond, &amp;gHs-&gt;gcThreadMutex,
+                                         HEAP_TRIM_IDLE_TIME_MS, 0);
+        <span style="color: #859900;">if</span> (result == ETIMEDOUT) {
+            <span style="color: #586e75; font-style: italic;">/* </span><span style="color: #586e75; font-style: italic;">Timed out waiting for a GC request, schedule a heap trim. </span><span style="color: #586e75; font-style: italic;">*/</span>
+            trim = <span style="color: #2aa198;">true</span>;
+        }
+    } <span style="color: #859900;">else</span> {
+        dvmWaitCond(&amp;gHs-&gt;gcThreadCond, &amp;gHs-&gt;gcThreadMutex);
+    }
+
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">Many JDWP requests cause allocation. We can't take the heap lock and wait to</span>
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">transition to runnable so we can start a GC if a debugger is connected, because</span>
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">we don't know that the JDWP thread isn't about to allocate and require the</span>
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">heap lock itself, leading to deadlock. http://b/8191824.</span>
+    <span style="color: #859900;">if</span> (gDvm.debuggerConnected) {
+        <span style="color: #859900;">continue</span>;
+    }
+
+    dvmLockHeap();
+    <span style="color: #586e75; font-style: italic;">/*</span>
+<span style="color: #586e75; font-style: italic;">     * Another thread may have started a concurrent garbage</span>
+<span style="color: #586e75; font-style: italic;">     * collection before we were scheduled.  Check for this</span>
+<span style="color: #586e75; font-style: italic;">     * condition before proceeding.</span>
+<span style="color: #586e75; font-style: italic;">     </span><span style="color: #586e75; font-style: italic;">*/</span>
+    <span style="color: #859900;">if</span> (<span style="color: #dc322f;">!</span>gDvm.gcHeap-&gt;gcRunning) {
+        dvmChangeStatus(<span style="color: #2aa198;">NULL</span>, THREAD_RUNNING);
+        <span style="color: #859900;">if</span> (trim) {
+            trimHeaps();
+            gHs-&gt;gcThreadTrimNeeded = <span style="color: #2aa198;">false</span>;
+        } <span style="color: #859900;">else</span> {
+            dvmCollectGarbageInternal(GC_CONCURRENT);
+            gHs-&gt;gcThreadTrimNeeded = <span style="color: #2aa198;">true</span>;
+        }
+        dvmChangeStatus(<span style="color: #2aa198;">NULL</span>, THREAD_VMWAIT);
+    }
+    dvmUnlockHeap();
+    dvmChangeStatus(<span style="color: #2aa198;">NULL</span>, THREAD_RUNNING);
+    <span style="color: #859900;">return</span> <span style="color: #2aa198;">NULL</span>;
+}
+</pre>
+</div>
+
+<p>
+可见, HeapWorker 是否工作取决于 gHs-&gt;gcThreadCond, 参考
+dvmHeapSourceAlloc 的代码:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">dvmHeapSourceAlloc
+  if (heap-&gt;bytesAllocated &gt; heap-&gt;concurrentStartBytes):
+    /*
+    * We have exceeded the allocation threshold.  Wake up the
+    * garbage collector.
+    */
+    dvmSignalCond(&amp;gHs-&gt;gcThreadCond);
+</pre>
+</div>
+<p>
+所以, 如果当前已经发配的内存大于 heap-&gt;concurrentStartBytes 时 (默认的
+配置是 freeBytes - CONCURRENT<sub>START</sub>(128KB), 即当可用内存少于 128KB 时),
+HeapWorker 会开始工作, 并且周期性的 (HEAP<sub>TRIM</sub><sub>IDLE</sub><sub>TIME</sub><sub>MS</sub>) 执行
+dvmCollectGarbageInternal
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> Concurrent GC</h3>
+<div class="outline-text-3" id="text-1-6">
+<p>
+HeapWorker 实际上就是实现了 Concurrent Mark Sweep (CMS), 说它是
+concurrent, 不是因为它会周期性的执行, 而是因为它允许在
+dvmHeapScanMarkedObjects() 时各个 java 继续执行, 而不必`stop the
+world` (并发标记).
+</p>
+
+<p>
+关于 CMS:
+<a href="http://dl.acm.org/citation.cfm?id=362422.362480">http://dl.acm.org/citation.cfm?id=362422.362480</a>
+</p>
+
+<p>
+"This paper reports our experiences with a mostly-concurrent
+incremental garbage collector, implemented in the context of a high
+performance virtual machine for the Java™ programming language. The
+garbage collector is based on the “mostly parallel” collection
+algorithm of Boehm et al. and can be used as the old generation of a
+generational memory system. It overloads efficient write-barrier code
+already generated to support generational garbage collection to also
+identify objects that were modified during concurrent marking. These
+objects must be rescanned to ensure that the concurrent marking phase
+marks all live objects. This algorithm minimises maximum garbage
+collection pause times, while having only a small impact on the
+average garbage collection pause time and overall execution time. We
+support our claims with experimental results, for both a synthetic
+benchmark and real programs."
+</p>
+
+<p>
+CMS 一般分为四个阶段:
+</p>
+<ol class="org-ol">
+<li>初始标记
+对应于 dvmCollectGarbageInternal 的 dvmHeapMarkRootSet
+</li>
+<li>并发标记
+对应于 dvmHeapScanMarkedObjects
+</li>
+<li>重新标记
+对应于 dvmHeapReMarkRootSet 与 dvmHeapReScanMarkedObjects
+</li>
+<li>清除
+</li>
+</ol>
+
+
+<p>
+CMS 可以更快, 是因为并发标记期间并没有 `stop the world`, 但带来的后果是
+并发标记结束后有可能会因为其他线程的执行产生新的可达对象, 这时就需要重
+新标记. 但是重新标记不能像初始标记和并发标记那样从头扫描一次, 这样就速
+度太慢没有意义.
+</p>
+
+<p>
+要做到快速重新标记, 需要一个叫做 CardTable 的东西与之配合.
+</p>
+
+<p>
+CardTable 实际就是一个 write barrier, GC Heap 被分割为固定大小的 card
+保存在 CardTable 中, 每次对 GC Heap 的修改会导致 CardTable 中相应的
+card 被标记为 dirty. 如此一来, 重新标记时只需要考虑这些 dirty 的 card
+对应的内存中的对象. 
+</p>
+<div class="org-src-container">
+
+<pre class="src src-text">scanDirtyCards
+  HeapBitmap *markBits = ctx-&gt;bitmap;
+  const u1 *card = start, *prevAddr = NULL;
+  while (card &lt; end):
+    if (*card != GC_CARD_DIRTY):
+      return card;
+    while (ptr &lt; limit):
+      // &#25152;&#35859;&#30340; gray object, &#26159;&#25351;&#35813; object &#24050;&#32463;&#25195;&#25551;&#21040;, &#20294;&#27809;&#26377;&#21518;&#32493;&#36827;&#19968;&#27493;&#25195;&#25551;
+      // dalvic GC mark &#37096;&#20998;&#20195;&#30721;&#39057;&#32321;&#25552;&#21040; black, white, gray, &#24212;&#35813;&#26159;&#25351; dalvik
+      // &#20351;&#29992;&#20102; tri-color marking (&#19977;&#33394;&#26631;&#35760;&#31639;&#27861;)
+      // &#37325;&#26032;&#26631;&#35760;&#30340;&#30446;&#30340;&#19981;&#26159;&#20026;&#20102;&#25226;&#24050;&#32463; mark &#30340; unmark, &#32780;&#26159;
+      // &#23558;&#26032;&#20135;&#29983;&#30340;&#21487;&#36798;&#30340; object &#37325;&#26032; mark, &#30830;&#20445;&#27809;&#26377;&#27491;&#22312;&#20351;&#29992;
+      // &#30340;&#23545;&#35937;&#34987; GC
+      Object *obj = nextGrayObject(ptr, limit, markBits);
+        // nextGrayObject &#30340;&#36807;&#31243;&#26159;&#22312; dirty card &#34920;&#31034;&#30340;&#20869;&#23384;&#30340;&#33539;&#22260;&#20869;
+        // &#23545;&#27599;&#19968;&#20010; 8 bytes &#23545;&#40784;&#30340;&#22320;&#22336;&#22312; markBits &#20013;&#26597;&#25214;, &#30475;&#30475;&#26159;&#19981;&#26159;&#19968;&#20010;
+        // &#23545;&#35937;.
+        for (ptr = base; ptr &lt; limit; ptr += HB_OBJECT_ALIGNMENT) {
+          if (dvmHeapBitmapIsObjectBitSet(markBits, ptr)):
+            return (Object *)ptr;
+      scanObject(obj, ctx);
+      ptr = (u1*)obj + ALIGN_UP(objectSize(obj), HB_OBJECT_ALIGNMENT);
+
+    if (ptr &lt; limit) {
+    /* Ended within the current card, advance to the next card. */
+      ++card;
+</pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-04-02 Wed 16:33</p>
+<p class="date">Created: 2014-04-09 Wed 13:47</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
