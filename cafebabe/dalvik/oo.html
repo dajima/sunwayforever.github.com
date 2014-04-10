@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>OO</title>
-<!-- 2014-04-09 Wed 13:46 -->
+<!-- 2014-04-10 Thu 19:11 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -126,6 +126,9 @@ Dalvik 使用 C++ 定义了五种对象:
     <span style="color: #b58900;">u4</span>              <span style="color: #268bd2;">instanceData</span>[CLASS_FIELD_SLOTS];
     <span style="color: #859900;">const</span> <span style="color: #b58900;">char</span>*     <span style="color: #268bd2;">descriptor</span>;
     <span style="color: #b58900;">u4</span>              <span style="color: #268bd2;">accessFlags</span>;
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">objectSize &#26159;&#20445;&#23384;&#22312; ClassObject (&#21363; java &#31867;&#20013;), &#32780;&#19981;&#26159;&#20445;&#23384;&#22312;</span>
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">java &#23545;&#35937;&#20013;. &#22240;&#20026;&#21516;&#19968;&#20010;&#31867;&#30340;&#23545;&#35937;&#30340;&#22823;&#23567;&#26159;&#30456;&#21516;&#30340;. &#23454;&#38469;&#19978;&#23601;&#26159; 8 +</span>
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">InstField &#30340;&#22823;&#23567;. </span>
     <span style="color: #b58900;">size_t</span>          <span style="color: #268bd2;">objectSize</span>;
     <span style="color: #b58900;">ClassObject</span>*    <span style="color: #268bd2;">super</span>;
     <span style="color: #b58900;">Object</span>*         <span style="color: #268bd2;">classLoader</span>;
@@ -218,10 +221,11 @@ tricky:
 上面的示意图有几点要注意:
 </p>
 <ol class="org-ol">
-<li>instance field 是直接放在 Object 中的, 并按照字母顺序. 虽然 Object
-本身并没有定义一个类似于 InstField 的字段.
+<li>instance field 是直接按一定顺序放在 Object 中的. 虽然 Object本身并没
+有定义一个类似于 InstField 的字段.
 </li>
-<li>基类的 InstField 会插入到 Object 自身的 InstField 之前.
+<li>基类的 InstField 会插入到 Object 自身的 InstField 之前 (通过
+computeFieldOffsets 代码可以确认)
 </li>
 <li>ClassObject 的开头 8 个字节与 Object 结构相同, 因为它继承自 Object,
 这一点要参考 C++ Object Model
@@ -374,6 +378,7 @@ findClassNoInit:
       dexReadClassDataField(&amp;pEncodedData, &amp;field, &amp;lastIndex);
       loadSFieldFromDex(newClass, &amp;field, &amp;newClass-&gt;sfields[i]);
     // &#35835;&#21462; ifield, direct methods, virtual methods ...
+
   dvmLinkClass(clazz)
     // resolve superclass &#20026; direct pointer
     ClassObject* super = dvmResolveClass(clazz, superclassIdx, false);
@@ -386,7 +391,36 @@ findClassNoInit:
       clazz-&gt;vtable = (Method**) dvmLinearAlloc(clazz-&gt;classLoader, maxCount);
       // &#23558; super &#30340; vtable &#19982; clazz &#33258;&#24049;&#30340; virtualMethods &#36827;&#34892;&#27604;&#36739;,
       // &#29983;&#25104;&#26368;&#32456;&#30340; clazz-&gt;vtable
-      // ...
+
+      // maxCount &#26159;&#25351;&#26412;&#31867;&#30340; vtable &#21487;&#33021;&#36798;&#21040;&#30340;&#26368;&#22823;&#22823;&#23567;, &#26368;&#32456; vtable &#30340;
+      // &#22823;&#23567;&#24517;&#28982;&#20250; &lt;= maxCount
+      maxCount = clazz-&gt;virtualMethodCount;
+      if (clazz-&gt;super != NULL):
+        maxCount += clazz-&gt;super-&gt;vtableCount;
+      clazz-&gt;vtable = (Method**) dvmLinearAlloc(sizeof(Method*) * maxCount);
+      // &#20808;&#29992; super-&gt;vtable &#35206;&#30422; class-&gt;vtabl &#30340;&#21069;&#20960;&#39033;
+      memcpy(clazz-&gt;vtable, clazz-&gt;super-&gt;vtable,
+            sizeof(*(clazz-&gt;vtable)) * clazz-&gt;super-&gt;vtableCount);
+      actualCount = clazz-&gt;super-&gt;vtableCount;        
+      // &#28982;&#21518;&#25195;&#25551; class-&gt;virtualMethods, &#36890;&#36807;&#21517;&#23383;&#30340;&#27604;&#36739;&#30475;&#26159;&#21542;&#26377;&#26041;&#27861;&#38656;&#35201;&#35206;&#30422;&#22522;&#31867;               for (i = 0; i &lt; clazz-&gt;virtualMethodCount; i++):
+        Method* localMeth = &amp;clazz-&gt;virtualMethods[i];
+        for (si = 0; si &lt; clazz-&gt;super-&gt;vtableCount; si++):
+          Method* superMeth = clazz-&gt;vtable[si];
+          // &#20004;&#20010;&#26041;&#27861;&#30340;&#21517;&#23383;&#21644; signature &#26159;&#30456;&#21516;&#30340; ...
+          if (dvmCompareMethodNamesAndProtos(localMeth, superMeth) == 0):
+            // &#30830;&#20445;&#22522;&#31867;&#26041;&#27861;&#19981;&#26159; final
+            if (dvmIsFinalMethod(superMeth)): bail;
+            // &#26412;&#31867;&#26041;&#27861;&#35206;&#30422;&#22522;&#31867;&#26041;&#27861;
+            clazz-&gt;vtable[si] = localMeth;
+            localMeth-&gt;methodIndex = (u2) si;
+         // inner for ends here
+         // super-&gt;vtable &#20013;&#21508;&#39033;&#25195;&#25551;&#23436;&#27605;, &#21457;&#29616;&#19981;&#33021;&#35206;&#30422;, &#25918;&#21040;&#32467;&#23614;
+         if (si == clazz-&gt;super-&gt;vtableCount):
+           clazz-&gt;vtable[actualCount] = localMeth;
+           localMeth-&gt;methodIndex = (u2) actualCount;
+       // outer for ends here
+       assert(actualCount &lt;= maxCount);
+
     // &#29983;&#25104; iftable
     // &#19978;&#19968;&#27493;&#30340; vtable &#20013;&#21253;&#21547;&#20102;&#25152;&#26377;&#30340;&#34394;&#20989;&#25968;, &#21253;&#25324;&#32487;&#25215;&#33258; super &#30340;&#21644;&#33258;&#24049;
     // &#23454;&#29616;&#30340;, &#20294;&#33258;&#24049;&#23454;&#29616;&#30340;&#25509;&#21475;&#20013;&#30340;&#34394;&#20989;&#25968;&#38656;&#35201;&#36890;&#36807; iftable &#36827;&#34892;&#32034;&#24341;, &#22240;
@@ -394,8 +428,14 @@ findClassNoInit:
     // iftable &#25165;&#33021;&#24037;&#20316;, &#20855;&#20307;&#35265;
     // http://stackoverflow.com/questions/1504633/what-is-the-point-of-invokeinterface
     createIftable(clazz)
-    // &#35745;&#31639;&#25152;&#26377; filed &#30340; offset, &#21518;&#38754;&#30340; GetFieldID &#31561;&#38656;&#35201;&#20351;&#29992;
+    // &#35745;&#31639;&#25152;&#26377; ifiled &#30340; offset, &#21518;&#38754;&#30340; GetFieldID &#31561;&#38656;&#35201;&#20351;&#29992;
+    // ifiled &#19982; vtable &#30340;&#32452;&#32455;&#26377;&#20123;&#31867;&#20284;: &#37117;&#26159;&#22522;&#31867;&#25104;&#21592;&#22312;&#21069;, &#33258;&#36523;&#25104;&#21592;&#22312;&#21518;
     computeFieldOffsets(clazz)
+      if (clazz-&gt;super != NULL):
+        fieldOffset = clazz-&gt;super-&gt;objectSize;
+        for (i = 0; i &lt; clazz-&gt;ifieldCount; i++):
+          pField-&gt;byteOffset = fieldOffset;
+          fieldOffset += sizeof(u4);
     // precacheReferenceOffsets &#20250;&#36127;&#36131;&#23558; referent filed &#20174; ifields
     // &#31227;&#38500;, &#20197;&#20415; GC &#26102; scanDataObject &#26102;&#19981;&#20250;&#25195;&#25551;&#21040; referent &#23545;&#35937;.
     if (strcmp(clazz-&gt;descriptor, "Ljava/lang/ref/Reference;") == 0):
@@ -474,6 +514,40 @@ virtualMethods 等成员却分配在 LinearAlloc. 分配在 GC Heap 可能主要
 进行的, 必须要求 ClassObject 本身分配在 GC Heap 上 (因为 liveBits,
 markBits 是针对 GC Heap 的 bitmap)
 </p>
+</div>
+
+<div id="outline-container-sec-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> class 何时被加载</h4>
+<div class="outline-text-4" id="text-1-4-1">
+<p>
+基本上涉及到 clazz 的 OP<sub>CODE</sub> 都会直接或间接通过 dvmResolveClass 来导致
+class 被加载.
+</p>
+
+<p>
+以下情况下 class 会首次被加载:
+</p>
+
+<ol class="org-ol">
+<li>主动调用 Class.forName 等函数
+</li>
+<li>通过 reflect 的一些方法对 class 进行操作时
+</li>
+<li>OP<sub>NEW</sub><sub>INSTANCE</sub>
+</li>
+<li>OP<sub>SGET</sub>/OP<sub>SSET</sub>
+</li>
+<li>OP<sub>INVOKE</sub><sub>STATIC</sub>
+</li>
+<li>OP<sub>INSTANCE</sub><sub>OF</sub>
+</li>
+</ol>
+
+<p>
+invoke-virtual, invoke-interface 等以及 iget/iset 不包含在以上列表中,
+因为这些调用之前, OP<sub>NEW</sub><sub>INSTANCE</sub> 肯定已经把 class 加载完成了. 
+</p>
+</div>
 </div>
 </div>
 <div id="outline-container-sec-1-5" class="outline-3">
@@ -990,7 +1064,7 @@ quick 版本. 因为这是不可能的&#x2026;
 <div id="postamble" class="status">
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-04-09 Wed 13:46</p>
+<p class="date">Created: 2014-04-10 Thu 19:11</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
