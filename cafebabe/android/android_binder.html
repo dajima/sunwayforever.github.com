@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Android Binder</title>
-<!-- 2014-01-30 Thu 13:54 -->
+<!-- 2014-04-16 Wed 17:26 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="wei.sun" />
@@ -421,8 +421,9 @@ Driver can't execute user-mode BBinder in kernel-mode, How does the driver execu
 <ul class="org-ul">
 <li>The Binder server has several `while(1) {}` thread blocked on IOCTL, waiting for client transaction.
 </li>
-<li>when the driver need to execute BBinder, it will first put data (BBinder address, function argument) to a place server can reach, then
-wake up the one of the server thread.
+<li>when the driver need to execute BBinder, it will first put data
+(BBinder address, function argument) to a place server can reach,
+then wake up the one of the server thread.
 </li>
 <li>those server thread are so-called `Binder Thread #1/#2&#x2026;`
 </li>
@@ -434,27 +435,38 @@ wake up the one of the server thread.
 <ul class="org-ul">
 <li>IPCThreadState.startThreadPool() can start a binder thread.
 </li>
-<li>ProcessState.joinThreadPool() can turn the calling thread to a binder thread.
+<li>ProcessState.joinThreadPool() can turn the calling thread to a
+binder thread.
 </li>
-<li>java process have a born binder thread, because onZygoteInit() will call IPCThreadState.startThreadPool() to init a binder thread.
+<li>java process have a born binder thread, because onZygoteInit() will
+call IPCThreadState.startThreadPool() to init a binder thread.
 </li>
-<li>native c++ service must call IPCThreadState.startThreadPool() or ProcessState.joinThreadPool() explicitly.
+<li>native c++ service must call IPCThreadState.startThreadPool() or
+ProcessState.joinThreadPool() explicitly.
 </li>
-<li>if a process has no binder thread, although driver can find the binder<sub>proc</sub> and BBinder, but since there is no binder thread,
-driver simply can't wake up any thread to perform the transaction.
+<li>if a process has no binder thread, although driver can find the
+binder<sub>proc</sub> and BBinder, but since there is no binder thread, driver
+simply can't wake up any thread to perform the transaction.
+</li>
+<li>binder thread 如何动态生成?
+<div class="org-src-container">
+
+<pre class="src src-text">void ProcessState::spawnPooledThread(bool isMain)
+</pre>
+</div>
 </li>
 </ul>
 </div>
 </div>
-
 <div id="outline-container-sec-1-1-5-2" class="outline-5">
 <h5 id="sec-1-1-5-2"><span class="section-number-5">1.1.5.2</span> Calling stack</h5>
 <div class="outline-text-5" id="text-1-1-5-2">
 <p>
 Client:
 </p>
-<pre class="example">
-BpBinder::transact()
+<div class="org-src-container">
+
+<pre class="src src-text">BpBinder::transact()
   IPCThreadState::transact()
     IPC~::waitForResponse()
        IPC~::talkWithDriver()
@@ -465,11 +477,13 @@ BpBinder::transact()
                 wait...
        case BR_REPLY
 </pre>
+</div>
 <p>
 Server:
 </p>
-<pre class="example">
-IPC~::joinThreadPool
+<div class="org-src-container">
+
+<pre class="src src-text">IPC~::joinThreadPool
   IPC~::talkWithDriver()
      ioctl(BINDER_WRITE_READ)
             drv::binder_thread_write()
@@ -487,6 +501,7 @@ IPC~::joinThreadPool
 </div>
 </div>
 </div>
+</div>
 
 <div id="outline-container-sec-1-1-6" class="outline-4">
 <h4 id="sec-1-1-6"><span class="section-number-4">1.1.6</span> binder<sub>buffer</sub></h4>
@@ -500,12 +515,12 @@ and this buffer is mmap to user-mode directly. so that user-mode BBinder can acc
 <li>one binder<sub>proc's</sub> bind<sub>buffers</sub> are organized in rb<sub>tree</sub>, every node control a sized buffer.
 </li>
 <li>the rb<sub>tree</sub> use `best-fit` rule to allocate binder<sub>buffer</sub>, and can `merge/split` on demand to reduce external memory fragmentation.
+</li>
+</ul>
 
 <p>
 all buffers are in a continuous memory block:
 </p>
-</li>
-</ul>
 <pre class="example">
 0                       1K      	       	       	       	       	       	1M-8K
 +----------------------------------------------------------------+-------+
@@ -902,39 +917,43 @@ Binder reference 分为两个方法:
 <div id="outline-container-sec-1-1-9-1" class="outline-5">
 <h5 id="sec-1-1-9-1"><span class="section-number-5">1.1.9.1</span> When Java Binder is finalized</h5>
 <div class="outline-text-5" id="text-1-1-9-1">
-<pre lang="c++" line="1">
-      Binder.finalize() @ Binder.java
-        android_os_Binder_destroy() //jni
-          JavaBBinderHolder->decStrong();
-            c = android_atomic_dec(&refs->mStrong)
-            if (c == 1):
-              const_cast<RefBase*>(this)->onLastStrongRef(id)
-                {} // nop for BBinder
+<div class="org-src-container">
+
+<pre class="src src-text">Binder.finalize() @ Binder.java
+  android_os_Binder_destroy() //jni
+    JavaBBinderHolder-&gt;decStrong();
+      c = android_atomic_dec(&amp;refs-&gt;mStrong)
+      if (c == 1):
+        const_cast&lt;RefBase*&gt;(this)-&gt;onLastStrongRef(id)
+          {} // nop for BBinder
 </pre>
+</div>
 </div>
 </div>
 
 <div id="outline-container-sec-1-1-9-2" class="outline-5">
 <h5 id="sec-1-1-9-2"><span class="section-number-5">1.1.9.2</span> When Java BinderProxy is finalized</h5>
 <div class="outline-text-5" id="text-1-1-9-2">
-<pre lang="c++" line="1">
-      BinderProxy.finalize() @ Binder.java
-        android_os_BinderProxy_destroy(JNIEnv* env, jobject obj)
-          BinderProxy.decStrong()
-            c = android_atomic_dec(&refs->mStrong)
-            if (c == 1):
-              const_cast<RefBase*>(this)->onLastStrongRef(id)
-                IPCThreadState->decStrongHandle(mHandle);
-                  mOut.writeInt32(BC_RELEASE)
-                    binder_thread_write()
-                      case BC_RELEASE:
-                        binder_dec_ref(ref, 1);
-                          ref->strong--;
-                          if ref->strong == 0:
-                           binder_dec_node(ref->node, strong, 1);
-                         if ref->strong == 0 && ref->weak == 0:
-                           binder_delete_ref(ref);
+<div class="org-src-container">
+
+<pre class="src src-text">BinderProxy.finalize() @ Binder.java
+  android_os_BinderProxy_destroy(JNIEnv* env, jobject obj)
+    BinderProxy.decStrong()
+      c = android_atomic_dec(&amp;refs-&gt;mStrong)
+      if (c == 1):
+        const_cast&lt;RefBase*&gt;(this)-&gt;onLastStrongRef(id)
+          IPCThreadState-&gt;decStrongHandle(mHandle);
+            mOut.writeInt32(BC_RELEASE)
+              binder_thread_write()
+                case BC_RELEASE:
+                  binder_dec_ref(ref, 1);
+                    ref-&gt;strong--;
+                    if ref-&gt;strong == 0:
+                     binder_dec_node(ref-&gt;node, strong, 1);
+                   if ref-&gt;strong == 0 &amp;&amp; ref-&gt;weak == 0:
+                     binder_delete_ref(ref);
 </pre>
+</div>
 <p>
 What's more:
 </p>
@@ -1082,55 +1101,61 @@ switch (code) {
 <li>Binder.execTransact()
 </li>
 </ul>
-<pre class="example">
-try {
+<div class="org-src-container">
+
+<pre class="src src-c">try {
     res = onTransact(code, data, reply, flags);
-    // if exceptions other than RemoteException and RuntimeException are thrown here,
-    // the outer JavaBBinder jni wrapper class will handle it, and output message like
-    // "Uncaught remote exception!
-    // Exceptions are not yet supported across processes"
-} catch (RemoteException e) {
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">if exceptions other than RemoteException and RuntimeException are thrown here,</span>
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">the outer JavaBBinder jni wrapper class will handle it, and output message like</span>
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">"Uncaught remote exception!</span>
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">Exceptions are not yet supported across processes"</span>
+} <span style="color: #268bd2;">catch</span> (<span style="color: #b58900;">RemoteException</span> <span style="color: #268bd2;">e</span>) {
     reply.writeException(e);
-    res = true;
-} catch (RuntimeException e) {
+    res = <span style="color: #2aa198;">true</span>;
+} <span style="color: #268bd2;">catch</span> (<span style="color: #b58900;">RuntimeException</span> <span style="color: #268bd2;">e</span>) {
     reply.writeException(e);
-    res = true;
+    res = <span style="color: #2aa198;">true</span>;
 }
 </pre>
+</div>
 <ul class="org-ul">
 <li>writeException()
 </li>
 </ul>
-<pre class="example">
-int code = 0;
-if (e instanceof SecurityException) {
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #b58900;">int</span> <span style="color: #268bd2;">code</span> = 0;
+<span style="color: #859900;">if</span> (e <span style="color: #b58900;">instanceof</span> <span style="color: #268bd2;">SecurityException</span>) {
     code = EX_SECURITY;
-} else if (e instanceof BadParcelableException) {
+} <span style="color: #859900;">else</span> <span style="color: #859900;">if</span> (e <span style="color: #b58900;">instanceof</span> <span style="color: #268bd2;">BadParcelableException</span>) {
     code = EX_BAD_PARCELABLE;
-} else if (e instanceof IllegalArgumentException) {
+} <span style="color: #859900;">else</span> <span style="color: #859900;">if</span> (e <span style="color: #b58900;">instanceof</span> <span style="color: #268bd2;">IllegalArgumentException</span>) {
     code = EX_ILLEGAL_ARGUMENT;
-} else if (e instanceof NullPointerException) {
+} <span style="color: #859900;">else</span> <span style="color: #859900;">if</span> (e <span style="color: #b58900;">instanceof</span> <span style="color: #268bd2;">NullPointerException</span>) {
     code = EX_NULL_POINTER;
-} else if (e instanceof IllegalStateException) {
+} <span style="color: #859900;">else</span> <span style="color: #859900;">if</span> (e <span style="color: #b58900;">instanceof</span> <span style="color: #268bd2;">IllegalStateException</span>) {
     code = EX_ILLEGAL_STATE;
 }
 writeInt(code);
-if (code==0) throw new RuntimeException();
+<span style="color: #859900;">if</span> (code==0) throw <span style="color: #b58900;">new</span> <span style="color: #268bd2;">RuntimeException</span>();
 </pre>
+</div>
 <ul class="org-ul">
 <li>Binder.stub.onTransact()
 </li>
 </ul>
-<pre class="example">
-case TRANSACTION_foo:
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #859900;">case</span> TRANSACTION_foo:
 {
     data.enforceInterface(DESCRIPTOR);
-    int _result = this.foo();
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">_result</span> = this.foo();
     reply.writeNoException();
     reply.writeInt(_result);
-    return true;
+    <span style="color: #859900;">return</span> <span style="color: #2aa198;">true</span>;
 }
 </pre>
+</div>
 </div>
 </li></ol>
 </div>
@@ -1141,25 +1166,27 @@ case TRANSACTION_foo:
 <p>
 `local exceptions` stands for `exceptions occurred other than stub.onTransact(), e.g. binder error`
 </p>
-<pre class="example">
-try {
+<div class="org-src-container">
+
+<pre class="src src-text">try {
   _data.writeInterfaceToken(DESCRIPTOR);
   mRemote.transact(Stub.TRANSACTION_foo, _data, _reply, 0); // binder's own exceptions may be thrown here .
     BinderPorxy.transact()
       android_os_BinderProxy_transact() // native here
-	err=BpBinder.transact()
-	  err=IPCTheadState.transact()
-	    err=waitForResponse()
-	      .. talk with driver, may return err for errors like FAILED_EXCEPTION, DEAD_OBJECT, NO_MEMORY, PERMISSION_DENIED ...
-	signalExceptionForError(err);
-	  switch err:
-	    case EPERM: jniThrowException("java/lang/SecurityException")
-	    case FAILED_TRANSACTION: LOGE("!!! FAILED BINDER TRANSACTION !!!"); // doesn't throw exceptions!
-	    ...
+        err=BpBinder.transact()
+          err=IPCTheadState.transact()
+            err=waitForResponse()
+              .. talk with driver, may return err for errors like FAILED_EXCEPTION, DEAD_OBJECT, NO_MEMORY, PERMISSION_DENIED ...
+        signalExceptionForError(err);
+          switch err:
+            case EPERM: jniThrowException("java/lang/SecurityException")
+            case FAILED_TRANSACTION: LOGE("!!! FAILED BINDER TRANSACTION !!!"); // doesn't throw exceptions!
+            ...
   _reply.readException(); // stub initiated exceptions may be thrown here
   _result = _reply.readInt();
 }
 </pre>
+</div>
 </div>
 </div>
 
@@ -1400,9 +1427,9 @@ IBinder.transact()   // binder proxy in java is BinderProxy
   BinderProxy.transact() // native
     android_os_BinderProxy_transact() // in android_util_Binder.cpp
       IBinder* target = env-&gt;GetIntField(obj, gBinderProxyOffsets.mObject); //target is a BpBinder
-	err=BpBinder-&gt;transact()-&gt;IPCThreadState-&gt;transact()
-	  ...
-	signalExceptionForError(env, obj, err);
+        err=BpBinder-&gt;transact()-&gt;IPCThreadState-&gt;transact()
+          ...
+        signalExceptionForError(env, obj, err);
 </pre>
 </div>
 </div>
@@ -1431,22 +1458,24 @@ Parcel.writeStrongBinder() // native
   android_os_Parcel_writeStrongBinder()
     parcel-&gt;writeStrongBinder(ibinderForJavaObject(env, object));
       if (env-&gt;IsInstanceOf(obj, gBinderProxyOffsets.mClass)): // binder is proxy
-	env-&gt;GetIntField(obj, gBinderProxyOffsets.mObject);
+        env-&gt;GetIntField(obj, gBinderProxyOffsets.mObject);
       else if (env-&gt;IsInstanceOf(obj, gBinderOffsets.mClass)): // binder is stub
-	env-&gt;GetIntField(obj, gBinderOffsets.mObject); // binder initialization will set this field
+        env-&gt;GetIntField(obj, gBinderOffsets.mObject); // binder initialization will set this field
 </pre>
 <ul class="org-ul">
 <li>onTransact
 </li>
 </ul>
-<pre class="example">
-JavaBBinder.onTransact() // c++
+<div class="org-src-container">
+
+<pre class="src src-text">JavaBBinder.onTransact() // c++
   env-&gt;CallBooleanMethod(mObject, gBinderOffsets.mExecTransact, ...)
     Binder.execTransact()
       Binder.onTransact()
   excep = env-&gt;ExceptionOccurred();
   report_exception(env, excep,...)
 </pre>
+</div>
 </div>
 </div>
 </div>
@@ -1570,7 +1599,7 @@ handy class which provide a handler within a binder, so that message can be sent
 <div id="postamble" class="status">
 <p class="author">Author: wei.sun</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-01-30 Thu 13:54</p>
+<p class="date">Created: 2014-04-16 Wed 17:26</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

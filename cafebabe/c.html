@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>c</title>
-<!-- 2014-01-30 Thu 13:54 -->
+<!-- 2014-04-16 Wed 17:26 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="wei.sun" />
@@ -2010,13 +2010,15 @@ delete b;
 ~B
 </pre>
 <p>
-//解释
-沿着程序执行流程，从main函数进入
-首先，执行语句Base *b=new Derived();
-结果是在堆中创建类Derived的一个对象，并且让类型为Base *的指针b指向这个对象；
-其次，执行语句delete b;
-运行结果是释放b指向对象的内存空间。按照C++的delete操作符的语义，编译器会指针b“对应类型”的对象的析构函数调用（你或许认为是Base::~Base()），但是由于类Base的析构函数声明为虚函数，因此实现方式具有多态特征（具体实现采用的技术请查看相关书籍，例如经典的Inside The C++ Object Model），因此运行时调用的析构函数是Derived::~Derived()。
-第三，子类的析构函数Derived::~Derived()内部会调用父类的析构函数，因此执行结果如上！
+//解释沿着程序执行流程，从main函数进入首先，执行语句Base *b=new
+Derived();结果是在堆中创建类Derived的一个对象，并且让类型为Base *的指针
+b指向这个对象；其次，执行语句delete b;运行结果是释放b指向对象的内存空间。
+按照C++的delete操作符的语义，编译器会指针b“对应类型”的对象的析构函数调
+用（你或许认为是Base::~Base()），但是由于类Base的析构函数声明为虚函数，
+因此实现方式具有多态特征（具体实现采用的技术请查看相关书籍，例如经典的
+Inside The C++ Object Model），因此运行时调用的析构函数是
+Derived::~Derived()。第三，子类的析构函数Derived::~Derived()内部会调用
+父类的析构函数，因此执行结果如上！
 </p>
 
 <p>
@@ -2602,7 +2604,7 @@ lots of relevance for C++ programmers.)
 <div id="postamble" class="status">
 <p class="author">Author: wei.sun</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-01-30 Thu 13:54</p>
+<p class="date">Created: 2014-04-16 Wed 17:26</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

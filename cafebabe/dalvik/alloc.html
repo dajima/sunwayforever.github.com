@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Alloc</title>
-<!-- 2014-04-09 Wed 13:47 -->
+<!-- 2014-04-16 Wed 17:56 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -71,6 +71,7 @@ for the JavaScript code in this tag.
 <li><a href="#sec-1-4">1.4. Daemons 与 ReferenceQueue</a></li>
 <li><a href="#sec-1-5">1.5. HeapWorker</a></li>
 <li><a href="#sec-1-6">1.6. Concurrent GC</a></li>
+<li><a href="#sec-1-7">1.7. Copying GC</a></li>
 </ul>
 </li>
 </ul>
@@ -699,6 +700,11 @@ card 被标记为 dirty. 如此一来, 重新标记时只需要考虑这些 dirt
       // &#37325;&#26032;&#26631;&#35760;&#30340;&#30446;&#30340;&#19981;&#26159;&#20026;&#20102;&#25226;&#24050;&#32463; mark &#30340; unmark, &#32780;&#26159;
       // &#23558;&#26032;&#20135;&#29983;&#30340;&#21487;&#36798;&#30340; object &#37325;&#26032; mark, &#30830;&#20445;&#27809;&#26377;&#27491;&#22312;&#20351;&#29992;
       // &#30340;&#23545;&#35937;&#34987; GC
+      // Additionally, although the
+      // collector guarantees to identify all live objects during a
+      // marking phase, some objects may become garbage during that phase
+      // and they will not be reclaimed until the next old
+      // generation collection. Such objects are referred to as floating garbage.
       Object *obj = nextGrayObject(ptr, limit, markBits);
         // nextGrayObject &#30340;&#36807;&#31243;&#26159;&#22312; dirty card &#34920;&#31034;&#30340;&#20869;&#23384;&#30340;&#33539;&#22260;&#20869;
         // &#23545;&#27599;&#19968;&#20010; 8 bytes &#23545;&#40784;&#30340;&#22320;&#22336;&#22312; markBits &#20013;&#26597;&#25214;, &#30475;&#30475;&#26159;&#19981;&#26159;&#19968;&#20010;
@@ -716,12 +722,326 @@ card 被标记为 dirty. 如此一来, 重新标记时只需要考虑这些 dirt
 </div>
 </div>
 </div>
+
+<div id="outline-container-sec-1-7" class="outline-3">
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> Copying GC</h3>
+<div class="outline-text-3" id="text-1-7">
+<p>
+上面提到的都是关于 MarkSweep GC 的, 包含 markBits, liveBits,
+Concurrent GC 等都是和 MarkSweep GC 相关. 因为 android 默认的就是
+MarkSweep GC. 
+</p>
+
+<p>
+实际上, android 还实现了一个 Copying GC, 还两种 GC 对外都是实现了
+HeapSource 这一接口, 例如 dvmHeapSourceAlloc 这个负责分配内存的函数在
+HeapSource.cpp (对应 MarkSweep) 和 Copying.cpp (对应 Copying) 中都有实
+现. 编译时只会编译某一个进行 (否则会发生重复定义), 所以两者只能在编译
+时确定使用哪个, 无法动态切换. 
+</p>
+
+<p>
+Copying GC 把整个 GC Heap 分为大小为 512 Bytes 的 block, 并且通过一个
+blockSpace 数组来记录各个 block 的状态, 目前定义了四种状态:
+</p>
+<ul class="org-ul">
+<li>BLOCK<sub>FREE</sub>
+</li>
+<li>BLOCK<sub>FROM</sub><sub>SPACE</sub>
+</li>
+<li>BLOCK<sub>TO</sub><sub>SPACE</sub>
+</li>
+<li>BLOCK<sub>CONTINUED</sub>
+</li>
+</ul>
+
+<p>
+即, Copying GC 并没有像传统的 Copying GC 那样, 把 heap 分为两个固定大
+小的空间, 也没有像 hot spot 那样分为一个 Eden 和两个 survivor. 
+</p>
+</div>
+
+
+<div id="outline-container-sec-1-7-1" class="outline-4">
+<h4 id="sec-1-7-1"><span class="section-number-4">1.7.1</span> dvmHeapSourceAlloc</h4>
+<div class="outline-text-4" id="text-1-7-1">
+<p>
+初始状态下所有 block 都为 free, 当每次调用 dvmHeapSourceAlloc 时,
+Copying GC 会通过两个指针记录当前正在"使用"的 block:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">/* Start of free space in the current block. */
+u1 *allocPtr;
+/* Exclusive limit of free space in the current block. */
+u1 *allocLimit;
+</pre>
+</div>
+
+<p>
+若要分配的对象大小还能放在当前正在"使用"的 block 中, 则直接通过
+advance allocPtr 的方法来分配. 
+</p>
+
+<p>
+若当前 block 大小不够了, 则通过 allocateBlocks(heapSource, blocks) 分
+配一个或多个新的连续 block, 然后把这些 block 在 blockSpace 中标记为
+BLOCK<sub>TO</sub><sub>SPACE</sub>, 并且修改 allocPtr 和 allocLimit, 把当前正在"使用" 的
+block 指向新的 block.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-7-2" class="outline-4">
+<h4 id="sec-1-7-2"><span class="section-number-4">1.7.2</span> dvmScavengeRoots</h4>
+<div class="outline-text-4" id="text-1-7-2">
+<p>
+与 MarkSweep 把 GC 分为 mark 阶段和 sweep 阶段不同, copying 只有一个
+scavenge 阶段. 
+</p>
+
+<p>
+Copying GC 与 MarkSweep 一样, 都是通过 Heap.cpp 的
+dvmCollectGarbageInternal 开始 GC 的
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">dvmCollectGarbageInternal
+  dvmHeapMarkRootSet();
+    /* do nothing */
+  dvmHeapScanMarkedObjects();
+    dvmScavengeRoots
+  dvmHeapProcessReferences();
+    /* do nothing */
+  dvmHeapSweepUnmarkedObjects();
+    /* do nothing */
+  // ...
+</pre>
+</div>
+
+<p>
+可见, 为了把后写的 Copying GC 放到之前按照 MarkSweep 实现的框架了,
+Copying GC 写了许多空的 stub 函数. 最终只有一个 dvmScavengeRoots 是有
+用的. 
+</p>
+
+
+<p>
+dvmScavengeRoots 需要解决几个问题:
+</p>
+<ol class="org-ol">
+<li>把对象从 BLOCK<sub>FROM</sub><sub>SPACE</sub> 的 block 复制到 BLOCK<sub>TO</sub><sub>SPACE</sub>
+</li>
+<li>修改引用关系
+</li>
+<li>对 `pinning` 的对象要特殊处理
+</li>
+<li>处理 hashcode
+</li>
+</ol>
+
+<div class="org-src-container">
+
+<pre class="src src-text">dvmScavengeRoots
+  dvmHeapSourceFlip();
+    // &#25226;&#31867;&#22411;&#20026; BLOCK_TO_SPACE &#30340; block &#21464;&#20026; BLOCK_FROM_SPACE
+    // &#22240;&#20026; dvmHeapSourceAlloc &#20998;&#37197;&#30340;&#23545;&#35937;&#37117;&#25918;&#22312; BLOCK_TO_SPACE &#20013;
+
+  /*
+  * Promote blocks with stationary objects.
+  */
+  pinThreadList();
+  pinReferenceTable(&amp;gDvm.jniGlobalRefTable);
+  pinReferenceTable(&amp;gDvm.jniPinRefTable);
+  pinHashTableEntries(gDvm.loadedClasses);
+  pinHashTableEntries(gDvm.dbgRegistry);
+  pinPrimitiveClasses();
+  pinInternedStrings();
+    // &#25152;&#35859;&#30340; pin, &#23601;&#26159;&#25226;&#19968;&#20010; object &#25152;&#22312;&#30340; block &#30001; BLOCK_FROM_SPACE
+    // &#21464;&#20026; BLOCK_TO_SPACE
+    promoteBlockByAddr(*addr)
+      heapSource-&gt;blockSpace[block] = BLOCK_TO_SPACE;
+      enqueueBlock(heapSource, block);
+
+  // &#37325;&#32622; allocPtr &#21644; allocLimit
+  gDvm.gcHeap-&gt;heapSource-&gt;allocPtr = allocateBlocks(gDvm.gcHeap-&gt;heapSource, 1);
+  gDvm.gcHeap-&gt;heapSource-&gt;allocLimit = gDvm.gcHeap-&gt;heapSource-&gt;allocPtr + BLOCK_SIZE;
+
+  scavengeThreadList();
+  scavengeReference(&amp;gDvm.outOfMemoryObj);
+  scavengeReference(&amp;gDvm.internalErrorObj);
+  scavengeReference(&amp;gDvm.noClassDefFoundErrorObj);
+  scavengeInternedStrings();
+
+  scavengeBlockQueue();
+
+  preserveSoftReferences(&amp;gDvm.gcHeap-&gt;softReferences);
+  clearWhiteReferences(&amp;gDvm.gcHeap-&gt;weakReferences);
+  processFinalizableReferences();
+  clearWhiteReferences(&amp;gDvm.gcHeap-&gt;softReferences);
+  clearWhiteReferences(&amp;gDvm.gcHeap-&gt;weakReferences);
+  clearWhiteReferences(&amp;gDvm.gcHeap-&gt;phantomReferences);
+  clearFromSpace(gcHeap-&gt;heapSource);
+</pre>
+</div>
+<p>
+与 MarkSweep 采用一个 markStack 来迭代 mark 类似, Copying GC 使用一个
+blockQueue 进行迭代式的 scavenge.
+</p>
+
+<p>
+在上面的函数中, scavengeBlockQueue 之前的各种 scavangeXxx 类似于
+MarkSweep 的 scanRootSet, 这些函数会负责对 GC root 进行初步的
+scavange, 主要是通过 allocateGray 在 BLOCK<sub>TO</sub><sub>SPACE</sub> 生成 GC ROOT 的
+copy. 这个新对象被称为 gray object, 是因为它们还需要后续的处理: 
+</p>
+
+<ol class="org-ol">
+<li>它引用到的其他对象还没处理
+</li>
+<li>它引用的对象的指针需要被调整
+</li>
+</ol>
+
+<p>
+以下面的对象为例:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-java"><span style="color: #859900;">class</span> <span style="color: #b58900;">A</span> {
+    <span style="color: #b58900;">B</span> <span style="color: #268bd2;">b</span>;
+    <span style="color: #b58900;">C</span> <span style="color: #268bd2;">c</span>;
+}
+
+<span style="color: #859900;">class</span> <span style="color: #b58900;">B</span> {
+    <span style="color: #b58900;">int</span> <span style="color: #268bd2;">x</span>;
+}
+
+<span style="color: #859900;">class</span> <span style="color: #b58900;">C</span> {
+    <span style="color: #b58900;">B</span> <span style="color: #268bd2;">b2</span>;
+}
+</pre>
+</div>
+
+<p>
+假设 A 对象有 GC root, 则 
+</p>
+<ol class="org-ol">
+<li>scavange a, blockQueue 为 {a'}, 但其 a'.b, a'.c 都指向旧的 b,c 的地址.
+</li>
+<li>scavange a', 导致 b,c 被 copy 到 b',c', 此时 blockQueue 为 {b',c'}
+</li>
+<li>scavange b'
+</li>
+<li>scavange c', blockQueue 为 {b2'}
+</li>
+<li>scavange b2'
+</li>
+</ol>
+
+<p>
+可见, scavange 过程是一个 BFS 过程.
+</p>
+
+<p>
+BFS 中对每个节点的处理, 主要是 scavengeObject
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">scavengeObject
+  scavengeDataObject
+    scavengeReference((Object **) obj);
+    for every field:
+      Object **ref = (Object **)((u1 *)obj + offset);
+      scavengeReference(ref);
+</pre>
+</div>
+
+<p>
+最主要的代码是在 scavengeReference, 当我们对 a'-&gt;b 调用scavengeReference 时,
+会导致:
+</p>
+<ol class="org-ol">
+<li>a'-&gt;b 被复制到 b' 
+</li>
+<li>a'-&gt;b 这个引用被修改为 a'-&gt;b'
+</li>
+<li>b' 被加入 blockQueue 中
+</li>
+</ol>
+
+<div class="org-src-container">
+
+<pre class="src src-text">scavengeReference(Object ** obj)
+  // toSpaceContains, &#35828;&#26126; *obj &#24050;&#32463;&#26159;&#22797;&#21046;&#21518;&#30340;&#23545;&#35937;(&#25110;&#32773;&#35813;&#23545;&#35937;&#26159; pin &#29366;
+  // &#24577;),&#19988;&#19978;&#23618;&#24341;&#29992;&#30340;&#20063;&#26159;&#26032;&#30340;&#23545;&#35937;&#20102;, &#30452;&#25509;&#36820;&#22238;
+  if (toSpaceContains(*obj)):
+    LOG_SCAV("scavengeReference skipping pinned object @ %p", *obj);
+    return;
+  if (isForward(*obj)):
+    // &#35828;&#26126; a'-&gt;b &#25351;&#21521;&#36824;&#26159;&#26087;&#30340; b &#23545;&#35937;, &#20294;&#26159;&#26087;&#30340; b &#23545;&#35937;&#24050;&#32463;&#34987;&#26631;&#35760;&#20026; forward
+    // &#21363; b' &#24050;&#32463;&#29983;&#25104;, &#36890;&#36807; getForward &#21487;&#20197;&#25343;&#21040;&#36825;&#20010; b'
+    *obj = (Object *)getForward(*obj);
+    return;
+  // a'-&gt;b &#36824;&#27809;&#32463;&#36807; copy
+  toObj = transportObject(fromObj);
+    assert(fromSpaceContains(fromObj));
+    toObj = allocateGray(allocSize);
+      addr = dvmHeapSourceAlloc(size);
+      block = addressToBlock(heapSource, (const u1 *)addr);
+      // &#26032;&#30340; gray object &#36827;&#34892; blockQueue
+      enqueueBlock(heapSource, block);
+    memcpy(toObj, fromObj, copySize);
+  setForward(toObj, fromObj);
+    *(unsigned long *)fromObj = (uintptr_t)toObj | 0x1;
+  *obj = (Object *)toObj;
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-1-7-2-1" class="outline-5">
+<h5 id="sec-1-7-2-1"><span class="section-number-5">1.7.2.1</span> forward</h5>
+<div class="outline-text-5" id="text-1-7-2-1">
+<p>
+getForward, isForward, setForward 这三个函数是用来实现对象移动后指针的
+重定位的. 
+例如, 假设 a-&gt;b 和 c-&gt;b2 本来指向的是同一个 B 对象. 当 scavenge a 的过
+程中, b 被复制到 b', 那么 scavenge c 时, 如果把 c'-&gt;b2 指向 b'?
+</p>
+
+<p>
+当 b 被复制到 b' 时, 会调用 setForward(b',b), 即
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">*(unsigned long *)b = (uintptr_t)b' | 0x1;
+</pre>
+</div>
+
+<p>
+可见, setForward 后, 原来的 b 对象不再是一个有效的 java 对象, 因为它的
+每一个 long 会被改写为 b' 的地址加一个 0x1 的标记 (这种 b' | 0x1 是有
+效的, 因为 b' 保证是 8 bytes 对齐的), 这种改写虽然破坏了 b 对象, 但信
+息通过 b' 已经保存了下来, 没有什么问题. 
+</p>
+
+<p>
+当 scavenge c' 时, 通过对 c'-&gt;b2 执行 isForward 判断, 可以知道 b2' 是
+否存在, 若已经存在, 则直接通过 getForward 从 b2 中获得 b2' 地址即可. 
+</p>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-04-09 Wed 13:47</p>
+<p class="date">Created: 2014-04-16 Wed 17:56</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
