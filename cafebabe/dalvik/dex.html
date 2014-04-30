@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Dex</title>
-<!-- 2014-04-16 Wed 17:26 -->
+<!-- 2014-04-30 Wed 16:53 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -69,6 +69,7 @@ for the JavaScript code in this tag.
 <li><a href="#sec-1-2">1.2. odex 文件结构</a></li>
 <li><a href="#sec-1-3">1.3. class 文件结构</a></li>
 <li><a href="#sec-1-4">1.4. DexFile 与 DvmDex</a></li>
+<li><a href="#sec-1-5">1.5. dex 与 ClassLoader</a></li>
 </ul>
 </li>
 </ul>
@@ -102,7 +103,7 @@ dex 文件主要由一个 dex header, 多个表(ids, defs)和数据 (data) 部�
 </li>
 <li>dex field ids
 </li>
-<li>dex method ids
+<li>dex method ids                 o
 </li>
 <li>dex class defs
 </li>
@@ -313,7 +314,7 @@ parameters<sub>off</sub> 类似, class<sub>def</sub><sub>item</sub> 中包含四
 <h5 id="sec-1-1-7-3"><span class="section-number-5">1.1.7.3</span> class<sub>data</sub><sub>off</sub></h5>
 <div class="outline-text-5" id="text-1-1-7-3">
 <p>
-class<sub>data</sub><sub>off</sub> 是 class<sub>def</sub><sub>item</sub> 中最复杂的. 
+class<sub>data</sub><sub>off</sub> 是 class<sub>def</sub><sub>item</sub> 中最复杂的.
 </p>
 
 <div class="org-src-container">
@@ -380,11 +381,55 @@ encoded<sub>method</sub> 中包含一个 code<sub>off</sub> 的指针, 指向真
 };
 </pre>
 </div>
+<p>
+如果 tries<sub>size</sub> 不为 0, 则 insns 后还会有另两部分和 exception 相关的内
+容:
+</p>
+<ol class="org-ol">
+<li>try<sub>item</sub><sub>list</sub>
+</li>
+<li>encoded<sub>catch</sub><sub>handler</sub><sub>list</sub>
+</li>
+</ol>
+
+<p>
+这两个 list 对应着 exception table.
+</p>
+
+<p>
+其中 tries<sub>item</sub> 为:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #859900;">struct</span> <span style="color: #b58900;">try_item</span> {
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">catcher &#23545;&#24212;&#30340; start_addr</span>
+    <span style="color: #b58900;">uint</span> <span style="color: #268bd2;">start_addr</span>;
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">catcher &#23545;&#24212;&#30340; end_addr &#20026; start_addr + insn_count</span>
+    <span style="color: #b58900;">ushort</span> <span style="color: #268bd2;">insn_count</span>;
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">catcher &#30340;&#20301;&#32622;. &#20197;&#19978;&#19977;&#20010;&#20540;&#37117;&#26159;&#24403;&#21069; method &#20013;&#30340;&#30456;&#23545;&#22320;&#22336;</span>
+    <span style="color: #b58900;">ushort</span> <span style="color: #268bd2;">handler_off</span>;
+}
+</pre>
+</div>
+
+<p>
+根据 handler<sub>off</sub> 可以找到 encoded<sub>catch</sub><sub>handler</sub>, encoded<sub>catch</sub><sub>handler</sub>
+结构比较啰嗦, 但基本信息为:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #859900;">struct</span> <span style="color: #b58900;">encoded_type_addr_pair</span> {
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">catcher &#35201; catch &#30340;&#24322;&#24120;&#30340;&#31867;&#22411;</span>
+    <span style="color: #b58900;">uleb128</span> <span style="color: #268bd2;">type_idx</span>;
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">catcher &#30340;&#20195;&#30721;, &#20063;&#26159;&#30456;&#23545;&#22320;&#22336;</span>
+    <span style="color: #b58900;">uleb128</span> <span style="color: #268bd2;">addr</span>;
+};
+</pre>
+</div>
 </div>
 </li></ol>
 </div>
 </div>
-
 <div id="outline-container-sec-1-1-8" class="outline-4">
 <h4 id="sec-1-1-8"><span class="section-number-4">1.1.8</span> dex map list</h4>
 <div class="outline-text-4" id="text-1-1-8">
@@ -474,7 +519,7 @@ odex 文件对 dex 做了如下的修改:
 <div class="outline-text-4" id="text-1-2-2">
 <p>
 register map 主要用来帮助 dvm 知道当前各个寄存器中哪些保存着 java 对象.
-以便 GC 时这些会被做为 GC Root. 
+以便 GC 时这些会被做为 GC Root.
 </p>
 </div>
 </div>
@@ -514,7 +559,7 @@ pDexFile-&gt;pLinkData = (const DexLink*) (A + pHeader-&gt;linkOff);
 <li>生成 DvmDex 结构
 
 <p>
-这个结构实际就是 procmem 时显示的 "dalvik-aux-structure". 
+这个结构实际就是 procmem 时显示的 "dalvik-aux-structure".
 这是一个辅助的数据结构: 因为 DexFile 基本是直接映射了 odex 文件, 里
 面的内容都是一些 "ID", 但实际执行时程序需要的通常不是 "ID", 而是真
 正的内容, 这时 DvmDex 相当于一个将 "ID" 映射为真正内容的一个 cache.
@@ -537,12 +582,217 @@ pDexFile-&gt;pLinkData = (const DexLink*) (A + pHeader-&gt;linkOff);
 </ol>
 </div>
 </div>
+
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> dex 与 ClassLoader</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+ClassLoader 并不是一定要在 native 实现的, 有些 ClassLoader 是完全用
+Java 写的. 但 dalvik 的 ClassLoader 因为底层都依赖于 dex, 所以都是通过
+native 层的 DexFile, DvmDex 实现的.
+</p>
+
+<p>
+Java 层和 ClassLoader 相关的类主要有:
+</p>
+
+<ol class="org-ol">
+<li>VMClassLoader
+</li>
+<li>ClassLoader
+</li>
+<li>BootClassLoader
+</li>
+<li>BaseDexClassLoader
+</li>
+<li>PathClassLoader
+</li>
+</ol>
+
+
+<pre class="example">
+                 -+-------------+
+                  | ClassLoader |
+                 -+-----+-------+
+                        |
+                        |
+          -+------------+-----------------+
+           |                              |
+           |                              |
+    -+-----+-----------+          -+------+-------------+
+     | BootClassLoader |           | BaseDexClassLoader |
+    -+-----+-----------+          -+------+-------------+
+           |                              |
+ comp      |                       comp   |
+-+---------+-----+                -+------+---+
+ | VMClassLoader |                 | DexFile  |
+-+---------+-----+                -+------+---+
+           |                              |
+           |                              |
+       native                         native
+</pre>
+</div>
+
+
+<div id="outline-container-sec-1-5-1" class="outline-4">
+<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> 双亲委派 loadClass</h4>
+<div class="outline-text-4" id="text-1-5-1">
+<p>
+ClassLoader 这个基类主要作用是实现双亲委派
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-java"><span style="color: #859900;">protected</span> <span style="color: #b58900;">Class</span>&lt;?&gt; loadClass(<span style="color: #b58900;">String</span> <span style="color: #268bd2;">className</span>) {
+    Class&lt;?&gt; clazz = findLoadedClass(className);
+
+    <span style="color: #859900;">if</span> (clazz == <span style="color: #2aa198;">null</span>) {
+        <span style="color: #859900;">try</span> {
+            clazz = parent.loadClass(className, <span style="color: #2aa198;">false</span>);
+        } <span style="color: #859900;">catch</span> (<span style="color: #b58900;">ClassNotFoundException</span> <span style="color: #268bd2;">e</span>) {
+            <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">Don't want to see this.</span>
+        }
+
+        <span style="color: #859900;">if</span> (clazz == <span style="color: #2aa198;">null</span>) {
+            clazz = findClass(className);
+        }
+    }
+    <span style="color: #859900;">return</span> clazz;
+}
+</pre>
+</div>
+
+<p>
+ClassLoader 通过 parent 指针可以形成一棵树, BootClassLoader 是树根.
+</p>
+
+<p>
+在 dalvik 底层代码中并没有 BootClassLoader 这个东西: dalvik 通过把
+clazz-&gt;classLoader 置为 NULL 表示该 class 是由 BootClassLoader 加载的.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">/* defining class loader, or NULL for the "bootstrap" system loader */
+Object*         classLoader;
+</pre>
+</div>
+
+<p>
+简单起见, 我们假设 BaseDexClassLoader 的 parent 都是
+BootClassLoader, 所以 PathClassLoader 的 loadClass 会先调用
+BootClassLoader 的 loadClass:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">BootClassLoader.loadClass
+  BootClassLoader.findClass
+    VMClassLoader.loadClass(name, false);
+      // native, &#20854;&#20013; null &#34920;&#31034; ClassLoader &#20026; null, &#20197;
+      // &#20415;&#20174; bootstrap class &#20013;&#26597;&#25214;
+      clazz = dvmFindClassByName(nameObj, NULL, resolve);
+        dvmFindClassNoInit
+          dvmFindSystemClassNoInit
+            findClassNoInit(descriptor, null);
+</pre>
+</div>
+
+<p>
+若 BootClassLoader 没有找到 class, 则使用 BaseDexClassLoader 有加载
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">BaseDexClassLoader.findClass(String name)
+  Class c = pathList.findClass(name, suppressedExceptions);
+    Class clazz = dex.loadClassBinaryName(name, definingContext, suppressed);
+      DexFile.defineClassNative(name, loader, cookie);
+        // native
+        clazz = dvmDefineClass(pDvmDex, descriptor, loader);
+          findClassNoInit(descriptor, loader);
+</pre>
+</div>
+
+<p>
+无论是 VMClassLoader 或是 DexFile, 最终都通过 native 的
+findClassNoInit 进行 dex 的加载
+</p>
+</div>
+
+<div id="outline-container-sec-1-5-1-1" class="outline-5">
+<h5 id="sec-1-5-1-1"><span class="section-number-5">1.5.1.1</span> ClassLoader 的具体工作过程</h5>
+<div class="outline-text-5" id="text-1-5-1-1">
+<p>
+dvmResolveClass 是 byte code 中加载 class 的入口
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">dvmResolveClass
+  // referrer-&gt;classLoader &#35843;&#29992;&#35813;&#20195;&#30721;&#30340;&#23545;&#35937;&#20351;&#29992;&#30340; BaseDexClassLoader
+  // jvm spec &#35268;&#23450;&#20102;&#33509; A &#30001; cl &#21152;&#36733;, &#21017; A-&gt;B &#26102;&#20063;&#35201;&#30001; cl &#36127;&#36131;&#21152;&#36733; B
+  dvmFindClassNoInit(className, referrer-&gt;classLoader);
+    // &#27492;&#26102; loader &#19981;&#20026;&#31354;, &#23427;&#23545;&#24212;&#30340;&#26159; app &#30340; BaseDexClassLoader,
+    // &#25152;&#20197;&#20250;&#35843;&#29992; findClassFromLoaderNoInit
+    if (loader != NULL):
+      return findClassFromLoaderNoInit(descriptor, loader);
+        // ClassLoader &#24320;&#22987;&#24037;&#20316;
+        // &#35843;&#29992; ClassLoader.java &#30340; loadClass &#20989;&#25968;
+        const Method* loadClass =
+          loader-&gt;clazz-&gt;vtable[gDvm.voffJavaLangClassLoader_loadClass];
+        dvmCallMethod(self, loadClass, loader, &amp;result, nameObj);
+          // &#21452;&#20146;&#22996;&#27966;&#23548;&#33268; ClassLoader.loadClass &#34987;&#35843;&#29992;
+          // BootClassLoader &#23548;&#33268; dvmFindClassNoInit &#20877;&#27425;&#34987;&#35843;&#29992;, &#20294;&#26159;
+          // loader &#21442;&#25968;&#20026; null
+          ClassLoader.loadClass
+            BootClassLoader.loadClass
+              dvmFindClassNoInit(className, null);
+                return dvmFindSystemClassNoInit(descriptor);
+            // &#33509; BootClassLoader.loadClass &#22833;&#36133;, &#35828;&#26126;&#36825;&#20010;&#31867;&#26159; BaseDexClassLoader
+            // &#23450;&#20041;&#30340;, &#21452;&#20146;&#22996;&#27966;&#20250;&#35843;&#29992; BaseDexClassLoader.findClass
+            BaseDexClassLoader.findClass
+              pathList.findClass(name);
+                dvmFindClassNoInit(className, loader);
+    else:
+      dvmFindSystemClassNoInit(descriptor);
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-5-2" class="outline-4">
+<h4 id="sec-1-5-2"><span class="section-number-4">1.5.2</span> 总结</h4>
+<div class="outline-text-4" id="text-1-5-2">
+<p>
+通过 dvmResolveClass 或其它方法加载类时, 若当前操作的类是通过某个
+ClassLoader 加载的, 则调用那个 ClassLoader 的 loadClass 来加载. 否则,
+直接通过 dvmFindSystemClassNoInit 在 bootstrap class path 中加载. 
+</p>
+
+<p>
+通过 ClassLoader 加载时, 双亲委派会优先使用 BootClassLoader 来加载,
+BootClassLoader 最终会通过 dvmFindSystemClassNoInit 来加载.
+</p>
+
+<p>
+若 BootClassLoader 没有加载成功, 则 BaseDexClassLoader 的 findClass 会
+负责通过 dvmDefineClass(pDvmDex, descriptor, loader) 在 app 自己的 dex
+中加载类. 
+</p>
+
+<p>
+但不管怎么加载, 最终 dex 都是通过 findClassNoInit 加载进来的. 
+</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-04-16 Wed 17:26</p>
+<p class="date">Created: 2014-04-30 Wed 16:53</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

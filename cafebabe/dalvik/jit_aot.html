@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>JIT And AOT</title>
-<!-- 2014-04-10 Thu 11:11 -->
+<!-- 2014-04-30 Wed 16:53 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -63,14 +63,100 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. JIT</a></li>
+<li><a href="#sec-1">1. JIT</a>
+<ul>
+<li><a href="#sec-1-1">1.1. 基本流程</a></li>
+</ul>
+</li>
 <li><a href="#sec-2">2. AOT</a></li>
 </ul>
 </div>
 </div>
 <div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> JIT</h2>
+<div class="outline-text-2" id="text-1">
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> 基本流程</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+JIT 的入口是 common<sub>updateProfile</sub>
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">common_updateProfile:   
+  // &#36825;&#37324;&#36127;&#36131;&#20174; thread-&gt;pJitProfTable &#20013;&#33719;&#24471;&#35813; rPC &#23545;&#24212;&#30340; threshold (&#21021;&#22987;&#20026;&#26368;&#22823;&#20540; 40, &#27599;&#21629;&#20013;&#19968;&#27425;&#20943;&#19968;)
+  // &#33509; threshold &#24050;&#32463;&#20026; 0, &#35828;&#26126;&#35813;&#20195;&#30721;&#26159; hot &#30340;, &#28982;&#21518;&#20250;&#36339;&#21040; common_Profile &#36827;&#34892; jit &#30456;&#20851;&#25805;&#20316;. &#21542;&#21017;&#30452;&#25509;
+  // &#36890;&#36807; GOTO_NEXT &#32487;&#32493;&#25191;&#34892; interp
+  common_Profile:
+    // &#26681;&#25454; pc &#26597;&#25214;&#35813; trace &#26159;&#21542;&#24050;&#32463;&#34987;&#32534;&#35793;      
+    call   dvmJitGetTraceAddrThread  # (pc, self)
+    // &#33509;&#36824;&#27809;&#26377;&#34987;&#32534;&#35793;&#20986;&#26469;
+    // &#36890;&#36807;&#26597;&#30475; interpBreak-&gt;subMode, &#30830;&#23450;&#26159;&#21542;&#24050;&#32463;&#22312;&#32534;&#35793; (kSubModeJitSV)        
+    movzwl      offThread_subMode(%ebx), %ecx
+    and         $(kSubModeJitTraceBuild | kSubModeJitSV), %ecx
+    // &#33509;&#24050;&#32463;&#22312;&#32534;&#35793;, &#21017;&#32487;&#32493;&#20197; interp &#26041;&#24335;&#25191;&#34892;
+    jne         3f                     # already doing JIT work, continue
+    FETCH_INST
+    // &#21542;&#21017;     
+    call dvmJitCheckTraceRequest
+      // &#24320;&#22987; trace build &#27169;&#24335;
+      dvmEnableSubMode (self, kSubModeJitTraceBuild);
+        updateInterpBreak
+          // &#20462;&#25913;&#20102; curHandlerTable, &#21518;&#32493; byte code &#30340;&#35299;&#37322;&#20250;&#36890;&#36807;&#36825;&#20010;
+          // altHandlerTable &#35299;&#37322;
+          newValue.ctl.curHandlerTable = (newValue.ctl.breakFlags) ?
+            thread-&gt;altHandlerTable : thread-&gt;mainHandlerTable;
+</pre>
 </div>
+
+<p>
+当 dvmJitCheckTraceRequest 决定开始 trace build 模式后, 后续所有的
+byte code 的解释会通过 altHandlerTable 进行, 而 altHandlerTable 对所有
+byte code 的解释基本都是一样的, 例如:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">.L_ALT_OP_MOVE: /* 0x01 */
+/* File: armv5te/alt_stub.S */
+/*
+* Inter-instruction transfer stub.  Call out to dvmCheckBefore to handle
+* any interesting requests and then jump to the real instruction
+* handler.    Note that the call to dvmCheckBefore is done as a tail call.
+* rIBASE updates won't be seen until a refresh, and we can tell we have a
+* stale rIBASE if breakFlags==0.  Always refresh rIBASE here, and then
+* bail to the real handler if breakFlags==0.
+*/
+ldrb   r3, [rSELF, #offThread_breakFlags]
+adrl   lr, dvmAsmInstructionStart + (1 * 64)
+ldr    rIBASE, [rSELF, #offThread_curHandlerTable]
+cmp    r3, #0
+// &#26816;&#26597; interpBreak-&gt;subMode, &#33509;&#19981;&#26159; jni &#27169;&#24335;, &#21017;&#30452;&#25509;&#35843;&#29992;
+// mainHandlerTable &#20013;&#30456;&#24212;&#30340; entry (dvmAsmInstructionStart &#23545;&#24212;&#20110; mainHandlerTable)
+bxeq   lr                   @ nothing to do - jump to real handler
+EXPORT_PC()
+mov    r0, rPC              @ arg0
+mov    r1, rFP              @ arg1
+mov    r2, rSELF            @ arg2
+// &#21542;&#21017;, &#35843;&#29992; dvmCheckBefore &#36827;&#34892; trace build
+b      dvmCheckBefore       @ (dPC,dFP,self) tail call
+  if (self-&gt;interpBreak.ctl.subMode &amp; kSubModeJitTraceBuild):
+    dvmCheckJit(pc, self);
+      // &#33509; trace build &#27491;&#22312;&#36827;&#34892;
+      if self-&gt;jitState == kJitTSelect:
+        self-&gt;trace[self-&gt;currTraceRun].info.frag.numInsts++;
+        self-&gt;totalTraceLen++;
+        self-&gt;currRunLen += len;
+      else if self-&gt;jitState == kJitTSelectEnd:
+      // trace build &#32467;&#26463;, &#25552;&#20132;&#32473; compiler &#32534;&#35793;
+        dvmCompilerWorkEnqueue
+</pre>
+</div>
+</div>
+</div>
+</div>
+
 <div id="outline-container-sec-2" class="outline-2">
 <h2 id="sec-2"><span class="section-number-2">2</span> AOT</h2>
 </div>
@@ -78,7 +164,7 @@ for the JavaScript code in this tag.
 <div id="postamble" class="status">
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-04-10 Thu 11:11</p>
+<p class="date">Created: 2014-04-30 Wed 16:53</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

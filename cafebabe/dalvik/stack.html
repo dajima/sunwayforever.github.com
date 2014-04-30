@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Stack</title>
-<!-- 2014-04-16 Wed 17:26 -->
+<!-- 2014-04-30 Wed 16:53 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -71,6 +71,7 @@ for the JavaScript code in this tag.
 <li><a href="#sec-1-4">1.4. stack frame 的维护</a></li>
 <li><a href="#sec-1-5">1.5. StackSaveArea</a></li>
 <li><a href="#sec-1-6">1.6. InterpSave</a></li>
+<li><a href="#sec-1-7">1.7. breakFrame 与异常处理</a></li>
 </ul>
 </li>
 </ul>
@@ -384,12 +385,87 @@ fp, 否则用参数在各个函数间传来传去太麻烦了&#x2026;
 </p>
 </div>
 </div>
+
+<div id="outline-container-sec-1-7" class="outline-3">
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> breakFrame 与异常处理</h3>
+<div class="outline-text-3" id="text-1-7">
+<p>
+当 native 函数通过 dvmCallMethodV 调用其他函数时 (native 或 interp),会
+先 push 一个 break frame, 然后再 push 一个真正的 frame. 这个 break
+frame 的作用是为了处理异常. 因为异常发生时, 正常情况下会通过不断的
+unrolling stack frame 的方式来找到真正的 catcher. 若 stack frame 中某个
+frame 代表着 native 函数, 则 stack frame 的 unrolling 必须停止并停止对
+异常的处理: 因为 native 函数本身一定有一个 ExceptionOccurred 的函数会来
+检查是否有异常.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">HANDLE_OPCODE(OP_THROW /*vAA*/)
+  dvmSetException(self, obj);
+  GOTO_exceptionThrown();
+
+GOTO_TARGET(exceptionThrown)
+  /* We need to unroll to the catch block or the nearest "break"
+  * frame.
+  *
+  * A break frame could indicate that we have reached an intermediate
+  * native call, or have gone off the top of the stack and the thread
+  * needs to exit.  Either way, we return from here, leaving the
+  * exception raised.
+  *
+  * If we do find a catch block, we want to transfer execution to
+  * that point.
+  */
+  catchRelPc = dvmFindCatchBlock(self, pc - curMethod-&gt;insns,exception, false, (void**)(void*)&amp;fp);
+    while (true):
+      StackSaveArea* saveArea = SAVEAREA_FROM_FP(fp);
+      catchAddr = findCatchInMethod(self, saveArea-&gt;method, relPc, exception-&gt;clazz);
+        /*
+        * Search the method's list of exceptions for a match.
+        * Returns the offset of the catch block on success, or -1 on failure.
+        */
+        // &#36890;&#36807;&#26597;&#25214; method &#30340;&#24322;&#24120;&#34920;&#26469;&#30830;&#23450; exceptions-&gt;clazz &#26159;&#21542;&#33021;&#34987;
+        // saveArea-&gt;method catch
+      if (catchAddr &gt;= 0)
+        break;
+      if (dvmIsBreakFrame((u4*)saveArea-&gt;prevFrame)):
+        // &#24403;&#21069;&#26041;&#27861;&#20013;&#27809;&#26377;&#25214;&#21040;&#23545;&#24212;&#30340; catcher, &#19988; prevFrame &#26159; break
+        // frame, &#21017;&#26080;&#27861;&#32487;&#32493; unrolling, &#36820;&#22238; -1
+        break;
+      // unrolling
+      else:
+        fp = saveArea-&gt;prevFrame;
+        // &#33719;&#24471;&#19978;&#19968;&#20010;&#20989;&#25968;&#20013;&#23545;&#24212;&#30340; relPc
+        relPc = saveArea-&gt;savedPc - SAVEAREA_FROM_FP(fp)-&gt;method-&gt;insns;
+    // while end  
+  // &#25214;&#21040;&#20102; catchAddr
+  if (catchRelPc &lt; 0):
+    // &#27809;&#25214;&#21040; catcher, &#30452;&#25509;&#36864;&#20986; interpeter
+    // interpeter &#36864;&#20986;&#21518;, native &#20195;&#30721;&#20250;&#36127;&#36131;&#28165;&#29702; stack frame
+    // &#22312;&#36864;&#20986;&#20043;&#21069;&#38656;&#35201;&#35843;&#29992; dvmSetException, &#22240;&#20026; native &#20195;&#30721;&#30340;
+    // ExceptionOccurred &#20381;&#36182;&#36825;&#20010;&#35843;&#29992;
+    dvmSetException(self, exception);
+    GOTO_bail();
+  else:
+    // self-&gt;interpSave.curFrame &#22312; dvmFindCatchBlock &#26102;&#24050;&#32463;&#34987;&#36171;&#20026;&#27491;&#30830;
+    // &#30340;&#20540;
+    curMethod = SAVEAREA_FROM_FP(fp)-&gt;method;
+    self-&gt;interpSave.method = curMethod;
+    //methodClass = curMethod-&gt;clazz;
+    methodClassDex = curMethod-&gt;clazz-&gt;pDvmDex;
+    pc = curMethod-&gt;insns + catchRelPc;
+    FINISH(0);
+</pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-04-16 Wed 17:26</p>
+<p class="date">Created: 2014-04-30 Wed 16:53</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

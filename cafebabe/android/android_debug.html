@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Android Debug</title>
-<!-- 2014-04-02 Wed 16:33 -->
+<!-- 2014-04-30 Wed 16:53 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -73,6 +73,9 @@ for the JavaScript code in this tag.
 <li><a href="#sec-1-6">1.6. tombstone / debuggerd</a></li>
 <li><a href="#sec-1-7">1.7. watchdog</a></li>
 <li><a href="#sec-1-8">1.8. anr trace</a></li>
+<li><a href="#sec-1-9">1.9. UncaughtHandler 打印的 trace</a></li>
+<li><a href="#sec-1-10">1.10. 程序中生成 c++ trace</a></li>
+<li><a href="#sec-1-11">1.11. 程序中使用 libcorkscrew 生成 c trace</a></li>
 </ul>
 </li>
 </ul>
@@ -225,10 +228,10 @@ debuggerd.c 负责 dump tombstone 文件, dump 完成后向原进程再次发送
 </div>
 </div>
 <div id="outline-container-sec-1-6-2" class="outline-4">
-<h4 id="sec-1-6-2"><span class="section-number-4">1.6.2</span> debugger.c</h4>
+<h4 id="sec-1-6-2"><span class="section-number-4">1.6.2</span> debugger.cpp</h4>
 <div class="outline-text-4" id="text-1-6-2">
 <p>
-debugger.c 由 bionic 的 linker 负责嵌入到每一个 elf 文件的 _start 段,
+debugger.cpp 由 bionic 的 linker 负责嵌入到每一个 elf 文件的 _start 段,
 所以每一个进程都会自动执行该代码. 它的作用主要是 catch 住所有会导致退
 出的信号, 例如 SIG<sub>ABRT</sub>, SIG<sub>SEGV</sub> 等 (但不包括 SIG<sub>KILL</sub>). 对应的
 signal handler 就是向 debuggerd.c 发送消息, 请求 dump tombstone, 同时,
@@ -242,7 +245,16 @@ java crash 是通过 dalvik 向自己发送 SIG<sub>KILL</sub> 实现的.
 </p>
 </div>
 </div>
+<div id="outline-container-sec-1-6-3" class="outline-4">
+<h4 id="sec-1-6-3"><span class="section-number-4">1.6.3</span> 手动生成 tombstone</h4>
+<div class="outline-text-4" id="text-1-6-3">
+<p>
+通过 debuggerd -b &lt;pid&gt; 可以直接生成 pid 对应进程的 tombstone
+</p>
 </div>
+</div>
+</div>
+
 <div id="outline-container-sec-1-7" class="outline-3">
 <h3 id="sec-1-7"><span class="section-number-3">1.7</span> watchdog</h3>
 </div>
@@ -295,13 +307,158 @@ dvmDumpAllThreadsEx(&amp;target, <span style="color: #2aa198;">true</span>);
 </p>
 </div>
 </div>
+
+<div id="outline-container-sec-1-8-3" class="outline-4">
+<h4 id="sec-1-8-3"><span class="section-number-4">1.8.3</span> 手动生成 trace</h4>
+<div class="outline-text-4" id="text-1-8-3">
+<p>
+kill -3 &lt;pid&gt;
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-9" class="outline-3">
+<h3 id="sec-1-9"><span class="section-number-3">1.9</span> UncaughtHandler 打印的 trace</h3>
+<div class="outline-text-3" id="text-1-9">
+<p>
+除了 debuggerd/anr trace 外, java 程序因为 UncaughtHandler 退出时也会
+打印 trace
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-java"><span style="color: #859900;">try</span> {
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">Bring up crash dialog, wait for it to be dismissed</span>
+    ActivityManagerNative.getDefault().handleApplicationCrash(
+        mApplicationObject, <span style="color: #859900;">new</span> <span style="color: #2aa198;">ApplicationErrorReport</span>.<span style="color: #b58900;">CrashInfo</span>(e));
+} <span style="color: #859900;">catch</span> (<span style="color: #b58900;">Throwable</span> <span style="color: #268bd2;">t2</span>) {
+
+} <span style="color: #859900;">finally</span> {
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">Try everything to make sure this process goes away.</span>
+    Process.killProcess(Process.myPid());
+    System.exit(10);
+}
+</pre>
+</div>
+<p>
+可见, 在 killProcess 之前, AMS.handleApplicationCrash 会被调用, 而
+handleApplicationCrash 会调用某些 controller 例如 monkey 的相应代码,
+在进程被 kill 之前打印出异常的信息. 
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-10" class="outline-3">
+<h3 id="sec-1-10"><span class="section-number-3">1.10</span> 程序中生成 c++ trace</h3>
+<div class="outline-text-3" id="text-1-10">
+<p>
+C++也是支持异常处理的，异常处理库中，已经包含了获取backtrace的接口，
+Android也是利用这个接口来打印堆栈信息的。在Android的C++中，已经集成了一
+个工具类CallStack，在libutils.so中。使用方法：
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c++"><span style="color: #cb4b16;">#include</span> <span style="color: #2aa198;">&lt;utils/CallStack.h&gt;</span>  
+<span style="color: #b58900;">CallStack</span> <span style="color: #268bd2;">stack</span>;  
+stack.update();  
+stack.dump();
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-11" class="outline-3">
+<h3 id="sec-1-11"><span class="section-number-3">1.11</span> 程序中使用 libcorkscrew 生成 c trace</h3>
+<div class="outline-text-3" id="text-1-11">
+<p>
+<a href="http://blog.csdn.net/freshui/article/details/9456889">http://blog.csdn.net/freshui/article/details/9456889</a>
+</p>
+
+<p>
+实际上 debuggerd 就是用 libcorkscrew 生成的 c trace
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #cb4b16;">#define</span> <span style="color: #268bd2;">MAX_DEPTH</span>                       31  
+<span style="color: #cb4b16;">#define</span> <span style="color: #268bd2;">MAX_BACKTRACE_LINE_LENGTH</span>   800  
+<span style="color: #cb4b16;">#define</span> <span style="color: #268bd2;">PATH</span> <span style="color: #2aa198;">"/system/lib/libcorkscrew.so"</span>  
+
+<span style="color: #859900;">typedef</span> <span style="color: #b58900;">ssize_t</span> (*<span style="color: #b58900;">unwindFn</span>)(<span style="color: #b58900;">backtrace_frame_t</span>*, <span style="color: #b58900;">size_t</span>, <span style="color: #b58900;">size_t</span>);  
+<span style="color: #859900;">typedef</span> <span style="color: #b58900;">void</span> (*<span style="color: #b58900;">unwindSymbFn</span>)(<span style="color: #859900;">const</span> <span style="color: #b58900;">backtrace_frame_t</span>*, <span style="color: #b58900;">size_t</span>, <span style="color: #b58900;">backtrace_symbol_t</span>*);  
+<span style="color: #859900;">typedef</span> <span style="color: #b58900;">void</span> (*<span style="color: #b58900;">unwindSymbFreeFn</span>)(<span style="color: #b58900;">backtrace_symbol_t</span>*, <span style="color: #b58900;">size_t</span>);  
+
+<span style="color: #859900;">static</span> <span style="color: #b58900;">void</span> *<span style="color: #268bd2;">gHandle</span> = <span style="color: #2aa198;">NULL</span>;  
+
+<span style="color: #859900;">static</span> <span style="color: #b58900;">int</span> <span style="color: #268bd2;">getCallStack</span>(<span style="color: #b58900;">void</span>){  
+    <span style="color: #b58900;">ssize_t</span> <span style="color: #268bd2;">i</span> = 0;  
+    <span style="color: #b58900;">ssize_t</span> <span style="color: #268bd2;">result</span> = 0;  
+    <span style="color: #b58900;">ssize_t</span> <span style="color: #268bd2;">count</span>;  
+    <span style="color: #b58900;">backtrace_frame_t</span> <span style="color: #268bd2;">mStack</span>[MAX_DEPTH];  
+    <span style="color: #b58900;">backtrace_symbol_t</span> <span style="color: #268bd2;">symbols</span>[MAX_DEPTH];  
+
+    <span style="color: #b58900;">unwindFn</span> <span style="color: #268bd2;">unwind_backtrace</span> = <span style="color: #2aa198;">NULL</span>;  
+    <span style="color: #b58900;">unwindSymbFn</span> <span style="color: #268bd2;">get_backtrace_symbols</span> = <span style="color: #2aa198;">NULL</span>;  
+    <span style="color: #b58900;">unwindSymbFreeFn</span> <span style="color: #268bd2;">free_backtrace_symbols</span> = <span style="color: #2aa198;">NULL</span>;  
+
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">open the so.  </span>
+    <span style="color: #859900;">if</span>(gHandle == <span style="color: #2aa198;">NULL</span>) gHandle = dlopen(PATH, RTLD_NOW);  
+
+    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">get the interface for unwind and symbol analyse  </span>
+    <span style="color: #859900;">if</span>(gHandle != <span style="color: #2aa198;">NULL</span>) unwind_backtrace = (<span style="color: #b58900;">unwindFn</span>)dlsym(gHandle, <span style="color: #2aa198;">"unwind_backtrace"</span>);  
+    <span style="color: #859900;">if</span>(gHandle != <span style="color: #2aa198;">NULL</span>) get_backtrace_symbols = (<span style="color: #b58900;">unwindSymbFn</span>)dlsym(gHandle, <span style="color: #2aa198;">"get_backtrace_symbols"</span>);  
+    <span style="color: #859900;">if</span>(gHandle != <span style="color: #2aa198;">NULL</span>) free_backtrace_symbols = (<span style="color: #b58900;">unwindSymbFreeFn</span>)dlsym(gHandle, <span style="color: #2aa198;">"free_backtrace_symbols"</span>);  
+
+    <span style="color: #859900;">if</span>(<span style="color: #dc322f;">!</span>gHandle ||<span style="color: #dc322f;">!</span>unwind_backtrace ||<span style="color: #dc322f;">!</span>get_backtrace_symbols || <span style="color: #dc322f;">!</span>free_backtrace_symbols  ){  
+        ALOGE(<span style="color: #2aa198;">"Error! cannot get unwind info: handle:%p %p %p %p"</span>,  
+              gHandle, unwind_backtrace, get_backtrace_symbols, free_backtrace_symbols );  
+        <span style="color: #859900;">return</span> result;  
+    }  
+
+    count= unwind_backtrace(mStack, 1, MAX_DEPTH);  
+    get_backtrace_symbols(mStack, count, symbols);  
+
+    <span style="color: #859900;">for</span> (i = 0; i &lt; count; i++) {  
+        <span style="color: #b58900;">char</span> <span style="color: #268bd2;">line</span>[MAX_BACKTRACE_LINE_LENGTH];  
+
+        <span style="color: #859900;">const</span> <span style="color: #b58900;">char</span>* <span style="color: #268bd2;">mapName</span> = symbols[i].map_name ? symbols[i].map_name : <span style="color: #2aa198;">"&lt;unknown&gt;"</span>;  
+        <span style="color: #859900;">const</span> <span style="color: #b58900;">char</span>* <span style="color: #268bd2;">symbolName</span> =symbols[i].demangled_name ? symbols[i].demangled_name : symbols[i].symbol_name;  
+        <span style="color: #b58900;">size_t</span> <span style="color: #268bd2;">fieldWidth</span> = (MAX_BACKTRACE_LINE_LENGTH - 80) / 2;  
+
+        <span style="color: #859900;">if</span> (symbolName) {  
+            <span style="color: #b58900;">uint32_t</span> <span style="color: #268bd2;">pc_offset</span> = symbols[i].relative_pc - symbols[i].relative_symbol_addr;  
+            <span style="color: #859900;">if</span> (pc_offset) {  
+                snprintf(line, MAX_BACKTRACE_LINE_LENGTH, <span style="color: #2aa198;">"#%02d  pc %08x  %.*s (%.*s+%u)"</span>,  
+                         i, symbols[i].relative_pc, fieldWidth, mapName,  
+                         fieldWidth, symbolName, pc_offset);  
+            } <span style="color: #859900;">else</span> {  
+                snprintf(line, MAX_BACKTRACE_LINE_LENGTH, <span style="color: #2aa198;">"#%02d  pc %08x  %.*s (%.*s)"</span>,  
+                         i, symbols[i].relative_pc, fieldWidth, mapName,  
+                         fieldWidth, symbolName);  
+            }  
+        } <span style="color: #859900;">else</span> {  
+            snprintf(line, MAX_BACKTRACE_LINE_LENGTH, <span style="color: #2aa198;">"#%02d  pc %08x  %.*s"</span>,  
+                     i, symbols[i].relative_pc, fieldWidth, mapName);  
+        }  
+
+        ALOGD(<span style="color: #2aa198;">"%s"</span>, line);  
+    }  
+
+    free_backtrace_symbols(symbols, count);  
+
+    <span style="color: #859900;">return</span> result;  
+}
+</pre>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-04-02 Wed 16:33</p>
+<p class="date">Created: 2014-04-30 Wed 16:53</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

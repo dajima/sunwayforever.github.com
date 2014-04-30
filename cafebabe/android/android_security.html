@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Android Security</title>
-<!-- 2014-01-30 Thu 13:54 -->
+<!-- 2014-04-30 Wed 16:53 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="wei.sun" />
@@ -833,8 +833,8 @@ signapk.jar到底做了什么。
 </p>
 
 <p>
-程序遍历update.apk包中的所有文件(entry)，对非文件夹非签名文件的文件，逐个生成SHA1的数字签名信息，再用Base64进行编码。具
-体代码见这个方法：
+程序遍历update.apk包中的所有文件(entry)，对非文件夹非签名文件的文件，逐
+个生成SHA1的摘要信息，再用Base64进行编码。具体代码见这个方法：
 </p>
 
 <p>
@@ -877,10 +877,11 @@ private static Manifest addDigestsToManifest(JarFile jar)
 </p>
 
 <p>
-    这里简单介绍下SHA1数字签名。简单地说，它就是一种安全哈希算法，类似于MD5算法。它把任意长度的输入，通过散列算法变成固
-定长度的输出（这里我们称作“摘要信息”）。你不能仅通过这个摘要信息复原原来的信息。另外，它保证不同信息的摘要信息彼此不同
-。因此，如果你改变了apk包中的文件，那么在apk安装校验时，改变后的文件摘要信息与MANIFEST.MF的检验信息不同，于是程序就不能
-成功安装。
+    这里简单介绍下SHA1。简单地说，它就是一种安全哈希算法，类似于MD5算法。
+它把任意长度的输入，通过散列算法变成固定长度的输出（这里我们称作“摘要信
+息”）。你不能仅通过这个摘要信息复原原来的信息。另外，它保证不同信息的摘
+要信息彼此不同。因此，如果你改变了apk包中的文件，那么在apk安装校验时，
+改变后的文件摘要信息与MANIFEST.MF的检验信息不同，于是程序就不能成功安装。
 </p>
 
 <p>
@@ -1122,7 +1123,7 @@ Android APK的软件安全呢？
 <div id="postamble" class="status">
 <p class="author">Author: wei.sun</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-01-30 Thu 13:54</p>
+<p class="date">Created: 2014-04-30 Wed 16:53</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
