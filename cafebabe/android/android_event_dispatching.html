@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Android Event Dispatching</title>
-<!-- 2014-01-30 Thu 13:54 -->
+<!-- 2014-07-01 Tue 10:54 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="wei.sun" />
@@ -349,8 +349,8 @@ InputDispatcher.interceptKeyBeforeQueueing/Dispatching 来处理系统硬
      +--------------------+        +--------+---+--------+      |
      | ViewRoot.addWindow |        |  InputReaderThread  +------+
      +------+-------------+        +--------+------------+
-            |                               |   +----------------+
-            v                               |   v looper.poll    |
+            |                 notify_key... |   +----------------+
+            v              notify_motion... v   v looper.poll    |
 +-----------+--------------+       +--------+---+-----------+    |
 | WMS.registerInputChannel +-------+  InputDispatcherThread +----+
 +--------------------------+       +--------+---------------+
@@ -359,10 +359,15 @@ InputDispatcher.interceptKeyBeforeQueueing/Dispatching 来处理系统硬
                                     +-------+---------------------------------------------------+
                                     | PhoneWindowManager.interceptKeyBeforeQueueing/Dispatching |
                                     +-------+---------------------------------------------------+
-                                            | 1. find the InputChannel that has focus or touched
-                                            |    (findTouchedWindowAtLocked | findFocusedWindowTargetsLocked)
-                                            | 2. wake up the related looper
-                                            | 3. Looper.handleEvent will notify the InputEventReceiver
+                                            | find the InputChannel that has focus or touched
+                           write to pipe    |    (findTouchedWindowAtLocked | findFocusedWindowTargetsLocked)
+                                            | 唤醒应用一侧的 looper (通过向 pipe 一端写入数据)
+                                    +-------+------------+
+                                    | Looper in ViewRoot |&lt;--+
+                                    +-------+------------+   | looper.poll
+                                            |                |
+                                            +----------------+
+                                            | NativeInputEventReceiver::handleEvent (NativeInputEventReceiver 是 loop 的 callback)
                                    +--------+------------------------+
                                    | InputEventReceiver.onInputEvent |
                                    +---------------------------------+
@@ -408,7 +413,7 @@ InputDispatcher.interceptKeyBeforeQueueing/Dispatching 来处理系统硬
 <h5 id="sec-1-2-2-2"><span class="section-number-5">1.2.2.2</span> InputEventReceiver &amp; InputChannel</h5>
 <div class="outline-text-5" id="text-1-2-2-2">
 <p>
-InputEventReceiver.onInputEvent() 是 ViewRoot 一侧 event dispatch 的起点. 
+InputEventReceiver.onInputEvent() 是 ViewRoot 一侧 event dispatch 的起点.
 </p>
 </div>
 </div>
@@ -466,7 +471,7 @@ Looper 是整个 event dispatching 中比较重要的部分.
 <li>InputReader 和 InputDispatcher 通过一个 looper 进行生产/消费的通知
 </li>
 <li>ViewRootImpl 一侧通过 InputEventReceiver 注册的本进程的 looper 来
-响应 InputChannel 的通知, 处理事件. 
+响应 InputChannel 的通知, 处理事件.
 </li>
 </ol>
 </li>
@@ -514,7 +519,7 @@ C++ looper 的封装.
 
 <li>Java looper 与 C++ looper 的唯一联系, 是 MessageQueue &lt;&#x2014;&gt;
 NativeMessageQueue, 但 Java MessageQueue 与 NativeMessageQueue 的功
-能也很有限, 只是借用了 C++ looper 高效的 pollOnce 和 wake 机制. 
+能也很有限, 只是借用了 C++ looper 高效的 pollOnce 和 wake 机制.
 </li>
 </ul>
 </div>
@@ -535,7 +540,7 @@ NativeMessageQueue, 但 Java MessageQueue 与 NativeMessageQueue 的功
     <span style="color: #b58900;">int</span> <span style="color: #268bd2;">result</span> = 0;
     <span style="color: #859900;">for</span> (;;) {
         <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#39318;&#20808;, &#20808;&#36820;&#22238;&#19978;&#19968;&#27425; for (;;) &#24490;&#29615; &#22788;&#29702;&#36807;&#30340;&#20854;&#20182;&#36890;&#36807; addFd() &#28155;&#21152;&#30340; fd</span>
-        <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#19978;&#30340;&#20107;&#20214;, &#19968;&#27425;&#36820;&#22238;&#19968;&#20214;. </span>
+        <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#19978;&#30340;&#20107;&#20214;, &#19968;&#27425;&#36820;&#22238;&#19968;&#20214;.</span>
         <span style="color: #859900;">while</span> (mResponseIndex &lt; mResponses.size()) {
             <span style="color: #859900;">const</span> <span style="color: #b58900;">Response</span>&amp; response = mResponses.itemAt(mResponseIndex++);
             <span style="color: #b58900;">int</span> <span style="color: #268bd2;">ident</span> = response.request.ident;
@@ -619,7 +624,7 @@ NativeMessageQueue, 但 Java MessageQueue 与 NativeMessageQueue 的功
                 }
             } <span style="color: #859900;">else</span> {
                 <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#26159;&#34987; addFd &#20013; fd &#21796;&#37266;&#30340;, &#21017;&#26500;&#36896;&#19968;&#20010; response &#25918;&#21040;</span>
-                <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">mResponse &#20013;, Done &#26102;&#20250;&#22788;&#29702;.  </span>
+                <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">mResponse &#20013;, Done &#26102;&#20250;&#22788;&#29702;.</span>
                 <span style="color: #b58900;">ssize_t</span> <span style="color: #268bd2;">requestIndex</span> = mRequests.indexOfKey(fd);
                 <span style="color: #859900;">if</span> (requestIndex &gt;= 0) {
                     <span style="color: #b58900;">int</span> <span style="color: #268bd2;">events</span> = 0;
@@ -636,14 +641,13 @@ NativeMessageQueue, 但 Java MessageQueue 与 NativeMessageQueue 的功
         }
 <span style="color: #2aa198;">Done</span>: ;
 
-    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">Invoke pending message callbacks.</span>
     <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#20808;&#22788;&#29702;&#25152;&#26377; pending message</span>
     mNextMessageUptime = LLONG_MAX;
     <span style="color: #859900;">while</span> (mMessageEnvelopes.size() != 0) {
         <span style="color: #b58900;">nsecs_t</span> <span style="color: #268bd2;">now</span> = systemTime(SYSTEM_TIME_MONOTONIC);
         <span style="color: #859900;">const</span> <span style="color: #b58900;">MessageEnvelope</span>&amp; messageEnvelope = mMessageEnvelopes.itemAt(0);
         <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">mMessageEnvelopes &#26159;&#19968;&#20010; vector, &#20294;&#26159;&#26159;&#25353;&#29031; uptime &#26469;&#25490;&#24207;&#30340;.</span>
-        <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#25152;&#26377;uptime &#23567;&#20110; now &#30340;&#20250;&#34987;&#22788;&#29702; (handleMessage), </span>
+        <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">&#25152;&#26377;uptime &#23567;&#20110; now &#30340;&#20250;&#34987;&#22788;&#29702; (handleMessage),</span>
         <span style="color: #859900;">if</span> (messageEnvelope.uptime &lt;= now) {
             <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">Remove the envelope from the list.</span>
             <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">We keep a strong reference to the handler until the call to handleMessage</span>
@@ -761,7 +765,7 @@ epoll<sub>wait</sub> 返回或超时时根据 uptime 选择性的处理
 syncBarrier 实际上就是一种特殊的 Message: 它的 tagetHandler 为 null,
 当 MessageQueue 处理到这种 Message 时, 会停顿下来, 直到该 Message 被
 removeSyncBarrier 移除. 但 asynchronous 的 Message 不受 syncBarrier 的
-限制. 
+限制.
 </p>
 </div>
 </li></ol>
@@ -817,7 +821,7 @@ InputChannel.
 <div id="postamble" class="status">
 <p class="author">Author: wei.sun</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-01-30 Thu 13:54</p>
+<p class="date">Created: 2014-07-01 Tue 10:54</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

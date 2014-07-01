@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Android</title>
-<!-- 2014-03-06 Thu 17:30 -->
+<!-- 2014-07-01 Tue 10:54 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="wei.sun" />
@@ -1761,8 +1761,16 @@ java -Xmx512M -jar smali.jar out -o classes.dex
 </li>
 <li><code>[X]</code> Pair
 </li>
-<li><code>[X]</code> SparseArray
+<li>SparseArray
+<ol class="org-ol">
+<li>SparseArray 查找的性能与 AVL 树类似
 </li>
+<li>构造性能比 AVL 差很多, AVL 插入或删除节点时为 O(logn), 而
+SparseArray 插入或删除时需要 O(logn)+O(n), 因为需要移动数据元素.
+</li>
+</ol>
+</li>
+
 <li><code>[X]</code> TimingLogger
 </li>
 </ul>
@@ -2028,7 +2036,7 @@ see also <a href="#sec-1-22-2">1.22.2</a>
 <div id="postamble" class="status">
 <p class="author">Author: wei.sun</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-03-06 Thu 17:30</p>
+<p class="date">Created: 2014-07-01 Tue 10:54</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
