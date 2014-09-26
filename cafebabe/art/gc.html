@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>GC</title>
+<!-- 2014-09-26 Fri 10:54 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Wei Sun (孙伟)" />
+<link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">GC</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. GC</a>
+<ul>
+<li><a href="#sec-1-1">1.1. Space</a></li>
+<li><a href="#sec-1-2">1.2. AllocObject</a></li>
+<li><a href="#sec-1-3">1.3. CollectGarbageInternal</a></li>
+<li><a href="#sec-1-4">1.4. Collector</a></li>
+<li><a href="#sec-1-5">1.5. GC Daemon</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> GC</h2>
+<div class="outline-text-2" id="text-1">
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Space</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+ART 的 space 类似于 dalvik 中的 HeapSource-&gt;heap[], 代表一块可以用来分配
+的内存区域. 
+</p>
+
+<p>
+在 dalvik 中 HeapSource-&gt;heap[] 只有两项: 在 zygote 启动期间, heap[]只
+有一项 heap<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup>, 用来做为 zygote 启动时的 GC heap. zygote 启动完毕,
+fork 新的 java 进程前, zygote 使用的 heap<sup><a id="fnr.1.100" name="fnr.1.100" class="footref" href="#fn.1">1</a></sup> 会被移动到heap<sup><a id="fnr.2" name="fnr.2" class="footref" href="#fn.2">2</a></sup>, 然后
+dalvik 会再初始化一块内存做为新的 heap<sup><a id="fnr.1.100" name="fnr.1.100" class="footref" href="#fn.1">1</a></sup>, 用来做为后续 java 进程的 GC
+heap. 在任何时候, dalvik 都只使用 heap<sup><a id="fnr.1.100" name="fnr.1.100" class="footref" href="#fn.1">1</a></sup> 做为 GC heap 来分配对象.
+</p>
+
+<p>
+zygote pre-fork 时初始化一个新的 GC heap, 主要是为了防止后续 java 进程
+再写那块旧的 GC heap: 这会导致大量的 copy on write 开销. 
+</p>
+
+<p>
+在 ART 也有类似的机制, 不过 ART 设计的更好一些: 它抽象出几个 space:
+</p>
+
+<ol class="org-ol">
+<li>ImageSpace
+和 AOT 相关
+</li>
+<li>DlMallocSpace
+dalvik 上的 heap[] 相当于 DlMallocSpace, 即它是用 dlmalloc 来实现对
+象分配的. 
+
+<p>
+ART 上一般包含两个 DlMallocSpace: 
+</p>
+
+<ol class="org-ol">
+<li>ZygoteSpace
+这个 ZygoteSpace 保存在 continuous<sub>spaces</sub>_ 数组中, zygote
+pre-fork 后不再使用它分配内存
+</li>
+<li>alloc<sub>space</sub>_
+这个也保存在 continuous<sub>spaces</sub>_ 数组中, zygote pre-fork 后会使用
+它来分配内存, 因为很常用, 所以有一个单独的 alloc<sub>space</sub>_ 变量引用
+着它. 
+</li>
+</ol>
+</li>
+
+<li>LargeObjectSpace
+dalvik 中不存在类似概念, ART 使用 LargeObjectSpace 来分配大型
+primitive 数组. 该对象有两个子类: FreeListSpace 和 LargeObjectMapSpace
+</li>
+</ol>
+
+<p>
+另外, 根据 space 是否是连续的, 又分为 ContinuousSpace 和
+DiscontinuousSpace, 所谓连续, 是指整个 space 是否有一个固定的大小, 所有
+空间都从这个固定大小的空间里分配. 例如, ImageSpace, DlMallocSpace 是
+ContinuousSpace, 而 LargeObjectSpace 是 DiscontinuousSpace.
+</p>
+
+<p>
+ContinuousSpace 因为空间有固定的大小,所以可以使用 SpaceBitmap 和 card
+table 来标识对象.
+</p>
+
+<p>
+DiscontinuousSpace 因为空间大小不定, 无法使用 SpaceBitmap 来标识对象,
+它使用 SpaceSetMap 来标识对象, SpaceSetMap 是使用 std::set 实现的 bitmap.
+</p>
+</div>
+
+<div id="outline-container-sec-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> 关于 ZygoteSpace</h4>
+<div class="outline-text-4" id="text-1-1-1">
+<p>
+在最初的 alloc<sub>space</sub>_ 在 PreZygoteFork 时被转换为 ZygoteSpace 时, 会
+调用这个函数:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-c++">zygote_space-&gt;SetGcRetentionPolicy(<span style="color: #2aa198;">space</span>::kGcRetentionPolicyFullCollect);
+</pre>
+</div>
+
+<p>
+所谓的 GcRetentionPolicy 有三种选择:
+</p>
+
+<ol class="org-ol">
+<li>kGcRetentionPolicyNeverCollect,
+这种 space 中的对象永远不会被 GC. 例如 ImageSpace
+</li>
+
+<li>kGcRetentionPolicyAlwaysCollect,
+任何类型的 GC (Partial, Full) 都会 GC 这个 space 中的对象. 
+例如 LargeObjectSpace, DlMallocSpace 中的非 ZygoteSpace (例如 alloc<sub>space</sub>_)
+</li>
+
+<li>kGcRetentionPolicyFullCollect,
+只有在进行 FULL GC 时才对这个 space 的对象进行 GC. 例如 ZygoteSpace
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> AllocObject</h3>
+<div class="outline-text-3" id="text-1-2">
+<div class="org-src-container">
+
+<pre class="src src-text">Heap::AllocObject(Thread* self, mirror::Class* c, size_t byte_count) @ heap.cc
+  // &#23545;&#20110;&#22823;&#22411;&#30340; primitive &#25968;&#32452;, &#20250;&#34987;&#20998;&#37197;&#21040; large_object_space_ &#20013;
+  // art &#26377;&#20004;&#31181; large_object_space_ &#23454;&#29616;: FreeListSpace &#21644; LargeObjectMapSpace, &#21069;&#32773;&#22312;&#19968;&#22359;&#22823;&#30340; mmap &#31354;&#38388;&#19978;&#20351;&#29992; free list &#26469;&#20998;&#37197;
+  // &#21518;&#32773;&#29992; mmap &#30452;&#25509;&#20998;&#37197;. &#30446;&#21069;&#21482;&#20351;&#29992; LargeObjectMapSpace
+  bool large_object_allocation = byte_count &gt;= large_object_threshold_ &amp;&amp; have_zygote_space_ &amp;&amp; c-&gt;IsPrimitiveArray();
+  if (UNLIKELY(large_object_allocation)):
+    obj = Allocate(self, large_object_space_, byte_count, &amp;bytes_allocated);
+  else:
+    obj = Allocate(self, alloc_space_, byte_count, &amp;bytes_allocated);
+      // ART &#30340; allocate &#19982; dalvik &#31867;&#20284;, &#20063;&#26159;&#19968;&#20010;&#22810;&#27425;&#23581;&#35797;&#30340;&#36807;&#31243;, &#20013;&#38388;&#20276;&#38543;&#30528;
+      // GC, &#22788;&#29702; SoftReferences, GC heap footprint grow &#31561;&#36807;&#31243;.
+      Object* Heap::Allocate(Thread* self, T* space, size_t alloc_size,...)
+        ptr = TryToAllocate(self, space, alloc_size, false, bytes_allocated);
+          if (UNLIKELY(IsOutOfMemoryOnAllocation(alloc_size, grow))):
+            // &gt;&gt;&gt; IsOutOfMemoryOnAllocation
+            if (UNLIKELY(new_footprint &gt; growth_limit_)):
+              return true;
+            // ART &#40664;&#35748;&#20250;&#20351;&#29992; concurrent_gc, &#25152;&#20197; concurrent_gc_ &#19968;&#33324;
+            // &#20026;&#30495;, &#25152;&#20197;&#21518;&#38754;&#30340;&#20195;&#30721;&#22522;&#26412;&#19981;&#20250;&#36305;&#21040;...&#32780; dalvik &#20250;&#36305;&#21040;&#31867;&#20284;&#19979;&#38754;
+            // &#30340;&#20195;&#30721;. &#25152;&#20197; concurrent_gc_ &#26159;&#19981;&#32771;&#34385; grow &#21442;&#25968;&#30340;. 
+            if (!concurrent_gc_):
+              if (!grow):
+                return true;
+              else:
+                max_allowed_footprint_ = new_footprint;
+            // &lt;&lt;&lt; IsOutOfMemoryOnAllocation  
+            return NULL;
+
+        if (ptr != NULL):
+          return ptr;
+        return AllocateInternalWithGc(self, space, alloc_size, bytes_allocated);
+          last_gc = WaitForConcurrentGcToComplete(self);
+          if (last_gc != collector::kGcTypeNone):
+            ptr = TryToAllocate(self, space, alloc_size, false, bytes_allocated);
+            if (ptr != NULL) return ptr;
+          // last_gc &#21453;&#26144;&#30340;&#26159;&#26368;&#36817;&#19968;&#27425; concurrent gc &#36827;&#34892;&#30340;&#26159;&#21738;&#31181; gc
+          // &#20540;&#36234;&#23567;&#34920;&#29616;&#36234;&#36731;&#37327;&#32423;. &#29616;&#22312;&#19968;&#20849;&#26377;&#19977;&#31181; gc, &#20174;&#36731;&#21040;&#37325;&#20381;&#27425;&#26159;
+          // sticky -&gt; partial -&gt; full
+          // sticky &#34920;&#31034;&#21482;&#22238;&#25910;&#19978;&#19968;&#27425; gc &#20197;&#26469;&#26032;&#20998;&#37197;&#30340;&#23545;&#35937;
+          // partial &#34920;&#31034;&#19981;&#22238;&#25910; zygote space
+          // full &#34920;&#31034;&#23436;&#20840;&#22238;&#25910;&#25152;&#26377;&#23545;&#35937;
+          // for &#24490;&#29615;&#30340;&#36215;&#28857;&#26159; last_gc+1, &#34920;&#31034;&#20351;&#29992;&#27604;&#26368;&#36817;&#19968;&#27425; concurrent gc
+          // &#20351;&#29992;&#30340; gc type &#26356;&#37325;&#37327;&#32423;&#30340; collector
+          for (size_t i = static_cast&lt;size_t&gt;(last_gc) + 1;
+            i &lt; static_cast&lt;size_t&gt;(collector::kGcTypeMax); ++i):
+            // &#23581;&#35797;&#35843;&#29992;&#27599;&#19968;&#31181; collector, &#20294;&#20107;&#20808;&#38656;&#35201;&#28385;&#36275;&#19968;&#23450;&#30340;&#26465;&#20214;
+            collector::GcType gc_type = static_cast&lt;collector::GcType&gt;(i);
+            switch (gc_type):
+              case collector::kGcTypeSticky:
+                // &#24403;&#21487;&#29992;&#20869;&#23384;&#24456;&#23569;&#26102;&#19981;&#20351;&#29992; sticky gc
+                run_gc = alloc_space_size &gt; min_alloc_space_size_for_sticky_gc_ &amp;&amp;
+                            alloc_space_-&gt;Capacity() - alloc_space_size &gt;= min_remaining_space_for_sticky_gc_;
+              case collector::kGcTypePartial:
+                // &#21482;&#26377;&#22312;&#26377; zygote space &#26102;&#20351;&#29992; partial gc &#25165;&#26377;&#24847;&#20041;
+                run_gc = have_zygote_space_;
+              case collector::kGcTypeFull:
+                run_gc = true;
+          // end for
+          if run_gc:
+            CollectGarbageInternal(gc_type, kGcCauseForAlloc, false);
+            TryToAllocate(self, space, alloc_size, false, bytes_allocated);
+          // &#22914;&#26524;&#19978;&#19968;&#27493;&#20173;&#27809;&#26377;&#20998;&#37197;&#21040;&#20869;&#23384;, &#20877;&#35843;&#29992;&#19968;&#27425; TryToAllocate, &#20294;&#23558;
+          // grow &#32622;&#20026; true. (&#20294;&#22312; concurrent_gc_ &#26465;&#20214;&#19979;, &#36825;&#19968;&#21442;&#25968;&#26159;&#19981;&#36215;&#20316;&#29992;&#30340;...)
+          ptr = TryToAllocate(self, space, alloc_size, true, bytes_allocated);
+          // &#33509;&#36824;&#26159;&#19981;&#34892;, &#22238;&#25910; SoftReferences
+          CollectGarbageInternal(collector::kGcTypeFull, kGcCauseForAlloc, true);
+          TryToAllocate(self, space, alloc_size, true, bytes_allocated);
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> CollectGarbageInternal</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+CollectGarbageInternal 是进行 GC 的入口, 无论 ConcurrentGC 线程, 还是
+AllocObject 导致的 GC, 或者强制进行的 GC, 最终都调用该接口. 
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">// gc_type &#20195;&#34920;&#35201;&#36827;&#34892;&#20309;&#31181; gc: sticky, partial, full
+// gc_cause &#34920;&#31034; gc &#30340;&#21407;&#22240;: alloc, background(concurrent), explicit
+// clear_soft_references: &#26159;&#21542;&#28165;&#38500; soft reference
+// &#30001;&#20110; ART &#19968;&#33324;&#20351;&#29992; concurrent_gc_, &#25152;&#20197;&#23454;&#38469;&#19978;&#36825;&#20010;&#20989;&#25968;&#30340;&#26576;&#20123;&#21442;&#25968;&#32452;&#21512;
+// &#26159;&#19981;&#23384;&#22312;&#30340;, &#20363;&#22914;:
+// 1. &#33509; gc_cause &#20026; concurrent, &#21017; gc_type &#21482;&#33021;&#26159; sticky &#25110; partial
+// 2. &#33509; gc_cause &#20026; explicit, &#21017; gc_type &#21482;&#33021;&#26159; full
+collector::GcType Heap::CollectGarbageInternal(collector::GcType gc_type, GcCause gc_cause,bool clear_soft_references):
+  bool start_collect = false;
+  // &#33719;&#24471; gc_complete_lock_, &#38450;&#27490;&#26377;&#20854;&#20182;&#30340; gc &#21516;&#26102;&#36827;&#34892;
+  // &#33509;&#26080;&#27861;&#33719;&#24471;&#38145;, &#21017;&#31561;&#24453; concurrent_gc &#23436;&#25104;
+  while (!start_collect):
+    MutexLock mu(self, *gc_complete_lock_);
+    if (!is_gc_running_)"
+      is_gc_running_ = true;
+      start_collect = true;
+    if (!start_collect):
+      WaitForConcurrentGcToComplete(self);
+
+  // &#26681;&#25454; gc_type &#36873;&#25321; collector, mark_sweep_collectors_ &#26159;&#19982; Heap &#19968;
+  // &#36215;&#21021;&#22987;&#21270;&#30340;, &#21253;&#21547;&#20845;&#20010; collector:
+  // 1. full no concurrent
+  // 2. partial no concurrent
+  // 3. sticky no concurrent
+  // 4. full concurrent
+  // 5. partial concurrent
+  // 6. sticky concurrent
+
+  // &#26681;&#25454; gc_type &#36873;&#25321;&#23545;&#24212;&#30340; collector
+  for (const auto&amp; cur_collector : mark_sweep_collectors_) {
+    if (cur_collector-&gt;IsConcurrent() == concurrent_gc_
+        &amp;&amp; cur_collector-&gt;GetGcType() == gc_type):
+      collector = cur_collector;
+      break;
+
+  collector-&gt;clear_soft_references_ = clear_soft_references;
+  collector-&gt;Run();
+
+  // &#37322;&#25918; gc_complete_lock_, &#36890;&#30693;&#20854;&#20182;&#31561;&#24453; gc &#30340;&#32447;&#31243;
+  MutexLock mu(self, *gc_complete_lock_);
+  is_gc_running_ = false;
+  last_gc_type_ = gc_type;
+  // Wake anyone who may have been waiting for the GC to complete.
+  gc_complete_cond_-&gt;Broadcast(self);
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Collector</h3>
+<div class="outline-text-3" id="text-1-4">
+<div class="org-src-container">
+
+<pre class="src src-text">void GarbageCollector::Run() @ garbage_collector.cc
+  ThreadList* thread_list = Runtime::Current()-&gt;GetThreadList();
+  InitializePhase(); @ mark_sweep.cc
+    mark_stack_ = heap_-&gt;mark_stack_.get();
+    // &#36825;&#20123; reference list &#22312; gc &#36807;&#31243;&#20013;&#20250;&#34987;&#36171;&#20540;
+    soft_reference_list_ = nullptr;
+    weak_reference_list_ = nullptr;
+    finalizer_reference_list_ = nullptr;
+    phantom_reference_list_ = nullptr;
+    cleared_reference_list_ = nullptr;
+    FindDefaultMarkBitmap();
+  // &#33509; concurrent_gc_ &#20026; false, &#21017;&#20351;&#29992; stop-the-world &#26041;&#24335;:
+  // suspend-&gt;mark-&gt;sweep-&gt;resume  
+  if (!IsConcurrent()):
+    thread_list-&gt;SuspendAll();
+    MarkingPhase();
+    ReclaimPhase();
+    thread_list-&gt;ResumeAll();
+  else:
+    ReaderMutexLock mu(self, *Locks::mutator_lock_);
+    MarkingPhase();
+    thread_list-&gt;SuspendAll();
+    HandleDirtyObjectsPhase();
+    thread_list-&gt;ResumeAll();
+    ReclaimPhase();
+  FinishPhase();
+</pre>
+</div>
+</div>
+<div id="outline-container-sec-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> MarkingPhase</h4>
+<div class="outline-text-4" id="text-1-4-1">
+<div class="org-src-container">
+
+<pre class="src src-text">MarkingPhase @ mark_sweep.cc
+  // &#25152;&#35859; BindBitmaps, &#23454;&#38469;&#25351;&#30340;&#26159; bind mark bitmaps, &#21363;&#22312;&#25195;&#25551;&#20043;&#21069;&#23601;
+  // &#25226;&#19968;&#20123;&#28385;&#36275;&#26465;&#20214;&#30340;&#23545;&#35937;&#22312; mark bitmaps &#20013;&#32622;&#20301;, &#20363;&#22914;:
+  // 1. &#33509;&#19968;&#20010; space &#23646;&#20110; kGcRetentionPolicyNeverCollect, &#21017;&#35813; space
+  // &#20013;&#30340;&#25152;&#26377; live bitmaps &#20013;&#30340;&#23545;&#35937;&#37117;&#34987;&#25918;&#21040; mark bitmaps &#20013;
+  // 2. &#33509;&#24403;&#21069;&#30340; collector &#20026; partial_mark_sweep, &#21017; zygote space &#30340;
+  // live bitmaps &#20250;&#34987;&#22797;&#21046;&#21040; mark bitmaps, &#34920;&#31034; zygote space &#22312;
+  // partial_mark_sweep &#26102;&#19981;&#20250;&#34987;&#22238;&#25910;
+  // 3. &#33509;&#24403;&#21069;&#20026; sticky_mark_sweep, &#21017; DlMallocSpace &#20013;&#30340; live bitmaps
+  // &#20063;&#20250;&#34987;&#22797;&#21046;&#21040; mark bitmaps, &#36825;&#20010;&#30475;&#36215;&#26469;&#26377;&#20123;&#22855;&#24618;: live bitmaps &#20013;&#19981;
+  // &#19968;&#23450;&#37117;&#26159;&#34987; mark &#30340;&#23545;&#35937;&#21834;...
+  // &#19982; dalvik &#19981;&#21516;&#30340;&#26159;, &#26032;&#20998;&#37197;&#30340;&#23545;&#35937;&#19981;&#20445;&#23384;&#22312; live bitmaps, &#32780;&#26159;&#20808;&#20445;&#23384;
+  // &#22312; allocation stack &#20013;, &#25152;&#20197; live bitmaps &#20195;&#34920;&#30340;&#23454;&#38469;&#19978;&#26159;&#19978;&#19968;&#27425; GC
+  // &#32467;&#26463;&#26102;&#30340; mark bitmaps. sticky_mark_sweep &#20026;&#20102;&#21152;&#24555; mark &#19982; sweep
+  // &#30340;&#36807;&#31243;, &#20551;&#35774;&#19978;&#19968;&#27425; GC &#32467;&#26463;&#26102;&#30340; mark bitmaps &#22312;&#36825;&#19968;&#27425; GC &#26102;&#36824;&#26159;&#26377;
+  // &#25928;&#30340;, &#21363;&#19978;&#19968;&#27425; GC &#26102;&#30340;&#23545;&#35937;&#37117;&#19981;&#20250;&#34987;&#37322;&#25918;: sticky_mark_sweep &#21482;&#20250;&#25195;
+  // &#25551;&#37027;&#20123;&#26032;&#22686;&#30340;&#23545;&#35937;
+  // &#20026;&#20102;&#20248;&#21270; GC, collector &#21487;&#20197;&#20570;&#19968;&#20123;&#20551;&#35774;, &#20294;&#23427;&#21482;&#21487;&#20197;&#20551;&#35774;&#26576;&#23545;&#35937;&#34987;
+  // mark, &#32780;&#19981;&#33021;&#20551;&#35774;&#26576;&#23545;&#35937;&#27809;&#26377;&#34987; mark.
+  BindBitmaps();
+  FindDefaultMarkBitmap();
+  // Process dirty cards and add dirty cards to mod union tables.
+  heap_-&gt;ProcessCards(timings_);
+
+  // SwapStacks &#26159;&#23558; allocation_stack_ &#19982; live_stack_ &#20132;&#25442;, &#20174;&#27492;&#20197;&#21518;,
+  // &#26032;&#20998;&#37197;&#30340;&#23545;&#35937;&#20250;&#34987; push &#21040;&#26032;&#30340; allocation_stack_ &#20013;, &#32780;&#20043;&#21069;
+  // allocation_stack_ &#30340;&#20869;&#23481;&#29616;&#22312;&#20301;&#20110; live_stack_ &#20013;.
+  // &#21518;&#32493; sticky_mark_sweep &#20250;&#20351;&#29992; live_stack_ &#26469;&#26597;&#25214;&#26368;&#36817;&#26032;&#20998;&#37197;&#30340;&#23545;&#35937;
+  heap_-&gt;SwapStacks();
+
+  if (Locks::mutator_lock_-&gt;IsExclusiveHeld(self)):
+    // If we exclusively hold the mutator lock, all threads must be suspended.
+    MarkRoots();
+  else:  
+    MarkThreadRoots(self);
+      MarkNonThreadRoots();
+  MarkConcurrentRoots();
+
+  // &#33267;&#27492;, gc root &#37117;&#24050;&#32463;&#34987; mark, &#19979;&#38754;&#35201;&#25195;&#25551; mark stack &#26469; mark &#25152;&#26377;&#21487;
+  // &#36798;&#30340;&#23545;&#35937;
+  MarkReachableObjects();
+    // &#23545;&#20110; mark_sweep
+    // &#23558; live_stack_ &#20013;&#30340;&#23545;&#35937;&#21152;&#20837;&#21040; live_bitmap_ &#20013;
+    accounting::ObjectStack* live_stack = heap_-&gt;GetLiveStack();
+    heap_-&gt;MarkAllocStack(heap_-&gt;alloc_space_-&gt;GetLiveBitmap(),
+        heap_-&gt;large_object_space_-&gt;GetLiveObjects(), live_stack);
+    live_stack-&gt;Reset();
+    RecursiveMark();
+
+    // &#23545;&#20110; sticky_mark_sweep
+    // mark_stack &#34987; clear ...
+    // &#22240;&#20026; sticky_mark_sweep &#30340;&#30446;&#26631;&#26159;&#28165;&#38500;&#37027;&#20123;&#26032;&#20998;&#37197;&#30340;&#23545;&#35937; (&#20301;&#20110;
+    // live_stack_&#20013;), &#33509;&#20351;&#29992;&#19978;&#19968;&#27425;&#30340; mark_bitmap_ + &#24403;&#21069;&#30340; CardTable
+    // + &#24403;&#21069;&#30340; live_stack_, &#20854;&#23454;&#26159;&#21487;&#20197;&#20445;&#35777; live_stack_ &#20013;&#27491;&#22312;&#20351;&#29992;&#30340;&#23545;&#35937;
+    // &#34987; mark &#30340;.
+    mark_stack_-&gt;Reset();
+    RecursiveMarkDirtyObjects(false, accounting::CardTable::kCardDirty - 1);
+      // &#25195;&#25551; CardTable &#20013;&#20462;&#25913;&#30340;&#23545;&#35937;
+      ScanGrayObjects(paused, minimum_age);
+      ProcessMarkStack(paused);
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4-2" class="outline-4">
+<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> ReclaimPhase</h4>
+<div class="outline-text-4" id="text-1-4-2">
+<div class="org-src-container">
+
+<pre class="src src-text">ReclaimPhase
+  if (!IsConcurrent()):
+    ProcessReferences(self);
+  if (IsConcurrent()):
+    // &#23558; allocation_stack_ &#20013;&#30340;&#23545;&#35937;&#20174; mark_bitmap_ &#20013;&#31227;&#38500;...
+    // &#39318;&#20808;, &#23558; allocation_stack_ &#20013;&#30340;&#23545;&#35937;&#20174; mark_bitmap_ &#20013;&#31227;&#38500;&#24182;&#19981;&#20250;
+    // &#23548;&#33268;&#21518;&#38754;&#22312; sweep &#26102;&#38169;&#35823;&#30340;&#23558;&#23545;&#35937;&#21024;&#38500;, &#22240;&#20026; allocation_stack_ &#20013;
+    // &#30340;&#23545;&#35937;&#26159;&#22312;&#26412;&#27425; GC &#24320;&#22987;&#21040;&#29616;&#22312;&#20998;&#37197;&#30340;&#26032;&#23545;&#35937;, &#36825;&#20123;&#23545;&#35937;&#22312;
+    // live_bitmap_ &#20013;&#24182;&#27809;&#26377;&#35760;&#24405;. (live_bitmap_ &#22312; GC &#26368;&#21518;&#38454;&#27573;&#36890;&#36807;
+    // swap &#25165;&#20250;&#36171;&#20540;)
+    // &#21478;&#22806;, &#24403;&#21069;&#30340; allocation_stack_ &#21363;&#26159;&#19979;&#27425;&#30340; live_stack_, &#24403;&#21069;&#30340;
+    // mark_bitmap_ &#21363;&#26159;&#19979;&#27425;&#30340; live_bitmap_, &#32780;&#23545;&#20110;&#19979;&#27425; sticky_mark_sweep
+    // &#26469;&#35828;, live_bitmap_ &#20250;&#34987;&#30452;&#25509;&#22797;&#21046;&#21040; mark_bitmap_, &#25152;&#20197;, &#33509;&#24403;&#21069;
+    // allocation_stack_ &#20013;&#30340;&#23545;&#35937;&#22312; mark_bitmap_ &#26377;&#35760;&#24405;, &#21017;&#19979;&#27425;
+    // sticky_mark_sweep &#26102;&#23427;&#32943;&#23450;&#26080;&#27861;&#34987; GC, &#20294;&#26159;, &#22914;&#26524;&#25226;&#36825;&#20010;&#23545;&#35937;&#20174;&#24403;&#21069;
+    // mark_bitmap_ &#20013;&#31227;&#38500;, &#24182;&#19981;&#24433;&#21709;&#19979;&#27425; sticky_mark_sweep &#30340;&#27491;&#30830;&#24615;:
+    // &#22914;&#26524;&#36825;&#20010;&#23545;&#35937;&#30495;&#30340;&#20173;&#34987;&#24341;&#29992;&#30528;, &#21017;&#19979;&#27425; sticky_mark_sweep &#26102;&#36824;&#26159;&#33021;&#36890;&#36807;
+    // MarkingPhase mark &#21040;&#23427;. 
+
+    for (mirror::Object** it = allocation_stack-&gt;Begin(); it != end; ++it) {
+      const Object* obj = *it;
+      if (obj != NULL):
+        UnMarkObjectNonNull(obj);
+
+    Sweep(false);
+      // &#23545;&#20110; mark_sweep &#26469;&#35828;, &#30452;&#25509;&#26681;&#25454; live_bitmap_ &#21644;
+      // mark_bitmap_ &#26469; sweep
+
+      // &#23545;&#20110; sticky_mark_sweep &#26469;&#35828;, &#21017;&#26159;&#26681;&#25454; live_stack_ &#21644;
+      // mark_bitmap_ &#26469; sweep: &#21482;&#26377; live_stack_ &#20013;&#30340;&#23545;&#35937;&#25165;&#21487;&#33021;&#34987;
+      // sweep
+    SwapBitmaps();
+    UnBindBitmaps();
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> GC Daemon</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+dalvik 在初始化时会通过 gcDaemonThread 函数启动一个名为 "GC" 的线程负
+责 concurrent gc. 
+</p>
+
+<p>
+ART 中也存在类似的线程, 但它是一个 java daemon, 不是一个 native 的 thread.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">StartDaemonThreads @ runtime.cc
+  Daemons.start @ daemons.java
+    ReferenceQueueDaemon.INSTANCE.start();
+    FinalizerDaemon.INSTANCE.start();
+    FinalizerWatchdogDaemon.INSTANCE.start();
+    // &#21518;&#38754;&#20004;&#20010;&#26159; ART &#26032;&#22686;&#30340; daemon
+    HeapTrimmerDaemon.INSTANCE.start();
+    GCDaemon.INSTANCE.start();
+      while (count == 0):
+        wait();
+      --count;
+      VMRuntime.getRuntime().concurrentGC();
+        Runtime::Current()-&gt;GetHeap()-&gt;ConcurrentGC(self);
+          if (WaitForConcurrentGcToComplete(self) == collector::kGcTypeNone): @ heap.cc
+            CollectGarbageInternal(next_gc_type_, kGcCauseBackground, false);
+</pre>
+</div>
+
+<p>
+至于 GCDaemon 被唤醒的条件, 与 dalvik 是一致的: 当前内存低于某个阀值时,
+runtime 会通过 RequestConcurrentGC 唤醒 GCDaemon, 进行 concurrentGC.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">Heap::AllocObject @ heap.cc
+  if (UNLIKELY(static_cast&lt;size_t&gt;(num_bytes_allocated_) &gt;= concurrent_start_bytes_)):
+    RequestConcurrentGC(self);
+      GCDaemon.requestGC @ Daemons.java
+        ++count;
+        notify();
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p>DEFINITION NOT FOUND.</p></div>
+
+<div class="footdef"><sup><a id="fn.2" name="fn.2" class="footnum" href="#fnr.2">2</a></sup> <p>DEFINITION NOT FOUND.</p></div>
+
+
+</div>
+</div></div>
+<div id="postamble" class="status">
+<p class="author">Author: Wei Sun (孙伟)</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2014-09-26 Fri 10:54</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.50.4 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

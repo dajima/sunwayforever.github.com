@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Android DEX &amp; ODEX</title>
-<!-- 2014-07-01 Tue 10:54 -->
+<!-- 2014-09-26 Fri 10:54 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="wei.sun" />
@@ -155,7 +155,7 @@ adb shell dalvikvm -cp /data/Test.apk Hello
 <h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> dex 基于寄存器</h4>
 <div class="outline-text-4" id="text-1-2-1">
 <p>
-java -jar smali.jar classes.dex
+java -jar baksmali.jar classes.dex -o ./
 </p>
 
 <pre class="example">
@@ -313,226 +313,14 @@ Class #1            -
 <a href="http://www.addictivetips.com/mobile/what-is-odex-and-deodex-in-android-complete-guide/">http://www.addictivetips.com/mobile/what-is-odex-and-deodex-in-android-complete-guide/</a>
 </p>
 </div>
-<div id="outline-container-sec-1-3-1" class="outline-4">
-<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> dexopt</h4>
-<div class="outline-text-4" id="text-1-3-1">
-<p>
-dexopt is located in dalvik/dexopt/OptMain.cpp
-</p>
-</div>
-<div id="outline-container-sec-1-3-1-1" class="outline-5">
-<h5 id="sec-1-3-1-1"><span class="section-number-5">1.3.1.1</span> dexopt 的作用</h5>
-<div class="outline-text-5" id="text-1-3-1-1">
-<ul class="org-ul">
-<li>verification
-</li>
-
-<li>optimization
-/dalvik/vm/analysis/Optimize.cpp::optimizeMethod
-
-<ol class="org-ol">
-<li>quick替换 与 符号解析
-
-<p>
-将本来 java 在类加载时完成的符号解析的工作拿出来,提前将符号解析出
-来, 并且使用相应的 `quick' 指令代替原来的基于常量池符号引用的指令,
-例如: 将之前的
-</p>
-
-<pre class="example">
-invoke-virtual {v0,v1},Ljava/io/PrintStream;-&gt;println(Ljava/lang/String;)V
-</pre>
-
-<p>
-替换为
-</p>
-
-<pre class="example">
-invoke-virtual-quick {v0,v1},vtable #0x3b
-</pre>
-</li>
-
-<li>inline method
-</li>
-
-<li>&#x2026;
-</li>
-</ol>
-</li>
-
-<li>register map
-</li>
-</ul>
-</div>
-</div>
-<div id="outline-container-sec-1-3-1-2" class="outline-5">
-<h5 id="sec-1-3-1-2"><span class="section-number-5">1.3.1.2</span> There are three ways to launch dexopt</h5>
-<div class="outline-text-5" id="text-1-3-1-2">
-<ol class="org-ol">
-<li>From the VM.  This takes a dozen args, one of which is a file
-descriptor that acts as both input and output.  This allows us to
-remain ignorant of where the DEX data originally came from.
-</li>
-
-<li>From installd or another native application.  Pass in a file
-descriptor for a zip file, a file descriptor for the output, and a
-filename for debug messages.  Many assumptions are made about
-what's going on (verification + optimization are enabled, boot
-class path is in BOOTCLASSPATH, etc).
-</li>
-
-<li>On the host during a build for preoptimization. This behaves almost
-the same as (2), except it takes file names instead of file
-descriptors.
-</li>
-</ol>
-</div>
-</div>
-</div>
-
-<div id="outline-container-sec-1-3-2" class="outline-4">
-<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> dex 何时被 dexopt</h4>
-<div class="outline-text-4" id="text-1-3-2">
-<ol class="org-ol">
-<li>PMS.performBootDexOpt
-PMS 启动时
-</li>
-<li>AMS.ensurePackageDexOpt
-AMS启动应用之前
-</li>
-<li>dvmRawDexFileOpen
-ClassLoader 初始化时
-</li>
-<li>app 被安装时
-</li>
-</ol>
-</div>
-</div>
-
-<div id="outline-container-sec-1-3-3" class="outline-4">
-<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> odex 如何被 ClassLoader 加载</h4>
-<div class="outline-text-4" id="text-1-3-3">
-</div><div id="outline-container-sec-1-3-3-1" class="outline-5">
-<h5 id="sec-1-3-3-1"><span class="section-number-5">1.3.3.1</span> context class loader</h5>
-<div class="outline-text-5" id="text-1-3-3-1">
-<p>
-当 PathClassLoader 初始化时, 会初始化 DexFile, 相当的会设置对应的 odex 的路
-径.
-</p>
-
-<ol class="org-ol">
-<li>ContextImpl.getClassLoader 最终返回的是一个 PathClassLoader
-</li>
-
-<li>PathClassLoader的构造函数
-<div class="org-src-container">
-
-<pre class="src src-java"><span style="color: #859900;">public</span> PathClassLoader(<span style="color: #b58900;">String</span> <span style="color: #268bd2;">dexPath</span>, <span style="color: #b58900;">ClassLoader</span> <span style="color: #268bd2;">parent</span>) {
-    <span style="color: #859900;">super</span>(dexPath, <span style="color: #2aa198;">null</span>, <span style="color: #2aa198;">null</span>, parent);
-}
-</pre>
-</div>
-
-<p>
-其中, 基类的第一个参数表示 apk/jar, 第二个参数表示
-optimizedDirectory, 表示 odex 放置在哪里, 以后查找和生成 odex 时会使用
-该目录, 若该参数为 null, 则表示使用默认的 `/data/dalvik-cache/`
-</p>
-</li>
-
-<li>PathClassLoader 的基类: BaseDexClassLoader 的构造函数
-<div class="org-src-container">
-
-<pre class="src src-java"><span style="color: #859900;">public</span> BaseDexClassLoader(<span style="color: #b58900;">String</span> <span style="color: #268bd2;">dexPath</span>, <span style="color: #b58900;">File</span> <span style="color: #268bd2;">optimizedDirectory</span>,
-                          <span style="color: #b58900;">String</span> <span style="color: #268bd2;">libraryPath</span>, <span style="color: #b58900;">ClassLoader</span> <span style="color: #268bd2;">parent</span>) {
-    <span style="color: #859900;">super</span>(parent);
-    <span style="color: #859900;">this</span>.originalPath = dexPath;
-    <span style="color: #859900;">this</span>.pathList =
-        <span style="color: #859900;">new</span> <span style="color: #b58900;">DexPathList</span>(<span style="color: #859900;">this</span>, dexPath, libraryPath, optimizedDirectory);
-}
-</pre>
-</div>
-
-<p>
-其中 optimizedDirectory 为 null, 表示使用默认的 `/data/dalvik-cache/`
-</p>
-</li>
-
-<li>DexPathList 构造函数
-
-<div class="org-src-container">
-
-<pre class="src src-text">this.dexElements = makeDexElements(splitDexPath(dexPath), optimizedDirectory);
-  dex = loadDexFile(file, optimizedDirectory);
-    if (optimizedDirectory == null):
-      return new DexFile(file);
-        mCookie = openDexFile(sourceName, outputName, flags);
-          Dalvik_dalvik_system_DexFile_openDexFile(const u4* args,)
-            dvmRawDexFileOpen(sourceName, outputName, &amp;pRawDexFile,)
-              if (odexOutputName == NULL):
-                // &#29983;&#25104; odex &#23545;&#24212;&#30340;&#25991;&#20214;&#21517;.
-                cachedName = dexOptGenerateCacheFileName(fileName,  NULL);
-              optFd = dvmOpenCachedDexFile(fileName, cachedName, modTime,);
-              ...
-    else:
-      String optimizedPath = optimizedPathFor(file, optimizedDirectory);
-      return DexFile.loadDex(file.getPath(), optimizedPath, 0);
-</pre>
-</div>
-</li>
-</ol>
-</div>
-</div>
-
-<div id="outline-container-sec-1-3-3-2" class="outline-5">
-<h5 id="sec-1-3-3-2"><span class="section-number-5">1.3.3.2</span> boot class loader</h5>
-<div class="outline-text-5" id="text-1-3-3-2">
-<div class="org-src-container">
-
-<pre class="src src-text">app_process.main()
-  AndroidRuntime::start
-    AndroidRuntime::startVM
-      JNI_CreateJavaVM
-        dvmStartup
-          dvmClassStartup()
-            // bootClassPathStr &#21253;&#25324; core.jar, bouncycastle.jar ...
-            processClassPath(gDvm.bootClassPathStr, true);
-              foreach entry in bootClassPathStr:
-                prepareCpe(&amp;entry, isBootstrap);
-                  dvmRawDexFileOpen(cpe-&gt;fileName, NULL, &amp;pRawDexFile, isBootstrap);
-</pre>
-</div>
-</div>
-</div>
-</div>
-
-<div id="outline-container-sec-1-3-4" class="outline-4">
-<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> ClassLoader 如何从 odex 加载类</h4>
-<div class="outline-text-4" id="text-1-3-4">
-<pre class="example">
-ClassLoader -&gt; DexPathList -&gt; DexFile -&gt; RawDexFile -&gt; DvmDex
-</pre>
-
-<div class="org-src-container">
-
-<pre class="src src-text">BaseDexClassLoader.findClass
-  DexPathList.findClass
-    DexFile.loadClassBinaryName
-      Dalvik_dalvik_system_DexFile_defineClass()
-        DvmDex* pDvmDex = dvmGetRawDexFileDex(pDexOrJar-&gt;pRawDexFile);
-        clazz = dvmDefineClass(pDvmDex, descriptor, loader);
-</pre>
-</div>
-</div>
-</div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: wei.sun</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-07-01 Tue 10:54</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
+<p class="date">Created: 2014-09-26 Fri 10:54</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.50.4 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

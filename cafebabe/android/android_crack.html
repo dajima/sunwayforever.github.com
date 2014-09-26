@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Android Crack: Injection, Hook, Pack, etc</title>
+<!-- 2014-09-26 Fri 10:54 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Wei Sun (孙伟)" />
+<link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Android Crack: Injection, Hook, Pack, etc</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Android Crack: Injection, Hook, Pack</a>
+<ul>
+<li><a href="#sec-1-1">1.1. Xposed</a></li>
+<li><a href="#sec-1-2">1.2. Cydia substrate</a></li>
+<li><a href="#sec-1-3">1.3. libinject</a></li>
+<li><a href="#sec-1-4">1.4. 梆梆加固</a></li>
+<li><a href="#sec-1-5">1.5. To summaries</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Android Crack: Injection, Hook, Pack</h2>
+<div class="outline-text-2" id="text-1">
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Xposed</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+通过改写 app<sub>process</sub> 和修改 clazz-&gt;method 为自定义的 native function
+对任意 java 函数进行 hook.
+</p>
+
+<p>
+xposed 的启动过程:
+</p>
+<ol class="org-ol">
+<li>修改了 app<sub>process</sub>, 在启动 app<sub>process</sub> 时做以下几件事:
+<ol class="org-ol">
+<li>注册 XposedBridge 需要使用的 native 函数(通过
+register<sub>de</sub><sub>robv</sub><sub>android</sub><sub>xposed</sub><sub>XposedBridge</sub>), 主要的要注册的函
+数是 hookMethodNative
+</li>
+<li>通过 addXposedToClasspath 把 XposedBridge.jar 加入到 classPath
+中
+</li>
+<li>通过 dalvik 启动 XposedBridge.main, 而不是 ZygoteInit
+</li>
+</ol>
+</li>
+</ol>
+
+<p>
+XposedBridge.main 主要是做以下几件事:
+</p>
+<ol class="org-ol">
+<li>initXbridgeZygote, 这个函数的主要功能是 hook handleBindApplication
+这个函数, 在应用启动时就会调用 XposedBridge 定义的相应的 hook, 进而
+调用 XC<sub>LoadPackage</sub>.callAll(lpparam), 后者会对所有注册的 Xposed 模
+块调用相应的 callback.
+</li>
+<li>loadModules,通过扫描 xposed 自身维护的 conf/module.list 扫描所有已
+安装的模块, 然后将各个模块中定义的 callback 加入到上一步提到的
+XC<sub>LoadPackage</sub> 中.
+</li>
+<li>调用原始的 ZygoteInit
+</li>
+</ol>
+
+<p>
+各个模块的 callback 在应用启动时被调用, 相应的 callback 函数会进一步通
+过 findAndHookMethod 来 hook 更多的函数.
+</p>
+</div>
+<div id="outline-container-sec-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> findAndHookMethod</h4>
+<div class="outline-text-4" id="text-1-1-1">
+<p>
+xposed 的核心是 findAndHookMethod 函数.
+</p>
+
+<p>
+这个函数最终会调用到 xposed framework 中定义的 hookMethodNative 中,
+hookMethodNative 会调用以下函数:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c++">method-&gt;nativeFunc = &amp;xposedCallHandler;
+method-&gt;insns = (<span style="color: #859900;">const</span> <span style="color: #b58900;">u2</span>*) hookInfo;
+</pre>
+</div>
+
+<p>
+即, 将 method 的 nativeFunc 强制指向 xposedCallHandler, 使该函数变成一
+个 native 函数, 同时将 method 无用的 insns 指向一个自定义的 hookInfo结
+构体, 这个结构会保存原始的函数的信息和 hook 的信息.
+</p>
+
+<p>
+xposedCallHandler 做为所有被 hook 函数统一的入口, 做的事主要是调用
+XposedBridge 中定义的 handleHookedMethod, 这个函数会调用用户自定义的各
+个 hook 方法, 包括 beforeHookedMethod, afterHookedMethod, 以及原始的方
+法.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Cydia substrate</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+不确定如何工作的, 但据说是通过 ptrace 进行 so injection 后修改
+clazz-&gt;method 为自定义 native function 实现的. 
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> libinject</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+通过 ptrace 进行 so injection. 
+</p>
+
+<p>
+so injection 是其它形式的 hook 的第一步:
+</p>
+<ol class="org-ol">
+<li>若要 hook 其它 so 中的函数, 例如 open 调用, 可以通过 so injection
+后再 目标进程中修改 elf 的 GOT 来完成 hook
+</li>
+<li>若要 hook 某些 java 调用, 可以通过 so injection 后通过修改一些
+dalvik 相关的数据来完成 hook, 例如: 直接修改某个 method 的 inst, 或
+者修改某些对象的引用来自定义的对象等
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> 梆梆加固</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+对 apk 进行加壳
+<a href="http://mobile.51cto.com/aprogram-400933_1.htm">Andorid APK反逆向解决方案：梆梆加固原理探寻</a>
+<a href="https://github.com/mmin18/AndroidDynamicLoader">AndroidDynamicLoader</a>
+</p>
+
+<p>
+原理: 
+</p>
+
+<ol class="org-ol">
+<li>大部分组件, 例如 Application, Activity, Receiver, Service 都是通过
+LoadedApk.getClassLoader 获得的 ClassLoader 来加载的, 这个
+ClassLoader 代表了实际的 apk. 但 Provider 比较另类: 如果
+Application 类被重写了, 则它优化使用 Application.getClassLoader 来
+加载. 
+</li>
+<li>对于 Provider, 可以简单的通过重写一个 Application 类来实现
+</li>
+<li>对于其它组件, 因为都是 LoadedApk 来加载的, 而 LoadedApk 在
+Application 中有一个引用: Application.mBase.mPackageInfo, 所以我们
+可以通过反射修改 Application.mBase.mPackageInfo.mClassLoader 来实现. 
+</li>
+</ol>
+
+<p>
+因为 Application 初始化比其他任何组件都早, 所以在 Application 实现上述
+做法是很好的方式. 
+</p>
+
+<p>
+具体的:
+</p>
+<ol class="org-ol">
+<li>加固程序会生成一个新的 apk, 这个 apk 的 manifest 与原 apk 类似, 也包
+含原有的组件声明, 但会修改原程序的 manifest, 填加或修改一个
+Application 类, 这个类是解壳时的起点.
+</li>
+<li>新的 apk 的 dex 中会有一块区域嵌入了经过加密的原 odex 文件, 相当于
+新的 dex 是原 odex 上加了一个壳.
+</li>
+<li>当 ActivityThread 加载新 apk 的 Application 类时, 这个类的代码会负
+责将原 odex 解密到内存, 然后调用 c++ 层的 dexFileParse 等函数生成
+DexFile, 最终通过 jni 生成一个 PathClassLoader
+</li>
+<li>通过反射等方法用这个 ClassLoader 代替 LoadedApk.mClassLoader, 后续
+加载其他组件时都会用这个 ClassLoader.
+</li>
+</ol>
+</div>
+</div>
+
+
+
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> To summaries</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+对 java 层代码进行 hook 时一般有两种方法:
+</p>
+<ol class="org-ol">
+<li>通过修改 clazz-&gt;method 为自定义 native function
+</li>
+<li>通过修改 Application 类中的 ClassLoader 成员
+</li>
+</ol>
+
+<p>
+另外还有些特殊的方法, 例如修改 java 进程中对应某 service 的
+BinderProxy来拦截 Binder 调用等 (例如这篇文件提到的方法 <a href="http://bbs.pediy.com/showthread.php?t=179860">Android Java虚
+拟机拦截技术分析</a>), 或者直接修改 method 的 inst &#x2026;
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Wei Sun (孙伟)</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2014-09-26 Fri 10:54</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.50.4 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

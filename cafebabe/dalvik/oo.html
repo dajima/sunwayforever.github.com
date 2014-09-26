@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>OO</title>
-<!-- 2014-04-30 Wed 16:53 -->
+<!-- 2014-09-26 Fri 10:54 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -70,6 +70,7 @@ for the JavaScript code in this tag.
 <li><a href="#sec-1-3">1.3. StringObject</a></li>
 <li><a href="#sec-1-4">1.4. Class Loading</a></li>
 <li><a href="#sec-1-5">1.5. 各种函数的实现</a></li>
+<li><a href="#sec-1-6">1.6. 对齐</a></li>
 </ul>
 </li>
 </ul>
@@ -323,8 +324,9 @@ dvmResolveString:
 java 类加载的过程包含一般包括加载, 解析, 初始化等过程.  特别的, dvm 加
 载类的过程基本上就是:
 </p>
+
 <ol class="org-ol">
-<li>加载
+<li>加载 &#x2013; dvmfindclassnoinit
 
 <p>
 从 odex 中加载类 (loadClassFromDex), 此后 ClassObject 的多数成员已经
@@ -332,7 +334,7 @@ java 类加载的过程包含一般包括加载, 解析, 初始化等过程.  �
 </p>
 </li>
 
-<li>解析 (link)
+<li>解析 (link) &#x2013; dvmLinkClass
 
 <p>
 通过 dvmLinkClass, 将 ClassObject 中的存在的 symbolic references
@@ -345,8 +347,11 @@ offset (对于 sfields, ifields)
 转换为 odex, 这时会做一些类似于 resolve 的工作, 但这些工作影响的主
 要是 dex 中的代码部分: 即 xxx 指令会被转换为 xxx<sub>quick</sub> 指令, 使代码
 由使用 symbolic references 的方式变为使用 direct pointer 或 offset
-的方式. 所以, 即使有 odex, dvmLinkClass 时还是需要做 resolve 的动作. 
+的方式. 所以, 即使有 odex, dvmLinkClass 时还是需要做 resolve 的动作.
 </p>
+</li>
+
+<li>初始化 &#x2013; dvminitclass 与 验证 &#x2013; dvmVerifyClass
 </li>
 </ol>
 
@@ -719,7 +724,7 @@ Object-&gt;virtualMethods 中找到.
 }
 
 <span style="color: #859900;">class</span> <span style="color: #b58900;">Foo</span> <span style="color: #859900;">extends</span> <span style="color: #b58900;">Base</span> <span style="color: #859900;">implements</span> <span style="color: #b58900;">I</span> {
-    <span style="color: #859900;">public</span> Foo() {}
+    <span style="color: #859900;">public</span> <span style="color: #268bd2;">Foo</span>() {}
     <span style="color: #859900;">public</span> <span style="color: #b58900;">void</span> <span style="color: #268bd2;">b</span>() {
         <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">invoke-super</span>
         <span style="color: #859900;">super</span>.b();
@@ -1060,13 +1065,61 @@ quick 版本. 因为这是不可能的&#x2026;
 </div>
 </div>
 </div>
+
+<div id="outline-container-sec-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> 对齐</h3>
+<div class="outline-text-3" id="text-1-6">
+<p>
+所有 java 对象都是 8 字节对齐的, 包括 Object, ClassObject 等. 
+</p>
+
+<p>
+之所以是 8 字节对齐, 是因为默认情况下 dlmalloc 分配的地址是 8 字节对齐
+的. 
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #cb4b16;">#define</span> <span style="color: #268bd2;">MALLOC_ALIGNMENT</span> ((<span style="color: #b58900;">size_t</span>)(2 * <span style="color: #859900;">sizeof</span>(<span style="color: #b58900;">void</span> *)))
+</pre>
+</div>
+
+<p>
+另外, dlmalloc 分配的地址按 8 字节对齐, 是指其分配出来的 malloc<sub>chunk</sub>
+是 8 字节对齐的, 因为 malloc<sub>chunk</sub> 与 malloc 返回的地址刚好相差 8 字节
+(prev+head), 所以 malloc 分配出来的地址也是 8 字节对齐的. 
+</p>
+
+<p>
+值得注意的是, dlmalloc 分配的地址是 8 字节对齐的, 但它分配的 chunk 最
+小为 16 字节(因为要包含 head+fd+prev = 12, 按 8 字节对齐就是 16).
+</p>
+
+<p>
+以下场景利用了这种对齐 (或者依赖于这种对齐):
+</p>
+
+<ol class="org-ol">
+<li>各种 bitmap 的每个位对应着 heap 上的 8 个字节.
+</li>
+<li>Object 的 lock word 被 inflate 成 fat lock 时, 其高 29 位对应着
+monitor 对象的地址, 剩余 3 位标记锁类型 (fat or thin) 以及 hash
+state. 因为 monitor 对象的地址是 8 字节对齐, 所以可以只用 29 位表示.
+</li>
+<li>基于 copy 的 GC 中, setForward 利用了对象地址的低三位来记录移动状态.
+</li>
+<li>&#x2026;
+</li>
+</ol>
+</div>
+</div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-04-30 Wed 16:53</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
+<p class="date">Created: 2014-09-26 Fri 10:54</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.50.4 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

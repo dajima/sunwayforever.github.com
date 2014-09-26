@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Mterp</title>
-<!-- 2014-04-10 Thu 19:11 -->
+<!-- 2014-09-26 Fri 10:54 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -65,7 +65,8 @@ for the JavaScript code in this tag.
 <ul>
 <li><a href="#sec-1">1. Mterp</a>
 <ul>
-<li><a href="#sec-1-1">1.1. 指令分发</a></li>
+<li><a href="#sec-1-1">1.1. dalvik byte code</a></li>
+<li><a href="#sec-1-2">1.2. 指令分发</a></li>
 </ul>
 </li>
 </ul>
@@ -75,8 +76,36 @@ for the JavaScript code in this tag.
 <h2 id="sec-1"><span class="section-number-2">1</span> Mterp</h2>
 <div class="outline-text-2" id="text-1">
 </div><div id="outline-container-sec-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> 指令分发</h3>
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> dalvik byte code</h3>
 <div class="outline-text-3" id="text-1-1">
+<p>
+dalvik byte code 是以 16 bits 为单位的, 即一个 byte code 至少 16
+bits. 其中前 8 bits 是 opcode, 后面的部分根据 opcode 不同而有不同的意
+义. 所以 dalvik 最多可以支持 256 个 opcode (目前使用的范围是 00-e2).
+</p>
+
+<p>
+例如:
+</p>
+<ul class="org-ul">
+<li>NOP 指令是 0000, 其中前两个 00 是 opcode, 后面的 00 是占位符
+</li>
+<li>MOVE 指令是 01AB, 其中 01 是 opcode, A 表示一个 4 bits 的目的寄存器,
+B 表示一个 4 bits 的源寄存器
+</li>
+<li>MOVE/FROM16 指令是 02AA BBBB, 02 是 opcode, AA 表示 8 bits 的目的寄存
+器, BBBB 表示一个 16 bits 的源寄存器. 这个指令一共是 32 bits.
+</li>
+<li>MOVE/16 指令是 0300 AAAA BBBB, 03 是 opcode, 00 表示占位符, AAAA 表示
+16 bits 的目的寄存器, BBBB 表示 16 bits 的源寄存器. 这个指令一共 48
+bits.
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 指令分发</h3>
+<div class="outline-text-3" id="text-1-2">
 <p>
 最简单的指令分发可能是这样的:
 </p>
@@ -95,9 +124,9 @@ for the JavaScript code in this tag.
 </pre>
 </div>
 </div>
-<div id="outline-container-sec-1-1-1" class="outline-4">
-<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> mterp-portable 的指令分发</h4>
-<div class="outline-text-4" id="text-1-1-1">
+<div id="outline-container-sec-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> mterp-portable 的指令分发</h4>
+<div class="outline-text-4" id="text-1-2-1">
 <div class="org-src-container">
 
 <pre class="src src-text">void * handlerTable[] = {
@@ -130,9 +159,9 @@ mterp-portable 使用跳转表去掉一次条件判断, 使用 FINISH 宏避免�
 </p>
 </div>
 </div>
-<div id="outline-container-sec-1-1-2" class="outline-4">
-<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> mterp-arm 中的指令分发</h4>
-<div class="outline-text-4" id="text-1-1-2">
+<div id="outline-container-sec-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> mterp-arm 中的指令分发</h4>
+<div class="outline-text-4" id="text-1-2-2">
 <p>
 mterp 中也有一个 类似于 handlerTable 的跳转表, 但是跳转表中的 entry 并
 不是指向代码的指针, 而是真正的代码, 并且每一个 case 对应的代码要求是64
@@ -187,8 +216,8 @@ mterp-arm 在 mterp-portable 基础上通过固定长度的代码避免内存读
 <div id="postamble" class="status">
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-04-10 Thu 19:11</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
+<p class="date">Created: 2014-09-26 Fri 10:54</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.50.4 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

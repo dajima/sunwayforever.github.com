@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Lazy Initialization / evaluation</title>
+<!-- 2014-09-26 Fri 10:54 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Wei Sun (孙伟)" />
+<link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Lazy Initialization / evaluation</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Lazy Initialization / evaluation</a>
+<ul>
+<li><a href="#sec-1-1">1.1. lazy initialization sample</a></li>
+<li><a href="#sec-1-2">1.2. 实例</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Lazy Initialization / evaluation</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Lazy initialization / evaluation 是一类通用的优化技术, 用来尽可能的延迟
+某些动作的执行, 因为有可能这些动作是永远不会被执行的, 例如:
+</p>
+
+<ol class="org-ol">
+<li>Singleton with lazy initialization
+当对象需要被使用时才初始化
+</li>
+
+<li>Copy On Write
+当内存需要被修改时才分配新的物理页
+</li>
+
+<li>Demand Paging
+当内存需要被使用时才分配物理页
+</li>
+
+<li>dalvik 中的 dvmResolveNativeMethod
+当 native 方法需要被调用时才去查找对应的 native 实现
+</li>
+
+<li>ld.so
+当需要调用 so 中引用的外部函数时, ld.so 才会负责去解析该函数
+</li>
+
+<li>某些函数式语言通过 lazy evaluation (call-by-need) 构造无穷序列.
+</li>
+
+<li>java 类只有使用时才初始化
+</li>
+
+<li>&#x2026;
+</li>
+</ol>
+</div>
+
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> lazy initialization sample</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+通用的 lazy initialization 通常都是通过设置一个标志将动作延迟, 例如:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-java"><span style="color: #859900;">class</span> <span style="color: #b58900;">FileReader</span> {
+    volitle <span style="color: #b58900;">int</span>  <span style="color: #268bd2;">fd</span> = -1;
+    <span style="color: #859900;">public</span> <span style="color: #268bd2;">File</span>(<span style="color: #b58900;">String</span> <span style="color: #268bd2;">path</span>) {
+        <span style="color: #859900;">this</span>.path = path;
+        <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">the fd is left unchanged for lazy initialization</span>
+        <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">fd = os.open(path);</span>
+    }
+    <span style="color: #859900;">public</span> <span style="color: #b58900;">char</span> <span style="color: #268bd2;">read</span>() {
+        <span style="color: #859900;">if</span> (fd == -1) {
+            <span style="color: #859900;">synchronized</span> {
+                <span style="color: #859900;">if</span> ((fd == -1)) {
+                    <span style="color: #586e75; font-style: italic;">// </span><span style="color: #586e75; font-style: italic;">os.open is deferred here</span>
+                    fd = os.open(path);
+                }
+            }
+        }
+        <span style="color: #859900;">return</span> os.read();
+    }
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 实例</h3>
+<div class="outline-text-3" id="text-1-2">
+<ol class="org-ol">
+<li>android 主题切换时使用 lazy initialization 避免多个进程同时加载资源时卡顿.
+</li>
+<li>ListView 使用 getView 来避免一次性加载所有 item view.
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Wei Sun (孙伟)</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2014-09-26 Fri 10:54</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.50.4 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

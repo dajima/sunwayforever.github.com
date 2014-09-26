@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Android Memory</title>
-<!-- 2014-07-01 Tue 10:54 -->
+<!-- 2014-09-26 Fri 10:54 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="wei.sun" />
@@ -71,8 +71,9 @@ for the JavaScript code in this tag.
 <li><a href="#sec-1-4">1.4. recycle</a></li>
 <li><a href="#sec-1-5">1.5. java memory</a></li>
 <li><a href="#sec-1-6">1.6. misc</a></li>
-<li><a href="#sec-1-7">1.7. Reference</a></li>
-<li><a href="#sec-1-8">1.8. About GC heap, growthLimit and OOM</a></li>
+<li><a href="#sec-1-7">1.7. Kernel feature</a></li>
+<li><a href="#sec-1-8">1.8. Reference</a></li>
+<li><a href="#sec-1-9">1.9. About GC heap, growthLimit and OOM</a></li>
 </ul>
 </li>
 </ul>
@@ -101,6 +102,9 @@ for the JavaScript code in this tag.
 </div>
 <div id="outline-container-sec-1-1-6" class="outline-4">
 <h4 id="sec-1-1-6"><span class="section-number-4">1.1.6</span> procrank</h4>
+</div>
+<div id="outline-container-sec-1-1-7" class="outline-4">
+<h4 id="sec-1-1-7"><span class="section-number-4">1.1.7</span> librank</h4>
 </div>
 </div>
 
@@ -434,12 +438,28 @@ optimization ?
 But if we fill the memory will `random', both linux and android will
 consume 50MB rss.
 </p>
+
+<p>
+可能和 zram 有关系吧&#x2026;
+</p>
 </div>
 </div>
 </div>
+
 <div id="outline-container-sec-1-7" class="outline-3">
-<h3 id="sec-1-7"><span class="section-number-3">1.7</span> Reference</h3>
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> Kernel feature</h3>
 <div class="outline-text-3" id="text-1-7">
+</div><div id="outline-container-sec-1-7-1" class="outline-4">
+<h4 id="sec-1-7-1"><span class="section-number-4">1.7.1</span> zram</h4>
+</div>
+<div id="outline-container-sec-1-7-2" class="outline-4">
+<h4 id="sec-1-7-2"><span class="section-number-4">1.7.2</span> ksm</h4>
+</div>
+</div>
+
+<div id="outline-container-sec-1-8" class="outline-3">
+<h3 id="sec-1-8"><span class="section-number-3">1.8</span> Reference</h3>
+<div class="outline-text-3" id="text-1-8">
 <ul class="org-ul">
 <li><a href="http://stackoverflow.com/questions/2298208/how-to-discover-memory-usage-of-my-application-in-android">how-to-discover-memory-usage-of-my-application-in-android</a>
 </li>
@@ -449,9 +469,9 @@ consume 50MB rss.
 </div>
 </div>
 
-<div id="outline-container-sec-1-8" class="outline-3">
-<h3 id="sec-1-8"><span class="section-number-3">1.8</span> About GC heap, growthLimit and OOM</h3>
-<div class="outline-text-3" id="text-1-8">
+<div id="outline-container-sec-1-9" class="outline-3">
+<h3 id="sec-1-9"><span class="section-number-3">1.9</span> About GC heap, growthLimit and OOM</h3>
+<div class="outline-text-3" id="text-1-9">
 <p>
 一直以来 android 都流传着一个说法:
 `android 的 GC heap 有一个 growthLimit 参数, 可以控制 GC heap 的大小,
@@ -464,9 +484,9 @@ growthLimit 时, 会 OOM`
 限制? 以下是我的调查:
 </p>
 </div>
-<div id="outline-container-sec-1-8-1" class="outline-4">
-<h4 id="sec-1-8-1"><span class="section-number-4">1.8.1</span> 第一阶段 &#x2026;</h4>
-<div class="outline-text-4" id="text-1-8-1">
+<div id="outline-container-sec-1-9-1" class="outline-4">
+<h4 id="sec-1-9-1"><span class="section-number-4">1.9.1</span> 第一阶段 &#x2026;</h4>
+<div class="outline-text-4" id="text-1-9-1">
 <ul class="org-ul">
 <li>为什么 OOM?
 <ul class="org-ul">
@@ -538,9 +558,9 @@ heap) 么?  求代码求真相, 反正我是没找到&#x2026;
 </div>
 </div>
 
-<div id="outline-container-sec-1-8-2" class="outline-4">
-<h4 id="sec-1-8-2"><span class="section-number-4">1.8.2</span> 第二阶段 &#x2026;</h4>
-<div class="outline-text-4" id="text-1-8-2">
+<div id="outline-container-sec-1-9-2" class="outline-4">
+<h4 id="sec-1-9-2"><span class="section-number-4">1.9.2</span> 第二阶段 &#x2026;</h4>
+<div class="outline-text-4" id="text-1-9-2">
 <p>
 2.3.5 的代码中除了一个类似于 growthLimit 的 absoluteMaxSize 外, 还维护
 了一个 externalBytesAllocated 的变量, 初始为0.
@@ -586,7 +606,7 @@ ByteBuffer.allocateDirect() 分配内存时使用以下方法:
 
 <pre class="src src-java"><span style="color: #859900;">static</span> <span style="color: #b58900;">jint</span> <span style="color: #268bd2;">OSMemory_malloc</span>(JNIEnv* env, <span style="color: #b58900;">jclass</span>, <span style="color: #b58900;">jint</span> <span style="color: #268bd2;">size</span>) {
     <span style="color: #b58900;">jboolean</span> <span style="color: #268bd2;">allowed</span> = env-&gt;CallBooleanMethod(gIDCache.runtimeInstance,
-                                              gIDCache.method_trackExternalAllocation, static_cast&lt;jlong&gt;(size));
+                                              gIDCache.method_trackExternalAllocation, <span style="color: #b58900;">static_cast</span>&lt;<span style="color: #b58900;">jlong</span>&gt;(<span style="color: #b58900;">size</span>));
     <span style="color: #859900;">if</span> (<span style="color: #dc322f;">!</span>allowed) {
         LOGW(<span style="color: #2aa198;">"External allocation of %d bytes was rejected\n"</span>, size);
         jniThrowException(env, <span style="color: #2aa198;">"java/lang/OutOfMemoryError"</span>, NULL);
@@ -620,8 +640,8 @@ ByteBuffer.allocateDirect() 分配内存时使用以下方法:
 <div id="postamble" class="status">
 <p class="author">Author: wei.sun</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2014-07-01 Tue 10:54</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.3.1 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
+<p class="date">Created: 2014-09-26 Fri 10:54</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.50.4 (<a href="http://orgmode.org">Org</a> mode 8.2.5g)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
