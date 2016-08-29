@@ -1,0 +1,1140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2016-08-29 Mon 22:03 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Linux Kernel: Interrupt</title>
+<meta name="generator" content="Org-mode" />
+<meta name="author" content="Wei Sun (孙伟)" />
+<link rel="stylesheet" type="text/css" href="/stylesheets/main.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Linux Kernel: Interrupt</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org003540a">1. Linux Kernel: Interrupt</a>
+<ul>
+<li><a href="#org7de2b5a">1.1. Overview</a></li>
+<li><a href="#org96da083">1.2. PIC</a>
+<ul>
+<li><a href="#orgec1d8dc">1.2.1. 8259a</a></li>
+<li><a href="#org838d80b">1.2.2. APIC</a></li>
+</ul>
+</li>
+<li><a href="#orge2a936a">1.3. IDT</a>
+<ul>
+<li><a href="#orgeedc24a">1.3.1. Interrupt Descriptor</a></li>
+<li><a href="#org32153f8">1.3.2. IDT 初始化</a></li>
+</ul>
+</li>
+<li><a href="#orgd529896">1.4. ret_from_intr</a></li>
+<li><a href="#org63a22ab">1.5. do_IRQ</a>
+<ul>
+<li><a href="#org79ad5f5">1.5.1. do_IRQ</a></li>
+<li><a href="#org16bcc81">1.5.2. request_irq</a></li>
+</ul>
+</li>
+<li><a href="#org1c8c318">1.6. softirq</a>
+<ul>
+<li><a href="#orgc2f10bd">1.6.1. open_softirq</a></li>
+<li><a href="#orgec61e40">1.6.2. raise_softirq</a></li>
+<li><a href="#orgf3ae915">1.6.3. do_softirq</a></li>
+</ul>
+</li>
+<li><a href="#org7f1358e">1.7. tasklet</a>
+<ul>
+<li><a href="#orga95deeb">1.7.1. tasklet_struct</a></li>
+<li><a href="#org662bc44">1.7.2. tasklet_init</a></li>
+<li><a href="#org29742d0">1.7.3. tasklet_schedule</a></li>
+<li><a href="#orgf4f316e">1.7.4. tasklet_action</a></li>
+</ul>
+</li>
+<li><a href="#org47b12f2">1.8. workqueue</a></li>
+<li><a href="#org81943fd">1.9. Appendix</a>
+<ul>
+<li><a href="#org77705cb">1.9.1. IO interrupt handler 内为什么不能睡眠</a></li>
+<li><a href="#org04c0af1">1.9.2. fault 与 SIGSEGV</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org003540a" class="outline-2">
+<h2 id="org003540a"><span class="section-number-2">1</span> Linux Kernel: Interrupt</h2>
+<div class="outline-text-2" id="text-1">
+</div><div id="outline-container-org7de2b5a" class="outline-3">
+<h3 id="org7de2b5a"><span class="section-number-3">1.1</span> Overview</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+Interrupt, 按照 Intel 的分类, 主要分为两类:
+</p>
+
+<ol class="org-ol">
+<li><p>
+Interrupt
+</p>
+
+<p>
+包括可屏蔽中断 (maskable interrupt) 与不可屏蔽中断(non-maskable
+interrupt, NMI), interrupt 是指由 IO 设备或内部 timer 产生的, 也称
+为异步中断 (asynchronous) 或外部中断, 后面统称为 IO interrupt
+</p>
+
+<p>
+interrupt 发生时中断保存的 eip 是下一条 eip
+</p></li>
+
+<li><p>
+Exception
+</p>
+
+<p>
+除了 IO interrupt 之外的 interrupt 称为 exception, 这一类一般是由
+CPU 主动产生的 (同步的), 也称为同步中断, 内部中断. 例如除零错, page
+fault, 断点, 浮点数异常等,另外还包括 int 指令产生的 interrupt, 关于
+exception, 在 <a href="process.html#org1d6c98d">Creating-Processes</a> 已经以 syscall 为例进行描述, 为避
+免混淆, 后面的内容主要讨论 IO interrupt
+</p>
+
+<p>
+Exception 内部又细分为 fault, trap, abort, 分类的主要依据是
+"exception 恢复后从哪里开始? 当前 eip 还是下一条 eip"
+</p>
+
+<ol class="org-ol">
+<li><p>
+fault
+</p>
+
+<p>
+fault 是可以恢复的 exception, 所以中断发生时保存的 eip 是当前导
+致 fault 的 eip (而不是下一条 eip), 以便 fault 恢复后可以再次执
+行同一条指令, 典型的 fault 是 page fault
+</p></li>
+
+<li><p>
+trap
+</p>
+
+<p>
+trap 的主要作用是 debug 相关, 它保存的 eip 是当前导致 trap 的下
+一条 eip
+</p></li>
+
+<li><p>
+abort
+</p>
+
+<p>
+abort 是不可恢复的, 中断保存的 eip 并不一定是一个有效的值
+</p></li>
+</ol></li>
+</ol>
+
+<p>
+exception 与 interrupt 的相似性主要体现在它们共用同一个中断向量表
+(Interrupt Descriptor Table, IDT). IDT 一共 256 项, 其中前 32 项是留给
+exception 和 NMI 使用, 32 项以后的部分留到 IO interrupt 使用 (第 0x80
+项是例外, 它是留给 syscall 的).
+</p>
+
+<p>
+IO 设备都通过它的 IRQ line (Interrupt ReQuest line) 连接到一个称为可
+编程中断控制器 (PIC) 的某个输入引脚上, PIC 的工作大致是:
+</p>
+
+<ol class="org-ol">
+<li>PIC 会监视输入引脚上的信号, 如果发现某个引脚上有信号, 说明对应的
+IRQ line 被 raised</li>
+
+<li>这时它会将引脚转换为一个数称为中断向量 (Interrupt Vector) 并把这个
+向量放在 PIC 的一个输出端口上等待 CPU 来读. 默认情况下
+interrupt_vector = irq + 32, 即 irq 0 被 raise 时, PIC 产生的中断向
+量为 32</li>
+
+<li>同时 PIC 给 CPU 的 INTR 引脚发送一个信号, 告诉 CPU 有中断发生.</li>
+
+<li>CPU 从 PIC 的 IO 端口读取中断向量, 然后给 PIC 的一个输入端口发送一
+个 ACK, PIC 随后会清除 INTR 并回到 step 1</li>
+</ol>
+
+<p>
+CPU 拿到中断向量后, 会根据中断向量查找 IDT (中断向量表) 以找到
+interrupt 对应的中断处理函数 (interrupt handler), CPU 首先会做一些检查,
+然后保存上下文, 最后跳转到 interrupt handler 去执行
+</p>
+
+<p>
+interrupt handler 需要尽可能快的完成操作, 因此 linux 把 interrupt
+handler 的功能分为两部分: top half 与 bottom half. top half 是指那些必
+须在 interrupt handler 中执行的部分, bottom half 是那些可以被延后处理
+的部分.
+</p>
+
+<p>
+实现 bottom half 有几种不同的机制: softirq, tasklet, work queue
+</p>
+</div>
+</div>
+
+<div id="outline-container-org96da083" class="outline-3">
+<h3 id="org96da083"><span class="section-number-3">1.2</span> PIC</h3>
+<div class="outline-text-3" id="text-1-2">
+</div><div id="outline-container-orgec1d8dc" class="outline-4">
+<h4 id="orgec1d8dc"><span class="section-number-4">1.2.1</span> 8259a</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<p>
+IO interrupt 的起点是 PIC, 传统的 PIC 是 intel 8259a
+</p>
+
+<p>
+它的外观如下:
+</p>
+
+<ol class="org-ol">
+<li>8 个中断输入引脚: IRQ0 ~ IRQ7, 与外设和其它 8259a 连接</li>
+
+<li>一个中断输出引脚 INT, 与 CPU 的 INTR 连接</li>
+
+<li>一个中断回复引脚 INTA, 与 CPU 连接</li>
+
+<li>8 个数据输出引脚 D0 ~ D7, 用来与 CPU 沟通中断向量</li>
+</ol>
+
+
+<p>
+一个 8259a 可以连接 8 个 IRQ line, 两个 8259a 可以通过级联的方式支持 15 个 IRQ line.
+</p>
+
+<p>
+最多可以将 8 个 slave 8259a 连接在一个 master 8259a 上, 构成一个支持 64
+个 IRQ line 的 PIC
+</p>
+
+<p>
+8259a 内部有三个寄存器: IMR, IRR, ISR, 其中 IMR 用来控制哪些 IRQ 被屏
+蔽, 但 IMR 是只写的 &#x2026; 所以 kernel 需要自己记住 cached_irq_mask
+</p>
+
+
+<div class="figure">
+<p><img src="file:///home/sunway/note/extra/kernel_8259a.png" alt="kernel_8259a.png" />
+</p>
+</div>
+</div>
+
+<div id="outline-container-org23f36f1" class="outline-5">
+<h5 id="org23f36f1"><span class="section-number-5">1.2.1.1</span> 中断屏蔽</h5>
+<div class="outline-text-5" id="text-1-2-1-1">
+<p>
+通过向 8259a 的 IMR 写入特定的 irq_mask, 可以屏蔽某些 IRQ line, 具体的,
+linux 通过 mask_and_ack_8259A 函数来屏蔽特定的 IRQ line.
+</p>
+
+<p>
+除了通过 PIC 来屏蔽特定的 IRQ line, 还可以通过 cli 指令来禁用当前 CPU
+的 INTR 从而使当前 CPU 禁用所有 IRQ line, 需要注意 cli 是针对当前 CPU
+而不是针对 PIC: 其它 CPU 还是可以从 PIC 收到中断请求
+</p>
+
+<p>
+后面 interrupt handler 部分可以看到 cli 与 irq mask 的应用
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org838d80b" class="outline-4">
+<h4 id="org838d80b"><span class="section-number-4">1.2.2</span> APIC</h4>
+<div class="outline-text-4" id="text-1-2-2">
+<p>
+8259a 涉及到多核时无法工作: 一个 8259a 的 INTR 如何接到多个 CPU 对应的
+引脚?
+</p>
+
+<p>
+Intel 从 Pentium III 开始推出 IO APIC 代替 8259a.
+</p>
+
+<p>
+每个 CPU 都有一个 local APIC, 这些 local APIC 通过 ICC 总线与 IO APIC
+连接, IO APIC 与外设连接.
+</p>
+
+<p>
+IO APIC 包括一个 Interrupt Redirection Table 和一个通过 ICC bus 与
+local APIC 通信的模块, 以便能将外设的中断请求 "route" 到相应的 local
+APIC, 从而解决多核的问题. 一般情况下 kernel 不需要关心 IRQ 如何分配给
+各个 CPU, 但 APIC 提供了一些可编程的寄存器使 kernel 可以控制 IRQ 的分
+配以完成 IRQ balancing
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge2a936a" class="outline-3">
+<h3 id="orge2a936a"><span class="section-number-3">1.3</span> IDT</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+CPU 从 PIC 得到中断向量后, 第一步就是从 IDT 中找到对应的中断描述符
+(interrupt descriptor)
+</p>
+
+<p>
+IDT 包含 256 项, 每一项是一个大小为 8 字节的 interrupt descriptor, 所
+以 IDT 的大小为 256 * 8 = 2K
+</p>
+
+<p>
+CPU 可以通过 idtr 找到 IDT 的基址, kernel 可以通过 lidt 给 idtr 赋值,
+但 idtr 中并非直接就是 IDT 的基址: idtr 中的地址中保存着一个二元组
+(idt_size, IDT), 所以这个二元组的第二项才是 IDT 的基址
+</p>
+</div>
+
+<div id="outline-container-orgeedc24a" class="outline-4">
+<h4 id="orgeedc24a"><span class="section-number-4">1.3.1</span> Interrupt Descriptor</h4>
+<div class="outline-text-4" id="text-1-3-1">
+<p>
+IDT 中的元素称为 Interrupt Descriptor, 大小为 8 字节. 这个 descriptor
+的主要成员是 interrupt handler 的地址, 但还包括其它一些内容.
+</p>
+
+<p>
+根据 descriptor 对应的 interrupt 类型 (IO interrupt, exception, trap
+&#x2026;), 有几种不同的 interrupt descriptor, 它们的格式基本相同, 但有个别
+flag 有些差别
+</p>
+
+<ol class="org-ol">
+<li><p>
+Interrupt Gate
+</p>
+
+
+<div class="figure">
+<p><img src="file:///home/sunway/note/extra/kernel_interrupt_gate.png" alt="kernel_interrupt_gate.png" />
+</p>
+</div>
+
+<ul class="org-ul">
+<li>OFFSET 为对应的 interrupt handler 的地址 (共 32 bits)</li>
+
+<li>SEGMENT SELECTOR 是指执行这个 interrupt handler 时硬件需要将 CS 需
+要切换到这个 selector 指示的 segment, linux 下所有 interrupt
+descriptor 的这个字段都为 __KERNEL_CS. 由于 cs 即 CPL, 所以
+SEGMENT SELECTOR 代表的实际上是 interrupt handler 运行时将处的
+running level</li>
+
+<li>DPL 是指运行这个 interrupt handler 需的 privilege level. 当
+interrupt (或 exception) 发生时, 硬件会检查 CPL 与这个 DPL 是否一
+致, 避免 user mode 发起 int 0x2 这种非法的调用</li>
+</ul>
+<p>
+Interrupt gate 与 Trap gate 的区别仅仅是第 40 bit 的值: Interrupt
+gate 的这个值被置位, 表示 CPU 在执行 interrupt handler 时需要 clear
+EFLAGS 的 IF 位, 即硬件会保证关中断
+</p></li>
+
+<li><p>
+Trap Gate
+</p>
+
+
+<div class="figure">
+<p><img src="file:///home/sunway/note/extra/kernel_trap_gate.png" alt="kernel_trap_gate.png" />
+</p>
+</div>
+
+<p>
+Trap gate 与 interrupt gate 基本相同, 但硬件不会主动关中断
+</p></li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org32153f8" class="outline-4">
+<h4 id="org32153f8"><span class="section-number-4">1.3.2</span> IDT 初始化</h4>
+<div class="outline-text-4" id="text-1-3-2">
+</div><div id="outline-container-orgb5da7fc" class="outline-5">
+<h5 id="orgb5da7fc"><span class="section-number-5">1.3.2.1</span> idtr 的初始化</h5>
+<div class="outline-text-5" id="text-1-3-2-1">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #bd93f9;">cpu_init</span>:
+  <span style="color: #ff79c6; font-weight: bold;">__asm__</span> __volatile__(<span style="color: #f1fa8c;">"lidt %0"</span> : : <span style="color: #f1fa8c;">"m"</span> (idt_descr));
+
+<span style="color: #bd93f9;">idt_descr</span>:
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">IDT_ENTRIES &#20026; 256</span>
+  .word IDT_ENTRIES*8-1
+  .<span style="color: #f8f8f2;">long</span> idt_table
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3444e1c" class="outline-5">
+<h5 id="org3444e1c"><span class="section-number-5">1.3.2.2</span> idt_table 的初始化</h5>
+<div class="outline-text-5" id="text-1-3-2-2">
+</div><ol class="org-ol"><li><a id="org2d17e61"></a>setup_idt<br  /><div class="outline-text-6" id="text-1-3-2-2-1">
+<p>
+setup_idt 是最初的初始化阶段, idt_table 中的每一项都被初始化为相同中的
+descriptor:
+</p>
+
+<ol class="org-ol">
+<li>handler 为 ignore_int</li>
+
+<li>SEGMENT DESCRIPTOR 为 __KERNEL_CS</li>
+
+<li>DPL 为 0</li>
+</ol>
+
+<p>
+这个 ignore_int 实际上只是打印一句 "Unknown interrupt&#x2026;" 并调用 iret
+从中断返回
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #bd93f9;">setup_idt</span>:
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">interrupt handler &#20026; ignore_int</span>
+  <span style="color: #f8f8f2;">lea</span> <span style="color: #f8f8f2;">ignore_int</span>,%edx
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">selector = 0x0010 = cs</span>
+  movl $(__KERNEL_CS &lt;&lt; 16),%eax
+  movw %dx,%ax
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">interrupt gate: dpl=0, present</span>
+  movw $0x8E00,%dx
+
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23558; idt_table &#30340;&#27599;&#19968;&#39033; (&#20849; 256 &#39033;) &#37117;&#35774;&#32622;&#20026;&#21069;&#38754;&#26500;&#36896;&#30340; descriptor</span>
+  lea idt_table,%edi
+  mov $256,%ecx
+  rp_sidt:
+  movl %eax,(%edi)
+  movl %edx,4(%edi)
+  addl $8,%edi
+  dec %ecx
+  jne rp_sidt
+  ret
+</pre>
+</div>
+</div></li>
+
+<li><a id="org41991d7"></a>trap_init<br  /><div class="outline-text-6" id="text-1-3-2-2-2">
+<p>
+trap_init 是 idt_table 初始化的第二个阶段, exception 对应的 descriptor
+在这时被初始化
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #bd93f9;">start_kernel</span>:
+  trap_init()
+    set_trap_gate(0,&amp;divide_error);
+    set_intr_gate(1,&amp;debug);
+    set_intr_gate(2,&amp;nmi);
+    set_system_intr_gate(3, &amp;int3);
+    set_system_gate(4,&amp;overflow);
+    set_system_gate(5,&amp;bounds);
+    set_trap_gate(6,&amp;invalid_op);
+    set_trap_gate(7,&amp;device_not_available);
+    set_task_gate(8,GDT_ENTRY_DOUBLEFAULT_TSS);
+    set_trap_gate(9,&amp;coprocessor_segment_overrun);
+    set_trap_gate(10,&amp;invalid_TSS);
+    set_trap_gate(11,&amp;segment_not_present);
+    set_trap_gate(12,&amp;stack_segment);
+    set_trap_gate(13,&amp;general_protection);
+    set_intr_gate(14,&amp;page_fault);
+    set_trap_gate(15,&amp;spurious_interrupt_bug);
+    set_trap_gate(16,&amp;coprocessor_error);
+    set_trap_gate(17,&amp;alignment_check);
+    set_trap_gate(19,&amp;simd_coprocessor_error);
+
+    set_system_gate(SYSCALL_VECTOR,&amp;system_call);
+</pre>
+</div>
+
+<p>
+这里设置的各种 gate 中比较重要和有代表性的是:
+</p>
+
+<ol class="org-ol">
+<li>set_intr_gate(14,&amp;page_fault)</li>
+
+<li>set_system_gate(SYSCALL_VECTOR,&amp;system_call)</li>
+</ol>
+</div>
+
+<ol class="org-ol"><li><a id="org3e07202"></a>set_intr_gate<br  /><div class="outline-text-7" id="text-1-3-2-2-2-1">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #bd93f9;">set_intr_gate</span>:
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">1. 14 &#34920;&#31034; type, &#23545;&#24212; gate descriptor &#30340; 43~40 bit, &#20998;&#21035;&#20026; 1110, &#34920;</span>
+  <span style="color: #6272a4;">//    </span><span style="color: #6272a4;">&#31034; clear IF</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">2. 0 &#34920;&#31034; DPL &#20026; 0</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">3. __KERNEL_CS &#34920;&#31034; SEGMENT SELECTOR &#20026; __KERNEL_CS</span>
+  _set_gate(idt_table+n,14,0,addr,__KERNEL_CS);
+</pre>
+</div>
+</div></li>
+
+<li><a id="orge1db56c"></a>set_trap_gate<br  /><div class="outline-text-7" id="text-1-3-2-2-2-2">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #bd93f9;">set_trap_gate</span>:
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#19982; set_intr_gate &#22522;&#26412;&#30456;&#21516;, &#38500;&#20102;&#36825;&#37324;&#30340; flag &#20026; 15 (1111), &#34920;&#31034;&#19981;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">clear IF</span>
+  _set_gate(idt_table+n,15,0,addr,__KERNEL_CS);
+</pre>
+</div>
+</div></li>
+
+<li><a id="org9015c56"></a>set_system_gate<br  /><div class="outline-text-7" id="text-1-3-2-2-2-3">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #bd93f9;">set_system_gate</span>:
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#19982; set_trap_gate &#19981;&#21516;&#30340;&#19968;&#28857;&#26159;&#20854; DPL &#20026; 3, &#34920;&#31034; user mode &#20063;&#21487;&#20197;&#21457;&#36215;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36825;&#20010; interrupt: &#23454;&#38469;&#19978; syscall &#23601;&#26159;&#36890;&#36807; set_system_gate &#35774;&#32622;&#30340;</span>
+  _set_gate(idt_table+n,15,3,addr,__KERNEL_CS);
+</pre>
+</div>
+</div></li></ol></li>
+
+<li><a id="org6b3fb19"></a>init_IRQ<br  /><div class="outline-text-6" id="text-1-3-2-2-3">
+<p>
+init_IRQ 负责将 idt_table 中剩余的部分初始化为 do_IRQ, do_IRQ 是所有 IO
+interrupt 的统一的 interrupt handler
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #bd93f9;">start_kernel</span>:
+  init_IRQ()
+    <span style="color: #ff79c6; font-weight: bold;">for</span> (i = 0; i &lt; (NR_VECTORS - FIRST_EXTERNAL_VECTOR); i++):
+      <span style="color: #f8f8f2;">int</span> vector = FIRST_EXTERNAL_VECTOR + i;
+      <span style="color: #ff79c6; font-weight: bold;">if</span> (i &gt;= NR_IRQS):
+        <span style="color: #ff79c6; font-weight: bold;">break</span>;
+      <span style="color: #ff79c6; font-weight: bold;">if</span> (vector != SYSCALL_VECTOR):
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">IO interrupt &#30340; gate descriptor &#20026; interrupt[i]</span>
+        set_intr_gate(vector, interrupt[i]);
+
+ENTRY(<span style="color: #bd93f9;">interrupt</span>):
+  vector=0
+  ENTRY(irq_entries_start)
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36825;&#37324;&#30340; .rept &#21644;&#21518;&#38754;&#30340; .endr &#20197;&#21450; vector=vector+1 &#19977;&#26465;&#20266;&#25351;&#20196;&#23548;&#33268;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">interrupt &#25968;&#32452;&#20013;&#34987;&#22635;&#20805;&#20102; NR_IRQS &#39033;</span>
+  .rept NR_IRQS
+  ALIGN
+  1:    pushl $vector-256
+  jmp common_interrupt
+  .data
+  .<span style="color: #f8f8f2;">long</span> 1b
+  .text
+  vector=vector+1
+  .endr
+
+  common_interrupt:
+  SAVE_ALL
+  movl %esp,%eax
+  call do_IRQ
+  jmp ret_from_intr
+</pre>
+</div>
+</div></li></ol>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd529896" class="outline-3">
+<h3 id="orgd529896"><span class="section-number-3">1.4</span> ret_from_intr</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+关于 interrupt 进入与返回的部分参考之前的 <a href="process.html#org1d6c98d">Creating Processes</a> 部分, 这
+里仅仅描述 interrupt 返回时的操作, 这一部分和 Creating Processes 时使
+用的 syscall_exit_work 差不多.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #bd93f9;">ret_from_intr</span>:
+  GET_THREAD_INFO(%ebp)
+  <span style="color: #f8f8f2;">movl</span> <span style="color: #50fa7b; font-weight: bold;">EFLAGS</span>(%esp), %eax
+  movb CS(%esp), %al
+  testl $(VM_MASK | 3), %eax
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26681;&#25454; regs-&gt;ecs &#30340;&#20540;&#21487;&#20197;&#30830;&#23450;&#36827;&#20837;&#20013;&#26029;&#26102;&#26159;&#21542;&#26159;&#22312; kernel mode, &#22914;&#26524;&#26159;,</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21017;&#36890;&#36807; resume_kernel &#36820;&#22238;&#21040; kernel space, &#21542;&#21017;&#36890;&#36807; resume_userspace</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36820;&#22238;&#21040; user space        </span>
+  jz resume_kernel
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">fall through</span>
+
+resume_userspace:
+  cli
+  movl TI_flags(%ebp), %ecx
+  andl $_TIF_WORK_MASK, %ecx
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26159;&#21542;&#26377; pending work? &#20363;&#22914; NEED_RESCHED, pending signal.</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">work_pending &#21442;&#32771; creating processes &#20013;&#30340;&#25551;&#36848;        </span>
+  jne work_pending
+  jmp restore_all
+
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509; kernel &#25171;&#24320;&#20102;&#20869;&#26680;&#25250;&#21344; (kernel preemption), &#21017; resume_kernel &#26102;,</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509; preempt_count &#20026;&#38646; (&#24403;&#21069;&#19981;&#26159;&#22312;&#25191;&#34892; softirq &#25110; hardirq &#19988; preempt</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#27809;&#26377; disable), &#21017;&#20250;&#23581;&#35797; reschedule. &#33509; preempt_count &#19981;&#20026;&#38646;, &#21017;&#19981;&#20250;</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#32771;&#34385; reschedule, &#22240;&#20026;&#36825;&#20250;&#23548;&#33268;&#34987;&#24403;&#21069; interrupt &#25171;&#26029;&#30340; kernel path &#20063;</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#34987;&#30561;&#30496;,&#36825;&#24182;&#19981;&#21512;&#29702;...</span>
+<span style="color: #6272a4;">// </span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509; kernel &#27809;&#26377;&#25171;&#24320; kernel preemption, &#21017; resume_kernel &#30452;&#25509;&#23601;&#26159;&#19968;&#20010;&#31616;</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21333;&#30340; restore_all</span>
+<span style="color: #6272a4;">// </span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">resume_kernel &#19982; resume_userspace &#30340;&#21306;&#21035;&#26159;:</span>
+<span style="color: #6272a4;">// </span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">1. &#21069;&#32773;&#24182;&#19981;&#20250;&#22788;&#29702; pending signal</span>
+<span style="color: #6272a4;">// </span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">2. &#33509;&#27809;&#26377;&#37197;&#32622; kernel preemption, &#21017;&#21069;&#32773;&#20063;&#19981;&#20250;&#22788;&#29702; pending schedule  </span>
+resume_kernel:
+  cli
+  cmpl $0,TI_preempt_count(%ebp)        # non-zero preempt_count ?
+  jnz restore_all
+need_resched:
+  movl TI_flags(%ebp), %ecx     # need_resched set ?
+  testb $_TIF_NEED_RESCHED, %cl
+  jz restore_all
+  testl $IF_MASK,EFLAGS(%esp)
+  jz restore_all
+  call preempt_schedule_irq
+  <span style="color: #f8f8f2;">jmp</span> <span style="color: #f8f8f2;">need_resched</span>
+</pre>
+</div>
+
+<p>
+关于内核抢占与 preempt_count, 参考 <a href="synchronization.html#orgbf5dd29">内核抢占</a>
+</p>
+</div>
+</div>
+
+<div id="outline-container-org63a22ab" class="outline-3">
+<h3 id="org63a22ab"><span class="section-number-3">1.5</span> do_IRQ</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+init_IRQ 之后, 和 IO interrupt 处理相关的问题就可以从 do_IRQ 开始, 而
+不必再关注更底层的 gate 和 interrupt handler.
+</p>
+
+<p>
+do_IRQ 需要考虑的几个问题:
+</p>
+
+<ol class="org-ol">
+<li>由于所有 IO interrupt 都使用 do_IRQ 做为其 interrupt handler, 所以
+do_IRQ 需要能区分出不同的中断向量并能调用不同的 Interrupt Service
+Routing (ISR)</li>
+
+<li>由于 PIC 的 IRQ 有限而外设数量却在不断增加, 类型也在变化, 导致:
+
+<ol class="org-ol">
+<li>多个设备的 IRQ line 可能会通过 PIC 产生相同的中断向量, 这就要求
+do_IRQ 需要能处理这种 IRQ 共享的情况</li>
+
+<li>设备使用的中断向量不再像早期那样是固定的 (例如 0 是 timer, 1 是
+键盘, 4 是串口, 5 是软盘&#x2026;). 在硬件的帮助下中断向量是可以动态分
+配的 (例如 PCI), do_IRQ 需要能知道某个中断向量动态分配给哪个 ISR</li>
+</ol></li>
+
+<li>do_IRQ 需要通过 bottom half 的手段保证 IO interrupt 能快速响应</li>
+</ol>
+</div>
+
+<div id="outline-container-org79ad5f5" class="outline-4">
+<h4 id="org79ad5f5"><span class="section-number-4">1.5.1</span> do_IRQ</h4>
+<div class="outline-text-4" id="text-1-5-1">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #bd93f9;">do_IRQ</span>:
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">regs-&gt;orig_eax &#20445;&#23384;&#30528; irq</span>
+  <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">irq</span> = regs-&gt;orig_eax &amp; 0xff;
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20462;&#25913; thread_info-&gt;preempt_count, &#21518;&#32493;&#36890;&#36807; in_interrupt &#21487;&#20197;&#21028;&#26029;&#20986;&#24403;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21069;&#26159;&#21542;&#27491;&#22312; interrupt &#19978;&#19979;&#25991;&#20013;</span>
+  irq_enter();
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20551;&#35774;&#24403;&#21069;&#26159; 8K &#30340; kernel stack, &#21017; ISR &#20250;&#20511;&#29992;&#36827;&#31243;&#30340;&#19978;&#19979;&#25991;. &#33509; kernel</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">stack &#20026; 4K, &#21017;&#36825;&#37324;&#20250;&#29983;&#25104; ISR &#33258;&#24049;&#30340;&#20013;&#26029;&#19978;&#19979;&#25991;</span>
+  __do_IRQ(irq, regs);
+  irq_exit();
+    sub_preempt_count(IRQ_EXIT_OFFSET);
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#35302;&#21457; softirq</span>
+    <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>in_interrupt() &amp;&amp; local_softirq_pending()):
+      invoke_softirq();
+
+<span style="color: #bd93f9;">__do_IRQ</span>:
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">irq_desc &#26159;&#19968;&#20010;&#25968;&#32452;: irq_desc_t[NR_IRQS], irq_desc_t &#20013;&#20027;&#35201;&#30340;&#25104;&#21592;&#26159;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#19968;&#20010; irqaction &#38142;&#34920;, &#36890;&#36807;&#36825;&#20010;&#38142;&#34920;&#21487;&#20197;&#25214;&#21040;&#36825;&#20010; IRQ &#23545;&#24212;&#30340;&#25152;&#26377; ISR</span>
+  <span style="color: #f8f8f2;">irq_desc_t</span> *<span style="color: #f8f8f2;">desc</span> = irq_desc + irq;
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#35843;&#29992; PIC &#30340; ack, &#20363;&#22914; mask_and_ack_8259A, &#36825;&#20010;&#20989;&#25968;&#20250;&#36890; INTA &#32473; PIC &#21457;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">ack, &#21516;&#26102;&#22312; PIC &#19978;&#23631;&#34109;&#23545;&#24212;&#30340; IRQ. &#25152;&#20197; ISR &#25191;&#34892;&#26102;&#21487;&#20197;&#20445;&#35777;&#23545;&#24212;&#30340; IRQ</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26159;&#23631;&#34109;&#30340;, ISR &#19981;&#38656;&#35201;&#32771;&#34385;&#37325;&#20837;&#30340;&#38382;&#39064;</span>
+  desc-&gt;handler-&gt;ack(irq);
+  action_ret = handle_IRQ_event(irq, regs, desc-&gt;action);
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">SA_INTERRUPT &#26631;&#35760;&#34920;&#31034; ISR &#20250;&#24456;&#24555;&#23436;&#25104;, &#25152;&#20197;&#19981;&#38656;&#35201;&#24320;&#20013;&#26029;.</span>
+    <span style="color: #6272a4;">//</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#19968;&#33324;&#24773;&#20917;&#19979;&#36825;&#20010; flag &#27809;&#26377;&#32622;&#20301;, &#25152;&#20197; do_IRQ &#20250;&#36890;&#36807; local_irq_enable &#35843;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#29992; sti &#24320;&#20013;&#26029; (&#20043;&#21069;&#30340; set_intr_gate &#23548;&#33268;&#27492;&#26102;&#20013;&#26029;&#26159;&#20851;&#30340;)</span>
+    <span style="color: #6272a4;">//</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#25152;&#20197;&#36890;&#24120;&#24773;&#20917;&#19979; ISR &#25191;&#34892;&#26102;&#20013;&#26029;&#26159;&#24320;&#30340;, &#20294;&#24403;&#21069;&#30340; IRQ &#26159;&#34987;&#23631;&#34109;&#30340;</span>
+    <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>(action-&gt;flags &amp; SA_INTERRUPT)):
+      local_irq_enable();
+
+    <span style="color: #ff79c6; font-weight: bold;">do</span>:
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#38024;&#23545;&#20013;&#26029;&#20849;&#20139;&#30340;&#24773;&#20917;, &#20381;&#27425;&#35843;&#29992;&#27599;&#20010; ISR, &#30452;&#21040;&#26576;&#20010; ISR &#36820;&#22238; IRQ_HANDLED</span>
+      ret = action-&gt;handler(irq, action-&gt;dev_id, regs);
+      <span style="color: #ff79c6; font-weight: bold;">if</span> (ret == IRQ_HANDLED)
+        status |= action-&gt;flags;
+      retval |= ret;
+      action = action-&gt;next;
+    <span style="color: #ff79c6; font-weight: bold;">while</span> (action);
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#35843;&#29992; PIC &#30340; end, &#20363;&#22914; end_8259A_irq, &#21518;&#32773;&#20250;&#21435;&#25481; IRQ &#30340;&#23631;&#34109;</span>
+  desc-&gt;handler-&gt;end(irq);
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgee4cab7" class="outline-5">
+<h5 id="orgee4cab7"><span class="section-number-5">1.5.1.1</span> irq_desc</h5>
+<div class="outline-text-5" id="text-1-5-1-1">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">irq_desc</span> {
+    <span style="color: #f8f8f2;">hw_irq_controller</span> *<span style="color: #f8f8f2;">handler</span>;
+    <span style="color: #f8f8f2;">void</span> *<span style="color: #f8f8f2;">handler_data</span>;
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">irqaction</span> *<span style="color: #f8f8f2;">action</span>;
+    <span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">status</span>;
+    <span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">depth</span>;
+    <span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">irq_count</span>;
+    <span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">irqs_unhandled</span>;
+    <span style="color: #f8f8f2;">spinlock_t</span> <span style="color: #f8f8f2;">lock</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0da4b43" class="outline-5">
+<h5 id="org0da4b43"><span class="section-number-5">1.5.1.2</span> irqaction</h5>
+<div class="outline-text-5" id="text-1-5-1-2">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">irqaction</span> {
+    <span style="color: #f8f8f2;">irqreturn_t</span> (*<span style="color: #50fa7b; font-weight: bold;">handler</span>)(<span style="color: #f8f8f2;">int</span>, <span style="color: #f8f8f2;">void</span> *, <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">pt_regs</span> *);
+    <span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">flags</span>;
+    <span style="color: #f8f8f2;">cpumask_t</span> <span style="color: #f8f8f2;">mask</span>;
+    <span style="color: #ff79c6; font-weight: bold;">const</span> <span style="color: #f8f8f2;">char</span> *<span style="color: #f8f8f2;">name</span>;
+    <span style="color: #f8f8f2;">void</span> *<span style="color: #f8f8f2;">dev_id</span>;
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">irqaction</span> *<span style="color: #f8f8f2;">next</span>;
+    <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">irq</span>;
+};
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org16bcc81" class="outline-4">
+<h4 id="org16bcc81"><span class="section-number-4">1.5.2</span> request_irq</h4>
+<div class="outline-text-4" id="text-1-5-2">
+<p>
+do_IRQ 之前, driver 都需要调用 request_irq(irq, ISR, flags, &#x2026;) 注册
+一个 ISR, 但这里的 "request" 并不是 "分配" 一个 IRQ, 因为设备使用的
+IRQ 是确定的, 以 PCI 为例, 所有 PCI 设备会声明它们希望使用的 IRQ, BIOS
+会根据 PCI 硬件的协议进行协商, 并最终给它们分配确定的 IRQ. linux 只需
+要通过 pci_read_config_byte (PCI_INTERRUPT_PIN) 获得这个 IRQ 号就可以
+了.
+</p>
+
+<p>
+那么 request_irq 到底做的什么?
+</p>
+
+<p>
+实际上, request_irq 的主要功能是分配一个 irqaction 并插入到对应的
+irq_desc[IRQ]-&gt;action 链表中, 和 "request" 关系并不大.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #f8f8f2;">int</span> <span style="color: #50fa7b; font-weight: bold;">request_irq</span>(<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">irq</span>, handler, irqflags):
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#29983;&#25104; irqaction</span>
+  <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">irqaction</span> * action;
+  action = kmalloc(<span style="color: #ff79c6; font-weight: bold;">sizeof</span>(<span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">irqaction</span>), GFP_ATOMIC);
+  action-&gt;handler = handler;
+  action-&gt;flags = irqflags;
+  action-&gt;name = devname;
+  action-&gt;next = <span style="color: #bd93f9;">NULL</span>;
+  action-&gt;dev_id = dev_id;
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20570;&#19968;&#20123;&#26816;&#26597;, &#26368;&#21518;&#25554;&#20837; irq_desc[irq]-&gt;action &#38142;&#34920;&#20013;</span>
+  setup_irq(irq, action);
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">irq_desc</span> *<span style="color: #f8f8f2;">desc</span> = irq_desc + irq;
+    p = &amp;desc-&gt;action;
+    <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>(old-&gt;flags &amp; new-&gt;flags &amp; SA_SHIRQ)):
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26377;&#20123; action &#25903;&#25345; SA_SHIRQ (IRQ sharing) &#20294;&#26377;&#20123;&#19981;&#25903;&#25345;, &#21017;&#25253;&#38169;</span>
+      <span style="color: #ff79c6; font-weight: bold;">return</span> -EBUSY;
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23558;&#26032;&#30340; action &#28155;&#21152;&#21040;&#38142;&#34920;&#26411;&#23614;</span>
+    <span style="color: #ff79c6; font-weight: bold;">do</span>:
+      p = &amp;old-&gt;next;
+      old = *p;
+    <span style="color: #ff79c6; font-weight: bold;">while</span> (old);
+
+    *p-&gt;irq = irq;
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1c8c318" class="outline-3">
+<h3 id="org1c8c318"><span class="section-number-3">1.6</span> softirq</h3>
+<div class="outline-text-3" id="text-1-6">
+</div><div id="outline-container-orgc2f10bd" class="outline-4">
+<h4 id="orgc2f10bd"><span class="section-number-4">1.6.1</span> open_softirq</h4>
+<div class="outline-text-4" id="text-1-6-1">
+<p>
+存在一个 softirq_vec 数组, 数组一共 6 项, 代表 6 种不同的 softirq:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c">HI_SOFTIRQ,
+TIMER_SOFTIRQ,
+NET_TX_SOFTIRQ,
+NET_RX_SOFTIRQ,
+SCSI_SOFTIRQ,
+TASKLET_SOFTIRQ
+</pre>
+</div>
+
+<p>
+每种 softirq 和一个 softirq_action 关联, 后者只是一个回调函数, 其中
+action 是 handler, data 是参数
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c">open_softirq(<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">nr</span>, actions, <span style="color: #bd93f9;">data</span>):
+  softirq_vec[nr].data = data;
+  softirq_vec[nr].action = action;
+</pre>
+</div>
+
+<p>
+所以 open_softirq 只是简单给某种 softirq 赋一个回调函数. 并且由于每种
+softirq 只能对应一个回调, 所以基本上 open_softirq 针对每种 softirq 只
+会被调用一次 (不像 request_irq 那样可以针对同一个 IRQ 调用多次)
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgec61e40" class="outline-4">
+<h4 id="orgec61e40"><span class="section-number-4">1.6.2</span> raise_softirq</h4>
+<div class="outline-text-4" id="text-1-6-2">
+<p>
+raise_softirq 作用是修改一个全局的 __softirq_pending 变量, 这个变量的
+bit n 表示 softirq_vec[n] 是否需要被执行
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c">raise_softirq(<span style="color: #bd93f9;">nr</span>):
+  local_softirq_pending() |= 1UL &lt;&lt; (nr)
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509;&#24403;&#21069;&#19981;&#22312;&#20013;&#26029;&#19978;&#19979;&#25991;, &#21017;&#21796;&#37266; ksoftirqd, &#21542;&#21017;, &#31561;&#24453; irq_exit &#26102;&#22788;&#29702;      </span>
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>in_interrupt()):
+    wakeup_softirqd();
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf3ae915" class="outline-4">
+<h4 id="orgf3ae915"><span class="section-number-4">1.6.3</span> do_softirq</h4>
+<div class="outline-text-4" id="text-1-6-3">
+<p>
+检查是否有 softirq pending (raised), 如果有, 则根据 pending 的值依次调
+用 softirq_action
+</p>
+
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #bd93f9;">do_softirq</span>:
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (in_interrupt())
+    <span style="color: #ff79c6; font-weight: bold;">return</span>;
+
+  local_irq_save(flags);
+  pending = local_softirq_pending();
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (pending)
+    __do_softirq();
+      pending = local_softirq_pending();
+      h = softirq_vec;
+      <span style="color: #ff79c6; font-weight: bold;">do</span>:
+        <span style="color: #ff79c6; font-weight: bold;">if</span> (pending &amp; 1):
+          h-&gt;action(h);
+        h++;
+        pending &gt;&gt;= 1;
+      <span style="color: #ff79c6; font-weight: bold;">while</span> (pending);
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22312; softirq_action &#25191;&#34892;&#36807;&#31243;&#20013;, &#26377;&#21487;&#33021;&#26576;&#20123; action &#26412;&#36523;&#20250;&#20877;&#27425; raise</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33258;&#24049;&#36896;&#25104;&#20877;&#27425; pending, &#20026;&#20102;&#36991;&#20813;&#19981;&#20572;&#30340;&#25191;&#34892;&#36825;&#20123; action, &#36825;&#37324;&#20027;&#21160;&#32467;</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26463;, &#24182; wakeup_softirqd &#35753; ksoftirqd &#26469;&#22788;&#29702;&#36825;&#20123; pending</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">softirq_action, &#27605;&#31455; do_softirq &#26377;&#21487;&#33021;&#26159;&#36890;&#36807; irq_exit &#34987;&#35843;&#29992;&#30340;      </span>
+      <span style="color: #ff79c6; font-weight: bold;">if</span> (pending):
+        wakeup_softirqd();
+  local_irq_restore(flags);
+</pre>
+</div>
+
+<p>
+do_softirq 被调用的时机一般有两个:
+</p>
+
+<ol class="org-ol">
+<li><p>
+irq_exit
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #bd93f9;">irq_exit</span>:
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>in_interrupt() &amp;&amp; local_softirq_pending()):
+    invoke_softirq();
+      do_softirq
+</pre>
+</div></li>
+
+<li><p>
+ksoftirqd
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #bd93f9;">ksoftirqd</span>:
+  set_user_nice(current, 19);
+
+  <span style="color: #ff79c6; font-weight: bold;">while</span> (<span style="color: #bd93f9;">!</span>kthread_should_stop()):
+    <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>local_softirq_pending()):
+      schedule();
+    __set_current_state(TASK_RUNNING);
+
+    <span style="color: #ff79c6; font-weight: bold;">while</span> (local_softirq_pending()):
+      do_softirq();
+      cond_resched();
+
+    set_current_state(TASK_INTERRUPTIBLE);
+</pre>
+</div></li>
+</ol>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7f1358e" class="outline-3">
+<h3 id="org7f1358e"><span class="section-number-3">1.7</span> tasklet</h3>
+<div class="outline-text-3" id="text-1-7">
+</div><div id="outline-container-orga95deeb" class="outline-4">
+<h4 id="orga95deeb"><span class="section-number-4">1.7.1</span> tasklet_struct</h4>
+</div>
+
+<div id="outline-container-org662bc44" class="outline-4">
+<h4 id="org662bc44"><span class="section-number-4">1.7.2</span> tasklet_init</h4>
+<div class="outline-text-4" id="text-1-7-2">
+<div class="org-src-container">
+
+<pre class="src src-c">asklet_init(t,func,<span style="color: #bd93f9;">data</span>):
+  t-&gt;next = <span style="color: #bd93f9;">NULL</span>;
+  t-&gt;state = 0;
+  atomic_set(&amp;t-&gt;count, 0);
+  t-&gt;func = func;
+  t-&gt;data = data;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org29742d0" class="outline-4">
+<h4 id="org29742d0"><span class="section-number-4">1.7.3</span> tasklet_schedule</h4>
+<div class="outline-text-4" id="text-1-7-3">
+<div class="org-src-container">
+
+<pre class="src src-c">__tasklet_schedule(<span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">tasklet_struct</span> *<span style="color: #bd93f9;">t</span>):
+  local_irq_save(flags);
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23558; tasklet_struct &#28155;&#21152;&#20110; tasklet_vec.list &#38142;&#34920;&#22836;, &#28982;&#21518;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">raise_softirq(TASKLET_SOFTIRQ), TASKLET_SOFTIRQ &#23545;&#24212;&#30340;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">softirq_action (tasklet_action) &#20250;&#22788;&#29702;&#36825;&#20123; tasklet    </span>
+  t-&gt;next = __get_cpu_var(tasklet_vec).list;
+  __get_cpu_var(tasklet_vec).list = t;
+  raise_softirq_irqoff(TASKLET_SOFTIRQ);
+  local_irq_restore(flags);
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf4f316e" class="outline-4">
+<h4 id="orgf4f316e"><span class="section-number-4">1.7.4</span> tasklet_action</h4>
+<div class="outline-text-4" id="text-1-7-4">
+<p>
+tasklet 是基于 softirq 的, 所有的 tasklet 构成一个链表, 由
+TASKLET_SOFTIRQ 对应的 softirq_action: tasklet_action 来处理
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org47b12f2" class="outline-3">
+<h3 id="org47b12f2"><span class="section-number-3">1.8</span> workqueue</h3>
+</div>
+
+<div id="outline-container-org81943fd" class="outline-3">
+<h3 id="org81943fd"><span class="section-number-3">1.9</span> Appendix</h3>
+<div class="outline-text-3" id="text-1-9">
+</div><div id="outline-container-org77705cb" class="outline-4">
+<h4 id="org77705cb"><span class="section-number-4">1.9.1</span> IO interrupt handler 内为什么不能睡眠</h4>
+<div class="outline-text-4" id="text-1-9-1">
+<ol class="org-ol">
+<li><p>
+如果 interrupt handler 运行在进程上下文, 则 IO interrupt handler 不
+应该睡眠
+</p>
+
+<p>
+IO interrupt handler 完全是异步的, 它运行在进程上下文时会打断一个普
+通进程的正常执行, 如果此时 interrupt handler 睡眠了, 被它打断的普通
+进程也会睡眠, 由于它运行在进程上下文, 所以它一会儿还会被调度从而继
+续执行, 但这是不合理的&#x2026;那个普通进程做错了什么需要被睡眠?
+</p>
+
+<p>
+另外, interrupt handler 是可以嵌套的, handler 1 正在执行时又发生了
+interrupt, 结果 handler 2 嵌套执行时睡眠了, 那 handler 1 也相当于睡
+眠了, 这也是不合理的
+</p></li>
+
+<li><p>
+如果 interrupt handler 运行在中断上下文, 则 IO interrupt handler 不
+能睡眠
+</p>
+
+<p>
+由于中断上下文并不是进程调度的单位, 所以这种情况下 handler 睡眠后无
+法被 scheduler 重新选择, 也就无法唤醒了
+</p></li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org04c0af1" class="outline-4">
+<h4 id="org04c0af1"><span class="section-number-4">1.9.2</span> fault 与 SIGSEGV</h4>
+<div class="outline-text-4" id="text-1-9-2">
+<p>
+如前面 <a href="#org7de2b5a">Overview</a> 所述, page_fault 时保存的 eip 是导致 fault 的 eip 而不
+是下一条 eip, 所以下面两个测试程序的输出是?
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #f8f8f2;">void</span> <span style="color: #50fa7b; font-weight: bold;">foo</span>(<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">signo</span>) {
+    printf(<span style="color: #f1fa8c;">"foo\n"</span>);
+}
+
+<span style="color: #f8f8f2;">int</span> <span style="color: #50fa7b; font-weight: bold;">main</span>(<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">argc</span>, <span style="color: #f8f8f2;">char</span> *<span style="color: #f8f8f2;">argv</span>[]) {
+    signal(11, foo);
+    *(<span style="color: #f8f8f2;">int</span>*)0 = 1;
+    <span style="color: #ff79c6; font-weight: bold;">return</span> 0;
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #f8f8f2;">void</span> <span style="color: #50fa7b; font-weight: bold;">foo</span>(<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">signo</span>) {
+    printf(<span style="color: #f1fa8c;">"foo\n"</span>);
+}
+
+<span style="color: #f8f8f2;">int</span> <span style="color: #50fa7b; font-weight: bold;">main</span>(<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">argc</span>, <span style="color: #f8f8f2;">char</span> *<span style="color: #f8f8f2;">argv</span>[]) {
+    signal(11, foo);
+    kill(getpid(), 11);
+    <span style="color: #ff79c6; font-weight: bold;">return</span> 0;
+}
+</pre>
+</div>
+
+<p>
+要解释前面程序的输出需要考虑:
+</p>
+
+<ol class="org-ol">
+<li>fault 时硬件关于 eip 的设置</li>
+
+<li>信号处理函数调用的时机</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-07-28 Thu&gt;</span></span></p>
+<p class="author">Author: Wei Sun (孙伟)</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2016-08-29 Mon 22:03</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
