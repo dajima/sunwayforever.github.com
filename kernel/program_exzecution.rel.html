@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-08-29 Mon 22:03 -->
+<!-- 2016-08-30 Tue 02:50 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: Program Exzecution</title>
@@ -64,35 +64,35 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org48c379d">1. Linux Kernel: Program Exzecution</a>
+<li><a href="#orgddbd6be">1. Linux Kernel: Program Exzecution</a>
 <ul>
-<li><a href="#org1b92208">1.1. do_execve</a>
+<li><a href="#orgcd81c0f">1.1. do_execve</a>
 <ul>
-<li><a href="#org0ff5e9c">1.1.1. copy_strings</a></li>
-<li><a href="#orgfa545f2">1.1.2. search_binary_handler</a></li>
+<li><a href="#org98a4dac">1.1.1. copy_strings</a></li>
+<li><a href="#org7dcf6cc">1.1.2. search_binary_handler</a></li>
 </ul>
 </li>
-<li><a href="#org101ca26">1.2. ELF 的加载</a>
+<li><a href="#org9530c1b">1.2. ELF 的加载</a>
 <ul>
-<li><a href="#orga97f66d">1.2.1. load_elf_binary</a></li>
-<li><a href="#org880b4d7">1.2.2. setup_arg_pages</a></li>
-<li><a href="#org2855648">1.2.3. create_elf_tables</a></li>
-<li><a href="#orgf8e8733">1.2.4. load_elf_interp</a></li>
-<li><a href="#org4ab84fc">1.2.5. ELF 程序引用 argc, argv</a></li>
+<li><a href="#org3a72853">1.2.1. load_elf_binary</a></li>
+<li><a href="#org4ad9680">1.2.2. setup_arg_pages</a></li>
+<li><a href="#org317b288">1.2.3. create_elf_tables</a></li>
+<li><a href="#orge074a77">1.2.4. load_elf_interp</a></li>
+<li><a href="#orgee66c86">1.2.5. ELF 程序引用 argc, argv</a></li>
 </ul>
 </li>
-<li><a href="#org2b73eef">1.3. script 的加载</a></li>
-<li><a href="#orgea00e3c">1.4. 用户自定义加载</a></li>
+<li><a href="#org6dec660">1.3. script 的加载</a></li>
+<li><a href="#org6f4de05">1.4. 用户自定义加载</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org48c379d" class="outline-2">
-<h2 id="org48c379d"><span class="section-number-2">1</span> Linux Kernel: Program Exzecution</h2>
+<div id="outline-container-orgddbd6be" class="outline-2">
+<h2 id="orgddbd6be"><span class="section-number-2">1</span> Linux Kernel: Program Exzecution</h2>
 <div class="outline-text-2" id="text-1">
-</div><div id="outline-container-org1b92208" class="outline-3">
-<h3 id="org1b92208"><span class="section-number-3">1.1</span> do_execve</h3>
+</div><div id="outline-container-orgcd81c0f" class="outline-3">
+<h3 id="orgcd81c0f"><span class="section-number-3">1.1</span> do_execve</h3>
 <div class="outline-text-3" id="text-1-1">
 <div class="org-src-container">
 
@@ -158,8 +158,8 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org0ff5e9c" class="outline-4">
-<h4 id="org0ff5e9c"><span class="section-number-4">1.1.1</span> copy_strings</h4>
+<div id="outline-container-org98a4dac" class="outline-4">
+<h4 id="org98a4dac"><span class="section-number-4">1.1.1</span> copy_strings</h4>
 <div class="outline-text-4" id="text-1-1-1">
 <p>
 do_execve 的一个重要的任务是根据 user mode 的 argv, envp 设置好新进程的
@@ -172,7 +172,7 @@ argv 和 envp.
 
 
 <div class="figure">
-<p><img src="file:///home/sunway/note/extra/kernel_argv_envp.png" alt="kernel_argv_envp.png" />
+<p><img src="../extra/kernel_argv_envp.png" alt="kernel_argv_envp.png" />
 </p>
 </div>
 
@@ -225,8 +225,8 @@ argv[] 和 argc
 </div>
 </div>
 
-<div id="outline-container-orgfa545f2" class="outline-4">
-<h4 id="orgfa545f2"><span class="section-number-4">1.1.2</span> search_binary_handler</h4>
+<div id="outline-container-org7dcf6cc" class="outline-4">
+<h4 id="org7dcf6cc"><span class="section-number-4">1.1.2</span> search_binary_handler</h4>
 <div class="outline-text-4" id="text-1-1-2">
 <p>
 search_binary_handler 是 do_execve 最重要的一步, 它所做的并不仅仅是
@@ -255,8 +255,8 @@ kernel 通过 register_binfmt 完成 linux_binfmt 的注册
 </p>
 </div>
 
-<div id="outline-container-org72fa548" class="outline-5">
-<h5 id="org72fa548"><span class="section-number-5">1.1.2.1</span> register_binfmt</h5>
+<div id="outline-container-org0ffa5d4" class="outline-5">
+<h5 id="org0ffa5d4"><span class="section-number-5">1.1.2.1</span> register_binfmt</h5>
 <div class="outline-text-5" id="text-1-1-2-1">
 <div class="org-src-container">
 
@@ -274,8 +274,8 @@ formats 链表的末尾
 </div>
 </div>
 
-<div id="outline-container-orgd16c75e" class="outline-5">
-<h5 id="orgd16c75e"><span class="section-number-5">1.1.2.2</span> linux_binfmt</h5>
+<div id="outline-container-orgecb3041" class="outline-5">
+<h5 id="orgecb3041"><span class="section-number-5">1.1.2.2</span> linux_binfmt</h5>
 <div class="outline-text-5" id="text-1-1-2-2">
 <div class="org-src-container">
 
@@ -298,8 +298,8 @@ load_binary 成功为止.
 </div>
 </div>
 
-<div id="outline-container-org2be4d11" class="outline-5">
-<h5 id="org2be4d11"><span class="section-number-5">1.1.2.3</span> search_binary_handler</h5>
+<div id="outline-container-org7dcf6cc" class="outline-5">
+<h5 id="org7dcf6cc"><span class="section-number-5">1.1.2.3</span> search_binary_handler</h5>
 <div class="outline-text-5" id="text-1-1-2-3">
 <div class="org-src-container">
 
@@ -320,16 +320,16 @@ load_binary 成功为止.
 </div>
 </div>
 
-<div id="outline-container-org101ca26" class="outline-3">
-<h3 id="org101ca26"><span class="section-number-3">1.2</span> ELF 的加载</h3>
+<div id="outline-container-org9530c1b" class="outline-3">
+<h3 id="org9530c1b"><span class="section-number-3">1.2</span> ELF 的加载</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 load_elf_binary 是 elf_format 对应的 load_binary 实现
 </p>
 </div>
 
-<div id="outline-container-orga97f66d" class="outline-4">
-<h4 id="orga97f66d"><span class="section-number-4">1.2.1</span> load_elf_binary</h4>
+<div id="outline-container-org3a72853" class="outline-4">
+<h4 id="org3a72853"><span class="section-number-4">1.2.1</span> load_elf_binary</h4>
 <div class="outline-text-4" id="text-1-2-1">
 <div class="org-src-container">
 
@@ -405,8 +405,8 @@ load_elf_binary 是 elf_format 对应的 load_binary 实现
 </div>
 </div>
 
-<div id="outline-container-org880b4d7" class="outline-4">
-<h4 id="org880b4d7"><span class="section-number-4">1.2.2</span> setup_arg_pages</h4>
+<div id="outline-container-org4ad9680" class="outline-4">
+<h4 id="org4ad9680"><span class="section-number-4">1.2.2</span> setup_arg_pages</h4>
 <div class="outline-text-4" id="text-1-2-2">
 <div class="org-src-container">
 
@@ -446,8 +446,8 @@ load_elf_binary 是 elf_format 对应的 load_binary 实现
 </div>
 </div>
 
-<div id="outline-container-org2855648" class="outline-4">
-<h4 id="org2855648"><span class="section-number-4">1.2.3</span> create_elf_tables</h4>
+<div id="outline-container-org317b288" class="outline-4">
+<h4 id="org317b288"><span class="section-number-4">1.2.3</span> create_elf_tables</h4>
 <div class="outline-text-4" id="text-1-2-3">
 <p>
 create_elf_tables 主要还是和 argv, envp 的处理有关:
@@ -507,8 +507,8 @@ create_elf_tables 会 setup 最后这一部分
 </div>
 
 
-<div id="outline-container-orgf8e8733" class="outline-4">
-<h4 id="orgf8e8733"><span class="section-number-4">1.2.4</span> load_elf_interp</h4>
+<div id="outline-container-orge074a77" class="outline-4">
+<h4 id="orge074a77"><span class="section-number-4">1.2.4</span> load_elf_interp</h4>
 <div class="outline-text-4" id="text-1-2-4">
 <p>
 当 elf 指定了 .interp 时, 程序的入口不再是 elf 本身的 entry, 而是
@@ -546,16 +546,16 @@ interp 的 entry
 </div>
 </div>
 
-<div id="outline-container-org4ab84fc" class="outline-4">
-<h4 id="org4ab84fc"><span class="section-number-4">1.2.5</span> ELF 程序引用 argc, argv</h4>
+<div id="outline-container-orgee66c86" class="outline-4">
+<h4 id="orgee66c86"><span class="section-number-4">1.2.5</span> ELF 程序引用 argc, argv</h4>
 <div class="outline-text-4" id="text-1-2-5">
 <p>
 argc 和 argv 已经放在栈上了, 那么应用程序如何引用到它们?
 </p>
 </div>
 
-<div id="outline-container-orgb7d4722" class="outline-5">
-<h5 id="orgb7d4722"><span class="section-number-5">1.2.5.1</span> 示例程序</h5>
+<div id="outline-container-org569c9f9" class="outline-5">
+<h5 id="org569c9f9"><span class="section-number-5">1.2.5.1</span> 示例程序</h5>
 <div class="outline-text-5" id="text-1-2-5-1">
 <div class="org-src-container">
 
@@ -587,8 +587,8 @@ nostdlib 后又无法使用 libc 中提供的函数例如 printf&#x2026;为了�
 </div>
 </div>
 
-<div id="outline-container-org5309f30" class="outline-5">
-<h5 id="org5309f30"><span class="section-number-5">1.2.5.2</span> 使用 gdb 分析</h5>
+<div id="outline-container-orgfa0024f" class="outline-5">
+<h5 id="orgfa0024f"><span class="section-number-5">1.2.5.2</span> 使用 gdb 分析</h5>
 <div class="outline-text-5" id="text-1-2-5-2">
 <pre class="example">
 #&gt; gdb ./a.out
@@ -683,8 +683,8 @@ $4 = 0xffffc62b "XDG_VTNR=1"
 </div>
 </div>
 
-<div id="outline-container-org14db662" class="outline-5">
-<h5 id="org14db662"><span class="section-number-5">1.2.5.3</span> 实现一个简单的 entry</h5>
+<div id="outline-container-orgf485c1a" class="outline-5">
+<h5 id="orgf485c1a"><span class="section-number-5">1.2.5.3</span> 实现一个简单的 entry</h5>
 <div class="outline-text-5" id="text-1-2-5-3">
 <div class="org-src-container">
 
@@ -735,8 +735,8 @@ hello
 </div>
 </div>
 
-<div id="outline-container-org2b73eef" class="outline-3">
-<h3 id="org2b73eef"><span class="section-number-3">1.3</span> script 的加载</h3>
+<div id="outline-container-org6dec660" class="outline-3">
+<h3 id="org6dec660"><span class="section-number-3">1.3</span> script 的加载</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 load_script 负责 script (bash, perl, python &#x2026;) 的加载
@@ -787,8 +787,8 @@ load_script 负责 script (bash, perl, python &#x2026;) 的加载
 </div>
 </div>
 
-<div id="outline-container-orgea00e3c" class="outline-3">
-<h3 id="orgea00e3c"><span class="section-number-3">1.4</span> 用户自定义加载</h3>
+<div id="outline-container-org6f4de05" class="outline-3">
+<h3 id="org6f4de05"><span class="section-number-3">1.4</span> 用户自定义加载</h3>
 <div class="outline-text-3" id="text-1-4">
 <p>
 load_misc_binary 实现用户自定义的加载, 它的过程和 load_script 非常类似,
@@ -803,7 +803,7 @@ load_misc_binary 实现用户自定义的加载, 它的过程和 load_script 非
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-08-02 Tue&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-08-29 Mon 22:03</p>
+<p class="date">Created: 2016-08-30 Tue 02:50</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
