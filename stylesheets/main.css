@@ -4,9 +4,9 @@
     margin: 10px 8% 10px 8%;
     font-family: Verdana;
     text-align: justify;
-    font-size: 10pt;
+    font-size: 13pt;
     padding: 10px;
-    line-height: 1.2em;
+    line-height: 1.5em;
   }
 
   #table-of-contents {
@@ -44,7 +44,7 @@
   }
 
   h1 {
-    font-size: 12pt;
+    font-size: 20pt;
   }
 
   .title {
@@ -55,19 +55,23 @@
   }
 
   h2 {
-    font-size: 12pt;
+    font-size: 19pt;
     padding-bottom: 4px;
     margin-bottom: 5px;
     border-bottom: 3px solid #DDD;
   }
 
   h3 {
-    font-size: 11pt;
+    font-size: 17pt;
     color: #333333;
   }
 
   h4 {
-    font-size: 9pt;
+    font-size: 15pt;
+  }
+
+  h5 {
+    font-size: 13pt;
   }
 
   a {
@@ -104,7 +108,7 @@
   }
 
   li {
-    margin: .4em;
+    margin: -0.2em;
   }
 
   table {
@@ -125,7 +129,7 @@
   }
 
   img {
-    border: none;
+      border: none;
   }
 
   .share img {
@@ -156,8 +160,8 @@
         font-family: "Courier 10 Pitch", Courier, monospace;
         font-size: 95%;
         line-height: 140%;
-        color: #EEE;
-        background-color: #282a36;
+        /* color: #EEE; */
+        /* background-color: #282a36; */
         border: 1px solid grey;
         padding: 2em;
  }

@@ -3,181 +3,13 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-08-30 Tue 14:07 -->
+<!-- 2016-08-30 Tue 16:01 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: Signal</title>
 <meta name="generator" content="Org-mode" />
 <meta name="author" content="Wei Sun (孙伟)" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
-  .title  { text-align: center;
-             margin-bottom: .2em; }
-  .subtitle { text-align: center;
-              font-size: medium;
-              font-weight: bold;
-              margin-top:0; }
-  .todo   { font-family: monospace; color: red; }
-  .done   { font-family: monospace; color: green; }
-  .priority { font-family: monospace; color: orange; }
-  .tag    { background-color: #eee; font-family: monospace;
-            padding: 2px; font-size: 80%; font-weight: normal; }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
-  .underline { text-decoration: underline; }
-  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
-  p.verse { margin-left: 3%; }
-  pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
-    padding: 8pt;
-    font-family: monospace;
-    overflow: auto;
-    margin: 1.2em;
-  }
-  pre.src {
-    position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
-  }
-  pre.src:before {
-    display: none;
-    position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
-    padding: 3px;
-    border: 1px solid black;
-  }
-  pre.src:hover:before { display: inline;}
-  /* Languages per Org manual */
-  pre.src-asymptote:before { content: 'Asymptote'; }
-  pre.src-awk:before { content: 'Awk'; }
-  pre.src-C:before { content: 'C'; }
-  /* pre.src-C++ doesn't work in CSS */
-  pre.src-clojure:before { content: 'Clojure'; }
-  pre.src-css:before { content: 'CSS'; }
-  pre.src-D:before { content: 'D'; }
-  pre.src-ditaa:before { content: 'ditaa'; }
-  pre.src-dot:before { content: 'Graphviz'; }
-  pre.src-calc:before { content: 'Emacs Calc'; }
-  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-fortran:before { content: 'Fortran'; }
-  pre.src-gnuplot:before { content: 'gnuplot'; }
-  pre.src-haskell:before { content: 'Haskell'; }
-  pre.src-java:before { content: 'Java'; }
-  pre.src-js:before { content: 'Javascript'; }
-  pre.src-latex:before { content: 'LaTeX'; }
-  pre.src-ledger:before { content: 'Ledger'; }
-  pre.src-lisp:before { content: 'Lisp'; }
-  pre.src-lilypond:before { content: 'Lilypond'; }
-  pre.src-matlab:before { content: 'MATLAB'; }
-  pre.src-mscgen:before { content: 'Mscgen'; }
-  pre.src-ocaml:before { content: 'Objective Caml'; }
-  pre.src-octave:before { content: 'Octave'; }
-  pre.src-org:before { content: 'Org mode'; }
-  pre.src-oz:before { content: 'OZ'; }
-  pre.src-plantuml:before { content: 'Plantuml'; }
-  pre.src-processing:before { content: 'Processing.js'; }
-  pre.src-python:before { content: 'Python'; }
-  pre.src-R:before { content: 'R'; }
-  pre.src-ruby:before { content: 'Ruby'; }
-  pre.src-sass:before { content: 'Sass'; }
-  pre.src-scheme:before { content: 'Scheme'; }
-  pre.src-screen:before { content: 'Gnu Screen'; }
-  pre.src-sed:before { content: 'Sed'; }
-  pre.src-sh:before { content: 'shell'; }
-  pre.src-sql:before { content: 'SQL'; }
-  pre.src-sqlite:before { content: 'SQLite'; }
-  /* additional languages in org.el's org-babel-load-languages alist */
-  pre.src-forth:before { content: 'Forth'; }
-  pre.src-io:before { content: 'IO'; }
-  pre.src-J:before { content: 'J'; }
-  pre.src-makefile:before { content: 'Makefile'; }
-  pre.src-maxima:before { content: 'Maxima'; }
-  pre.src-perl:before { content: 'Perl'; }
-  pre.src-picolisp:before { content: 'Pico Lisp'; }
-  pre.src-scala:before { content: 'Scala'; }
-  pre.src-shell:before { content: 'Shell Script'; }
-  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
-  /* additional language identifiers per "defun org-babel-execute"
-       in ob-*.el */
-  pre.src-cpp:before  { content: 'C++'; }
-  pre.src-abc:before  { content: 'ABC'; }
-  pre.src-coq:before  { content: 'Coq'; }
-  pre.src-groovy:before  { content: 'Groovy'; }
-  /* additional language identifiers from org-babel-shell-names in
-     ob-shell.el: ob-shell is the only babel language using a lambda to put
-     the execution function name together. */
-  pre.src-bash:before  { content: 'bash'; }
-  pre.src-csh:before  { content: 'csh'; }
-  pre.src-ash:before  { content: 'ash'; }
-  pre.src-dash:before  { content: 'dash'; }
-  pre.src-ksh:before  { content: 'ksh'; }
-  pre.src-mksh:before  { content: 'mksh'; }
-  pre.src-posh:before  { content: 'posh'; }
-  /* Additional Emacs modes also supported by the LaTeX listings package */
-  pre.src-ada:before { content: 'Ada'; }
-  pre.src-asm:before { content: 'Assembler'; }
-  pre.src-caml:before { content: 'Caml'; }
-  pre.src-delphi:before { content: 'Delphi'; }
-  pre.src-html:before { content: 'HTML'; }
-  pre.src-idl:before { content: 'IDL'; }
-  pre.src-mercury:before { content: 'Mercury'; }
-  pre.src-metapost:before { content: 'MetaPost'; }
-  pre.src-modula-2:before { content: 'Modula-2'; }
-  pre.src-pascal:before { content: 'Pascal'; }
-  pre.src-ps:before { content: 'PostScript'; }
-  pre.src-prolog:before { content: 'Prolog'; }
-  pre.src-simula:before { content: 'Simula'; }
-  pre.src-tcl:before { content: 'tcl'; }
-  pre.src-tex:before { content: 'TeX'; }
-  pre.src-plain-tex:before { content: 'Plain TeX'; }
-  pre.src-verilog:before { content: 'Verilog'; }
-  pre.src-vhdl:before { content: 'VHDL'; }
-  pre.src-xml:before { content: 'XML'; }
-  pre.src-nxml:before { content: 'XML'; }
-  /* add a generic configuration mode; LaTeX export needs an additional
-     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
-  pre.src-conf:before { content: 'Configuration File'; }
-
-  table { border-collapse:collapse; }
-  caption.t-above { caption-side: top; }
-  caption.t-bottom { caption-side: bottom; }
-  td, th { vertical-align:top;  }
-  th.org-right  { text-align: center;  }
-  th.org-left   { text-align: center;   }
-  th.org-center { text-align: center; }
-  td.org-right  { text-align: right;  }
-  td.org-left   { text-align: left;   }
-  td.org-center { text-align: center; }
-  dt { font-weight: bold; }
-  .footpara { display: inline; }
-  .footdef  { margin-bottom: 1em; }
-  .figure { padding: 1em; }
-  .figure p { text-align: center; }
-  .inlinetask {
-    padding: 10px;
-    border: 2px solid gray;
-    margin: 10px;
-    background: #ffffcc;
-  }
-  #org-div-home-and-up
-   { text-align: right; font-size: 70%; white-space: nowrap; }
-  textarea { overflow-x: auto; }
-  .linenr { font-size: smaller }
-  .code-highlighted { background-color: #ffff00; }
-  .org-info-js_info-navigation { border-style: none; }
-  #org-info-js_console-label
-    { font-size: 10px; font-weight: bold; white-space: nowrap; }
-  .org-info-js_search-highlight
-    { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
-</style>
+<link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -232,35 +64,35 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orga61bb9c">1. Linux Kernel: Signal</a>
+<li><a href="#org87e14ff">1. Linux Kernel: Signal</a>
 <ul>
-<li><a href="#orgaf2b06b">1.1. Overview</a></li>
-<li><a href="#org7efcea8">1.2. 数据结构</a></li>
-<li><a href="#org34b7c6a">1.3. 信号产生</a>
+<li><a href="#org62e548b">1.1. Overview</a></li>
+<li><a href="#org9051e1c">1.2. 数据结构</a></li>
+<li><a href="#org37c83e1">1.3. 信号产生</a>
 <ul>
-<li><a href="#orga28f0fe">1.3.1. 给单个线程发送信号</a></li>
-<li><a href="#org15976cd">1.3.2. 给线程组发送信号</a></li>
-<li><a href="#orgca3c7af">1.3.3. 举例</a></li>
+<li><a href="#org3f79dc5">1.3.1. 给单个线程发送信号</a></li>
+<li><a href="#org8a650b6">1.3.2. 给线程组发送信号</a></li>
+<li><a href="#org7b4c074">1.3.3. 举例</a></li>
 </ul>
 </li>
-<li><a href="#orgadbfc3d">1.4. 信号传递</a>
+<li><a href="#org1014302">1.4. 信号传递</a>
 <ul>
-<li><a href="#org467e161">1.4.1. do_signal</a></li>
+<li><a href="#orgf50b7b2">1.4.1. do_signal</a></li>
 </ul>
 </li>
-<li><a href="#orgbc74a18">1.5. 相关的系统调用</a>
+<li><a href="#orgbdcfbe5">1.5. 相关的系统调用</a>
 <ul>
-<li><a href="#orgf4ce6a8">1.5.1. kill, tkill, tgkill</a></li>
-<li><a href="#org6ca0c3c">1.5.2. signal, sigaction</a></li>
-<li><a href="#org4921e33">1.5.3. sigsuspend</a></li>
-<li><a href="#org4d88761">1.5.4. sigpending</a></li>
-<li><a href="#org575a996">1.5.5. sigprocmask</a></li>
+<li><a href="#org163e7b1">1.5.1. kill, tkill, tgkill</a></li>
+<li><a href="#orgdd90687">1.5.2. signal, sigaction</a></li>
+<li><a href="#org762aee8">1.5.3. sigsuspend</a></li>
+<li><a href="#org9302e18">1.5.4. sigpending</a></li>
+<li><a href="#org2e10dd2">1.5.5. sigprocmask</a></li>
 </ul>
 </li>
-<li><a href="#org21916a9">1.6. Appendix</a>
+<li><a href="#org6a0120e">1.6. Appendix</a>
 <ul>
-<li><a href="#orgfafad7a">1.6.1. 系统调用的中断与重启</a></li>
-<li><a href="#org7ce4e74">1.6.2. 信号与线程</a></li>
+<li><a href="#org060b741">1.6.1. 系统调用的中断与重启</a></li>
+<li><a href="#org6dc6a14">1.6.2. 信号与线程</a></li>
 </ul>
 </li>
 </ul>
@@ -268,11 +100,11 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
-<div id="outline-container-orga61bb9c" class="outline-2">
-<h2 id="orga61bb9c"><span class="section-number-2">1</span> Linux Kernel: Signal</h2>
+<div id="outline-container-org87e14ff" class="outline-2">
+<h2 id="org87e14ff"><span class="section-number-2">1</span> Linux Kernel: Signal</h2>
 <div class="outline-text-2" id="text-1">
-</div><div id="outline-container-orgaf2b06b" class="outline-3">
-<h3 id="orgaf2b06b"><span class="section-number-3">1.1</span> Overview</h3>
+</div><div id="outline-container-org62e548b" class="outline-3">
+<h3 id="org62e548b"><span class="section-number-3">1.1</span> Overview</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 信号 (signal) 是一个很短的消息, 发送者可以是 kernel 本身或某个进程, 接
@@ -325,7 +157,7 @@ SIG_IGN, 则这个信号并不会进入 pending signal 列表中: 它会被直�
 
 <p>
 A 发送信号给 B 只是将信号记在 B 的 pending signal 中, B 真正响应这个信号
-的时机是从 kernel mode 返回 user mode 时, 参考 <a href="interrupt.rel.html#org19830d0">ret_from_intr</a> 中关于
+的时机是从 kernel mode 返回 user mode 时, 参考 <a href="interrupt.rel.html#org728534a">ret_from_intr</a> 中关于
 work_pending 的描述. B 响应信号的过程称为 signal delivering
 </p>
 
@@ -338,8 +170,8 @@ work_pending 的描述. B 响应信号的过程称为 signal delivering
 </div>
 
 
-<div id="outline-container-org7efcea8" class="outline-3">
-<h3 id="org7efcea8"><span class="section-number-3">1.2</span> 数据结构</h3>
+<div id="outline-container-org9051e1c" class="outline-3">
+<h3 id="org9051e1c"><span class="section-number-3">1.2</span> 数据结构</h3>
 <div class="outline-text-3" id="text-1-2">
 
 <div class="figure">
@@ -363,8 +195,8 @@ signal-&gt;rlim 是进程的 rlimit 信息, rlimit 中的大部分信息和信�
 </div>
 </div>
 
-<div id="outline-container-org34b7c6a" class="outline-3">
-<h3 id="org34b7c6a"><span class="section-number-3">1.3</span> 信号产生</h3>
+<div id="outline-container-org37c83e1" class="outline-3">
+<h3 id="org37c83e1"><span class="section-number-3">1.3</span> 信号产生</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 根据信号的来源 (进程通过 kill 发起或 kernel 本身发起的), kernel 通过许多
@@ -403,11 +235,11 @@ group_send_sig_info
 </p>
 </div>
 
-<div id="outline-container-orga28f0fe" class="outline-4">
-<h4 id="orga28f0fe"><span class="section-number-4">1.3.1</span> 给单个线程发送信号</h4>
+<div id="outline-container-org3f79dc5" class="outline-4">
+<h4 id="org3f79dc5"><span class="section-number-4">1.3.1</span> 给单个线程发送信号</h4>
 <div class="outline-text-4" id="text-1-3-1">
-</div><div id="outline-container-orga8abff3" class="outline-5">
-<h5 id="orga8abff3"><span class="section-number-5">1.3.1.1</span> specific_send_sig_info</h5>
+</div><div id="outline-container-orgdc12cba" class="outline-5">
+<h5 id="orgdc12cba"><span class="section-number-5">1.3.1.1</span> specific_send_sig_info</h5>
 <div class="outline-text-5" id="text-1-3-1-1">
 <div class="org-src-container">
 
@@ -458,8 +290,8 @@ group_send_sig_info
 </div>
 </div>
 
-<div id="outline-container-org0d5b7b9" class="outline-5">
-<h5 id="org0d5b7b9"><span class="section-number-5">1.3.1.2</span> send_signal</h5>
+<div id="outline-container-orgd28a61d" class="outline-5">
+<h5 id="orgd28a61d"><span class="section-number-5">1.3.1.2</span> send_signal</h5>
 <div class="outline-text-5" id="text-1-3-1-2">
 <div class="org-src-container">
 
@@ -500,11 +332,11 @@ group_send_sig_info
 </div>
 </div>
 
-<div id="outline-container-org15976cd" class="outline-4">
-<h4 id="org15976cd"><span class="section-number-4">1.3.2</span> 给线程组发送信号</h4>
+<div id="outline-container-org8a650b6" class="outline-4">
+<h4 id="org8a650b6"><span class="section-number-4">1.3.2</span> 给线程组发送信号</h4>
 <div class="outline-text-4" id="text-1-3-2">
-</div><div id="outline-container-orgaf421ed" class="outline-5">
-<h5 id="orgaf421ed"><span class="section-number-5">1.3.2.1</span> group_send_sig_info</h5>
+</div><div id="outline-container-org511f7f6" class="outline-5">
+<h5 id="org511f7f6"><span class="section-number-5">1.3.2.1</span> group_send_sig_info</h5>
 <div class="outline-text-5" id="text-1-3-2-1">
 <div class="org-src-container">
 
@@ -531,8 +363,8 @@ group_send_sig_info
 </div>
 </div>
 
-<div id="outline-container-orga3652a4" class="outline-5">
-<h5 id="orga3652a4"><span class="section-number-5">1.3.2.2</span> __group_complete_signal</h5>
+<div id="outline-container-orgfaa49cc" class="outline-5">
+<h5 id="orgfaa49cc"><span class="section-number-5">1.3.2.2</span> __group_complete_signal</h5>
 <div class="outline-text-5" id="text-1-3-2-2">
 <div class="org-src-container">
 
@@ -581,11 +413,11 @@ __group_complete_signal(sig, <span style="font-weight: bold; text-decoration: un
 </div>
 </div>
 
-<div id="outline-container-orgca3c7af" class="outline-4">
-<h4 id="orgca3c7af"><span class="section-number-4">1.3.3</span> 举例</h4>
+<div id="outline-container-org7b4c074" class="outline-4">
+<h4 id="org7b4c074"><span class="section-number-4">1.3.3</span> 举例</h4>
 <div class="outline-text-4" id="text-1-3-3">
-</div><div id="outline-container-org4bee204" class="outline-5">
-<h5 id="org4bee204"><span class="section-number-5">1.3.3.1</span> 应用发起的 kill</h5>
+</div><div id="outline-container-orgb33fa79" class="outline-5">
+<h5 id="orgb33fa79"><span class="section-number-5">1.3.3.1</span> 应用发起的 kill</h5>
 <div class="outline-text-5" id="text-1-3-3-1">
 <div class="org-src-container">
 
@@ -621,8 +453,8 @@ __group_complete_signal(sig, <span style="font-weight: bold; text-decoration: un
 </div>
 </div>
 
-<div id="outline-container-org510e2a5" class="outline-5">
-<h5 id="org510e2a5"><span class="section-number-5">1.3.3.2</span> page fault 导致的 SIGSEGV</h5>
+<div id="outline-container-org1cd4214" class="outline-5">
+<h5 id="org1cd4214"><span class="section-number-5">1.3.3.2</span> page fault 导致的 SIGSEGV</h5>
 <div class="outline-text-5" id="text-1-3-3-2">
 <div class="org-src-container">
 
@@ -650,8 +482,8 @@ __group_complete_signal(sig, <span style="font-weight: bold; text-decoration: un
 </div>
 </div>
 
-<div id="outline-container-orgadbfc3d" class="outline-3">
-<h3 id="orgadbfc3d"><span class="section-number-3">1.4</span> 信号传递</h3>
+<div id="outline-container-org1014302" class="outline-3">
+<h3 id="org1014302"><span class="section-number-3">1.4</span> 信号传递</h3>
 <div class="outline-text-3" id="text-1-4">
 <p>
 信号传递 (signal delivering) 是指 pending 信号对应的 sa_handler 真正被
@@ -699,8 +531,8 @@ work_notifysig:
 </div>
 </div>
 
-<div id="outline-container-org467e161" class="outline-4">
-<h4 id="org467e161"><span class="section-number-4">1.4.1</span> do_signal</h4>
+<div id="outline-container-orgf50b7b2" class="outline-4">
+<h4 id="orgf50b7b2"><span class="section-number-4">1.4.1</span> do_signal</h4>
 <div class="outline-text-4" id="text-1-4-1">
 <p>
 do_signal 是信号处理最主要的部分, 它需要完成信号处理中最复杂的部分: 在
@@ -718,8 +550,8 @@ kernel space 调用 user space 下的 sa_handler
 </div>
 </div>
 
-<div id="outline-container-orgb3ba0e2" class="outline-5">
-<h5 id="orgb3ba0e2"><span class="section-number-5">1.4.1.1</span> get_signal_to_deliver</h5>
+<div id="outline-container-orga1a0642" class="outline-5">
+<h5 id="orga1a0642"><span class="section-number-5">1.4.1.1</span> get_signal_to_deliver</h5>
 <div class="outline-text-5" id="text-1-4-1-1">
 <p>
 找一个 pending 的 signal, 并交给 handle_signal 去处理. 如果 pending
@@ -786,8 +618,8 @@ signal 对应的 handler 是 SIG_DFL, 则执行默认的操作: ignore, coredump
 </div>
 </div>
 
-<div id="outline-container-org018ee04" class="outline-5">
-<h5 id="org018ee04"><span class="section-number-5">1.4.1.2</span> handle_signal</h5>
+<div id="outline-container-org046ad56" class="outline-5">
+<h5 id="org046ad56"><span class="section-number-5">1.4.1.2</span> handle_signal</h5>
 <div class="outline-text-5" id="text-1-4-1-2">
 <div class="org-src-container">
 
@@ -808,8 +640,8 @@ signal 对应的 handler 是 SIG_DFL, 则执行默认的操作: ignore, coredump
 </div>
 </div>
 
-<div id="outline-container-org97037b6" class="outline-5">
-<h5 id="org97037b6"><span class="section-number-5">1.4.1.3</span> setup_frame</h5>
+<div id="outline-container-org9ecbaf7" class="outline-5">
+<h5 id="org9ecbaf7"><span class="section-number-5">1.4.1.3</span> setup_frame</h5>
 <div class="outline-text-5" id="text-1-4-1-3">
 
 <div class="figure">
@@ -889,14 +721,14 @@ siginfo 的指针.
 </div>
 </div>
 
-<div id="outline-container-org603b3db" class="outline-5">
-<h5 id="org603b3db"><span class="section-number-5">1.4.1.4</span> __kernel_sigreturn</h5>
+<div id="outline-container-org89d8e65" class="outline-5">
+<h5 id="org89d8e65"><span class="section-number-5">1.4.1.4</span> __kernel_sigreturn</h5>
 <div class="outline-text-5" id="text-1-4-1-4">
 <p>
 sa_handler 执行结束后, 按照 c 默认的调用约定和前面描述的栈布局, 会跳转
 到 __kernel_sigreturn 函数, __kernel_sigreturn 函数是保存在 vsyscall
 page 中的一个函数, 所以应用可以直接访问, 关于 vsyscall page, 参考
-<a href="process.rel.html#org220d0a1">sysenter, syscall, vsyscall</a>
+<a href="process.rel.html#org92c5d0b">sysenter, syscall, vsyscall</a>
 </p>
 
 <p>
@@ -950,8 +782,8 @@ page 中的一个函数, 所以应用可以直接访问, 关于 vsyscall page, �
 </div>
 </div>
 
-<div id="outline-container-org4bf0dc5" class="outline-5">
-<h5 id="org4bf0dc5"><span class="section-number-5">1.4.1.5</span> 观察 sigframe</h5>
+<div id="outline-container-org6b1f8c0" class="outline-5">
+<h5 id="org6b1f8c0"><span class="section-number-5">1.4.1.5</span> 观察 sigframe</h5>
 <div class="outline-text-5" id="text-1-4-1-5">
 <p>
 测试程序:
@@ -1047,35 +879,35 @@ End of assembler dump.
 </div>
 </div>
 
-<div id="outline-container-orgbc74a18" class="outline-3">
-<h3 id="orgbc74a18"><span class="section-number-3">1.5</span> 相关的系统调用</h3>
+<div id="outline-container-orgbdcfbe5" class="outline-3">
+<h3 id="orgbdcfbe5"><span class="section-number-3">1.5</span> 相关的系统调用</h3>
 <div class="outline-text-3" id="text-1-5">
-</div><div id="outline-container-orgf4ce6a8" class="outline-4">
-<h4 id="orgf4ce6a8"><span class="section-number-4">1.5.1</span> kill, tkill, tgkill</h4>
+</div><div id="outline-container-org163e7b1" class="outline-4">
+<h4 id="org163e7b1"><span class="section-number-4">1.5.1</span> kill, tkill, tgkill</h4>
 </div>
 
-<div id="outline-container-org6ca0c3c" class="outline-4">
-<h4 id="org6ca0c3c"><span class="section-number-4">1.5.2</span> signal, sigaction</h4>
+<div id="outline-container-orgdd90687" class="outline-4">
+<h4 id="orgdd90687"><span class="section-number-4">1.5.2</span> signal, sigaction</h4>
 </div>
 
-<div id="outline-container-org4921e33" class="outline-4">
-<h4 id="org4921e33"><span class="section-number-4">1.5.3</span> sigsuspend</h4>
+<div id="outline-container-org762aee8" class="outline-4">
+<h4 id="org762aee8"><span class="section-number-4">1.5.3</span> sigsuspend</h4>
 </div>
 
-<div id="outline-container-org4d88761" class="outline-4">
-<h4 id="org4d88761"><span class="section-number-4">1.5.4</span> sigpending</h4>
+<div id="outline-container-org9302e18" class="outline-4">
+<h4 id="org9302e18"><span class="section-number-4">1.5.4</span> sigpending</h4>
 </div>
 
-<div id="outline-container-org575a996" class="outline-4">
-<h4 id="org575a996"><span class="section-number-4">1.5.5</span> sigprocmask</h4>
+<div id="outline-container-org2e10dd2" class="outline-4">
+<h4 id="org2e10dd2"><span class="section-number-4">1.5.5</span> sigprocmask</h4>
 </div>
 </div>
 
-<div id="outline-container-org21916a9" class="outline-3">
-<h3 id="org21916a9"><span class="section-number-3">1.6</span> Appendix</h3>
+<div id="outline-container-org6a0120e" class="outline-3">
+<h3 id="org6a0120e"><span class="section-number-3">1.6</span> Appendix</h3>
 <div class="outline-text-3" id="text-1-6">
-</div><div id="outline-container-orgfafad7a" class="outline-4">
-<h4 id="orgfafad7a"><span class="section-number-4">1.6.1</span> 系统调用的中断与重启</h4>
+</div><div id="outline-container-org060b741" class="outline-4">
+<h4 id="org060b741"><span class="section-number-4">1.6.1</span> 系统调用的中断与重启</h4>
 <div class="outline-text-4" id="text-1-6-1">
 <p>
 <a href="https://github.com/mozilla/rr/wiki/Linux-signals">https://github.com/mozilla/rr/wiki/Linux-signals</a>
@@ -1168,8 +1000,8 @@ handle_signal
 </div>
 </div>
 
-<div id="outline-container-org7ce4e74" class="outline-4">
-<h4 id="org7ce4e74"><span class="section-number-4">1.6.2</span> 信号与线程</h4>
+<div id="outline-container-org6dc6a14" class="outline-4">
+<h4 id="org6dc6a14"><span class="section-number-4">1.6.2</span> 信号与线程</h4>
 <div class="outline-text-4" id="text-1-6-2">
 <p>
 通过 fork 时的 copy_process 代码, 可以看到:
@@ -1193,7 +1025,7 @@ handle_signal
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-08-10 Wed&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-08-30 Tue 14:07</p>
+<p class="date">Created: 2016-08-30 Tue 16:01</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

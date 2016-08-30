@@ -3,181 +3,13 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-08-30 Tue 14:07 -->
+<!-- 2016-08-30 Tue 16:01 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: VFS</title>
 <meta name="generator" content="Org-mode" />
 <meta name="author" content="Wei Sun (孙伟)" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
-  .title  { text-align: center;
-             margin-bottom: .2em; }
-  .subtitle { text-align: center;
-              font-size: medium;
-              font-weight: bold;
-              margin-top:0; }
-  .todo   { font-family: monospace; color: red; }
-  .done   { font-family: monospace; color: green; }
-  .priority { font-family: monospace; color: orange; }
-  .tag    { background-color: #eee; font-family: monospace;
-            padding: 2px; font-size: 80%; font-weight: normal; }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
-  .underline { text-decoration: underline; }
-  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
-  p.verse { margin-left: 3%; }
-  pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
-    padding: 8pt;
-    font-family: monospace;
-    overflow: auto;
-    margin: 1.2em;
-  }
-  pre.src {
-    position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
-  }
-  pre.src:before {
-    display: none;
-    position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
-    padding: 3px;
-    border: 1px solid black;
-  }
-  pre.src:hover:before { display: inline;}
-  /* Languages per Org manual */
-  pre.src-asymptote:before { content: 'Asymptote'; }
-  pre.src-awk:before { content: 'Awk'; }
-  pre.src-C:before { content: 'C'; }
-  /* pre.src-C++ doesn't work in CSS */
-  pre.src-clojure:before { content: 'Clojure'; }
-  pre.src-css:before { content: 'CSS'; }
-  pre.src-D:before { content: 'D'; }
-  pre.src-ditaa:before { content: 'ditaa'; }
-  pre.src-dot:before { content: 'Graphviz'; }
-  pre.src-calc:before { content: 'Emacs Calc'; }
-  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-fortran:before { content: 'Fortran'; }
-  pre.src-gnuplot:before { content: 'gnuplot'; }
-  pre.src-haskell:before { content: 'Haskell'; }
-  pre.src-java:before { content: 'Java'; }
-  pre.src-js:before { content: 'Javascript'; }
-  pre.src-latex:before { content: 'LaTeX'; }
-  pre.src-ledger:before { content: 'Ledger'; }
-  pre.src-lisp:before { content: 'Lisp'; }
-  pre.src-lilypond:before { content: 'Lilypond'; }
-  pre.src-matlab:before { content: 'MATLAB'; }
-  pre.src-mscgen:before { content: 'Mscgen'; }
-  pre.src-ocaml:before { content: 'Objective Caml'; }
-  pre.src-octave:before { content: 'Octave'; }
-  pre.src-org:before { content: 'Org mode'; }
-  pre.src-oz:before { content: 'OZ'; }
-  pre.src-plantuml:before { content: 'Plantuml'; }
-  pre.src-processing:before { content: 'Processing.js'; }
-  pre.src-python:before { content: 'Python'; }
-  pre.src-R:before { content: 'R'; }
-  pre.src-ruby:before { content: 'Ruby'; }
-  pre.src-sass:before { content: 'Sass'; }
-  pre.src-scheme:before { content: 'Scheme'; }
-  pre.src-screen:before { content: 'Gnu Screen'; }
-  pre.src-sed:before { content: 'Sed'; }
-  pre.src-sh:before { content: 'shell'; }
-  pre.src-sql:before { content: 'SQL'; }
-  pre.src-sqlite:before { content: 'SQLite'; }
-  /* additional languages in org.el's org-babel-load-languages alist */
-  pre.src-forth:before { content: 'Forth'; }
-  pre.src-io:before { content: 'IO'; }
-  pre.src-J:before { content: 'J'; }
-  pre.src-makefile:before { content: 'Makefile'; }
-  pre.src-maxima:before { content: 'Maxima'; }
-  pre.src-perl:before { content: 'Perl'; }
-  pre.src-picolisp:before { content: 'Pico Lisp'; }
-  pre.src-scala:before { content: 'Scala'; }
-  pre.src-shell:before { content: 'Shell Script'; }
-  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
-  /* additional language identifiers per "defun org-babel-execute"
-       in ob-*.el */
-  pre.src-cpp:before  { content: 'C++'; }
-  pre.src-abc:before  { content: 'ABC'; }
-  pre.src-coq:before  { content: 'Coq'; }
-  pre.src-groovy:before  { content: 'Groovy'; }
-  /* additional language identifiers from org-babel-shell-names in
-     ob-shell.el: ob-shell is the only babel language using a lambda to put
-     the execution function name together. */
-  pre.src-bash:before  { content: 'bash'; }
-  pre.src-csh:before  { content: 'csh'; }
-  pre.src-ash:before  { content: 'ash'; }
-  pre.src-dash:before  { content: 'dash'; }
-  pre.src-ksh:before  { content: 'ksh'; }
-  pre.src-mksh:before  { content: 'mksh'; }
-  pre.src-posh:before  { content: 'posh'; }
-  /* Additional Emacs modes also supported by the LaTeX listings package */
-  pre.src-ada:before { content: 'Ada'; }
-  pre.src-asm:before { content: 'Assembler'; }
-  pre.src-caml:before { content: 'Caml'; }
-  pre.src-delphi:before { content: 'Delphi'; }
-  pre.src-html:before { content: 'HTML'; }
-  pre.src-idl:before { content: 'IDL'; }
-  pre.src-mercury:before { content: 'Mercury'; }
-  pre.src-metapost:before { content: 'MetaPost'; }
-  pre.src-modula-2:before { content: 'Modula-2'; }
-  pre.src-pascal:before { content: 'Pascal'; }
-  pre.src-ps:before { content: 'PostScript'; }
-  pre.src-prolog:before { content: 'Prolog'; }
-  pre.src-simula:before { content: 'Simula'; }
-  pre.src-tcl:before { content: 'tcl'; }
-  pre.src-tex:before { content: 'TeX'; }
-  pre.src-plain-tex:before { content: 'Plain TeX'; }
-  pre.src-verilog:before { content: 'Verilog'; }
-  pre.src-vhdl:before { content: 'VHDL'; }
-  pre.src-xml:before { content: 'XML'; }
-  pre.src-nxml:before { content: 'XML'; }
-  /* add a generic configuration mode; LaTeX export needs an additional
-     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
-  pre.src-conf:before { content: 'Configuration File'; }
-
-  table { border-collapse:collapse; }
-  caption.t-above { caption-side: top; }
-  caption.t-bottom { caption-side: bottom; }
-  td, th { vertical-align:top;  }
-  th.org-right  { text-align: center;  }
-  th.org-left   { text-align: center;   }
-  th.org-center { text-align: center; }
-  td.org-right  { text-align: right;  }
-  td.org-left   { text-align: left;   }
-  td.org-center { text-align: center; }
-  dt { font-weight: bold; }
-  .footpara { display: inline; }
-  .footdef  { margin-bottom: 1em; }
-  .figure { padding: 1em; }
-  .figure p { text-align: center; }
-  .inlinetask {
-    padding: 10px;
-    border: 2px solid gray;
-    margin: 10px;
-    background: #ffffcc;
-  }
-  #org-div-home-and-up
-   { text-align: right; font-size: 70%; white-space: nowrap; }
-  textarea { overflow-x: auto; }
-  .linenr { font-size: smaller }
-  .code-highlighted { background-color: #ffff00; }
-  .org-info-js_info-navigation { border-style: none; }
-  #org-info-js_console-label
-    { font-size: 10px; font-weight: bold; white-space: nowrap; }
-  .org-info-js_search-highlight
-    { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
-</style>
+<link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -232,60 +64,60 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org438688b">1. Linux Kernel: VFS</a>
+<li><a href="#orgdab0888">1. Linux Kernel: VFS</a>
 <ul>
-<li><a href="#org6e14a84">1.1. Data Structure</a>
+<li><a href="#orgbdcd074">1.1. Data Structure</a>
 <ul>
-<li><a href="#org7efd4a0">1.1.1. file_system_type</a></li>
-<li><a href="#org034dfdf">1.1.2. super_block</a></li>
-<li><a href="#org8a5cc48">1.1.3. inode</a></li>
-<li><a href="#org5ceccfa">1.1.4. dentry</a></li>
-<li><a href="#org1d6a58d">1.1.5. file</a></li>
-<li><a href="#orgf52c115">1.1.6. vfsmount</a></li>
-<li><a href="#orgf6602ac">1.1.7. nameidata</a></li>
-<li><a href="#org5fadcde">1.1.8. task_struct</a></li>
-<li><a href="#org94fc11f">1.1.9. address_space</a></li>
+<li><a href="#org4356f53">1.1.1. file_system_type</a></li>
+<li><a href="#org14c2146">1.1.2. super_block</a></li>
+<li><a href="#org2576f6f">1.1.3. inode</a></li>
+<li><a href="#orgbb69f99">1.1.4. dentry</a></li>
+<li><a href="#org2d7b452">1.1.5. file</a></li>
+<li><a href="#org0f3440b">1.1.6. vfsmount</a></li>
+<li><a href="#org221fff0">1.1.7. nameidata</a></li>
+<li><a href="#orgbb362dc">1.1.8. task_struct</a></li>
+<li><a href="#org3751288">1.1.9. address_space</a></li>
 </ul>
 </li>
-<li><a href="#orge5be73f">1.2. Operations</a>
+<li><a href="#orgccea5ae">1.2. Operations</a>
 <ul>
-<li><a href="#org2961609">1.2.1. super_operations</a></li>
-<li><a href="#org365aabf">1.2.2. inode_operations</a></li>
-<li><a href="#org1b16a12">1.2.3. file_operations</a></li>
-<li><a href="#orgafaff66">1.2.4. address_space_operations</a></li>
-<li><a href="#orgcd84c68">1.2.5. 总结</a></li>
+<li><a href="#orgd8ceba9">1.2.1. super_operations</a></li>
+<li><a href="#orgd322ebe">1.2.2. inode_operations</a></li>
+<li><a href="#orgfef3bdb">1.2.3. file_operations</a></li>
+<li><a href="#orge96bfc2">1.2.4. address_space_operations</a></li>
+<li><a href="#org9df58ee">1.2.5. 总结</a></li>
 </ul>
 </li>
-<li><a href="#orgc268f81">1.3. Details</a>
+<li><a href="#orge1234d1">1.3. Details</a>
 <ul>
-<li><a href="#org49a0982">1.3.1. sys_mount</a></li>
-<li><a href="#org143d42b">1.3.2. mount the root</a></li>
-<li><a href="#orgb5b9e4f">1.3.3. path_lookup</a></li>
-<li><a href="#orgf0e1642">1.3.4. open</a></li>
-<li><a href="#org29c5ca7">1.3.5. readdir</a></li>
-<li><a href="#org7bac973">1.3.6. write</a></li>
-<li><a href="#org27ace2d">1.3.7. read</a></li>
-<li><a href="#orgac87713">1.3.8. permission</a></li>
-<li><a href="#org024659c">1.3.9. dentry cache</a></li>
-<li><a href="#org85a7b3c">1.3.10. page cache</a></li>
+<li><a href="#org0ddf669">1.3.1. sys_mount</a></li>
+<li><a href="#org6950e6f">1.3.2. mount the root</a></li>
+<li><a href="#org79a304f">1.3.3. path_lookup</a></li>
+<li><a href="#org78952fb">1.3.4. open</a></li>
+<li><a href="#orged6bd47">1.3.5. readdir</a></li>
+<li><a href="#org2951fdb">1.3.6. write</a></li>
+<li><a href="#org3d85177">1.3.7. read</a></li>
+<li><a href="#org2c1c759">1.3.8. permission</a></li>
+<li><a href="#org7392113">1.3.9. dentry cache</a></li>
+<li><a href="#orge447a42">1.3.10. page cache</a></li>
 </ul>
 </li>
-<li><a href="#org2944376">1.4. File Systems</a>
+<li><a href="#orgea93069">1.4. File Systems</a>
 <ul>
-<li><a href="#orgdba82fb">1.4.1. procfs</a></li>
-<li><a href="#orgbe3b45d">1.4.2. debugfs</a></li>
-<li><a href="#orgcf16a08">1.4.3. ramfs</a></li>
-<li><a href="#orgd64e8d9">1.4.4. ext2</a></li>
+<li><a href="#org5bd6e62">1.4.1. procfs</a></li>
+<li><a href="#org3aba853">1.4.2. debugfs</a></li>
+<li><a href="#org38b7f59">1.4.3. ramfs</a></li>
+<li><a href="#org254d4bb">1.4.4. ext2</a></li>
 </ul>
 </li>
-<li><a href="#org2027a2f">1.5. Appendix</a>
+<li><a href="#org2b14873">1.5. Appendix</a>
 <ul>
-<li><a href="#org891d902">1.5.1. special inode</a></li>
-<li><a href="#orgf5e4181">1.5.2. inode-&gt;i_size</a></li>
-<li><a href="#orgad5dc8e">1.5.3. .(single dot) 与 ..(double dots)</a></li>
-<li><a href="#org7d526d1">1.5.4. atime / mtime</a></li>
-<li><a href="#orgca52ed2">1.5.5. ramfs, rootfs, initramfs</a></li>
-<li><a href="#org98b362f">1.5.6. getcwd</a></li>
+<li><a href="#org0ff0d9d">1.5.1. special inode</a></li>
+<li><a href="#org295c9e7">1.5.2. inode-&gt;i_size</a></li>
+<li><a href="#org6a21b36">1.5.3. .(single dot) 与 ..(double dots)</a></li>
+<li><a href="#orgc1a23d2">1.5.4. atime / mtime</a></li>
+<li><a href="#orgd2fc4d0">1.5.5. ramfs, rootfs, initramfs</a></li>
+<li><a href="#orgb173b25">1.5.6. getcwd</a></li>
 </ul>
 </li>
 </ul>
@@ -293,14 +125,14 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
-<div id="outline-container-org438688b" class="outline-2">
-<h2 id="org438688b"><span class="section-number-2">1</span> Linux Kernel: VFS</h2>
+<div id="outline-container-orgdab0888" class="outline-2">
+<h2 id="orgdab0888"><span class="section-number-2">1</span> Linux Kernel: VFS</h2>
 <div class="outline-text-2" id="text-1">
-</div><div id="outline-container-org6e14a84" class="outline-3">
-<h3 id="org6e14a84"><span class="section-number-3">1.1</span> Data Structure</h3>
+</div><div id="outline-container-orgbdcd074" class="outline-3">
+<h3 id="orgbdcd074"><span class="section-number-3">1.1</span> Data Structure</h3>
 <div class="outline-text-3" id="text-1-1">
-</div><div id="outline-container-org7efd4a0" class="outline-4">
-<h4 id="org7efd4a0"><span class="section-number-4">1.1.1</span> file_system_type</h4>
+</div><div id="outline-container-org4356f53" class="outline-4">
+<h4 id="org4356f53"><span class="section-number-4">1.1.1</span> file_system_type</h4>
 <div class="outline-text-4" id="text-1-1-1">
 <div class="org-src-container">
 
@@ -315,8 +147,8 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org034dfdf" class="outline-4">
-<h4 id="org034dfdf"><span class="section-number-4">1.1.2</span> super_block</h4>
+<div id="outline-container-org14c2146" class="outline-4">
+<h4 id="org14c2146"><span class="section-number-4">1.1.2</span> super_block</h4>
 <div class="outline-text-4" id="text-1-1-2">
 <div class="org-src-container">
 
@@ -334,8 +166,8 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org8a5cc48" class="outline-4">
-<h4 id="org8a5cc48"><span class="section-number-4">1.1.3</span> inode</h4>
+<div id="outline-container-org2576f6f" class="outline-4">
+<h4 id="org2576f6f"><span class="section-number-4">1.1.3</span> inode</h4>
 <div class="outline-text-4" id="text-1-1-3">
 <div class="org-src-container">
 
@@ -361,8 +193,8 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org5ceccfa" class="outline-4">
-<h4 id="org5ceccfa"><span class="section-number-4">1.1.4</span> dentry</h4>
+<div id="outline-container-orgbb69f99" class="outline-4">
+<h4 id="orgbb69f99"><span class="section-number-4">1.1.4</span> dentry</h4>
 <div class="outline-text-4" id="text-1-1-4">
 <div class="org-src-container">
 
@@ -382,8 +214,8 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org1d6a58d" class="outline-4">
-<h4 id="org1d6a58d"><span class="section-number-4">1.1.5</span> file</h4>
+<div id="outline-container-org2d7b452" class="outline-4">
+<h4 id="org2d7b452"><span class="section-number-4">1.1.5</span> file</h4>
 <div class="outline-text-4" id="text-1-1-5">
 <div class="org-src-container">
 
@@ -402,8 +234,8 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-orgf52c115" class="outline-4">
-<h4 id="orgf52c115"><span class="section-number-4">1.1.6</span> vfsmount</h4>
+<div id="outline-container-org0f3440b" class="outline-4">
+<h4 id="org0f3440b"><span class="section-number-4">1.1.6</span> vfsmount</h4>
 <div class="outline-text-4" id="text-1-1-6">
 <div class="org-src-container">
 
@@ -420,8 +252,8 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-orgf6602ac" class="outline-4">
-<h4 id="orgf6602ac"><span class="section-number-4">1.1.7</span> nameidata</h4>
+<div id="outline-container-org221fff0" class="outline-4">
+<h4 id="org221fff0"><span class="section-number-4">1.1.7</span> nameidata</h4>
 <div class="outline-text-4" id="text-1-1-7">
 <div class="org-src-container">
 
@@ -438,8 +270,8 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org5fadcde" class="outline-4">
-<h4 id="org5fadcde"><span class="section-number-4">1.1.8</span> task_struct</h4>
+<div id="outline-container-orgbb362dc" class="outline-4">
+<h4 id="orgbb362dc"><span class="section-number-4">1.1.8</span> task_struct</h4>
 <div class="outline-text-4" id="text-1-1-8">
 <div class="org-src-container">
 
@@ -452,19 +284,19 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org94fc11f" class="outline-4">
-<h4 id="org94fc11f"><span class="section-number-4">1.1.9</span> address_space</h4>
+<div id="outline-container-org3751288" class="outline-4">
+<h4 id="org3751288"><span class="section-number-4">1.1.9</span> address_space</h4>
 </div>
 </div>
 
-<div id="outline-container-orge5be73f" class="outline-3">
-<h3 id="orge5be73f"><span class="section-number-3">1.2</span> Operations</h3>
+<div id="outline-container-orgccea5ae" class="outline-3">
+<h3 id="orgccea5ae"><span class="section-number-3">1.2</span> Operations</h3>
 <div class="outline-text-3" id="text-1-2">
-</div><div id="outline-container-org2961609" class="outline-4">
-<h4 id="org2961609"><span class="section-number-4">1.2.1</span> super_operations</h4>
+</div><div id="outline-container-orgd8ceba9" class="outline-4">
+<h4 id="orgd8ceba9"><span class="section-number-4">1.2.1</span> super_operations</h4>
 <div class="outline-text-4" id="text-1-2-1">
-</div><div id="outline-container-org9faeb07" class="outline-5">
-<h5 id="org9faeb07"><span class="section-number-5">1.2.1.1</span> alloc_inode</h5>
+</div><div id="outline-container-org5009077" class="outline-5">
+<h5 id="org5009077"><span class="section-number-5">1.2.1.1</span> alloc_inode</h5>
 <div class="outline-text-5" id="text-1-2-1-1">
 <p>
 alloc_inode 分配一个 struct inode, 并做一些简单的初始化,后续的
@@ -510,8 +342,8 @@ alloc_inode 典型的调用栈:
 </div>
 </div>
 
-<div id="outline-container-org54b2a1d" class="outline-5">
-<h5 id="org54b2a1d"><span class="section-number-5">1.2.1.2</span> read_inode</h5>
+<div id="outline-container-org83c7a51" class="outline-5">
+<h5 id="org83c7a51"><span class="section-number-5">1.2.1.2</span> read_inode</h5>
 <div class="outline-text-5" id="text-1-2-1-2">
 <p>
 read_inode 是从具体文件系统加载数据对 alloc_inode 分配的 inode 进行填
@@ -546,10 +378,10 @@ read_inode 的行为完全由文件系统的 i_op-&gt;read_inode 决定.
 </div>
 </div>
 
-<div id="outline-container-org7ed2b40" class="outline-5">
-<h5 id="org7ed2b40"><span class="section-number-5">1.2.1.3</span> write_inode</h5>
+<div id="outline-container-org481c6c4" class="outline-5">
+<h5 id="org481c6c4"><span class="section-number-5">1.2.1.3</span> write_inode</h5>
 <div class="outline-text-5" id="text-1-2-1-3">
-</div><ol class="org-ol"><li><a id="org192cc69"></a>fsync 导致的 write_inode<br  /><div class="outline-text-6" id="text-1-2-1-3-1">
+</div><ol class="org-ol"><li><a id="org9935905"></a>fsync 导致的 write_inode<br  /><div class="outline-text-6" id="text-1-2-1-3-1">
 <div class="org-src-container">
 
 <pre class="src src-c">sys_fsync(<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; text-decoration: underline;">fd</span>):
@@ -572,7 +404,7 @@ read_inode 的行为完全由文件系统的 i_op-&gt;read_inode 决定.
 </div>
 </div></li>
 
-<li><a id="orga63558a"></a>dirty page balance 导致的 write_inode (vm_dirty_ratio)<br  /><div class="outline-text-6" id="text-1-2-1-3-2">
+<li><a id="org7b7b856"></a>dirty page balance 导致的 write_inode (vm_dirty_ratio)<br  /><div class="outline-text-6" id="text-1-2-1-3-2">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">generic_file_buffered_write</span>:
@@ -586,11 +418,11 @@ read_inode 的行为完全由文件系统的 i_op-&gt;read_inode 决定.
 </div>
 </div>
 
-<div id="outline-container-org365aabf" class="outline-4">
-<h4 id="org365aabf"><span class="section-number-4">1.2.2</span> inode_operations</h4>
+<div id="outline-container-orgd322ebe" class="outline-4">
+<h4 id="orgd322ebe"><span class="section-number-4">1.2.2</span> inode_operations</h4>
 <div class="outline-text-4" id="text-1-2-2">
-</div><div id="outline-container-org1805408" class="outline-5">
-<h5 id="org1805408"><span class="section-number-5">1.2.2.1</span> lookup</h5>
+</div><div id="outline-container-org478e4be" class="outline-5">
+<h5 id="org478e4be"><span class="section-number-5">1.2.2.1</span> lookup</h5>
 <div class="outline-text-5" id="text-1-2-2-1">
 <p>
 lookup 是 i_op 中非常重要的一个回调函数, 它负责将路径名转换为相应的
@@ -651,8 +483,8 @@ inode, 例如, open, mkdir, stat, rename 等都需要先通过 lookup 获得对�
 </div>
 </div>
 
-<div id="outline-container-orgfc6d7d8" class="outline-5">
-<h5 id="orgfc6d7d8"><span class="section-number-5">1.2.2.2</span> permission</h5>
+<div id="outline-container-org6a72b11" class="outline-5">
+<h5 id="org6a72b11"><span class="section-number-5">1.2.2.2</span> permission</h5>
 <div class="outline-text-5" id="text-1-2-2-2">
 <p>
 vfs 对许多行为会进行 permission 检查, 并且会调用到 i_op-&gt;permission 函
@@ -696,8 +528,8 @@ vfs 对许多行为会进行 permission 检查, 并且会调用到 i_op-&gt;perm
 </div>
 </div>
 
-<div id="outline-container-orgc17d0ca" class="outline-5">
-<h5 id="orgc17d0ca"><span class="section-number-5">1.2.2.3</span> getattr / setattr</h5>
+<div id="outline-container-orga1acba5" class="outline-5">
+<h5 id="orga1acba5"><span class="section-number-5">1.2.2.3</span> getattr / setattr</h5>
 <div class="outline-text-5" id="text-1-2-2-3">
 <p>
 getattr 和 stat 系统调用有关, 大多数涉及到修改 inode 的系统调用例如
@@ -705,7 +537,7 @@ chmod, utime 等和 setattr 的关.
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="orgfe33e4f"></a>getattr<br  /><div class="outline-text-6" id="text-1-2-2-3-1">
+<ol class="org-ol"><li><a id="orge359630"></a>getattr<br  /><div class="outline-text-6" id="text-1-2-2-3-1">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">vfs_stat</span>:
@@ -736,7 +568,7 @@ chmod, utime 等和 setattr 的关.
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="org95536e9"></a>关于文件大小<br  /><div class="outline-text-7" id="text-1-2-2-3-1-1">
+<ol class="org-ol"><li><a id="orgcdeaff6"></a>关于文件大小<br  /><div class="outline-text-7" id="text-1-2-2-3-1-1">
 <p>
 stat 返回的信息中, 有两个和文件大小相关的值: stat-&gt;size 和
 stat-&gt;blocks
@@ -762,7 +594,7 @@ $&gt; du --apparent-size -k a
 </pre>
 </div></li></ol></li>
 
-<li><a id="org3ee50e0"></a>setattr<br  /><ol class="org-ol"><li><a id="orga905c11"></a>UID<br  /><div class="outline-text-7" id="text-1-2-2-3-2-1">
+<li><a id="org3d1ec21"></a>setattr<br  /><ol class="org-ol"><li><a id="org2842910"></a>UID<br  /><div class="outline-text-7" id="text-1-2-2-3-2-1">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">sys_chmod</span>:
@@ -780,7 +612,7 @@ $&gt; du --apparent-size -k a
 </div>
 </div></li>
 
-<li><a id="orge938a6b"></a>ATIME / MTIME<br  /><div class="outline-text-7" id="text-1-2-2-3-2-2">
+<li><a id="org817a9d6"></a>ATIME / MTIME<br  /><div class="outline-text-7" id="text-1-2-2-3-2-2">
 <p>
 读写文件时 atime/mtime 会相应变化, vfs 在 generic_file_read / write 处
 做了实现, 如果某个 fs 的文件读写不是通过 generic_file_read / write, 需
@@ -791,28 +623,28 @@ $&gt; du --apparent-size -k a
 </div>
 
 
-<div id="outline-container-org1b16a12" class="outline-4">
-<h4 id="org1b16a12"><span class="section-number-4">1.2.3</span> file_operations</h4>
+<div id="outline-container-orgfef3bdb" class="outline-4">
+<h4 id="orgfef3bdb"><span class="section-number-4">1.2.3</span> file_operations</h4>
 <div class="outline-text-4" id="text-1-2-3">
-</div><div id="outline-container-org82c273a" class="outline-5">
-<h5 id="org82c273a"><span class="section-number-5">1.2.3.1</span> read</h5>
+</div><div id="outline-container-orgb25f333" class="outline-5">
+<h5 id="orgb25f333"><span class="section-number-5">1.2.3.1</span> read</h5>
 </div>
 
-<div id="outline-container-orgd44e6fe" class="outline-5">
-<h5 id="orgd44e6fe"><span class="section-number-5">1.2.3.2</span> write</h5>
+<div id="outline-container-org5378cda" class="outline-5">
+<h5 id="org5378cda"><span class="section-number-5">1.2.3.2</span> write</h5>
 </div>
 
-<div id="outline-container-org5aa77db" class="outline-5">
-<h5 id="org5aa77db"><span class="section-number-5">1.2.3.3</span> readdir</h5>
+<div id="outline-container-org95a2c24" class="outline-5">
+<h5 id="org95a2c24"><span class="section-number-5">1.2.3.3</span> readdir</h5>
 </div>
 </div>
 
-<div id="outline-container-orgafaff66" class="outline-4">
-<h4 id="orgafaff66"><span class="section-number-4">1.2.4</span> address_space_operations</h4>
+<div id="outline-container-orge96bfc2" class="outline-4">
+<h4 id="orge96bfc2"><span class="section-number-4">1.2.4</span> address_space_operations</h4>
 </div>
 
-<div id="outline-container-orgcd84c68" class="outline-4">
-<h4 id="orgcd84c68"><span class="section-number-4">1.2.5</span> 总结</h4>
+<div id="outline-container-org9df58ee" class="outline-4">
+<h4 id="org9df58ee"><span class="section-number-4">1.2.5</span> 总结</h4>
 <div class="outline-text-4" id="text-1-2-5">
 <p>
 四种 ops 的区别与联系:
@@ -883,11 +715,11 @@ generic_file_read), 则 a_op 中相应的 readpage, writepage 等会被调用.
 </div>
 </div>
 
-<div id="outline-container-orgc268f81" class="outline-3">
-<h3 id="orgc268f81"><span class="section-number-3">1.3</span> Details</h3>
+<div id="outline-container-orge1234d1" class="outline-3">
+<h3 id="orge1234d1"><span class="section-number-3">1.3</span> Details</h3>
 <div class="outline-text-3" id="text-1-3">
-</div><div id="outline-container-org49a0982" class="outline-4">
-<h4 id="org49a0982"><span class="section-number-4">1.3.1</span> sys_mount</h4>
+</div><div id="outline-container-org0ddf669" class="outline-4">
+<h4 id="org0ddf669"><span class="section-number-4">1.3.1</span> sys_mount</h4>
 <div class="outline-text-4" id="text-1-3-1">
 <p>
 sys_mount 的主要功能是:
@@ -944,11 +776,11 @@ mnt_root</li>
 </div>
 </div>
 
-<div id="outline-container-org143d42b" class="outline-4">
-<h4 id="org143d42b"><span class="section-number-4">1.3.2</span> mount the root</h4>
+<div id="outline-container-org6950e6f" class="outline-4">
+<h4 id="org6950e6f"><span class="section-number-4">1.3.2</span> mount the root</h4>
 <div class="outline-text-4" id="text-1-3-2">
-</div><div id="outline-container-orgb647171" class="outline-5">
-<h5 id="orgb647171"><span class="section-number-5">1.3.2.1</span> Stage 1: mount rootfs</h5>
+</div><div id="outline-container-orgcb85a22" class="outline-5">
+<h5 id="orgcb85a22"><span class="section-number-5">1.3.2.1</span> Stage 1: mount rootfs</h5>
 <div class="outline-text-5" id="text-1-3-2-1">
 <div class="org-src-container">
 
@@ -978,8 +810,8 @@ mnt_root</li>
 </div>
 </div>
 
-<div id="outline-container-org96014a7" class="outline-5">
-<h5 id="org96014a7"><span class="section-number-5">1.3.2.2</span> Stage 2: mount real root</h5>
+<div id="outline-container-orgf6e7d9c" class="outline-5">
+<h5 id="orgf6e7d9c"><span class="section-number-5">1.3.2.2</span> Stage 2: mount real root</h5>
 <div class="outline-text-5" id="text-1-3-2-2">
 <div class="org-src-container">
 
@@ -997,7 +829,7 @@ mnt_root</li>
 </div>
 </div>
 
-<ol class="org-ol"><li><a id="org39886f4"></a>populate_rootfs<br  /><div class="outline-text-6" id="text-1-3-2-2-1">
+<ol class="org-ol"><li><a id="org8d5b21d"></a>populate_rootfs<br  /><div class="outline-text-6" id="text-1-3-2-2-1">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">populate_rootfs</span>:
@@ -1027,7 +859,7 @@ mnt_root</li>
 </div>
 </div></li>
 
-<li><a id="orgd46316f"></a>prepare_namespace<br  /><div class="outline-text-6" id="text-1-3-2-2-2">
+<li><a id="org6231caa"></a>prepare_namespace<br  /><div class="outline-text-6" id="text-1-3-2-2-2">
 <p>
 若:
 </p>
@@ -1073,7 +905,7 @@ mnt_root</li>
 </div>
 </div></li>
 
-<li><a id="org50f37fa"></a>initrd_load<br  /><div class="outline-text-6" id="text-1-3-2-2-3">
+<li><a id="org3b182c6"></a>initrd_load<br  /><div class="outline-text-6" id="text-1-3-2-2-3">
 <p>
 initrd (initialized RAM disk) 与 initramfs 类似, 都是一种镜像文件, 通
 过将镜像文件加载到内存做为基本的 root fs.
@@ -1092,7 +924,7 @@ initrd (initialized RAM disk) 与 initramfs 类似, 都是一种镜像文件, �
 </ol>
 </div></li>
 
-<li><a id="org57b0c0f"></a>为什么需要 initrd / initramfs<br  /><div class="outline-text-6" id="text-1-3-2-2-4">
+<li><a id="org43f7977"></a>为什么需要 initrd / initramfs<br  /><div class="outline-text-6" id="text-1-3-2-2-4">
 <ol class="org-ol">
 <li>可以提供一个只读的基本 root fs (比如 android 的作法)</li>
 
@@ -1133,7 +965,7 @@ rightly handled in userspace.
 </ol>
 </div></li>
 
-<li><a id="org58afaa7"></a>为什么需要先 mount 一个 rootfs<br  /><div class="outline-text-6" id="text-1-3-2-2-5">
+<li><a id="orgdb16d22"></a>为什么需要先 mount 一个 rootfs<br  /><div class="outline-text-6" id="text-1-3-2-2-5">
 <ol class="org-ol">
 <li>对于需要使用 initramfs 或 initrd 的情形, rootfs 显然是必要的</li>
 
@@ -1145,11 +977,11 @@ root 在逻辑上会变的非常简单.</li>
 </div>
 </div>
 
-<div id="outline-container-orgb5b9e4f" class="outline-4">
-<h4 id="orgb5b9e4f"><span class="section-number-4">1.3.3</span> path_lookup</h4>
+<div id="outline-container-org79a304f" class="outline-4">
+<h4 id="org79a304f"><span class="section-number-4">1.3.3</span> path_lookup</h4>
 <div class="outline-text-4" id="text-1-3-3">
-</div><div id="outline-container-orgefaa640" class="outline-5">
-<h5 id="orgefaa640"><span class="section-number-5">1.3.3.1</span> path_lookup</h5>
+</div><div id="outline-container-org7dc8e2f" class="outline-5">
+<h5 id="org7dc8e2f"><span class="section-number-5">1.3.3.1</span> path_lookup</h5>
 <div class="outline-text-5" id="text-1-3-3-1">
 <div class="org-src-container">
 
@@ -1168,8 +1000,8 @@ root 在逻辑上会变的非常简单.</li>
 </div>
 </div>
 
-<div id="outline-container-orgc73d03f" class="outline-5">
-<h5 id="orgc73d03f"><span class="section-number-5">1.3.3.2</span> link_path_walk</h5>
+<div id="outline-container-org3bc0034" class="outline-5">
+<h5 id="org3bc0034"><span class="section-number-5">1.3.3.2</span> link_path_walk</h5>
 <div class="outline-text-5" id="text-1-3-3-2">
 <div class="org-src-container">
 
@@ -1240,8 +1072,8 @@ root 在逻辑上会变的非常简单.</li>
 </div>
 </div>
 
-<div id="outline-container-org31499b1" class="outline-5">
-<h5 id="org31499b1"><span class="section-number-5">1.3.3.3</span> follow_dotdot</h5>
+<div id="outline-container-org19d2b83" class="outline-5">
+<h5 id="org19d2b83"><span class="section-number-5">1.3.3.3</span> follow_dotdot</h5>
 <div class="outline-text-5" id="text-1-3-3-3">
 <div class="org-src-container">
 
@@ -1276,7 +1108,7 @@ root 在逻辑上会变的非常简单.</li>
 </pre>
 </div>
 
-<ol class="org-ol"><li><a id="org9decc24"></a>关于 follow_dotdot 最后的 follow_mount<br  /><div class="outline-text-6" id="text-1-3-3-3-1">
+<ol class="org-ol"><li><a id="orgdc94efd"></a>关于 follow_dotdot 最后的 follow_mount<br  /><div class="outline-text-6" id="text-1-3-3-3-1">
 <p>
 一般情况下, follow_mount 是无意义的操作: 上面提到的三个例子都不需要使
 用 follow_mount. 但考虑下面的例子:
@@ -1310,8 +1142,8 @@ Device: 802h/2050d      Inode: 21725293    Links: 2
 </div></li></ol>
 </div>
 
-<div id="outline-container-org79b6797" class="outline-5">
-<h5 id="org79b6797"><span class="section-number-5">1.3.3.4</span> do_lookup</h5>
+<div id="outline-container-org8fa50b6" class="outline-5">
+<h5 id="org8fa50b6"><span class="section-number-5">1.3.3.4</span> do_lookup</h5>
 <div class="outline-text-5" id="text-1-3-3-4">
 <div class="org-src-container">
 
@@ -1327,8 +1159,8 @@ Device: 802h/2050d      Inode: 21725293    Links: 2
 </div>
 </div>
 
-<div id="outline-container-org4cf3867" class="outline-5">
-<h5 id="org4cf3867"><span class="section-number-5">1.3.3.5</span> follow_mount</h5>
+<div id="outline-container-orgd6939c9" class="outline-5">
+<h5 id="orgd6939c9"><span class="section-number-5">1.3.3.5</span> follow_mount</h5>
 <div class="outline-text-5" id="text-1-3-3-5">
 <div class="org-src-container">
 
@@ -1349,8 +1181,8 @@ Device: 802h/2050d      Inode: 21725293    Links: 2
 </div>
 </div>
 
-<div id="outline-container-orgb242ddb" class="outline-5">
-<h5 id="orgb242ddb"><span class="section-number-5">1.3.3.6</span> do_follow_link</h5>
+<div id="outline-container-org0138a8a" class="outline-5">
+<h5 id="org0138a8a"><span class="section-number-5">1.3.3.6</span> do_follow_link</h5>
 <div class="outline-text-5" id="text-1-3-3-6">
 <div class="org-src-container">
 
@@ -1377,8 +1209,8 @@ Device: 802h/2050d      Inode: 21725293    Links: 2
 </div>
 </div>
 
-<div id="outline-container-orgf0e1642" class="outline-4">
-<h4 id="orgf0e1642"><span class="section-number-4">1.3.4</span> open</h4>
+<div id="outline-container-org78952fb" class="outline-4">
+<h4 id="org78952fb"><span class="section-number-4">1.3.4</span> open</h4>
 <div class="outline-text-4" id="text-1-3-4">
 <div class="org-src-container">
 
@@ -1426,12 +1258,12 @@ Device: 802h/2050d      Inode: 21725293    Links: 2
 </div>
 </div>
 
-<div id="outline-container-org29c5ca7" class="outline-4">
-<h4 id="org29c5ca7"><span class="section-number-4">1.3.5</span> readdir</h4>
+<div id="outline-container-orged6bd47" class="outline-4">
+<h4 id="orged6bd47"><span class="section-number-4">1.3.5</span> readdir</h4>
 </div>
 
-<div id="outline-container-org7bac973" class="outline-4">
-<h4 id="org7bac973"><span class="section-number-4">1.3.6</span> write</h4>
+<div id="outline-container-org2951fdb" class="outline-4">
+<h4 id="org2951fdb"><span class="section-number-4">1.3.6</span> write</h4>
 <div class="outline-text-4" id="text-1-3-6">
 <div class="org-src-container">
 
@@ -1465,8 +1297,8 @@ f_op-&gt;write 一般情况下为 generic_file_write, 后者会考虑 pagecache,
 </div>
 </div>
 
-<div id="outline-container-org27ace2d" class="outline-4">
-<h4 id="org27ace2d"><span class="section-number-4">1.3.7</span> read</h4>
+<div id="outline-container-org3d85177" class="outline-4">
+<h4 id="org3d85177"><span class="section-number-4">1.3.7</span> read</h4>
 <div class="outline-text-4" id="text-1-3-7">
 <p>
 read 与 write 几乎完全一样, 只是把 f_op-&gt;write 换成 f_op-&gt;read
@@ -1474,8 +1306,8 @@ read 与 write 几乎完全一样, 只是把 f_op-&gt;write 换成 f_op-&gt;read
 </div>
 </div>
 
-<div id="outline-container-orgac87713" class="outline-4">
-<h4 id="orgac87713"><span class="section-number-4">1.3.8</span> permission</h4>
+<div id="outline-container-org2c1c759" class="outline-4">
+<h4 id="org2c1c759"><span class="section-number-4">1.3.8</span> permission</h4>
 <div class="outline-text-4" id="text-1-3-8">
 <div class="org-src-container">
 
@@ -1517,13 +1349,13 @@ read 与 write 几乎完全一样, 只是把 f_op-&gt;write 换成 f_op-&gt;read
 </div>
 </div>
 
-<div id="outline-container-org024659c" class="outline-4">
-<h4 id="org024659c"><span class="section-number-4">1.3.9</span> dentry cache</h4>
+<div id="outline-container-org7392113" class="outline-4">
+<h4 id="org7392113"><span class="section-number-4">1.3.9</span> dentry cache</h4>
 <div class="outline-text-4" id="text-1-3-9">
-</div><div id="outline-container-orgaab65de" class="outline-5">
-<h5 id="orgaab65de"><span class="section-number-5">1.3.9.1</span> dentry_operations</h5>
+</div><div id="outline-container-orgc5864cf" class="outline-5">
+<h5 id="orgc5864cf"><span class="section-number-5">1.3.9.1</span> dentry_operations</h5>
 <div class="outline-text-5" id="text-1-3-9-1">
-</div><ol class="org-ol"><li><a id="orga183768"></a>d_revalidate<br  /><div class="outline-text-6" id="text-1-3-9-1-1">
+</div><ol class="org-ol"><li><a id="org12ca6c2"></a>d_revalidate<br  /><div class="outline-text-6" id="text-1-3-9-1-1">
 <p>
 若 dcache 中的某个 dentry 实现了 d_op-&gt;d_revalidate, 则每次要重用
 dcache 中的该 dentry 之前, 都需要调用 d_revalidate, 以确认该 dentry 是
@@ -1569,8 +1401,8 @@ dentry, 这些 dentry 需要通过 pid_revalidate 进行 revalidate
 </div>
 </div>
 
-<div id="outline-container-org85a7b3c" class="outline-4">
-<h4 id="org85a7b3c"><span class="section-number-4">1.3.10</span> page cache</h4>
+<div id="outline-container-orge447a42" class="outline-4">
+<h4 id="orge447a42"><span class="section-number-4">1.3.10</span> page cache</h4>
 <div class="outline-text-4" id="text-1-3-10">
 <p>
 如果一个文件系统想要使用 page cache, 则必须使用 generic_file_read 做为
@@ -1589,8 +1421,8 @@ scheduler 及 blk device driver
 </p>
 </div>
 
-<div id="outline-container-org349e7b6" class="outline-5">
-<h5 id="org349e7b6"><span class="section-number-5">1.3.10.1</span> generic_file_read 如何使用 page cache?</h5>
+<div id="outline-container-orgf5e2aea" class="outline-5">
+<h5 id="orgf5e2aea"><span class="section-number-5">1.3.10.1</span> generic_file_read 如何使用 page cache?</h5>
 <div class="outline-text-5" id="text-1-3-10-1">
 <div class="org-src-container">
 
@@ -1633,8 +1465,8 @@ scheduler 及 blk device driver
 </div>
 </div>
 
-<div id="outline-container-orgda0887e" class="outline-5">
-<h5 id="orgda0887e"><span class="section-number-5">1.3.10.2</span> radix tree</h5>
+<div id="outline-container-org80b9415" class="outline-5">
+<h5 id="org80b9415"><span class="section-number-5">1.3.10.2</span> radix tree</h5>
 <div class="outline-text-5" id="text-1-3-10-2">
 <p>
 page cache 使用 radix tree 来组织, 目的是根据 page index 可以很快的找
@@ -1657,14 +1489,14 @@ radix tree 的 leaf node 保存着 page 的指针 (intermediate node 不保存),
 </div>
 </div>
 
-<div id="outline-container-org2944376" class="outline-3">
-<h3 id="org2944376"><span class="section-number-3">1.4</span> File Systems</h3>
+<div id="outline-container-orgea93069" class="outline-3">
+<h3 id="orgea93069"><span class="section-number-3">1.4</span> File Systems</h3>
 <div class="outline-text-3" id="text-1-4">
-</div><div id="outline-container-orgdba82fb" class="outline-4">
-<h4 id="orgdba82fb"><span class="section-number-4">1.4.1</span> procfs</h4>
+</div><div id="outline-container-org5bd6e62" class="outline-4">
+<h4 id="org5bd6e62"><span class="section-number-4">1.4.1</span> procfs</h4>
 <div class="outline-text-4" id="text-1-4-1">
-</div><div id="outline-container-org60cd373" class="outline-5">
-<h5 id="org60cd373"><span class="section-number-5">1.4.1.1</span> init</h5>
+</div><div id="outline-container-org1fa95e0" class="outline-5">
+<h5 id="org1fa95e0"><span class="section-number-5">1.4.1.1</span> init</h5>
 <div class="outline-text-5" id="text-1-4-1-1">
 <div class="org-src-container">
 
@@ -1679,7 +1511,7 @@ radix tree 的 leaf node 保存着 page 的指针 (intermediate node 不保存),
 </div>
 </div>
 
-<ol class="org-ol"><li><a id="org700a360"></a>kern_mount<br  /><div class="outline-text-6" id="text-1-4-1-1-1">
+<ol class="org-ol"><li><a id="orgc6e9b49"></a>kern_mount<br  /><div class="outline-text-6" id="text-1-4-1-1-1">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">proc_get_sb</span>:
@@ -1697,7 +1529,7 @@ radix tree 的 leaf node 保存着 page 的指针 (intermediate node 不保存),
 </div>
 </div></li>
 
-<li><a id="org027ffa6"></a>proc_misc_init<br  /><div class="outline-text-6" id="text-1-4-1-1-2">
+<li><a id="org6685435"></a>proc_misc_init<br  /><div class="outline-text-6" id="text-1-4-1-1-2">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">proc_misc_init</span>
@@ -1712,7 +1544,7 @@ radix tree 的 leaf node 保存着 page 的指针 (intermediate node 不保存),
 </div>
 </div>
 
-<ol class="org-ol"><li><a id="org2edf347"></a>proc_dir_entry<br  /><div class="outline-text-7" id="text-1-4-1-1-2-1">
+<ol class="org-ol"><li><a id="orgdd8d519"></a>proc_dir_entry<br  /><div class="outline-text-7" id="text-1-4-1-1-2-1">
 <p>
 proc_dir_entry 相当于虚拟的 /proc 目录树中的结点
 </p>
@@ -1743,7 +1575,7 @@ proc_dir_entry 相当于虚拟的 /proc 目录树中的结点
 </div>
 </div>
 
-<ol class="org-ol"><li><a id="orgf07530e"></a>proc_root<br  /><div class="outline-text-8" id="text-1-4-1-1-2-1-1">
+<ol class="org-ol"><li><a id="org37f5d80"></a>proc_root<br  /><div class="outline-text-8" id="text-1-4-1-1-2-1-1">
 <p>
 proc_root 这个特殊的 proc_dir_entry 对应于 "/proc":
 </p>
@@ -1769,7 +1601,7 @@ proc_root 这个特殊的 proc_dir_entry 对应于 "/proc":
 </p>
 </div></li></ol></li>
 
-<li><a id="orgc4bda05"></a>create_proc_entry<br  /><div class="outline-text-7" id="text-1-4-1-1-2-2">
+<li><a id="org28b6f02"></a>create_proc_entry<br  /><div class="outline-text-7" id="text-1-4-1-1-2-2">
 <p>
 create_proc_entry, 可以简单理解为: 以 hard code 的形式在内存中建立
 /proc 目录树.
@@ -1810,7 +1642,7 @@ create_proc_read_entry 和 create_seq_entry 都是对 create_proc_entry 的
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="orga2c7961"></a>proc_symlink<br  /><div class="outline-text-8" id="text-1-4-1-1-2-2-1">
+<ol class="org-ol"><li><a id="org8779cd8"></a>proc_symlink<br  /><div class="outline-text-8" id="text-1-4-1-1-2-2-1">
 <p>
 proc_symlink 在 create_proc_entry 基础上, 将 symlink 的信息写到了
 proc_dir_entry 的 data 部分
@@ -1830,7 +1662,7 @@ proc_dir_entry 的 data 部分
 </div>
 </div></li></ol></li>
 
-<li><a id="org911042c"></a>xlate_proc_name<br  /><div class="outline-text-7" id="text-1-4-1-1-2-3">
+<li><a id="orgbdf77bc"></a>xlate_proc_name<br  /><div class="outline-text-7" id="text-1-4-1-1-2-3">
 <p>
 通过 xlate_proc_name("/xxx/yyy") 可以找到 "/proc/xxx/yyy" 对应的
 proc_dir_entry, 在 create_proc_entry 或后面的 proc_mkdir 时, 都会使用
@@ -1838,13 +1670,13 @@ xlate_proc_name
 </p>
 </div></li></ol></li>
 
-<li><a id="org65728da"></a>proc_mkdir<br  /><div class="outline-text-6" id="text-1-4-1-1-3">
+<li><a id="orgb59b682"></a>proc_mkdir<br  /><div class="outline-text-6" id="text-1-4-1-1-3">
 <p>
 proc_mkdir 与 create_proc_entry 基本类似
 </p>
 </div></li>
 
-<li><a id="org3a851ae"></a>总结<br  /><div class="outline-text-6" id="text-1-4-1-1-4">
+<li><a id="org9a662ec"></a>总结<br  /><div class="outline-text-6" id="text-1-4-1-1-4">
 <p>
 proc_root_init 所做的:
 </p>
@@ -1866,10 +1698,10 @@ do_kern_mount 并没有完成真正的 mount 的动作 (并没有与 mountpoint 
 </div></li></ol>
 </div>
 
-<div id="outline-container-orgf785020" class="outline-5">
-<h5 id="orgf785020"><span class="section-number-5">1.4.1.2</span> xx_op</h5>
+<div id="outline-container-orgdef02b7" class="outline-5">
+<h5 id="orgdef02b7"><span class="section-number-5">1.4.1.2</span> xx_op</h5>
 <div class="outline-text-5" id="text-1-4-1-2">
-</div><ol class="org-ol"><li><a id="orgd254e1c"></a>file_system_type<br  /><div class="outline-text-6" id="text-1-4-1-2-1">
+</div><ol class="org-ol"><li><a id="org92dd821"></a>file_system_type<br  /><div class="outline-text-6" id="text-1-4-1-2-1">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">file_system_type</span> <span style="font-weight: bold; font-style: italic;">proc_fs_type</span> = {
@@ -1881,7 +1713,7 @@ do_kern_mount 并没有完成真正的 mount 的动作 (并没有与 mountpoint 
 </div>
 </div></li>
 
-<li><a id="orgff1f9a8"></a>file_system_type.get_sb<br  /><div class="outline-text-6" id="text-1-4-1-2-2">
+<li><a id="org23a25b3"></a>file_system_type.get_sb<br  /><div class="outline-text-6" id="text-1-4-1-2-2">
 <p>
 proc_get_sb:
 </p>
@@ -1894,7 +1726,7 @@ proc_get_sb:
 </div>
 </div></li>
 
-<li><a id="org7b5e4cc"></a>fill_super<br  /><div class="outline-text-6" id="text-1-4-1-2-3">
+<li><a id="org0bcf35e"></a>fill_super<br  /><div class="outline-text-6" id="text-1-4-1-2-3">
 <p>
 proc_fill_super:
 </p>
@@ -1911,7 +1743,7 @@ proc_fill_super:
 </div>
 </div></li>
 
-<li><a id="org805e94d"></a>super_operations<br  /><div class="outline-text-6" id="text-1-4-1-2-4">
+<li><a id="org99912a2"></a>super_operations<br  /><div class="outline-text-6" id="text-1-4-1-2-4">
 <p>
 proc_sops:
 </p>
@@ -1931,7 +1763,7 @@ proc_sops:
 </div>
 </div></li>
 
-<li><a id="org17c0117"></a>i_op for /proc root<br  /><div class="outline-text-6" id="text-1-4-1-2-5">
+<li><a id="org0801a3a"></a>i_op for /proc root<br  /><div class="outline-text-6" id="text-1-4-1-2-5">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode_operations</span> <span style="font-weight: bold; font-style: italic;">proc_root_inode_operations</span> = {
@@ -1941,7 +1773,7 @@ proc_sops:
 </div>
 </div></li>
 
-<li><a id="org0905871"></a>i_fop for /proc root<br  /><div class="outline-text-6" id="text-1-4-1-2-6">
+<li><a id="org68e34cd"></a>i_fop for /proc root<br  /><div class="outline-text-6" id="text-1-4-1-2-6">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">file_operations</span> <span style="font-weight: bold; font-style: italic;">proc_root_operations</span> = {
@@ -1952,7 +1784,7 @@ proc_sops:
 </div>
 </div></li>
 
-<li><a id="org597cea5"></a>i_fop for generic proc dir<br  /><div class="outline-text-6" id="text-1-4-1-2-7">
+<li><a id="org2c6f0c9"></a>i_fop for generic proc dir<br  /><div class="outline-text-6" id="text-1-4-1-2-7">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">file_operations</span> <span style="font-weight: bold; font-style: italic;">proc_dir_operations</span> = {
@@ -1963,7 +1795,7 @@ proc_sops:
 </div>
 </div></li>
 
-<li><a id="org8597103"></a>i_op for generic proc dir<br  /><div class="outline-text-6" id="text-1-4-1-2-8">
+<li><a id="org8367717"></a>i_op for generic proc dir<br  /><div class="outline-text-6" id="text-1-4-1-2-8">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode_operations</span> <span style="font-weight: bold; font-style: italic;">proc_dir_inode_operations</span> = {
@@ -1974,7 +1806,7 @@ proc_sops:
 </div>
 </div></li>
 
-<li><a id="orgad03f8c"></a>i_fop for generic proc file<br  /><div class="outline-text-6" id="text-1-4-1-2-9">
+<li><a id="org592bd38"></a>i_fop for generic proc file<br  /><div class="outline-text-6" id="text-1-4-1-2-9">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">file_operations</span> <span style="font-weight: bold; font-style: italic;">proc_file_operations</span> = {
@@ -1986,7 +1818,7 @@ proc_sops:
 </div>
 </div></li>
 
-<li><a id="orgf652fa7"></a>i_op for generic proc file<br  /><div class="outline-text-6" id="text-1-4-1-2-10">
+<li><a id="orge30bf41"></a>i_op for generic proc file<br  /><div class="outline-text-6" id="text-1-4-1-2-10">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode_operations</span> <span style="font-weight: bold; font-style: italic;">proc_file_inode_operations</span> = {
@@ -1996,7 +1828,7 @@ proc_sops:
 </div>
 </div></li>
 
-<li><a id="orgf17df67"></a>和 /proc/&lt;pid&gt; 相关的 i_op/i_fop<br  /><div class="outline-text-6" id="text-1-4-1-2-11">
+<li><a id="orgd1ef44b"></a>和 /proc/&lt;pid&gt; 相关的 i_op/i_fop<br  /><div class="outline-text-6" id="text-1-4-1-2-11">
 <p>
 /proc/&lt;pid&gt; 下的许多 inode , 都有其独立的 i_op 和 i_fop
 </p>
@@ -2004,10 +1836,10 @@ proc_sops:
 </div>
 
 
-<div id="outline-container-org2bf6fb9" class="outline-5">
-<h5 id="org2bf6fb9"><span class="section-number-5">1.4.1.3</span> super_operations</h5>
+<div id="outline-container-orge4f3d58" class="outline-5">
+<h5 id="orge4f3d58"><span class="section-number-5">1.4.1.3</span> super_operations</h5>
 <div class="outline-text-5" id="text-1-4-1-3">
-</div><ol class="org-ol"><li><a id="orgf3ca939"></a>alloc_inode<br  /><div class="outline-text-6" id="text-1-4-1-3-1">
+</div><ol class="org-ol"><li><a id="orgb5b9d9f"></a>alloc_inode<br  /><div class="outline-text-6" id="text-1-4-1-3-1">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode</span> *<span style="font-weight: bold;">proc_alloc_inode</span>(<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">super_block</span> *<span style="font-weight: bold; font-style: italic;">sb</span>):
@@ -2025,26 +1857,26 @@ proc_sops:
 </div>
 </div></li>
 
-<li><a id="org595576c"></a>read_inode<br  /><div class="outline-text-6" id="text-1-4-1-3-2">
+<li><a id="orgb776a9f"></a>read_inode<br  /><div class="outline-text-6" id="text-1-4-1-3-2">
 <p>
 procfs 的 proc_read_inode 并没有做太多工作, 因为 inode 信息的填充主要
 在上层的 proc_get_inode 中完成. 
 </p>
 </div></li>
 
-<li><a id="org396d03c"></a>statfs<br  /></li></ol>
+<li><a id="orgdfc871c"></a>statfs<br  /></li></ol>
 </div>
 
-<div id="outline-container-org0e32801" class="outline-5">
-<h5 id="org0e32801"><span class="section-number-5">1.4.1.4</span> inode_operations</h5>
+<div id="outline-container-org7ad08fd" class="outline-5">
+<h5 id="org7ad08fd"><span class="section-number-5">1.4.1.4</span> inode_operations</h5>
 <div class="outline-text-5" id="text-1-4-1-4">
-</div><ol class="org-ol"><li><a id="org437517a"></a>lookup<br  /><div class="outline-text-6" id="text-1-4-1-4-1">
+</div><ol class="org-ol"><li><a id="orga61f815"></a>lookup<br  /><div class="outline-text-6" id="text-1-4-1-4-1">
 <p>
 对于 proc 来说, /proc 下许多目录都有其独立的 lookup 函数
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="orgefe9ec6"></a>proc_root_lookup<br  /><div class="outline-text-7" id="text-1-4-1-4-1-1">
+<ol class="org-ol"><li><a id="org2668846"></a>proc_root_lookup<br  /><div class="outline-text-7" id="text-1-4-1-4-1-1">
 <p>
 /proc 根目录下本身的 lookup 函数
 </p>
@@ -2061,7 +1893,7 @@ procfs 的 proc_read_inode 并没有做太多工作, 因为 inode 信息的填�
 </div>
 </div>
 
-<ol class="org-ol"><li><a id="org0ea17d6"></a>proc_lookup<br  /><div class="outline-text-8" id="text-1-4-1-4-1-1-1">
+<ol class="org-ol"><li><a id="org850e7e4"></a>proc_lookup<br  /><div class="outline-text-8" id="text-1-4-1-4-1-1-1">
 <p>
 /proc 一级目录下所有非 &lt;pid&gt; 的 inode 都是通过 proc_lookup 查找的. 具
 体的, 通过遍历之前通过 create_proc_entry 创建虚拟目录树来查找. 
@@ -2099,7 +1931,7 @@ touch: cannot touch 'a': No such file or directory
 </pre>
 </div></li>
 
-<li><a id="org8320bb3"></a>proc_pid_lookup<br  /><div class="outline-text-8" id="text-1-4-1-4-1-1-2">
+<li><a id="orgfbd7b1e"></a>proc_pid_lookup<br  /><div class="outline-text-8" id="text-1-4-1-4-1-1-2">
 <p>
 因为 /proc 下的 &lt;pid&gt; 之类的 inode 是动态变化的, 无法通过
 create_proc_entry 添加到虚拟的 /proc 目录树中, 所以需要通过
@@ -2132,7 +1964,7 @@ proc_pid_lookup 动态去查找
 </div>
 </div></li></ol></li>
 
-<li><a id="orge3a4579"></a>proc_tgid_base_lookup<br  /><div class="outline-text-7" id="text-1-4-1-4-1-2">
+<li><a id="org715768c"></a>proc_tgid_base_lookup<br  /><div class="outline-text-7" id="text-1-4-1-4-1-2">
 <p>
 /proc/&lt;pid&gt; 目录的 lookup 函数
 </p>
@@ -2207,13 +2039,13 @@ proc_tgid_base_inode_operations, 后者的定义为:
 </div>
 </div></li></ol></li>
 
-<li><a id="orgb063d08"></a>permission<br  /><div class="outline-text-6" id="text-1-4-1-4-2">
+<li><a id="org7075f70"></a>permission<br  /><div class="outline-text-6" id="text-1-4-1-4-2">
 <p>
 procfs 实现了自己的 permission 实现: proc_permission
 </p>
 </div></li>
 
-<li><a id="orgf7c721e"></a>readlink<br  /><div class="outline-text-6" id="text-1-4-1-4-3">
+<li><a id="orgc1f7761"></a>readlink<br  /><div class="outline-text-6" id="text-1-4-1-4-3">
 <p>
 /proc 中至少有三个地方用到了 symlink: 
 </p>
@@ -2232,7 +2064,7 @@ procfs 实现了自己的 permission 实现: proc_permission
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="org0e7c534"></a>/proc/self<br  /><div class="outline-text-7" id="text-1-4-1-4-3-1">
+<ol class="org-ol"><li><a id="orgfb642be"></a>/proc/self<br  /><div class="outline-text-7" id="text-1-4-1-4-3-1">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">dentry</span> * <span style="font-weight: bold;">proc_pid_lookup</span>:
@@ -2254,7 +2086,7 @@ procfs 实现了自己的 permission 实现: proc_permission
 </div>
 </div></li>
 
-<li><a id="org2f47f78"></a>/proc/&lt;pid&gt;/fd/&lt;fd&gt;<br  /><div class="outline-text-7" id="text-1-4-1-4-3-2">
+<li><a id="orgdb6bfea"></a>/proc/&lt;pid&gt;/fd/&lt;fd&gt;<br  /><div class="outline-text-7" id="text-1-4-1-4-3-2">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">proc_lookupfd</span>:
@@ -2281,7 +2113,7 @@ procfs 实现了自己的 permission 实现: proc_permission
 </div>
 </div></li>
 
-<li><a id="orgdf521ec"></a>/proc/mounts<br  /><div class="outline-text-7" id="text-1-4-1-4-3-3">
+<li><a id="org8fc095d"></a>/proc/mounts<br  /><div class="outline-text-7" id="text-1-4-1-4-3-3">
 <p>
 proc_root_init 时, 通过 proc_symlink 建立了一个  proc_dir_entry , 这个
 entry 是 /proc/mounts 到 /proc/self/mounts 的 symlink, 具体参考前面
@@ -2304,10 +2136,10 @@ proc_symlink
 </div></li></ol></li></ol>
 </div>
 
-<div id="outline-container-org11b96b0" class="outline-5">
-<h5 id="org11b96b0"><span class="section-number-5">1.4.1.5</span> file_operations</h5>
+<div id="outline-container-org71f424f" class="outline-5">
+<h5 id="org71f424f"><span class="section-number-5">1.4.1.5</span> file_operations</h5>
 <div class="outline-text-5" id="text-1-4-1-5">
-</div><ol class="org-ol"><li><a id="org7f8ca91"></a>readdir<br  /><div class="outline-text-6" id="text-1-4-1-5-1">
+</div><ol class="org-ol"><li><a id="orgca98ce8"></a>readdir<br  /><div class="outline-text-6" id="text-1-4-1-5-1">
 <p>
 readdir 的过程和 lookup 的过程类似, 根据不同的 inode 调用不同的
 i_fop-&gt;readdir, 且 readdir 依据的数据的来源与 lookup 也是类似的:
@@ -2323,8 +2155,8 @@ i_fop-&gt;readdir, 且 readdir 依据的数据的来源与 lookup 也是类似�
 </div></li></ol>
 </div>
 
-<div id="outline-container-org793c8d0" class="outline-5">
-<h5 id="org793c8d0"><span class="section-number-5">1.4.1.6</span> 总结</h5>
+<div id="outline-container-orgcbed436" class="outline-5">
+<h5 id="orgcbed436"><span class="section-number-5">1.4.1.6</span> 总结</h5>
 <div class="outline-text-5" id="text-1-4-1-6">
 <ol class="org-ol">
 <li>vfs 由一系列的回调函数构成, 由最初的 file_system_type 到
@@ -2341,12 +2173,12 @@ super_operations 再到 inode_operations 和 file_operations</li>
 </div>
 </div>
 
-<div id="outline-container-orgbe3b45d" class="outline-4">
-<h4 id="orgbe3b45d"><span class="section-number-4">1.4.2</span> debugfs</h4>
+<div id="outline-container-org3aba853" class="outline-4">
+<h4 id="org3aba853"><span class="section-number-4">1.4.2</span> debugfs</h4>
 </div>
 
-<div id="outline-container-orgcf16a08" class="outline-4">
-<h4 id="orgcf16a08"><span class="section-number-4">1.4.3</span> ramfs</h4>
+<div id="outline-container-org38b7f59" class="outline-4">
+<h4 id="org38b7f59"><span class="section-number-4">1.4.3</span> ramfs</h4>
 <div class="outline-text-4" id="text-1-4-3">
 <p>
 ramfs 是基于内存的文件系统, 因为 kernel 本身有 dcache 和 page cache,
@@ -2355,8 +2187,8 @@ dcache 和 pagecache.
 </p>
 </div>
 
-<div id="outline-container-org188aa99" class="outline-5">
-<h5 id="org188aa99"><span class="section-number-5">1.4.3.1</span> lookup</h5>
+<div id="outline-container-orgdc66752" class="outline-5">
+<h5 id="orgdc66752"><span class="section-number-5">1.4.3.1</span> lookup</h5>
 <div class="outline-text-5" id="text-1-4-3-1">
 <p>
 ramfs 的 lookup 被定义为 simple_lookup, 而 simple_lookup 只是简单的返
@@ -2384,8 +2216,8 @@ ramfs 的 lookup 被定义为 simple_lookup, 而 simple_lookup 只是简单的�
 </div>
 </div>
 
-<div id="outline-container-orgca9cb1f" class="outline-5">
-<h5 id="orgca9cb1f"><span class="section-number-5">1.4.3.2</span> create</h5>
+<div id="outline-container-org5a278f6" class="outline-5">
+<h5 id="org5a278f6"><span class="section-number-5">1.4.3.2</span> create</h5>
 <div class="outline-text-5" id="text-1-4-3-2">
 <p>
 ramfs_mknod, 基本就是直接 make inode
@@ -2393,8 +2225,8 @@ ramfs_mknod, 基本就是直接 make inode
 </div>
 </div>
 
-<div id="outline-container-org3cc4d6a" class="outline-5">
-<h5 id="org3cc4d6a"><span class="section-number-5">1.4.3.3</span> readdir</h5>
+<div id="outline-container-org04fcc39" class="outline-5">
+<h5 id="org04fcc39"><span class="section-number-5">1.4.3.3</span> readdir</h5>
 <div class="outline-text-5" id="text-1-4-3-3">
 <p>
 dcache_readdir, 基本就是直接遍历 dcache
@@ -2403,21 +2235,21 @@ dcache_readdir, 基本就是直接遍历 dcache
 </div>
 </div>
 
-<div id="outline-container-orgd64e8d9" class="outline-4">
-<h4 id="orgd64e8d9"><span class="section-number-4">1.4.4</span> ext2</h4>
+<div id="outline-container-org254d4bb" class="outline-4">
+<h4 id="org254d4bb"><span class="section-number-4">1.4.4</span> ext2</h4>
 <div class="outline-text-4" id="text-1-4-4">
 <p>
-refers to <a href="ext2.html#org1440ee4">Ext2</a>
+refers to <a href="ext2.html#org01e410d">Ext2</a>
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org2027a2f" class="outline-3">
-<h3 id="org2027a2f"><span class="section-number-3">1.5</span> Appendix</h3>
+<div id="outline-container-org2b14873" class="outline-3">
+<h3 id="org2b14873"><span class="section-number-3">1.5</span> Appendix</h3>
 <div class="outline-text-3" id="text-1-5">
-</div><div id="outline-container-org891d902" class="outline-4">
-<h4 id="org891d902"><span class="section-number-4">1.5.1</span> special inode</h4>
+</div><div id="outline-container-org0ff0d9d" class="outline-4">
+<h4 id="org0ff0d9d"><span class="section-number-4">1.5.1</span> special inode</h4>
 <div class="outline-text-4" id="text-1-5-1">
 <p>
 除了普通文件和目录, 还存在一些特殊的文件:
@@ -2454,8 +2286,8 @@ inode-&gt;i_mode 是一个 short int, 它的低位保存权限 (rwx), 高位保�
 </div>
 </div>
 
-<div id="outline-container-orga5698c0" class="outline-5">
-<h5 id="orga5698c0"><span class="section-number-5">1.5.1.1</span> char device</h5>
+<div id="outline-container-orgefca960" class="outline-5">
+<h5 id="orgefca960"><span class="section-number-5">1.5.1.1</span> char device</h5>
 <div class="outline-text-5" id="text-1-5-1-1">
 <div class="org-src-container">
 
@@ -2513,8 +2345,8 @@ ext2_read_inode (<span style="font-weight: bold;">struct</span> <span style="fon
 </div>
 </div>
 
-<div id="outline-container-org3e8457e" class="outline-5">
-<h5 id="org3e8457e"><span class="section-number-5">1.5.1.2</span> blk device</h5>
+<div id="outline-container-org10313f8" class="outline-5">
+<h5 id="org10313f8"><span class="section-number-5">1.5.1.2</span> blk device</h5>
 <div class="outline-text-5" id="text-1-5-1-2">
 <p>
 TODO: refers to `block device driver`
@@ -2523,19 +2355,19 @@ TODO: refers to `block device driver`
 </div>
 </div>
 
-<div id="outline-container-orgf5e4181" class="outline-4">
-<h4 id="orgf5e4181"><span class="section-number-4">1.5.2</span> inode-&gt;i_size</h4>
+<div id="outline-container-org295c9e7" class="outline-4">
+<h4 id="org295c9e7"><span class="section-number-4">1.5.2</span> inode-&gt;i_size</h4>
 <div class="outline-text-4" id="text-1-5-2">
-</div><div id="outline-container-org0d15c98" class="outline-5">
-<h5 id="org0d15c98"><span class="section-number-5">1.5.2.1</span> ext2</h5>
+</div><div id="outline-container-orgbc0081a" class="outline-5">
+<h5 id="orgbc0081a"><span class="section-number-5">1.5.2.1</span> ext2</h5>
 <div class="outline-text-5" id="text-1-5-2-1">
-</div><ol class="org-ol"><li><a id="org8f29d06"></a>dir<br  /><div class="outline-text-6" id="text-1-5-2-1-1">
+</div><ol class="org-ol"><li><a id="org1dd1c58"></a>dir<br  /><div class="outline-text-6" id="text-1-5-2-1-1">
 <p>
 ext2 目录的大小是随着目录中 entry 的多少变化的.
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="org4d76cec"></a>新建空目录<br  /><div class="outline-text-7" id="text-1-5-2-1-1-1">
+<ol class="org-ol"><li><a id="orgbd14379"></a>新建空目录<br  /><div class="outline-text-7" id="text-1-5-2-1-1-1">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_mkdir</span>:
@@ -2560,7 +2392,7 @@ ext2 目录的大小是随着目录中 entry 的多少变化的.
 </div>
 </div></li>
 
-<li><a id="org81f36be"></a>目录中添加文件或子目录导致大小变化<br  /><div class="outline-text-7" id="text-1-5-2-1-1-2">
+<li><a id="org5029fa2"></a>目录中添加文件或子目录导致大小变化<br  /><div class="outline-text-7" id="text-1-5-2-1-1-2">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_create</span>:
@@ -2580,7 +2412,7 @@ ext2 目录的大小是随着目录中 entry 的多少变化的.
 </div>
 </div></li></ol></li>
 
-<li><a id="org218432b"></a>symlink<br  /><div class="outline-text-6" id="text-1-5-2-1-2">
+<li><a id="org77043a6"></a>symlink<br  /><div class="outline-text-6" id="text-1-5-2-1-2">
 <p>
 symlink 通过 ext2_symlink 生成
 </p>
@@ -2654,26 +2486,26 @@ Device: 802h/2050d      Inode: 21500456    Links: 1
 </div>
 </div></li>
 
-<li><a id="org571af9d"></a>regular file<br  /></li>
+<li><a id="orgc1f34aa"></a>regular file<br  /></li>
 
-<li><a id="org676bfd5"></a>char/blk device<br  /><div class="outline-text-6" id="text-1-5-2-1-4">
+<li><a id="org1b72639"></a>char/blk device<br  /><div class="outline-text-6" id="text-1-5-2-1-4">
 <p>
 mknod 时 i_size 没有赋值, 所以大小为 0
 </p>
 </div></li>
 
-<li><a id="orgcad363a"></a>fifo<br  /></li>
+<li><a id="org0800a1f"></a>fifo<br  /></li>
 
-<li><a id="orgd9e73a9"></a>socket<br  /></li></ol>
+<li><a id="org489d243"></a>socket<br  /></li></ol>
 </div>
 
-<div id="outline-container-org115b594" class="outline-5">
-<h5 id="org115b594"><span class="section-number-5">1.5.2.2</span> proc</h5>
+<div id="outline-container-orgd96fab6" class="outline-5">
+<h5 id="orgd96fab6"><span class="section-number-5">1.5.2.2</span> proc</h5>
 </div>
 </div>
 
-<div id="outline-container-orgad5dc8e" class="outline-4">
-<h4 id="orgad5dc8e"><span class="section-number-4">1.5.3</span> .(single dot) 与 ..(double dots)</h4>
+<div id="outline-container-org6a21b36" class="outline-4">
+<h4 id="org6a21b36"><span class="section-number-4">1.5.3</span> .(single dot) 与 ..(double dots)</h4>
 <div class="outline-text-4" id="text-1-5-3">
 <p>
 对于 ext2 来说, single dot 与 double dots 是真实存在于磁盘上的, 而并非程序模拟出来的
@@ -2707,8 +2539,8 @@ inode 在 mkdir 时即被指定.
 </p>
 </div>
 
-<div id="outline-container-org2741534" class="outline-5">
-<h5 id="org2741534"><span class="section-number-5">1.5.3.1</span> 测试</h5>
+<div id="outline-container-orgd8f59b7" class="outline-5">
+<h5 id="orgd8f59b7"><span class="section-number-5">1.5.3.1</span> 测试</h5>
 <div class="outline-text-5" id="text-1-5-3-1">
 <p>
 根据前面关于 path_lookup 的描述, single dot 与 double dots 在
@@ -2784,8 +2616,8 @@ Device: 802h/2050d      Inode: 21725291    Links: 3
 </div>
 </div>
 
-<div id="outline-container-org7d526d1" class="outline-4">
-<h4 id="org7d526d1"><span class="section-number-4">1.5.4</span> atime / mtime</h4>
+<div id="outline-container-orgc1a23d2" class="outline-4">
+<h4 id="orgc1a23d2"><span class="section-number-4">1.5.4</span> atime / mtime</h4>
 <div class="outline-text-4" id="text-1-5-4">
 <p>
 读写文件时 atime/mtime 会相应变化, vfs 在 generic_file_read / write 处
@@ -2815,8 +2647,8 @@ Device: 802h/2050d      Inode: 21725291    Links: 3
 </div>
 </div>
 
-<div id="outline-container-orgca52ed2" class="outline-4">
-<h4 id="orgca52ed2"><span class="section-number-4">1.5.5</span> ramfs, rootfs, initramfs</h4>
+<div id="outline-container-orgd2fc4d0" class="outline-4">
+<h4 id="orgd2fc4d0"><span class="section-number-4">1.5.5</span> ramfs, rootfs, initramfs</h4>
 <div class="outline-text-4" id="text-1-5-5">
 <p>
 <a href="https://www.kernel.org/doc/Documentation/filesystems/ramfs-rootfs-initramfs.txt">https://www.kernel.org/doc/Documentation/filesystems/ramfs-rootfs-initramfs.txt</a>
@@ -2824,8 +2656,8 @@ Device: 802h/2050d      Inode: 21725291    Links: 3
 </div>
 </div>
 
-<div id="outline-container-org98b362f" class="outline-4">
-<h4 id="org98b362f"><span class="section-number-4">1.5.6</span> getcwd</h4>
+<div id="outline-container-orgb173b25" class="outline-4">
+<h4 id="orgb173b25"><span class="section-number-4">1.5.6</span> getcwd</h4>
 <div class="outline-text-4" id="text-1-5-6">
 <p>
 getcwd 显然依赖于 fs_struct-&gt;pwdmnt, 但 pwdmnt 做为 vfsmount 只包含一
@@ -2869,7 +2701,7 @@ drop cache 时需要保证 dentry A 的 parent 不能先于 dentry A 被 drop?
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-04-26 Tue&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-08-30 Tue 14:07</p>
+<p class="date">Created: 2016-08-30 Tue 16:01</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
