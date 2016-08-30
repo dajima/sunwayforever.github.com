@@ -12,7 +12,7 @@
   #table-of-contents {
     color: black;
     background: #FFF;
-    font-size: 110%;
+    font-size: 90%;
     padding: .5em;
     margin: 1em -2em 1em 1em;
     display: block;
@@ -108,7 +108,7 @@
   }
 
   li {
-    margin-left: -1.3em;
+    margin-left: -1.2em;
   }
 
   table {
