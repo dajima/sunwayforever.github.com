@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-08-30 Tue 10:03 -->
+<!-- 2016-08-30 Tue 13:33 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: Signal</title>
@@ -64,35 +64,35 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org42f01fa">1. Linux Kernel: Signal</a>
+<li><a href="#org9996dab">1. Linux Kernel: Signal</a>
 <ul>
-<li><a href="#org5931655">1.1. Overview</a></li>
-<li><a href="#orge946b01">1.2. 数据结构</a></li>
-<li><a href="#orgd9f5559">1.3. 信号产生</a>
+<li><a href="#orgc5ff2af">1.1. Overview</a></li>
+<li><a href="#org4eb2423">1.2. 数据结构</a></li>
+<li><a href="#orgf75baa1">1.3. 信号产生</a>
 <ul>
-<li><a href="#orgb8ff4c5">1.3.1. 给单个线程发送信号</a></li>
-<li><a href="#org9e72fbe">1.3.2. 给线程组发送信号</a></li>
-<li><a href="#orgba39a6d">1.3.3. 举例</a></li>
+<li><a href="#org3a24748">1.3.1. 给单个线程发送信号</a></li>
+<li><a href="#org587b615">1.3.2. 给线程组发送信号</a></li>
+<li><a href="#org1e65a9f">1.3.3. 举例</a></li>
 </ul>
 </li>
-<li><a href="#orgf2f987e">1.4. 信号传递</a>
+<li><a href="#org9c4692e">1.4. 信号传递</a>
 <ul>
-<li><a href="#org6baaab1">1.4.1. do_signal</a></li>
+<li><a href="#orgcc89705">1.4.1. do_signal</a></li>
 </ul>
 </li>
-<li><a href="#orgbbde37e">1.5. 相关的系统调用</a>
+<li><a href="#org7924670">1.5. 相关的系统调用</a>
 <ul>
-<li><a href="#org4f193d7">1.5.1. kill, tkill, tgkill</a></li>
-<li><a href="#orgb970aa7">1.5.2. signal, sigaction</a></li>
-<li><a href="#orgd21137c">1.5.3. sigsuspend</a></li>
-<li><a href="#orgdf6a779">1.5.4. sigpending</a></li>
-<li><a href="#org0c21d3b">1.5.5. sigprocmask</a></li>
+<li><a href="#org9acad97">1.5.1. kill, tkill, tgkill</a></li>
+<li><a href="#orga90235a">1.5.2. signal, sigaction</a></li>
+<li><a href="#orga3d4ff5">1.5.3. sigsuspend</a></li>
+<li><a href="#org38d5a6f">1.5.4. sigpending</a></li>
+<li><a href="#orgbe6ee08">1.5.5. sigprocmask</a></li>
 </ul>
 </li>
-<li><a href="#orgacfe0de">1.6. Appendix</a>
+<li><a href="#org23c960e">1.6. Appendix</a>
 <ul>
-<li><a href="#org641fe4a">1.6.1. 系统调用的中断与重启</a></li>
-<li><a href="#orge103c21">1.6.2. 信号与线程</a></li>
+<li><a href="#orge39c035">1.6.1. 系统调用的中断与重启</a></li>
+<li><a href="#orgc78f7b0">1.6.2. 信号与线程</a></li>
 </ul>
 </li>
 </ul>
@@ -100,11 +100,11 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
-<div id="outline-container-org42f01fa" class="outline-2">
-<h2 id="org42f01fa"><span class="section-number-2">1</span> Linux Kernel: Signal</h2>
+<div id="outline-container-org9996dab" class="outline-2">
+<h2 id="org9996dab"><span class="section-number-2">1</span> Linux Kernel: Signal</h2>
 <div class="outline-text-2" id="text-1">
-</div><div id="outline-container-org5931655" class="outline-3">
-<h3 id="org5931655"><span class="section-number-3">1.1</span> Overview</h3>
+</div><div id="outline-container-orgc5ff2af" class="outline-3">
+<h3 id="orgc5ff2af"><span class="section-number-3">1.1</span> Overview</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 信号 (signal) 是一个很短的消息, 发送者可以是 kernel 本身或某个进程, 接
@@ -157,7 +157,7 @@ SIG_IGN, 则这个信号并不会进入 pending signal 列表中: 它会被直�
 
 <p>
 A 发送信号给 B 只是将信号记在 B 的 pending signal 中, B 真正响应这个信号
-的时机是从 kernel mode 返回 user mode 时, 参考 <a href="interrupt.rel.html#orgfa544f2">ret_from_intr</a> 中关于
+的时机是从 kernel mode 返回 user mode 时, 参考 <a href="interrupt.rel.html#orge176a43">ret_from_intr</a> 中关于
 work_pending 的描述. B 响应信号的过程称为 signal delivering
 </p>
 
@@ -170,8 +170,8 @@ work_pending 的描述. B 响应信号的过程称为 signal delivering
 </div>
 
 
-<div id="outline-container-orge946b01" class="outline-3">
-<h3 id="orge946b01"><span class="section-number-3">1.2</span> 数据结构</h3>
+<div id="outline-container-org4eb2423" class="outline-3">
+<h3 id="org4eb2423"><span class="section-number-3">1.2</span> 数据结构</h3>
 <div class="outline-text-3" id="text-1-2">
 
 <div class="figure">
@@ -195,8 +195,8 @@ signal-&gt;rlim 是进程的 rlimit 信息, rlimit 中的大部分信息和信�
 </div>
 </div>
 
-<div id="outline-container-orgd9f5559" class="outline-3">
-<h3 id="orgd9f5559"><span class="section-number-3">1.3</span> 信号产生</h3>
+<div id="outline-container-orgf75baa1" class="outline-3">
+<h3 id="orgf75baa1"><span class="section-number-3">1.3</span> 信号产生</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 根据信号的来源 (进程通过 kill 发起或 kernel 本身发起的), kernel 通过许多
@@ -235,11 +235,11 @@ group_send_sig_info
 </p>
 </div>
 
-<div id="outline-container-orgb8ff4c5" class="outline-4">
-<h4 id="orgb8ff4c5"><span class="section-number-4">1.3.1</span> 给单个线程发送信号</h4>
+<div id="outline-container-org3a24748" class="outline-4">
+<h4 id="org3a24748"><span class="section-number-4">1.3.1</span> 给单个线程发送信号</h4>
 <div class="outline-text-4" id="text-1-3-1">
-</div><div id="outline-container-orga24cc9d" class="outline-5">
-<h5 id="orga24cc9d"><span class="section-number-5">1.3.1.1</span> specific_send_sig_info</h5>
+</div><div id="outline-container-orgfb811a9" class="outline-5">
+<h5 id="orgfb811a9"><span class="section-number-5">1.3.1.1</span> specific_send_sig_info</h5>
 <div class="outline-text-5" id="text-1-3-1-1">
 <div class="org-src-container">
 
@@ -290,8 +290,8 @@ group_send_sig_info
 </div>
 </div>
 
-<div id="outline-container-orge14165f" class="outline-5">
-<h5 id="orge14165f"><span class="section-number-5">1.3.1.2</span> send_signal</h5>
+<div id="outline-container-orgf51787d" class="outline-5">
+<h5 id="orgf51787d"><span class="section-number-5">1.3.1.2</span> send_signal</h5>
 <div class="outline-text-5" id="text-1-3-1-2">
 <div class="org-src-container">
 
@@ -332,11 +332,11 @@ group_send_sig_info
 </div>
 </div>
 
-<div id="outline-container-org9e72fbe" class="outline-4">
-<h4 id="org9e72fbe"><span class="section-number-4">1.3.2</span> 给线程组发送信号</h4>
+<div id="outline-container-org587b615" class="outline-4">
+<h4 id="org587b615"><span class="section-number-4">1.3.2</span> 给线程组发送信号</h4>
 <div class="outline-text-4" id="text-1-3-2">
-</div><div id="outline-container-org5c7fc97" class="outline-5">
-<h5 id="org5c7fc97"><span class="section-number-5">1.3.2.1</span> group_send_sig_info</h5>
+</div><div id="outline-container-org38fedc8" class="outline-5">
+<h5 id="org38fedc8"><span class="section-number-5">1.3.2.1</span> group_send_sig_info</h5>
 <div class="outline-text-5" id="text-1-3-2-1">
 <div class="org-src-container">
 
@@ -363,8 +363,8 @@ group_send_sig_info
 </div>
 </div>
 
-<div id="outline-container-org72b06a5" class="outline-5">
-<h5 id="org72b06a5"><span class="section-number-5">1.3.2.2</span> __group_complete_signal</h5>
+<div id="outline-container-orgf10f29f" class="outline-5">
+<h5 id="orgf10f29f"><span class="section-number-5">1.3.2.2</span> __group_complete_signal</h5>
 <div class="outline-text-5" id="text-1-3-2-2">
 <div class="org-src-container">
 
@@ -413,11 +413,11 @@ __group_complete_signal(sig, <span style="color: #bd93f9;">p</span>):
 </div>
 </div>
 
-<div id="outline-container-orgba39a6d" class="outline-4">
-<h4 id="orgba39a6d"><span class="section-number-4">1.3.3</span> 举例</h4>
+<div id="outline-container-org1e65a9f" class="outline-4">
+<h4 id="org1e65a9f"><span class="section-number-4">1.3.3</span> 举例</h4>
 <div class="outline-text-4" id="text-1-3-3">
-</div><div id="outline-container-org0b15f57" class="outline-5">
-<h5 id="org0b15f57"><span class="section-number-5">1.3.3.1</span> 应用发起的 kill</h5>
+</div><div id="outline-container-orgdc47e1b" class="outline-5">
+<h5 id="orgdc47e1b"><span class="section-number-5">1.3.3.1</span> 应用发起的 kill</h5>
 <div class="outline-text-5" id="text-1-3-3-1">
 <div class="org-src-container">
 
@@ -453,8 +453,8 @@ __group_complete_signal(sig, <span style="color: #bd93f9;">p</span>):
 </div>
 </div>
 
-<div id="outline-container-org46077ea" class="outline-5">
-<h5 id="org46077ea"><span class="section-number-5">1.3.3.2</span> page fault 导致的 SIGSEGV</h5>
+<div id="outline-container-orgb69759b" class="outline-5">
+<h5 id="orgb69759b"><span class="section-number-5">1.3.3.2</span> page fault 导致的 SIGSEGV</h5>
 <div class="outline-text-5" id="text-1-3-3-2">
 <div class="org-src-container">
 
@@ -482,8 +482,8 @@ __group_complete_signal(sig, <span style="color: #bd93f9;">p</span>):
 </div>
 </div>
 
-<div id="outline-container-orgf2f987e" class="outline-3">
-<h3 id="orgf2f987e"><span class="section-number-3">1.4</span> 信号传递</h3>
+<div id="outline-container-org9c4692e" class="outline-3">
+<h3 id="org9c4692e"><span class="section-number-3">1.4</span> 信号传递</h3>
 <div class="outline-text-3" id="text-1-4">
 <p>
 信号传递 (signal delivering) 是指 pending 信号对应的 sa_handler 真正被
@@ -531,8 +531,8 @@ work_notifysig:
 </div>
 </div>
 
-<div id="outline-container-org6baaab1" class="outline-4">
-<h4 id="org6baaab1"><span class="section-number-4">1.4.1</span> do_signal</h4>
+<div id="outline-container-orgcc89705" class="outline-4">
+<h4 id="orgcc89705"><span class="section-number-4">1.4.1</span> do_signal</h4>
 <div class="outline-text-4" id="text-1-4-1">
 <p>
 do_signal 是信号处理最主要的部分, 它需要完成信号处理中最复杂的部分: 在
@@ -550,8 +550,8 @@ kernel space 调用 user space 下的 sa_handler
 </div>
 </div>
 
-<div id="outline-container-orge3508d8" class="outline-5">
-<h5 id="orge3508d8"><span class="section-number-5">1.4.1.1</span> get_signal_to_deliver</h5>
+<div id="outline-container-org2a18e87" class="outline-5">
+<h5 id="org2a18e87"><span class="section-number-5">1.4.1.1</span> get_signal_to_deliver</h5>
 <div class="outline-text-5" id="text-1-4-1-1">
 <p>
 找一个 pending 的 signal, 并交给 handle_signal 去处理. 如果 pending
@@ -618,8 +618,8 @@ signal 对应的 handler 是 SIG_DFL, 则执行默认的操作: ignore, coredump
 </div>
 </div>
 
-<div id="outline-container-org5ca3519" class="outline-5">
-<h5 id="org5ca3519"><span class="section-number-5">1.4.1.2</span> handle_signal</h5>
+<div id="outline-container-orgf25098b" class="outline-5">
+<h5 id="orgf25098b"><span class="section-number-5">1.4.1.2</span> handle_signal</h5>
 <div class="outline-text-5" id="text-1-4-1-2">
 <div class="org-src-container">
 
@@ -640,8 +640,8 @@ signal 对应的 handler 是 SIG_DFL, 则执行默认的操作: ignore, coredump
 </div>
 </div>
 
-<div id="outline-container-org68d37bd" class="outline-5">
-<h5 id="org68d37bd"><span class="section-number-5">1.4.1.3</span> setup_frame</h5>
+<div id="outline-container-org479d7ff" class="outline-5">
+<h5 id="org479d7ff"><span class="section-number-5">1.4.1.3</span> setup_frame</h5>
 <div class="outline-text-5" id="text-1-4-1-3">
 
 <div class="figure">
@@ -721,14 +721,14 @@ siginfo 的指针.
 </div>
 </div>
 
-<div id="outline-container-org538a364" class="outline-5">
-<h5 id="org538a364"><span class="section-number-5">1.4.1.4</span> __kernel_sigreturn</h5>
+<div id="outline-container-org83e0e9d" class="outline-5">
+<h5 id="org83e0e9d"><span class="section-number-5">1.4.1.4</span> __kernel_sigreturn</h5>
 <div class="outline-text-5" id="text-1-4-1-4">
 <p>
 sa_handler 执行结束后, 按照 c 默认的调用约定和前面描述的栈布局, 会跳转
 到 __kernel_sigreturn 函数, __kernel_sigreturn 函数是保存在 vsyscall
 page 中的一个函数, 所以应用可以直接访问, 关于 vsyscall page, 参考
-<a href="process.rel.html#orgb93728b">sysenter, syscall, vsyscall</a>
+<a href="process.rel.html#orgbab446c">sysenter, syscall, vsyscall</a>
 </p>
 
 <p>
@@ -782,8 +782,8 @@ page 中的一个函数, 所以应用可以直接访问, 关于 vsyscall page, �
 </div>
 </div>
 
-<div id="outline-container-org35d5c02" class="outline-5">
-<h5 id="org35d5c02"><span class="section-number-5">1.4.1.5</span> 观察 sigframe</h5>
+<div id="outline-container-org4402055" class="outline-5">
+<h5 id="org4402055"><span class="section-number-5">1.4.1.5</span> 观察 sigframe</h5>
 <div class="outline-text-5" id="text-1-4-1-5">
 <p>
 测试程序:
@@ -879,35 +879,35 @@ End of assembler dump.
 </div>
 </div>
 
-<div id="outline-container-orgbbde37e" class="outline-3">
-<h3 id="orgbbde37e"><span class="section-number-3">1.5</span> 相关的系统调用</h3>
+<div id="outline-container-org7924670" class="outline-3">
+<h3 id="org7924670"><span class="section-number-3">1.5</span> 相关的系统调用</h3>
 <div class="outline-text-3" id="text-1-5">
-</div><div id="outline-container-org4f193d7" class="outline-4">
-<h4 id="org4f193d7"><span class="section-number-4">1.5.1</span> kill, tkill, tgkill</h4>
+</div><div id="outline-container-org9acad97" class="outline-4">
+<h4 id="org9acad97"><span class="section-number-4">1.5.1</span> kill, tkill, tgkill</h4>
 </div>
 
-<div id="outline-container-orgb970aa7" class="outline-4">
-<h4 id="orgb970aa7"><span class="section-number-4">1.5.2</span> signal, sigaction</h4>
+<div id="outline-container-orga90235a" class="outline-4">
+<h4 id="orga90235a"><span class="section-number-4">1.5.2</span> signal, sigaction</h4>
 </div>
 
-<div id="outline-container-orgd21137c" class="outline-4">
-<h4 id="orgd21137c"><span class="section-number-4">1.5.3</span> sigsuspend</h4>
+<div id="outline-container-orga3d4ff5" class="outline-4">
+<h4 id="orga3d4ff5"><span class="section-number-4">1.5.3</span> sigsuspend</h4>
 </div>
 
-<div id="outline-container-orgdf6a779" class="outline-4">
-<h4 id="orgdf6a779"><span class="section-number-4">1.5.4</span> sigpending</h4>
+<div id="outline-container-org38d5a6f" class="outline-4">
+<h4 id="org38d5a6f"><span class="section-number-4">1.5.4</span> sigpending</h4>
 </div>
 
-<div id="outline-container-org0c21d3b" class="outline-4">
-<h4 id="org0c21d3b"><span class="section-number-4">1.5.5</span> sigprocmask</h4>
+<div id="outline-container-orgbe6ee08" class="outline-4">
+<h4 id="orgbe6ee08"><span class="section-number-4">1.5.5</span> sigprocmask</h4>
 </div>
 </div>
 
-<div id="outline-container-orgacfe0de" class="outline-3">
-<h3 id="orgacfe0de"><span class="section-number-3">1.6</span> Appendix</h3>
+<div id="outline-container-org23c960e" class="outline-3">
+<h3 id="org23c960e"><span class="section-number-3">1.6</span> Appendix</h3>
 <div class="outline-text-3" id="text-1-6">
-</div><div id="outline-container-org641fe4a" class="outline-4">
-<h4 id="org641fe4a"><span class="section-number-4">1.6.1</span> 系统调用的中断与重启</h4>
+</div><div id="outline-container-orge39c035" class="outline-4">
+<h4 id="orge39c035"><span class="section-number-4">1.6.1</span> 系统调用的中断与重启</h4>
 <div class="outline-text-4" id="text-1-6-1">
 <p>
 <a href="https://github.com/mozilla/rr/wiki/Linux-signals">https://github.com/mozilla/rr/wiki/Linux-signals</a>
@@ -1000,8 +1000,8 @@ handle_signal
 </div>
 </div>
 
-<div id="outline-container-orge103c21" class="outline-4">
-<h4 id="orge103c21"><span class="section-number-4">1.6.2</span> 信号与线程</h4>
+<div id="outline-container-orgc78f7b0" class="outline-4">
+<h4 id="orgc78f7b0"><span class="section-number-4">1.6.2</span> 信号与线程</h4>
 <div class="outline-text-4" id="text-1-6-2">
 <p>
 通过 fork 时的 copy_process 代码, 可以看到:
@@ -1025,7 +1025,7 @@ handle_signal
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-08-10 Wed&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-08-30 Tue 10:03</p>
+<p class="date">Created: 2016-08-30 Tue 13:33</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
