@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-08-30 Tue 13:07 -->
+<!-- 2016-08-30 Tue 13:24 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: Synchronization</title>
@@ -250,23 +250,13 @@ for the JavaScript code in this tag.
 </li>
 <li><a href="#orgec33861">1.4. 自旋锁</a>
 <ul>
-<li><a href="#org470f7e7">1.4.1. spin<sub>lock</sub></a>
-<ul>
-<li><a href="#orgd5f0807">1.4.1.1. UP 上的 spin<sub>lock</sub></a></li>
-<li><a href="#orgccbc32b">1.4.1.2. MP 上的 spin<sub>lock</sub></a></li>
-</ul>
-</li>
-<li><a href="#org6937b15">1.4.2. spin<sub>unlock</sub></a></li>
+<li><a href="#org470f7e7">1.4.1. spin_lock</a></li>
+<li><a href="#org6937b15">1.4.2. spin_unlock</a></li>
 </ul>
 </li>
 <li><a href="#org6d08e31">1.5. 信号量</a>
 <ul>
-<li><a href="#orgc3ed404">1.5.1. kernel 中的 semaphore</a>
-<ul>
-<li><a href="#org5019d9b">1.5.1.1. down</a></li>
-<li><a href="#org48c38ef">1.5.1.2. up</a></li>
-</ul>
-</li>
+<li><a href="#orgc3ed404">1.5.1. kernel 中的 semaphore</a></li>
 </ul>
 </li>
 </ul>
@@ -281,7 +271,7 @@ for the JavaScript code in this tag.
 <h3 id="orgfbd4d8a"><span class="section-number-3">1.1</span> 内核抢占</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
-内核抢占 (kernel preemption) 在 <a href="interrupt.rel.html#orgfa544f2">ret<sub>from</sub><sub>intr</sub></a> 时已经描述过, 简单的说,
+内核抢占 (kernel preemption) 在 <a href="interrupt.rel.html#orgfa544f2">ret_from_intr</a> 时已经描述过, 简单的说,
 内核抢占是指:
 </p>
 
@@ -291,10 +281,10 @@ for the JavaScript code in this tag.
 
 <p>
 举例来说, 若进程 A 正在 kernel mode 执行一个 syscall, 此时发生时钟中断
-(schedule<sub>tick</sub>), schedule<sub>tick</sub> 更新 A 的 time slice 时发现它的 time
-slice 已经用尽,如果当前打开了内核抢占, 则 ret<sub>from</sub><sub>intr</sub> -&gt;
-resume<sub>kernel</sub> 时会调用 schedule. 如果没有打开内核抢占, 则 A 虽然 time
-slice 耗尽, resume<sub>kernel</sub> 还是会返回到 A 正在执行在 syscall, 直到
+(schedule_tick), schedule_tick 更新 A 的 time slice 时发现它的 time
+slice 已经用尽,如果当前打开了内核抢占, 则 ret_from_intr -&gt;
+resume_kernel 时会调用 schedule. 如果没有打开内核抢占, 则 A 虽然 time
+slice 耗尽, resume_kernel 还是会返回到 A 正在执行在 syscall, 直到
 syscall 返回(或 A 主动放弃 CPU, 例如阻塞)
 </p>
 
@@ -304,7 +294,7 @@ syscall 返回(或 A 主动放弃 CPU, 例如阻塞)
 
 <ol class="org-ol">
 <li><p>
-resume<sub>kernel</sub>
+resume_kernel
 </p>
 
 <div class="org-src-container">
@@ -329,78 +319,78 @@ need_resched:
 </div>
 
 <p>
-当 CONFIG<sub>PREEMPT</sub> 为假时, 即内核抢占功能没有打开时, resume<sub>kernel</sub>
-只是简单的一个 restore<sub>all</sub>.
+当 CONFIG_PREEMPT 为假时, 即内核抢占功能没有打开时, resume_kernel
+只是简单的一个 restore_all.
 </p>
 
 <p>
-当 CONFIG<sub>PREEMPT</sub> 为真时, resume<sub>kernel</sub> 会先检查
-thread<sub>info</sub>-&gt;preempt<sub>cout</sub>, 若 preempt<sub>count</sub> 为 0, 表示可以进行内核
-抢占, 则根据 TIF<sub>NEED</sub><sub>RESCHED</sub> 标记决定是否调用 reschedule 来调度另
+当 CONFIG_PREEMPT 为真时, resume_kernel 会先检查
+thread_info-&gt;preempt_cout, 若 preempt_count 为 0, 表示可以进行内核
+抢占, 则根据 TIF_NEED_RESCHED 标记决定是否调用 reschedule 来调度另
 一个进程执行
 </p></li>
 
 <li><p>
-preempt<sub>count</sub>
+preempt_count
 </p>
 
 <p>
-preempt<sub>count</sub> 是 thread<sub>info</sub> 的一个成员, 大小为 4 字节, 但它的值并不
-仅仅用来表示 `preempt<sub>count</sub>`:
+preempt_count 是 thread_info 的一个成员, 大小为 4 字节, 但它的值并不
+仅仅用来表示 `preempt_count`:
 </p>
 
 <p>
-preempt<sub>count</sub> 的值被下面三个 MASK 分为三部分:
+preempt_count 的值被下面三个 MASK 分为三部分:
 </p>
 
 <ol class="org-ol">
 <li><p>
-PREEMPT<sub>MASK</sub>: 0x000000ff
+PREEMPT_MASK: 0x000000ff
 </p>
 
 <p>
-preempt<sub>count</sub> 的 bit 0~7 用来表示 `preempt<sub>count</sub>`,
-preempt<sub>disable</sub>/enable 负责加减这些 bit
+preempt_count 的 bit 0~7 用来表示 `preempt_count`,
+preempt_disable/enable 负责加减这些 bit
 </p>
 
 <p>
-preempt<sub>disable</sub> 将相应的部分加 1, preempt<sub>enable</sub> 减 1
+preempt_disable 将相应的部分加 1, preempt_enable 减 1
 </p></li>
 
 <li><p>
-SOFTIRQ<sub>MASK</sub>: 0x0000ff00
+SOFTIRQ_MASK: 0x0000ff00
 </p>
 
 <p>
-bit 8~15 表示 softirq 的计数, do<sub>softirq</sub> 时的
-local<sub>bh</sub><sub>disable</sub>/enable 负责加减这些 bit.
+bit 8~15 表示 softirq 的计数, do_softirq 时的
+local_bh_disable/enable 负责加减这些 bit.
 </p>
 
 <p>
-do<sub>softirq</sub> 开始时会通过 local<sub>bh</sub><sub>disable</sub> 将相应的部分加 1,
-do<sub>softirq</sub> 结束时通过 local<sub>bh</sub><sub>enable</sub> 减 1
+do_softirq 开始时会通过 local_bh_disable 将相应的部分加 1,
+do_softirq 结束时通过 local_bh_enable 减 1
 </p></li>
 
 <li><p>
-HARDIRQ<sub>MASK</sub>: 0x0fff0000
+HARDIRQ_MASK: 0x0fff0000
 </p>
 
 <p>
-其余 bit 表示 hardirq 的计数, do<sub>IRQ</sub> 时的 irq<sub>enter</sub> 和 irq<sub>exit</sub>
+其余 bit 表示 hardirq 的计数, do_IRQ 时的 irq_enter 和 irq_exit
 负责加减这些 bit.
 </p>
 
 <p>
-do<sub>IRQ</sub> 开始时通过 irq<sub>enter</sub> 将相应的部分加 1, 结束时通过
-irq<sub>exit</sub> 减 1
+do_IRQ 开始时通过 irq_enter 将相应的部分加 1, 结束时通过
+irq_exit 减 1
 </p></li>
 </ol>
 <p>
-resume<sub>kernel</sub> 时要求 preempt<sub>count</sub> 为 0 才能进行内核抢占, 也就要求:
+resume_kernel 时要求 preempt_count 为 0 才能进行内核抢占, 也就要求:
 </p>
 
 <ol class="org-ol">
-<li>preempt<sub>enable</sub></li>
+<li>preempt_enable</li>
 
 <li>当前没有执行 softirq</li>
 
@@ -408,7 +398,7 @@ resume<sub>kernel</sub> 时要求 preempt<sub>count</sub> 为 0 才能进行内�
 </ol>
 <p>
 以上三点实际上意味着 kernel 只有在执行 syscall 时被打断 (而不是在执
-行 softirq 或 hardirq 时被打断) 且 preempt<sub>enable</sub> 时才能发生内核抢占
+行 softirq 或 hardirq 时被打断) 且 preempt_enable 时才能发生内核抢占
 </p></li>
 </ol>
 </div>
@@ -524,7 +514,7 @@ x = xxxx
 
 <p>
 可见 c 代码的第一行 x=10 在 UP 和 MP 都是原子操作 (-12(%ebp) 是
-4-byte 对齐的), 但第二行对 int64<sub>t</sub> 的赋值并不是原子操作
+4-byte 对齐的), 但第二行对 int64_t 的赋值并不是原子操作
 </p></li>
 
 <li><p>
@@ -555,7 +545,7 @@ x++ 也可能被编译为:
 
 <p>
 所以高级语言中的基本操作无法保证是否是原子操作, 因为 kernel 使用汇编实
-现了一系统的 atomic<sub>xxx</sub> 函数, 以支持原子操作, 例如:
+现了一系统的 atomic_xxx 函数, 以支持原子操作, 例如:
 </p>
 
 <div class="org-src-container">
@@ -668,7 +658,7 @@ kernel 提供了一个 barrier 宏做为 optimization barrier:
 </p>
 
 <ol class="org-ol">
-<li>_<sub>volatile</sub>__ 阻止编译器 barrier 这条指令与它之前或之后的指令交换位
+<li>__volatile__ 阻止编译器 barrier 这条指令与它之前或之后的指令交换位
 置, 导致编译器无法把 barrier 之后的指令移到到 barrier 之前, 反之亦
 然</li>
 
@@ -700,10 +690,10 @@ CPU 乱序执行, 通过两者的配合, 可以确保程序确实是以代码上
 保护临界区</li>
 
 <li>如果支持内核抢占, 且临界区不会被 interrupt 使用, 则通过
-preempt<sub>disable</sub> 就可以保护临界区了</li>
+preempt_disable 就可以保护临界区了</li>
 
-<li>如果临界区会被 interrupt 使用, 则在前面上基础上 (preempt<sub>disable</sub>)
-通过 local<sub>irq</sub><sub>disable</sub> 关中断就可以了. 因为:
+<li>如果临界区会被 interrupt 使用, 则在前面上基础上 (preempt_disable)
+通过 local_irq_disable 关中断就可以了. 因为:
 
 <ol class="org-ol">
 <li>若当前是 exception 正在使用临界区, 则关中断可以防止 interrupt 使
@@ -735,10 +725,10 @@ interrupt 使用它. 而且 interrupt 返回前, exception 是不会执行
 </div>
 
 <div id="outline-container-org470f7e7" class="outline-4">
-<h4 id="org470f7e7"><span class="section-number-4">1.4.1</span> spin<sub>lock</sub></h4>
+<h4 id="org470f7e7"><span class="section-number-4">1.4.1</span> spin_lock</h4>
 <div class="outline-text-4" id="text-1-4-1">
 <p>
-spin<sub>lock</sub> 是由 BUILD<sub>LOCK</sub><sub>OPS</sub> 这个宏定义的
+spin_lock 是由 BUILD_LOCK_OPS 这个宏定义的
 </p>
 
 <div class="org-src-container">
@@ -762,7 +752,7 @@ spin<sub>lock</sub> 是由 BUILD<sub>LOCK</sub><sub>OPS</sub> 这个宏定义的
 </div>
 
 <div id="outline-container-orgd5f0807" class="outline-5">
-<h5 id="orgd5f0807"><span class="section-number-5">1.4.1.1</span> UP 上的 spin<sub>lock</sub></h5>
+<h5 id="orgd5f0807"><span class="section-number-5">1.4.1.1</span> UP 上的 spin_lock</h5>
 <div class="outline-text-5" id="text-1-4-1-1">
 <div class="org-src-container">
 
@@ -772,13 +762,13 @@ spin<sub>lock</sub> 是由 BUILD<sub>LOCK</sub><sub>OPS</sub> 这个宏定义的
 </div>
 
 <p>
-可见 UP 上的 spin<sub>lock</sub> 等同于 preempt<sub>disable</sub>
+可见 UP 上的 spin_lock 等同于 preempt_disable
 </p>
 </div>
 </div>
 
 <div id="outline-container-orgccbc32b" class="outline-5">
-<h5 id="orgccbc32b"><span class="section-number-5">1.4.1.2</span> MP 上的 spin<sub>lock</sub></h5>
+<h5 id="orgccbc32b"><span class="section-number-5">1.4.1.2</span> MP 上的 spin_lock</h5>
 <div class="outline-text-5" id="text-1-4-1-2">
 <div class="org-src-container">
 
@@ -805,14 +795,14 @@ spin<sub>lock</sub> 是由 BUILD<sub>LOCK</sub><sub>OPS</sub> 这个宏定义的
 </div>
 
 <div id="outline-container-org6937b15" class="outline-4">
-<h4 id="org6937b15"><span class="section-number-4">1.4.2</span> spin<sub>unlock</sub></h4>
+<h4 id="org6937b15"><span class="section-number-4">1.4.2</span> spin_unlock</h4>
 <div class="outline-text-4" id="text-1-4-2">
 <p>
-UP 上的 spin<sub>unlock</sub> 等同于 preempt<sub>enable</sub>
+UP 上的 spin_unlock 等同于 preempt_enable
 </p>
 
 <p>
-MP 上的 spin<sub>unlock</sub> 为:
+MP 上的 spin_unlock 为:
 </p>
 
 <div class="org-src-container">
@@ -983,7 +973,7 @@ passeren (通过), V 表示 vrijgeven (释放)
 <div id="postamble" class="status">
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-08-25 Thu&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
-<p class="date">Created: 2016-08-30 Tue 13:07</p>
+<p class="date">Created: 2016-08-30 Tue 13:24</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
