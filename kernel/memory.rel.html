@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-08-30 Tue 16:01 -->
+<!-- 2016-08-30 Tue 20:35 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: Memory</title>
@@ -64,42 +64,42 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org6c261bd">1. Linux Kernel: Memory</a>
+<li><a href="#org7cf4285">1. Linux Kernel: Memory</a>
 <ul>
-<li><a href="#org2ecb21e">1.1. 内存定址</a>
+<li><a href="#orgb7b72c8">1.1. 内存定址</a>
 <ul>
-<li><a href="#org4da0e62">1.1.1. 分段</a></li>
-<li><a href="#orga9ca9df">1.1.2. 分页</a></li>
+<li><a href="#org296eda8">1.1.1. 分段</a></li>
+<li><a href="#orga2e287d">1.1.2. 分页</a></li>
 </ul>
 </li>
-<li><a href="#orgce7a326">1.2. 内存管理</a>
+<li><a href="#orga097c60">1.2. 内存管理</a>
 <ul>
-<li><a href="#orge07e52c">1.2.1. Page Descriptor</a></li>
-<li><a href="#org1a6463d">1.2.2. Memory Zones</a></li>
-<li><a href="#org51dad90">1.2.3. Zone Allocator</a></li>
-<li><a href="#orgfc593f5">1.2.4. Physical Mapping</a></li>
-<li><a href="#org877645e">1.2.5. Mapping High memory</a></li>
-<li><a href="#orga857a22">1.2.6. Buddy System</a></li>
-<li><a href="#org8c4b648">1.2.7. Slab Allocator</a></li>
-<li><a href="#org1bbbb8c">1.2.8. vmalloc</a></li>
-<li><a href="#org0a5ed0d">1.2.9. Bootmem Allocator</a></li>
+<li><a href="#org6da3040">1.2.1. Page Descriptor</a></li>
+<li><a href="#orgaed62e5">1.2.2. Memory Zones</a></li>
+<li><a href="#org46007c7">1.2.3. Zone Allocator</a></li>
+<li><a href="#orgbf99ed3">1.2.4. Physical Mapping</a></li>
+<li><a href="#org1535532">1.2.5. Mapping High memory</a></li>
+<li><a href="#org45d1840">1.2.6. Buddy System</a></li>
+<li><a href="#org969346f">1.2.7. Slab Allocator</a></li>
+<li><a href="#org47d572c">1.2.8. vmalloc</a></li>
+<li><a href="#org7bea5a8">1.2.9. Bootmem Allocator</a></li>
 </ul>
 </li>
-<li><a href="#org227e8bb">1.3. 进程地址空间</a>
+<li><a href="#org82e7718">1.3. 进程地址空间</a>
 <ul>
-<li><a href="#org77a642c">1.3.1. mm_struct</a></li>
-<li><a href="#orgcf11232">1.3.2. Memory Region</a></li>
-<li><a href="#orgd415fd5">1.3.3. Page Fault</a></li>
-<li><a href="#org440f9f0">1.3.4. Creating Process Address Space</a></li>
-<li><a href="#org0575445">1.3.5. Managing the Heap</a></li>
-<li><a href="#org1a0ccbd">1.3.6. API</a></li>
+<li><a href="#org2fbf29a">1.3.1. mm_struct</a></li>
+<li><a href="#org598268e">1.3.2. Memory Region</a></li>
+<li><a href="#org82b9a4e">1.3.3. Page Fault</a></li>
+<li><a href="#org8610075">1.3.4. Creating Process Address Space</a></li>
+<li><a href="#orgca0c316">1.3.5. Managing the Heap</a></li>
+<li><a href="#org864d282">1.3.6. API</a></li>
 </ul>
 </li>
-<li><a href="#orgb928ba9">1.4. 页面回收</a>
+<li><a href="#org7bbe44c">1.4. 页面回收</a>
 <ul>
-<li><a href="#orgd815257">1.4.1. Overview</a></li>
-<li><a href="#orgb8a67d2">1.4.2. 反向映射</a></li>
-<li><a href="#orgb899e8b">1.4.3. PFRA 的实现</a></li>
+<li><a href="#org69a7f5f">1.4.1. Overview</a></li>
+<li><a href="#orgf2e55b1">1.4.2. 反向映射</a></li>
+<li><a href="#org697aa6f">1.4.3. PFRA 的实现</a></li>
 </ul>
 </li>
 </ul>
@@ -107,27 +107,27 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
-<div id="outline-container-org6c261bd" class="outline-2">
-<h2 id="org6c261bd"><span class="section-number-2">1</span> Linux Kernel: Memory</h2>
+<div id="outline-container-org7cf4285" class="outline-2">
+<h2 id="org7cf4285"><span class="section-number-2">1</span> Linux Kernel: Memory</h2>
 <div class="outline-text-2" id="text-1">
-</div><div id="outline-container-org2ecb21e" class="outline-3">
-<h3 id="org2ecb21e"><span class="section-number-3">1.1</span> 内存定址</h3>
+</div><div id="outline-container-orgb7b72c8" class="outline-3">
+<h3 id="orgb7b72c8"><span class="section-number-3">1.1</span> 内存定址</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 内存定址 (memory addressing) 是指如何实现虚拟地址与物理地址的转换. 
 </p>
 </div>
 
-<div id="outline-container-org4da0e62" class="outline-4">
-<h4 id="org4da0e62"><span class="section-number-4">1.1.1</span> 分段</h4>
+<div id="outline-container-org296eda8" class="outline-4">
+<h4 id="org296eda8"><span class="section-number-4">1.1.1</span> 分段</h4>
 <div class="outline-text-4" id="text-1-1-1">
 <p>
 分段 (segmentation) 是早期 x86 采用的内存定址方式
 </p>
 </div>
 
-<div id="outline-container-orgd0b2181" class="outline-5">
-<h5 id="orgd0b2181"><span class="section-number-5">1.1.1.1</span> 实模式</h5>
+<div id="outline-container-orgca49967" class="outline-5">
+<h5 id="orgca49967"><span class="section-number-5">1.1.1.1</span> 实模式</h5>
 <div class="outline-text-5" id="text-1-1-1-1">
 <p>
 实模式 (real mode) 下, 各个段寄存器保存的是段基址
@@ -135,8 +135,8 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-orgd5649a5" class="outline-5">
-<h5 id="orgd5649a5"><span class="section-number-5">1.1.1.2</span> 保护模式</h5>
+<div id="outline-container-org164f6d2" class="outline-5">
+<h5 id="org164f6d2"><span class="section-number-5">1.1.1.2</span> 保护模式</h5>
 <div class="outline-text-5" id="text-1-1-1-2">
 <p>
 在保护模式 (protected mode) 下, 各个段寄存器中保存的不再是段的基址: 每个段寄存器共 16
@@ -146,7 +146,7 @@ for the JavaScript code in this tag.
 
 <p>
 对于 cs 寄存器, 它的低两位称为 CPL (Current Privilege Level), cs 的
-CPL 位始终与 CPU 当时的 privilege level (ring) 是一致的(参考 <a href="process.rel.html#org9dfdbf9">关于系统
+CPL 位始终与 CPU 当时的 privilege level (ring) 是一致的(参考 <a href="process.rel.html#org8d4cb22">关于系统
 调用</a>). 若当前处于 kernel mode, 则 CPU 为 ring 0, cs 的 CPL 也为 0, 若
 当前处于 user mode, 则 CPU 的 ring 和 cs 的 CPL 都为 3
 </p>
@@ -158,8 +158,8 @@ CPL 位始终与 CPU 当时的 privilege level (ring) 是一致的(参考 <a hre
 </div>
 </div>
 
-<div id="outline-container-org44ae2cc" class="outline-5">
-<h5 id="org44ae2cc"><span class="section-number-5">1.1.1.3</span> 段描述符</h5>
+<div id="outline-container-org32e31a3" class="outline-5">
+<h5 id="org32e31a3"><span class="section-number-5">1.1.1.3</span> 段描述符</h5>
 <div class="outline-text-5" id="text-1-1-1-3">
 <p>
 每个段描述符 (segment descriptor) 大小为 8 bytes, 它主要的结构:
@@ -196,7 +196,7 @@ DPL
 </p>
 
 <p>
-2 bit 的 descriptor privilege level, 它的作用在后面的 <a href="#org5e442cd">memory 的保护</a>
+2 bit 的 descriptor privilege level, 它的作用在后面的 <a href="#orgdf2b166">memory 的保护</a>
 部分会描述
 </p></li>
 </ol>
@@ -221,8 +221,8 @@ DPL
 </div>
 </div>
 
-<div id="outline-container-org21a0dc5" class="outline-5">
-<h5 id="org21a0dc5"><span class="section-number-5">1.1.1.4</span> 基于分段的保护</h5>
+<div id="outline-container-org8cc1684" class="outline-5">
+<h5 id="org8cc1684"><span class="section-number-5">1.1.1.4</span> 基于分段的保护</h5>
 <div class="outline-text-5" id="text-1-1-1-4">
 <p>
 基于分段的保护 (segmentation protection), 主要是指基于 CPL, DPL 的保护,
@@ -230,7 +230,7 @@ DPL
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="org5e442cd"></a>memory 的保护<br  /><div class="outline-text-6" id="text-1-1-1-4-1">
+<ol class="org-ol"><li><a id="orgdf2b166"></a>memory 的保护<br  /><div class="outline-text-6" id="text-1-1-1-4-1">
 <p>
 由于 linux 主要依赖 paging 来保护内存, 所以 segmentation 对内存的保护
 不好体现. 假设存在某种依赖 segmentation 保护内存的 OS, 它的 gtd 表中有
@@ -253,7 +253,7 @@ descriptor 不就可以通过个 segment 访问任意内存了么? GDT 所在的
 </p>
 </div></li>
 
-<li><a id="org091d88d"></a>指令的保护<br  /><div class="outline-text-6" id="text-1-1-1-4-2">
+<li><a id="orgfebd620"></a>指令的保护<br  /><div class="outline-text-6" id="text-1-1-1-4-2">
 <p>
 有些指令限制了只有 ring 0 才可以使用, 或者限制了只有 ring 0 才能在某些
 指令中使用特定的操作数.
@@ -265,7 +265,7 @@ descriptor 不就可以通过个 segment 访问任意内存了么? GDT 所在的
 </p>
 </div></li>
 
-<li><a id="org6e9b209"></a>interrupt 处理<br  /><div class="outline-text-6" id="text-1-1-1-4-3">
+<li><a id="orgc6a297d"></a>interrupt 处理<br  /><div class="outline-text-6" id="text-1-1-1-4-3">
 <p>
 interrupt, trap, syscall 都是通过同一个 idt (中断向量表) 处理的, 例如
 page fault 这个 interrupt 在 idt_table 中对应的 index 为 14, 那么 ring
@@ -282,12 +282,12 @@ page fault 这个 interrupt 在 idt_table 中对应的 index 为 14, 那么 ring
 <p>
 因为 int 指令可以指定任意 idt index, 所以每个 int 指令都需要去检查 CPL
 与 DPL. 但 int 通常都是用来实现 syscall 的, x86 又提供两个不需要检查
-DPL 的 `int 0x80` 指令: sysenter, syscall (参考 <a href="process.rel.html#orgad39d57">sysenter, syscall,
+DPL 的 `int 0x80` 指令: sysenter, syscall (参考 <a href="process.rel.html#org6fb57c5">sysenter, syscall,
 vsyscall</a>)
 </p>
 </div></li>
 
-<li><a id="orgcf64fe7"></a>See also<br  /><div class="outline-text-6" id="text-1-1-1-4-4">
+<li><a id="orgc05c046"></a>See also<br  /><div class="outline-text-6" id="text-1-1-1-4-4">
 <p>
 <a href="http://duartes.org/gustavo/blog/post/cpu-rings-privilege-and-protection/">CPU-rings-privilege-and-protection</a>
 </p>
@@ -295,19 +295,19 @@ vsyscall</a>)
 </div>
 </div>
 
-<div id="outline-container-orga9ca9df" class="outline-4">
-<h4 id="orga9ca9df"><span class="section-number-4">1.1.2</span> 分页</h4>
+<div id="outline-container-orga2e287d" class="outline-4">
+<h4 id="orga2e287d"><span class="section-number-4">1.1.2</span> 分页</h4>
 <div class="outline-text-4" id="text-1-1-2">
 <p>
 分页 (paging) 是另一种内存定址的方式, 由于它功能更强, 已经代替了上面提
-到的分段的方式, 但如前面 <a href="#orgd5649a5">保护模式</a> 所述, linux 还是会使用分段提供的保护
+到的分段的方式, 但如前面 <a href="#org164f6d2">保护模式</a> 所述, linux 还是会使用分段提供的保护
 模式等和安全相关的功能. 但是不会使用分段机制提供的地址翻译相关的功能
 (例如所有段描述符中的 base 都为 0)
 </p>
 </div>
 
-<div id="outline-container-orgc1e0848" class="outline-5">
-<h5 id="orgc1e0848"><span class="section-number-5">1.1.2.1</span> Overview</h5>
+<div id="outline-container-org69a7f5f" class="outline-5">
+<h5 id="org69a7f5f"><span class="section-number-5">1.1.2.1</span> Overview</h5>
 <div class="outline-text-5" id="text-1-1-2-1">
 <p>
 Paging unit 的作用:
@@ -333,8 +333,8 @@ page "管理" 的那个 page frame 并没有任何关系
 </div>
 </div>
 
-<div id="outline-container-org8fde4b7" class="outline-5">
-<h5 id="org8fde4b7"><span class="section-number-5">1.1.2.2</span> Paging</h5>
+<div id="outline-container-org88da66d" class="outline-5">
+<h5 id="org88da66d"><span class="section-number-5">1.1.2.2</span> Paging</h5>
 <div class="outline-text-5" id="text-1-1-2-2">
 <p>
 i386 使用 cr3 保存 Page Directory Table 的物理地址.
@@ -371,8 +371,8 @@ table entry 都是用 32 位表示, 所以它们的低 12 位实际是空闲的,
 </div>
 </div>
 
-<div id="outline-container-org79630da" class="outline-5">
-<h5 id="org79630da"><span class="section-number-5">1.1.2.3</span> page directory/table entry 的 flag</h5>
+<div id="outline-container-org16aaf0a" class="outline-5">
+<h5 id="org16aaf0a"><span class="section-number-5">1.1.2.3</span> page directory/table entry 的 flag</h5>
 <div class="outline-text-5" id="text-1-1-2-3">
 <ol class="org-ol">
 <li><p>
@@ -424,8 +424,8 @@ privilege level require to access the page frame, 若 flag 为 0, 则
 </div>
 </div>
 
-<div id="outline-container-orge36d5b1" class="outline-5">
-<h5 id="orge36d5b1"><span class="section-number-5">1.1.2.4</span> Process page table 初始化</h5>
+<div id="outline-container-orga6ad376" class="outline-5">
+<h5 id="orga6ad376"><span class="section-number-5">1.1.2.4</span> Process page table 初始化</h5>
 <div class="outline-text-5" id="text-1-1-2-4">
 <p>
 一般情况下每个进程有不同的页表, 即 PGD (Page Global Directory) 不
@@ -438,7 +438,7 @@ privilege level require to access the page frame, 若 flag 为 0, 则
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="orgb67724e"></a>do_fork<br  /><div class="outline-text-6" id="text-1-1-2-4-1">
+<ol class="org-ol"><li><a id="orgfe5aa15"></a>do_fork<br  /><div class="outline-text-6" id="text-1-1-2-4-1">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">do_fork</span>:
@@ -465,12 +465,12 @@ privilege level require to access the page frame, 若 flag 为 0, 则
 
 <p>
 需要注意的是, dump_mmap 复制由 vma 控制的区域的页表项, 即 3G 以下的部
-分, 3G 以上的部分的复制由 mm_alloc_pgd 间接完成 <a href="#org89bbbb5">Kernel page table 与
+分, 3G 以上的部分的复制由 mm_alloc_pgd 间接完成 <a href="#orgb466ce4">Kernel page table 与
 process page table 的同步</a>
 </p>
 </div></li>
 
-<li><a id="org5242d8d"></a>Copy On Write<br  /><div class="outline-text-6" id="text-1-1-2-4-2">
+<li><a id="orgf086165"></a>Copy On Write<br  /><div class="outline-text-6" id="text-1-1-2-4-2">
 <p>
 copy_one_pte 只是复制 PTE: 新旧两个 pte 值相同, 指向同一
 个 page frame, copy_one_pte 会处理 COW 的情况
@@ -521,8 +521,8 @@ frame, 都会触发 page fault, 从而分配新的 page frame
 </div></li></ol>
 </div>
 
-<div id="outline-container-orgef42ca9" class="outline-5">
-<h5 id="orgef42ca9"><span class="section-number-5">1.1.2.5</span> Kernel page table 初始化</h5>
+<div id="outline-container-orgf48d83b" class="outline-5">
+<h5 id="orgf48d83b"><span class="section-number-5">1.1.2.5</span> Kernel page table 初始化</h5>
 <div class="outline-text-5" id="text-1-1-2-5">
 <p>
 kernel page table 是 kernel 使用的 page table, 这个 table 的地址保存在
@@ -544,7 +544,7 @@ kernel 页表的布局大约是这样的:
 </div>
 </div>
 
-<ol class="org-ol"><li><a id="orgcc7fe5b"></a>pagetable_init<br  /><div class="outline-text-6" id="text-1-1-2-5-1">
+<ol class="org-ol"><li><a id="orgc901bc1"></a>pagetable_init<br  /><div class="outline-text-6" id="text-1-1-2-5-1">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">paging_init</span>:
@@ -572,7 +572,7 @@ kernel 页表的布局大约是这样的:
 </div>
 </div></li>
 
-<li><a id="org74a4dc3"></a>kernel_physical_mapping_init<br  /><div class="outline-text-6" id="text-1-1-2-5-2">
+<li><a id="org7756c3b"></a>kernel_physical_mapping_init<br  /><div class="outline-text-6" id="text-1-1-2-5-2">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">kernel_physical_mapping_init</span>:
@@ -602,7 +602,7 @@ kernel 页表的布局大约是这样的:
 </div>
 </div></li>
 
-<li><a id="orgd4ba618"></a>page_table_range_init<br  /><div class="outline-text-6" id="text-1-1-2-5-3">
+<li><a id="org4102a3d"></a>page_table_range_init<br  /><div class="outline-text-6" id="text-1-1-2-5-3">
 <div class="org-src-container">
 
 <pre class="src src-c">page_table_range_init(vaddr, end, pgd_base);
@@ -617,7 +617,7 @@ kernel 页表的布局大约是这样的:
 </div>
 </div></li>
 
-<li><a id="orgdae9cce"></a>permanent_kmaps_init<br  /><div class="outline-text-6" id="text-1-1-2-5-4">
+<li><a id="org3efd3d5"></a>permanent_kmaps_init<br  /><div class="outline-text-6" id="text-1-1-2-5-4">
 <div class="org-src-container">
 
 <pre class="src src-c">permanent_kmaps_init(<span style="font-weight: bold; text-decoration: underline;">pgd_base</span>):
@@ -630,8 +630,8 @@ kernel 页表的布局大约是这样的:
 </div></li></ol>
 </div>
 
-<div id="outline-container-org89bbbb5" class="outline-5">
-<h5 id="org89bbbb5"><span class="section-number-5">1.1.2.6</span> Kernel page table 与 process page table 的同步</h5>
+<div id="outline-container-orgb466ce4" class="outline-5">
+<h5 id="orgb466ce4"><span class="section-number-5">1.1.2.6</span> Kernel page table 与 process page table 的同步</h5>
 <div class="outline-text-5" id="text-1-1-2-6">
 <p>
 kernel page table (swapper_pg_dir) 大部分情况<sup><a id="fnr.5" class="footref" href="#fn.5">5</a></sup>只是 process page table
@@ -648,9 +648,9 @@ table 的 3G 以上的部分与 kernel page table 是一致的, 如何做到一�
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="orgcc09191"></a>固定映射的部分 (ZONE_DMA+ZONE_NORMAL)<br  /><div class="outline-text-6" id="text-1-1-2-6-1">
+<ol class="org-ol"><li><a id="orgc9ab196"></a>固定映射的部分 (ZONE_DMA+ZONE_NORMAL)<br  /><div class="outline-text-6" id="text-1-1-2-6-1">
 <p>
-<a href="#orgb67724e">do_fork</a> 时已经提到了 mm_alloc_pgd, 但这个函数并不是简单的分配一个 pgd:
+<a href="#orgfe5aa15">do_fork</a> 时已经提到了 mm_alloc_pgd, 但这个函数并不是简单的分配一个 pgd:
 </p>
 
 <p>
@@ -683,7 +683,7 @@ swapper_pg_dir 是一致的
 </p>
 </div></li>
 
-<li><a id="orgdbb7124"></a>动态映射的部分 (ZONE_HIGHMEM)<br  /><div class="outline-text-6" id="text-1-1-2-6-2">
+<li><a id="org4b1b678"></a>动态映射的部分 (ZONE_HIGHMEM)<br  /><div class="outline-text-6" id="text-1-1-2-6-2">
 <p>
 但 swapper_pg_dir 后面 1g 的部分并不是一直固定不变的, 3G~3G+896M 的部
 分是固定映射, 不会改变, 但 896M 之后的部分 (ZONE_HIGHMEM), 是通过 kmap
@@ -711,22 +711,22 @@ process page table.
 </p>
 
 <p>
-参考 <a href="#orga2c2861">vmalloc_fault</a>
+参考 <a href="#orgf1fefa2">vmalloc_fault</a>
 </p>
 </div></li></ol>
 </div>
 
-<div id="outline-container-org0690d5c" class="outline-5">
-<h5 id="org0690d5c"><span class="section-number-5">1.1.2.7</span> 页表的切换</h5>
+<div id="outline-container-orge2907d1" class="outline-5">
+<h5 id="orge2907d1"><span class="section-number-5">1.1.2.7</span> 页表的切换</h5>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgce7a326" class="outline-3">
-<h3 id="orgce7a326"><span class="section-number-3">1.2</span> 内存管理</h3>
+<div id="outline-container-orga097c60" class="outline-3">
+<h3 id="orga097c60"><span class="section-number-3">1.2</span> 内存管理</h3>
 <div class="outline-text-3" id="text-1-2">
-</div><div id="outline-container-orge07e52c" class="outline-4">
-<h4 id="orge07e52c"><span class="section-number-4">1.2.1</span> Page Descriptor</h4>
+</div><div id="outline-container-org6da3040" class="outline-4">
+<h4 id="org6da3040"><span class="section-number-4">1.2.1</span> Page Descriptor</h4>
 <div class="outline-text-4" id="text-1-2-1">
 <div class="org-src-container">
 
@@ -758,8 +758,8 @@ frame 有一一对应关系.
 </p>
 </div>
 
-<div id="outline-container-org79a93e1" class="outline-5">
-<h5 id="org79a93e1"><span class="section-number-5">1.2.1.1</span> mem_map</h5>
+<div id="outline-container-org5a609cd" class="outline-5">
+<h5 id="org5a609cd"><span class="section-number-5">1.2.1.1</span> mem_map</h5>
 <div class="outline-text-5" id="text-1-2-1-1">
 <p>
 paging_init 时会针对每一个 page frame 都生成一个 page struct, 并会把这
@@ -793,8 +793,8 @@ memmap_init_zone 中.
 </div>
 </div>
 
-<div id="outline-container-org1a6463d" class="outline-4">
-<h4 id="org1a6463d"><span class="section-number-4">1.2.2</span> Memory Zones</h4>
+<div id="outline-container-orgaed62e5" class="outline-4">
+<h4 id="orgaed62e5"><span class="section-number-4">1.2.2</span> Memory Zones</h4>
 <div class="outline-text-4" id="text-1-2-2">
 <p>
 kernel 将所有物理内存分为三个 zone:
@@ -835,7 +835,7 @@ ZONE_DMA 和 ZONE_NORMAL 中的 page frame 可以被 physical mapping
 </p>
 
 <p>
-ZONE_HIGHMEM 中的 page frame 无法被 physical mapping (<a href="#org877645e">Mapping High
+ZONE_HIGHMEM 中的 page frame 无法被 physical mapping (<a href="#org1535532">Mapping High
 memory</a> )
 </p>
 
@@ -866,8 +866,8 @@ kmap
 </div>
 </div>
 
-<div id="outline-container-org51dad90" class="outline-4">
-<h4 id="org51dad90"><span class="section-number-4">1.2.3</span> Zone Allocator</h4>
+<div id="outline-container-org46007c7" class="outline-4">
+<h4 id="org46007c7"><span class="section-number-4">1.2.3</span> Zone Allocator</h4>
 <div class="outline-text-4" id="text-1-2-3">
 <p>
 所有的 page frame 最终都是通过 zone allocator 来分配, 通过 zone
@@ -889,10 +889,10 @@ allocator 可以分配多个物理连续的 page frame. zone allocator 可以根
 </p>
 </div>
 
-<div id="outline-container-org1773fd5" class="outline-5">
-<h5 id="org1773fd5"><span class="section-number-5">1.2.3.1</span> 相关的分配函数</h5>
+<div id="outline-container-org52e6938" class="outline-5">
+<h5 id="org52e6938"><span class="section-number-5">1.2.3.1</span> 相关的分配函数</h5>
 <div class="outline-text-5" id="text-1-2-3-1">
-</div><ol class="org-ol"><li><a id="org1ddc2fe"></a>alloc_pages(gfp_mask, order)<br  /><div class="outline-text-6" id="text-1-2-3-1-1">
+</div><ol class="org-ol"><li><a id="org876dcba"></a>alloc_pages(gfp_mask, order)<br  /><div class="outline-text-6" id="text-1-2-3-1-1">
 <p>
 分配 2^order 个连续的 page frame, 返回第个 page struct 的地址.
 gfp_mask 中的 gfp 代表 "get_free_page". Zone allocator 会根据 gfp_mask
@@ -928,17 +928,17 @@ alloc_pages 主要逻辑:
 </ol>
 
 <p>
-具体参考 <a href="#orgb928ba9">页面回收</a>
+具体参考 <a href="#org7bbe44c">页面回收</a>
 </p>
 </div></li>
 
-<li><a id="orgabb44e6"></a>alloc_page(gfp_mask)<br  /><div class="outline-text-6" id="text-1-2-3-1-2">
+<li><a id="orge99674c"></a>alloc_page(gfp_mask)<br  /><div class="outline-text-6" id="text-1-2-3-1-2">
 <p>
 即 alloc_page(gfp_mask, 0)
 </p>
 </div></li>
 
-<li><a id="org59d66e2"></a>__get_free_pages(gfp_mask, order)<br  /><div class="outline-text-6" id="text-1-2-3-1-3">
+<li><a id="org8bb5aea"></a>__get_free_pages(gfp_mask, order)<br  /><div class="outline-text-6" id="text-1-2-3-1-3">
 <p>
 与 alloc_pages 类似, 但它将第一个 page struct 映射为线性地址后返回
 </p>
@@ -962,11 +962,11 @@ alloc_pages 主要逻辑:
 </pre>
 </div>
 </div></li>
-<li><a id="org3928bf6"></a>__get_free_page(gfp_mask)<br  /></li></ol>
+<li><a id="org5932cdf"></a>__get_free_page(gfp_mask)<br  /></li></ol>
 </div>
 
-<div id="outline-container-org6ada532" class="outline-5">
-<h5 id="org6ada532"><span class="section-number-5">1.2.3.2</span> GFP Mask</h5>
+<div id="outline-container-orga2f49c6" class="outline-5">
+<h5 id="orga2f49c6"><span class="section-number-5">1.2.3.2</span> GFP Mask</h5>
 <div class="outline-text-5" id="text-1-2-3-2">
 <ol class="org-ol">
 <li><p>
@@ -1062,14 +1062,14 @@ ZONE_NORMAL, ZONE_DMA</li>
 </div>
 
 
-<div id="outline-container-orgfc593f5" class="outline-4">
-<h4 id="orgfc593f5"><span class="section-number-4">1.2.4</span> Physical Mapping</h4>
+<div id="outline-container-orgbf99ed3" class="outline-4">
+<h4 id="orgbf99ed3"><span class="section-number-4">1.2.4</span> Physical Mapping</h4>
 <div class="outline-text-4" id="text-1-2-4">
 <p>
 ZONE_DMA 和 ZONE_NORMAL 中的 page frame 可以通过 physical mapping 直接
 映射, 所谓 physical mapping, 是指 0~896M 范围的物理内存直接映射到
-3G~3G+896M 的线性地址空间. 前面 <a href="#org89bbbb5">Kernel page table 与 process page
-table 的同步</a> 及 <a href="#org74a4dc3">kernel_physical_mapping_init</a> 已经提到了这部分 mapping
+3G~3G+896M 的线性地址空间. 前面 <a href="#orgb466ce4">Kernel page table 与 process page
+table 的同步</a> 及 <a href="#org7756c3b">kernel_physical_mapping_init</a> 已经提到了这部分 mapping
 建立的过程.
 </p>
 
@@ -1078,8 +1078,8 @@ table 的同步</a> 及 <a href="#org74a4dc3">kernel_physical_mapping_init</a> �
 </p>
 </div>
 
-<div id="outline-container-org1fb2b50" class="outline-5">
-<h5 id="org1fb2b50"><span class="section-number-5">1.2.4.1</span> _va</h5>
+<div id="outline-container-org986894c" class="outline-5">
+<h5 id="org986894c"><span class="section-number-5">1.2.4.1</span> _va</h5>
 <div class="outline-text-5" id="text-1-2-4-1">
 <div class="org-src-container">
 
@@ -1089,8 +1089,8 @@ table 的同步</a> 及 <a href="#org74a4dc3">kernel_physical_mapping_init</a> �
 </div>
 </div>
 
-<div id="outline-container-orgddb4f32" class="outline-5">
-<h5 id="orgddb4f32"><span class="section-number-5">1.2.4.2</span> _pa</h5>
+<div id="outline-container-orgbfae960" class="outline-5">
+<h5 id="orgbfae960"><span class="section-number-5">1.2.4.2</span> _pa</h5>
 <div class="outline-text-5" id="text-1-2-4-2">
 <div class="org-src-container">
 
@@ -1101,8 +1101,8 @@ table 的同步</a> 及 <a href="#org74a4dc3">kernel_physical_mapping_init</a> �
 </div>
 </div>
 
-<div id="outline-container-org877645e" class="outline-4">
-<h4 id="org877645e"><span class="section-number-4">1.2.5</span> Mapping High memory</h4>
+<div id="outline-container-org1535532" class="outline-4">
+<h4 id="org1535532"><span class="section-number-4">1.2.5</span> Mapping High memory</h4>
 <div class="outline-text-4" id="text-1-2-5">
 <p>
 ZONE_HIGHMEM 中的 page frame 无法被 physical mapping, 必须通过
@@ -1135,8 +1135,8 @@ kmap_high
 </ol>
 </div>
 
-<div id="outline-container-org8120abe" class="outline-5">
-<h5 id="org8120abe"><span class="section-number-5">1.2.5.1</span> Permanent Kmap</h5>
+<div id="outline-container-org679ca64" class="outline-5">
+<h5 id="org679ca64"><span class="section-number-5">1.2.5.1</span> Permanent Kmap</h5>
 <div class="outline-text-5" id="text-1-2-5-1">
 <p>
 Permanent Kmap 维护 kernel page map 中一段 page table 的映射,
@@ -1234,11 +1234,11 @@ fix mapping) 无法根据 page 直接查找到其 vaddr (当然通过遍历还�
 </div>
 </div>
 
-<div id="outline-container-orga857a22" class="outline-4">
-<h4 id="orga857a22"><span class="section-number-4">1.2.6</span> Buddy System</h4>
+<div id="outline-container-org45d1840" class="outline-4">
+<h4 id="org45d1840"><span class="section-number-4">1.2.6</span> Buddy System</h4>
 <div class="outline-text-4" id="text-1-2-6">
-</div><div id="outline-container-org09f50af" class="outline-5">
-<h5 id="org09f50af"><span class="section-number-5">1.2.6.1</span> Buddy system 的基本原理</h5>
+</div><div id="outline-container-org65b6b5f" class="outline-5">
+<h5 id="org65b6b5f"><span class="section-number-5">1.2.6.1</span> Buddy system 的基本原理</h5>
 <div class="outline-text-5" id="text-1-2-6-1">
 <ol class="org-ol">
 <li>buddy system 用来快速分配连续的 page frame</li>
@@ -1285,10 +1285,10 @@ block 能否与前后的 block 合并, 合并的条件是:
 </div>
 </div>
 
-<div id="outline-container-org5821304" class="outline-5">
-<h5 id="org5821304"><span class="section-number-5">1.2.6.2</span> 相关数据结构</h5>
+<div id="outline-container-orgadf9d80" class="outline-5">
+<h5 id="orgadf9d80"><span class="section-number-5">1.2.6.2</span> 相关数据结构</h5>
 <div class="outline-text-5" id="text-1-2-6-2">
-</div><ol class="org-ol"><li><a id="org392af7c"></a>zone<br  /><div class="outline-text-6" id="text-1-2-6-2-1">
+</div><ol class="org-ol"><li><a id="org73e2869"></a>zone<br  /><div class="outline-text-6" id="text-1-2-6-2-1">
 <p>
 struct zone 维护了许多和 buddy system 相关的信息
 </p>
@@ -1308,7 +1308,7 @@ struct zone 维护了许多和 buddy system 相关的信息
 </div>
 </div></li>
 
-<li><a id="org9f8a267"></a>free_area<br  /><div class="outline-text-6" id="text-1-2-6-2-2">
+<li><a id="org1edc60b"></a>free_area<br  /><div class="outline-text-6" id="text-1-2-6-2-2">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">free_area</span> {
@@ -1322,7 +1322,7 @@ struct zone 维护了许多和 buddy system 相关的信息
 </div>
 </div></li>
 
-<li><a id="org6b72cd5"></a>page<br  /><div class="outline-text-6" id="text-1-2-6-2-3">
+<li><a id="orgaea624d"></a>page<br  /><div class="outline-text-6" id="text-1-2-6-2-3">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">page</span> {
@@ -1338,8 +1338,8 @@ struct zone 维护了许多和 buddy system 相关的信息
 </div></li></ol>
 </div>
 
-<div id="outline-container-org5e758de" class="outline-5">
-<h5 id="org5e758de"><span class="section-number-5">1.2.6.3</span> Allocating a block</h5>
+<div id="outline-container-org1c3c9aa" class="outline-5">
+<h5 id="org1c3c9aa"><span class="section-number-5">1.2.6.3</span> Allocating a block</h5>
 <div class="outline-text-5" id="text-1-2-6-3">
 <div class="org-src-container">
 
@@ -1386,8 +1386,8 @@ struct zone 维护了许多和 buddy system 相关的信息
 </div>
 </div>
 
-<div id="outline-container-org1811ef3" class="outline-5">
-<h5 id="org1811ef3"><span class="section-number-5">1.2.6.4</span> Freeing a block</h5>
+<div id="outline-container-orgf6b5547" class="outline-5">
+<h5 id="orgf6b5547"><span class="section-number-5">1.2.6.4</span> Freeing a block</h5>
 <div class="outline-text-5" id="text-1-2-6-4">
 <div class="org-src-container">
 
@@ -1446,10 +1446,10 @@ struct zone 维护了许多和 buddy system 相关的信息
 </div>
 </div>
 
-<div id="outline-container-org0a4a824" class="outline-5">
-<h5 id="org0a4a824"><span class="section-number-5">1.2.6.5</span> Buddy system 初始化</h5>
+<div id="outline-container-orgf30febd" class="outline-5">
+<h5 id="orgf30febd"><span class="section-number-5">1.2.6.5</span> Buddy system 初始化</h5>
 <div class="outline-text-5" id="text-1-2-6-5">
-</div><ol class="org-ol"><li><a id="orgdf92cff"></a>初始化所有的 free_area 为空<br  /><div class="outline-text-6" id="text-1-2-6-5-1">
+</div><ol class="org-ol"><li><a id="org5dc447f"></a>初始化所有的 free_area 为空<br  /><div class="outline-text-6" id="text-1-2-6-5-1">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">setup_arch</span>:
@@ -1466,7 +1466,7 @@ struct zone 维护了许多和 buddy system 相关的信息
 </div>
 </div></li>
 
-<li><a id="org826bb0f"></a>释放 bootmem 到 buddy system<br  /><div class="outline-text-6" id="text-1-2-6-5-2">
+<li><a id="orgfe42411"></a>释放 bootmem 到 buddy system<br  /><div class="outline-text-6" id="text-1-2-6-5-2">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">start_kernel</span>:
@@ -1481,11 +1481,11 @@ struct zone 维护了许多和 buddy system 相关的信息
 </div>
 </div>
 
-<div id="outline-container-org8c4b648" class="outline-4">
-<h4 id="org8c4b648"><span class="section-number-4">1.2.7</span> Slab Allocator</h4>
+<div id="outline-container-org969346f" class="outline-4">
+<h4 id="org969346f"><span class="section-number-4">1.2.7</span> Slab Allocator</h4>
 <div class="outline-text-4" id="text-1-2-7">
-</div><div id="outline-container-org860d203" class="outline-5">
-<h5 id="org860d203"><span class="section-number-5">1.2.7.1</span> Slab 基本原理</h5>
+</div><div id="outline-container-orge5f0794" class="outline-5">
+<h5 id="orge5f0794"><span class="section-number-5">1.2.7.1</span> Slab 基本原理</h5>
 <div class="outline-text-5" id="text-1-2-7-1">
 <ol class="org-ol">
 <li>Buddy System 以 page 为单位来分配内存, 如果用 Buddy System 来分配一
@@ -1505,10 +1505,10 @@ mm_struct 等, 通过维护一个针对这些常用数据结构的对象缓存, 
 </div>
 </div>
 
-<div id="outline-container-orgc3b5504" class="outline-5">
-<h5 id="orgc3b5504"><span class="section-number-5">1.2.7.2</span> 相关数据结构</h5>
+<div id="outline-container-orgadf9d80" class="outline-5">
+<h5 id="orgadf9d80"><span class="section-number-5">1.2.7.2</span> 相关数据结构</h5>
 <div class="outline-text-5" id="text-1-2-7-2">
-</div><ol class="org-ol"><li><a id="orge703ea8"></a>kmem_cache_t<br  /><div class="outline-text-6" id="text-1-2-7-2-1">
+</div><ol class="org-ol"><li><a id="orgc8aa9e0"></a>kmem_cache_t<br  /><div class="outline-text-6" id="text-1-2-7-2-1">
 <p>
 kmem_cache_t (或 struct kmem_cache_s) 是 Slab 最上层的结构, 代表一种对
 象的缓存, 例如 task_struct, mm_struct 各自会有一个对应的 kmem_cache_t,
@@ -1561,7 +1561,7 @@ kmem_cache_t (或 struct kmem_cache_s) 是 Slab 最上层的结构, 代表一种
 </div>
 </div></li>
 
-<li><a id="orgf627a1b"></a>slab<br  /><div class="outline-text-6" id="text-1-2-7-2-2">
+<li><a id="orgdd1a79c"></a>slab<br  /><div class="outline-text-6" id="text-1-2-7-2-2">
 <p>
 slab 代表了一些 object 的集合, 它也代表一个或多个 (gfporder 有关) page.
 </p>
@@ -1589,7 +1589,7 @@ slab 代表了一些 object 的集合, 它也代表一个或多个 (gfporder 有
 其中 free 及 kmem_bufctl_t 数组中的箭头指向相应的 Free Object, 实际上
 这个箭头是通过 free 和 kmem_bufctl_t 下标推算出来的 (slabp-&gt;s_mem +
 slabp-&gt;free*cachep-&gt;objsize) &#x2026; 并不是直接的指针, 具体见
-<a href="#org3f19cf7">kmem_cache_alloc</a>
+<a href="#org0dc126e">kmem_cache_alloc</a>
 </p>
 
 <div class="org-src-container">
@@ -1618,7 +1618,7 @@ slabp-&gt;free*cachep-&gt;objsize) &#x2026; 并不是直接的指针, 具体见
 </div>
 </div></li>
 
-<li><a id="org6618a92"></a>kmem_bufctl_t 数组及 slab objects<br  /><div class="outline-text-6" id="text-1-2-7-2-3">
+<li><a id="orga7fda54"></a>kmem_bufctl_t 数组及 slab objects<br  /><div class="outline-text-6" id="text-1-2-7-2-3">
 <p>
 kmem_bufctl_t 实际就是一个数组下标, 本身是 short 类型.
 </p>
@@ -1635,11 +1635,11 @@ objects 的链表.
 </p>
 
 <p>
-slab-&gt;free 及 kmem_bufctl_t 的使用见 <a href="#org3f19cf7">kmem_cache_alloc</a>
+slab-&gt;free 及 kmem_bufctl_t 的使用见 <a href="#org0dc126e">kmem_cache_alloc</a>
 </p>
 </div></li>
 
-<li><a id="org1b9ddac"></a>总结<br  /><div class="outline-text-6" id="text-1-2-7-2-4">
+<li><a id="orge514f8c"></a>总结<br  /><div class="outline-text-6" id="text-1-2-7-2-4">
 <p>
 Slab 分为 cache, slab, object 三个层次.
 </p>
@@ -1657,10 +1657,10 @@ descriptor 本身以及一个 kmem_bufctl_t 数组, 这个数组用来维护 sla
 </div></li></ol>
 </div>
 
-<div id="outline-container-orgd4e1772" class="outline-5">
-<h5 id="orgd4e1772"><span class="section-number-5">1.2.7.3</span> Allocating a Slab Object</h5>
+<div id="outline-container-orga5e035a" class="outline-5">
+<h5 id="orga5e035a"><span class="section-number-5">1.2.7.3</span> Allocating a Slab Object</h5>
 <div class="outline-text-5" id="text-1-2-7-3">
-</div><ol class="org-ol"><li><a id="org3f19cf7"></a>kmem_cache_alloc<br  /><div class="outline-text-6" id="text-1-2-7-3-1">
+</div><ol class="org-ol"><li><a id="org0dc126e"></a>kmem_cache_alloc<br  /><div class="outline-text-6" id="text-1-2-7-3-1">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">void</span> * <span style="font-weight: bold;">kmem_cache_alloc</span> (<span style="font-weight: bold; text-decoration: underline;">kmem_cache_t</span> *<span style="font-weight: bold; font-style: italic;">cachep</span>, <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">flags</span>):
@@ -1715,7 +1715,7 @@ descriptor 本身以及一个 kmem_bufctl_t 数组, 这个数组用来维护 sla
 </div>
 </div></li>
 
-<li><a id="orga3a8ed7"></a>cache_grow<br  /><div class="outline-text-6" id="text-1-2-7-3-2">
+<li><a id="org3f3a761"></a>cache_grow<br  /><div class="outline-text-6" id="text-1-2-7-3-2">
 <p>
 当 cache 没有任何 free 的 slab 时, 通过 cache_grow 分配一个 slab
 </p>
@@ -1790,14 +1790,14 @@ descriptor 本身以及一个 kmem_bufctl_t 数组, 这个数组用来维护 sla
 </div></li></ol>
 </div>
 
-<div id="outline-container-org959af84" class="outline-5">
-<h5 id="org959af84"><span class="section-number-5">1.2.7.4</span> Freeing a Slab Object</h5>
+<div id="outline-container-orgb8c2022" class="outline-5">
+<h5 id="orgb8c2022"><span class="section-number-5">1.2.7.4</span> Freeing a Slab Object</h5>
 <div class="outline-text-5" id="text-1-2-7-4">
-</div><ol class="org-ol"><li><a id="org0a0b3af"></a>kmem_cache_free<br  /></li></ol>
+</div><ol class="org-ol"><li><a id="orga2d7df9"></a>kmem_cache_free<br  /></li></ol>
 </div>
 
-<div id="outline-container-org3e9a9a3" class="outline-5">
-<h5 id="org3e9a9a3"><span class="section-number-5">1.2.7.5</span> kmalloc</h5>
+<div id="outline-container-org81a52c2" class="outline-5">
+<h5 id="org81a52c2"><span class="section-number-5">1.2.7.5</span> kmalloc</h5>
 <div class="outline-text-5" id="text-1-2-7-5">
 <p>
 kmalloc 建立在 slab 基础上, 除了通过 kmem_cache_create 创建的 specific
@@ -1808,7 +1808,7 @@ cache_sizes 数组, slab 维护了 object size 分别为 32, 64, &#x2026; 128K �
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="org2bb2c56"></a>kmalloc<br  /><div class="outline-text-6" id="text-1-2-7-5-1">
+<ol class="org-ol"><li><a id="org81a52c2"></a>kmalloc<br  /><div class="outline-text-6" id="text-1-2-7-5-1">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">inline</span> <span style="font-weight: bold; text-decoration: underline;">void</span> *<span style="font-weight: bold;">kmalloc</span>(<span style="font-weight: bold; text-decoration: underline;">size_t</span> <span style="font-weight: bold; font-style: italic;">size</span>, <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">flags</span>):
@@ -1828,7 +1828,7 @@ cache_sizes 数组, slab 维护了 object size 分别为 32, 64, &#x2026; 128K �
 </p>
 </div></li>
 
-<li><a id="org05cf23f"></a>kfree<br  /><div class="outline-text-6" id="text-1-2-7-5-2">
+<li><a id="org9ca9faa"></a>kfree<br  /><div class="outline-text-6" id="text-1-2-7-5-2">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">void</span> <span style="font-weight: bold;">kfree</span> (<span style="font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">void</span> *<span style="font-weight: bold; font-style: italic;">objp</span>):
@@ -1840,11 +1840,11 @@ cache_sizes 数组, slab 维护了 object size 分别为 32, 64, &#x2026; 128K �
 </div></li></ol>
 </div>
 
-<div id="outline-container-org5e84543" class="outline-5">
-<h5 id="org5e84543"><span class="section-number-5">1.2.7.6</span> Slab Colouring</h5>
+<div id="outline-container-org522cc22" class="outline-5">
+<h5 id="org522cc22"><span class="section-number-5">1.2.7.6</span> Slab Colouring</h5>
 <div class="outline-text-5" id="text-1-2-7-6">
 <p>
-如 <a href="#orga3a8ed7">cache_grow</a> 所示, 在分配 slab 时会在 slab 开头插入一段空白, 空白的大
+如 <a href="#org3f3a761">cache_grow</a> 所示, 在分配 slab 时会在 slab 开头插入一段空白, 空白的大
 小由 cache 的 colour, colour_next 及 colour_offset 决定.
 </p>
 
@@ -1908,10 +1908,10 @@ object 数为 (4096-20)/300 = 13, 则不考虑 colouring 的情况下, slab 的�
 </div>
 </div>
 
-<div id="outline-container-org72eb5f3" class="outline-5">
-<h5 id="org72eb5f3"><span class="section-number-5">1.2.7.7</span> Appendix</h5>
+<div id="outline-container-orgb5218bb" class="outline-5">
+<h5 id="orgb5218bb"><span class="section-number-5">1.2.7.7</span> Appendix</h5>
 <div class="outline-text-5" id="text-1-2-7-7">
-</div><ol class="org-ol"><li><a id="org476aa13"></a>cache 的 gfporder 如何确定<br  /><div class="outline-text-6" id="text-1-2-7-7-1">
+</div><ol class="org-ol"><li><a id="org9c8a514"></a>cache 的 gfporder 如何确定<br  /><div class="outline-text-6" id="text-1-2-7-7-1">
 <p>
 cache 的 gfporder 决定了一个 slab 占用多少个 page (参考 cache_grow 的代
 码), 那么 cache 的 gfporder 是如何确定的?
@@ -1935,11 +1935,11 @@ cache 的 gfporder 决定了一个 slab 占用多少个 page (参考 cache_grow 
 </div>
 </div>
 
-<div id="outline-container-org1bbbb8c" class="outline-4">
-<h4 id="org1bbbb8c"><span class="section-number-4">1.2.8</span> vmalloc</h4>
+<div id="outline-container-org47d572c" class="outline-4">
+<h4 id="org47d572c"><span class="section-number-4">1.2.8</span> vmalloc</h4>
 <div class="outline-text-4" id="text-1-2-8">
-</div><div id="outline-container-orga592475" class="outline-5">
-<h5 id="orga592475"><span class="section-number-5">1.2.8.1</span> vm_struct</h5>
+</div><div id="outline-container-org897a80c" class="outline-5">
+<h5 id="org897a80c"><span class="section-number-5">1.2.8.1</span> vm_struct</h5>
 <div class="outline-text-5" id="text-1-2-8-1">
 <div class="org-src-container">
 
@@ -1957,8 +1957,8 @@ cache 的 gfporder 决定了一个 slab 占用多少个 page (参考 cache_grow 
 </div>
 </div>
 
-<div id="outline-container-org72d94af" class="outline-5">
-<h5 id="org72d94af"><span class="section-number-5">1.2.8.2</span> vmalloc</h5>
+<div id="outline-container-org47d572c" class="outline-5">
+<h5 id="org47d572c"><span class="section-number-5">1.2.8.2</span> vmalloc</h5>
 <div class="outline-text-5" id="text-1-2-8-2">
 <div class="org-src-container">
 
@@ -1985,7 +1985,7 @@ cache 的 gfporder 决定了一个 slab 占用多少个 page (参考 cache_grow 
 </div>
 </div>
 
-<ol class="org-ol"><li><a id="org7011210"></a>get_vm_area<br  /><div class="outline-text-6" id="text-1-2-8-2-1">
+<ol class="org-ol"><li><a id="org9a2c6ed"></a>get_vm_area<br  /><div class="outline-text-6" id="text-1-2-8-2-1">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">vm_struct</span> *<span style="font-weight: bold;">get_vm_area</span>(<span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">size</span>, <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">flags</span>):
@@ -2031,13 +2031,13 @@ cache 的 gfporder 决定了一个 slab 占用多少个 page (参考 cache_grow 
 </div>
 
 <p>
-ps. 关于 get_vm_area, 参考 android binder 的 <a href="file:///home/sunway/Dropbox/note/android/android_binder.html#org7bcdada">页表</a> 部分
+ps. 关于 get_vm_area, 参考 android binder 的 <a href="file:///home/sunway/Dropbox/note/android/android_binder.html#orgf644082">页表</a> 部分
 </p>
 </div></li>
 
-<li><a id="orgc9d9fcd"></a>map_vm_area<br  /></li>
+<li><a id="orge11ecb1"></a>map_vm_area<br  /></li>
 
-<li><a id="org8c5e5b4"></a>总结<br  /><div class="outline-text-6" id="text-1-2-8-2-3">
+<li><a id="orge514f8c"></a>总结<br  /><div class="outline-text-6" id="text-1-2-8-2-3">
 <ol class="org-ol">
 <li>vmalloc 用一个简单 vm_struct 链表通过 first_fit 方法来管理虚拟地址
 空间的分配</li>
@@ -2047,8 +2047,8 @@ ps. 关于 get_vm_area, 参考 android binder 的 <a href="file:///home/sunway/D
 </div></li></ol>
 </div>
 
-<div id="outline-container-orgdc19db6" class="outline-5">
-<h5 id="orgdc19db6"><span class="section-number-5">1.2.8.3</span> vfree</h5>
+<div id="outline-container-orgb0e9cb2" class="outline-5">
+<h5 id="orgb0e9cb2"><span class="section-number-5">1.2.8.3</span> vfree</h5>
 <div class="outline-text-5" id="text-1-2-8-3">
 <p>
 与 vmalloc 相反的动作:
@@ -2069,13 +2069,13 @@ ps. 关于 get_vm_area, 参考 android binder 的 <a href="file:///home/sunway/D
 </div>
 </div>
 
-<div id="outline-container-org0a5ed0d" class="outline-4">
-<h4 id="org0a5ed0d"><span class="section-number-4">1.2.9</span> Bootmem Allocator</h4>
+<div id="outline-container-org7bea5a8" class="outline-4">
+<h4 id="org7bea5a8"><span class="section-number-4">1.2.9</span> Bootmem Allocator</h4>
 </div>
 </div>
 
-<div id="outline-container-org227e8bb" class="outline-3">
-<h3 id="org227e8bb"><span class="section-number-3">1.3</span> 进程地址空间</h3>
+<div id="outline-container-org82e7718" class="outline-3">
+<h3 id="org82e7718"><span class="section-number-3">1.3</span> 进程地址空间</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 进程地址空间 (process address space), 是指 0~3G 这部分 user mode 可以直接访问的虚拟地址空间,
@@ -2089,8 +2089,8 @@ page fault, 能实现 demanding page, COW, swap 等功能.
 </p>
 </div>
 
-<div id="outline-container-org77a642c" class="outline-4">
-<h4 id="org77a642c"><span class="section-number-4">1.3.1</span> mm_struct</h4>
+<div id="outline-container-org2fbf29a" class="outline-4">
+<h4 id="org2fbf29a"><span class="section-number-4">1.3.1</span> mm_struct</h4>
 <div class="outline-text-4" id="text-1-3-1">
 <p>
 mm_struct 中和 memory region 相关的字段主要有:
@@ -2124,11 +2124,11 @@ mm_struct 中和 memory region 相关的字段主要有:
 </div>
 </div>
 
-<div id="outline-container-orgcf11232" class="outline-4">
-<h4 id="orgcf11232"><span class="section-number-4">1.3.2</span> Memory Region</h4>
+<div id="outline-container-org598268e" class="outline-4">
+<h4 id="org598268e"><span class="section-number-4">1.3.2</span> Memory Region</h4>
 <div class="outline-text-4" id="text-1-3-2">
-</div><div id="outline-container-org0b8a1a6" class="outline-5">
-<h5 id="org0b8a1a6"><span class="section-number-5">1.3.2.1</span> Data Structure</h5>
+</div><div id="outline-container-org5ad1bd1" class="outline-5">
+<h5 id="org5ad1bd1"><span class="section-number-5">1.3.2.1</span> Data Structure</h5>
 <div class="outline-text-5" id="text-1-3-2-1">
 <div class="org-src-container">
 
@@ -2179,8 +2179,8 @@ mm_struct 中和 memory region 相关的字段主要有:
 </div>
 </div>
 
-<div id="outline-container-org07674c0" class="outline-5">
-<h5 id="org07674c0"><span class="section-number-5">1.3.2.2</span> vm_flags</h5>
+<div id="outline-container-orgc68d1b9" class="outline-5">
+<h5 id="orgc68d1b9"><span class="section-number-5">1.3.2.2</span> vm_flags</h5>
 <div class="outline-text-5" id="text-1-3-2-2">
 <p>
 和 "memory" 相关的 flags 有许多, 例如:
@@ -2200,7 +2200,7 @@ page descriptor 中的 flags
 </p>
 
 <p>
-参考 <a href="#orge07e52c">Page Descriptor</a>, 主要是和 PFRA 有关, 例如 PG_referenced,
+参考 <a href="#org6da3040">Page Descriptor</a>, 主要是和 PFRA 有关, 例如 PG_referenced,
 PG_lru, PG_active 等, CPU 并不会直接使用这个 flag
 </p></li>
 </ol>
@@ -2211,7 +2211,7 @@ PG_lru, PG_active 等, CPU 并不会直接使用这个 flag
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="orgbdddacb"></a>Access Right 相关<br  /><div class="outline-text-6" id="text-1-3-2-2-1">
+<ol class="org-ol"><li><a id="org7dab831"></a>Access Right 相关<br  /><div class="outline-text-6" id="text-1-3-2-2-1">
 <ul class="org-ul">
 <li>VM_READ</li>
 <li>VM_WRITE</li>
@@ -2238,40 +2238,40 @@ Access right 分为三种: 读, 写, 执行, 一般情况下, vma 的 access rig
 </ol>
 </div></li>
 
-<li><a id="orgd474ca7"></a>和栈有关<br  /><div class="outline-text-6" id="text-1-3-2-2-2">
+<li><a id="orgdb1b54a"></a>和栈有关<br  /><div class="outline-text-6" id="text-1-3-2-2-2">
 <ul class="org-ul">
 <li>VM_GROWSDOWN</li>
 <li>VM_GROWSUP</li>
 </ul>
 </div></li>
 
-<li><a id="org645b6b4"></a>和 PFRA 有关<br  /><div class="outline-text-6" id="text-1-3-2-2-3">
+<li><a id="orgb16bc78"></a>和 PFRA 有关<br  /><div class="outline-text-6" id="text-1-3-2-2-3">
 <ul class="org-ul">
 <li>VM_LOCKED</li>
 <li>VM_RESERVED</li>
 </ul>
 </div></li>
 
-<li><a id="orgfb9820d"></a>和 IO 预读有关<br  /><div class="outline-text-6" id="text-1-3-2-2-4">
+<li><a id="orgfa15be8"></a>和 IO 预读有关<br  /><div class="outline-text-6" id="text-1-3-2-2-4">
 <ul class="org-ul">
 <li>VM_SEQ_READ</li>
 <li>VM_RAND_READ</li>
 </ul>
 </div></li>
 
-<li><a id="orgf2b3302"></a>其它<br  /><div class="outline-text-6" id="text-1-3-2-2-5">
+<li><a id="org86a9483"></a>其它<br  /><div class="outline-text-6" id="text-1-3-2-2-5">
 <ul class="org-ul">
 <li>VM_DONTCOPY</li>
 </ul>
 </div></li></ol>
 </div>
 
-<div id="outline-container-orgcf98565" class="outline-5">
-<h5 id="orgcf98565"><span class="section-number-5">1.3.2.3</span> find_vma</h5>
+<div id="outline-container-orgd974edb" class="outline-5">
+<h5 id="orgd974edb"><span class="section-number-5">1.3.2.3</span> find_vma</h5>
 </div>
 
-<div id="outline-container-orge8be66c" class="outline-5">
-<h5 id="orge8be66c"><span class="section-number-5">1.3.2.4</span> get_unmapped_area</h5>
+<div id="outline-container-org1e39f9e" class="outline-5">
+<h5 id="org1e39f9e"><span class="section-number-5">1.3.2.4</span> get_unmapped_area</h5>
 <div class="outline-text-5" id="text-1-3-2-4">
 <p>
 get_unmapped_area 决定了 mmap 时分配的区域的位置, 实际上, 存在两种不同
@@ -2291,7 +2291,7 @@ get_unmapped_area 决定了 mmap 时分配的区域的位置, 实际上, 存在�
 </div>
 </div>
 
-<ol class="org-ol"><li><a id="org310dc3d"></a>arch_get_unmapped_area<br  /><div class="outline-text-6" id="text-1-3-2-4-1">
+<ol class="org-ol"><li><a id="org94cd874"></a>arch_get_unmapped_area<br  /><div class="outline-text-6" id="text-1-3-2-4-1">
 <p>
 arch_get_unmapped_area 是从 TASK_UNMAPPED_BASE (1G) 处开始, 从低到高选
 择一块可用的区域, 这种方式适用于 stack 需要 "无限" 增长的情况: the
@@ -2361,7 +2361,7 @@ arch_get_unmapped_area 是从 TASK_UNMAPPED_BASE (1G) 处开始, 从低到高选
 </div>
 </div></li>
 
-<li><a id="org17a4408"></a>arch_get_unmapped_area_topdown<br  /><div class="outline-text-6" id="text-1-3-2-4-2">
+<li><a id="org907d13d"></a>arch_get_unmapped_area_topdown<br  /><div class="outline-text-6" id="text-1-3-2-4-2">
 <p>
 arch_get_unmapped_area_topdown 是从 stack 的 low-limit (base) 处开始从
 高到低来查找可用区域, 适用于 stack 大小固定的 layout: the "flexible"
@@ -2402,7 +2402,7 @@ layout.
 </div>
 </div></li>
 
-<li><a id="orgb3d497c"></a>arch_pick_mmap_layout<br  /><div class="outline-text-6" id="text-1-3-2-4-3">
+<li><a id="orgaeea48c"></a>arch_pick_mmap_layout<br  /><div class="outline-text-6" id="text-1-3-2-4-3">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">arch_pick_mmap_layout</span>:
@@ -2426,8 +2426,8 @@ layout.
 </div></li></ol>
 </div>
 
-<div id="outline-container-org3f25621" class="outline-5">
-<h5 id="org3f25621"><span class="section-number-5">1.3.2.5</span> sys_mmap</h5>
+<div id="outline-container-org528cf41" class="outline-5">
+<h5 id="org528cf41"><span class="section-number-5">1.3.2.5</span> sys_mmap</h5>
 <div class="outline-text-5" id="text-1-3-2-5">
 <p>
 mmap 系统调用用来建立 memory region
@@ -2505,11 +2505,11 @@ mmap 系统调用用来建立 memory region
 </div>
 </div>
 
-<div id="outline-container-orgd415fd5" class="outline-4">
-<h4 id="orgd415fd5"><span class="section-number-4">1.3.3</span> Page Fault</h4>
+<div id="outline-container-org82b9a4e" class="outline-4">
+<h4 id="org82b9a4e"><span class="section-number-4">1.3.3</span> Page Fault</h4>
 <div class="outline-text-4" id="text-1-3-3">
-</div><div id="outline-container-orge76ce4f" class="outline-5">
-<h5 id="orge76ce4f"><span class="section-number-5">1.3.3.1</span> Overview</h5>
+</div><div id="outline-container-org69a7f5f" class="outline-5">
+<h5 id="org69a7f5f"><span class="section-number-5">1.3.3.1</span> Overview</h5>
 <div class="outline-text-5" id="text-1-3-3-1">
 
 <div class="figure">
@@ -2519,8 +2519,8 @@ mmap 系统调用用来建立 memory region
 </div>
 </div>
 
-<div id="outline-container-org531937b" class="outline-5">
-<h5 id="org531937b"><span class="section-number-5">1.3.3.2</span> error code</h5>
+<div id="outline-container-org6a0082d" class="outline-5">
+<h5 id="org6a0082d"><span class="section-number-5">1.3.3.2</span> error code</h5>
 <div class="outline-text-5" id="text-1-3-3-2">
 <p>
 page fault 发生时, 硬件负责调用 do_page_fault 并提供一个 error code, 表
@@ -2570,8 +2570,8 @@ user
 </div>
 </div>
 
-<div id="outline-container-org3fd9f19" class="outline-5">
-<h5 id="org3fd9f19"><span class="section-number-5">1.3.3.3</span> do_page_fault</h5>
+<div id="outline-container-org2ac8652" class="outline-5">
+<h5 id="org2ac8652"><span class="section-number-5">1.3.3.3</span> do_page_fault</h5>
 <div class="outline-text-5" id="text-1-3-3-3">
 <div class="org-src-container">
 
@@ -2667,12 +2667,12 @@ user
 </div>
 </div>
 
-<div id="outline-container-orga2c2861" class="outline-5">
-<h5 id="orga2c2861"><span class="section-number-5">1.3.3.4</span> vmalloc_fault</h5>
+<div id="outline-container-orgf1fefa2" class="outline-5">
+<h5 id="orgf1fefa2"><span class="section-number-5">1.3.3.4</span> vmalloc_fault</h5>
 <div class="outline-text-5" id="text-1-3-3-4">
 <p>
 vmalloc_fault 的功能是把 swapper_pg_dir 中对应的 PTE 同步到 current
-task 的页表, 参考 <a href="#orgdbb7124">动态映射的部分 (ZONE_HIGHMEM)</a>
+task 的页表, 参考 <a href="#org4b1b678">动态映射的部分 (ZONE_HIGHMEM)</a>
 </p>
 
 <div class="org-src-container">
@@ -2691,10 +2691,10 @@ task 的页表, 参考 <a href="#orgdbb7124">动态映射的部分 (ZONE_HIGHMEM
 </div>
 </div>
 
-<div id="outline-container-orgd5cea52" class="outline-5">
-<h5 id="orgd5cea52"><span class="section-number-5">1.3.3.5</span> expand_stack</h5>
+<div id="outline-container-orga69b88a" class="outline-5">
+<h5 id="orga69b88a"><span class="section-number-5">1.3.3.5</span> expand_stack</h5>
 <div class="outline-text-5" id="text-1-3-3-5">
-</div><ol class="org-ol"><li><a id="org184a585"></a>expand_stack<br  /><div class="outline-text-6" id="text-1-3-3-5-1">
+</div><ol class="org-ol"><li><a id="orga69b88a"></a>expand_stack<br  /><div class="outline-text-6" id="text-1-3-3-5-1">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">expand_stack</span>:
@@ -2714,7 +2714,7 @@ task 的页表, 参考 <a href="#orgdbb7124">动态映射的部分 (ZONE_HIGHMEM
 </div>
 </div></li>
 
-<li><a id="org9a4934e"></a>一段利用 expand_stack (或者 MAP_GROWSDOWN) 的代码<br  /><div class="outline-text-6" id="text-1-3-3-5-2">
+<li><a id="org3ac7d0b"></a>一段利用 expand_stack (或者 MAP_GROWSDOWN) 的代码<br  /><div class="outline-text-6" id="text-1-3-3-5-2">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold;">#include</span> <span style="font-style: italic;">&lt;sys/mman.h&gt;</span>
@@ -2743,7 +2743,7 @@ task 的页表, 参考 <a href="#orgdbb7124">动态映射的部分 (ZONE_HIGHMEM
 </p>
 </div></li>
 
-<li><a id="org7b4802a"></a>pthread 与 stack<br  /><div class="outline-text-6" id="text-1-3-3-5-3">
+<li><a id="orge54c42d"></a>pthread 与 stack<br  /><div class="outline-text-6" id="text-1-3-3-5-3">
 <p>
 pthread_create 在生成新的 stack 时也并没有使用 expand_stack 功能
 </p>
@@ -2768,8 +2768,8 @@ pthread_create 在生成新的 stack 时也并没有使用 expand_stack 功能
 </div></li></ol>
 </div>
 
-<div id="outline-container-org9705512" class="outline-5">
-<h5 id="org9705512"><span class="section-number-5">1.3.3.6</span> do_no_page</h5>
+<div id="outline-container-org644e1b4" class="outline-5">
+<h5 id="org644e1b4"><span class="section-number-5">1.3.3.6</span> do_no_page</h5>
 <div class="outline-text-5" id="text-1-3-3-6">
 <p>
 Demanding page
@@ -2815,26 +2815,26 @@ Demanding page
 </div>
 </div>
 
-<div id="outline-container-org8324a0a" class="outline-5">
-<h5 id="org8324a0a"><span class="section-number-5">1.3.3.7</span> do_swap_page</h5>
+<div id="outline-container-org129cb87" class="outline-5">
+<h5 id="org129cb87"><span class="section-number-5">1.3.3.7</span> do_swap_page</h5>
 <div class="outline-text-5" id="text-1-3-3-7">
 <p>
-参考 <a href="#orge20540a">Swap In</a>
+参考 <a href="#orgd9d9339">Swap In</a>
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgb439087" class="outline-5">
-<h5 id="orgb439087"><span class="section-number-5">1.3.3.8</span> do_wp_page</h5>
+<div id="outline-container-org31e6b8e" class="outline-5">
+<h5 id="org31e6b8e"><span class="section-number-5">1.3.3.8</span> do_wp_page</h5>
 <div class="outline-text-5" id="text-1-3-3-8">
 <p>
-COW, 参考 <a href="#org5242d8d">Copy On Write</a>
+COW, 参考 <a href="#orgf086165">Copy On Write</a>
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgfe7f8ea" class="outline-5">
-<h5 id="orgfe7f8ea"><span class="section-number-5">1.3.3.9</span> 关于 SIGBUS</h5>
+<div id="outline-container-org5933dfa" class="outline-5">
+<h5 id="org5933dfa"><span class="section-number-5">1.3.3.9</span> 关于 SIGBUS</h5>
 <div class="outline-text-5" id="text-1-3-3-9">
 <p>
 一般情况下, handle_mm_fault 返回 VM_FAULT_MAJOR 或 VM_FAULT_MAJOR, 但
@@ -2869,26 +2869,26 @@ COW, 参考 <a href="#org5242d8d">Copy On Write</a>
 </div>
 
 
-<div id="outline-container-org440f9f0" class="outline-4">
-<h4 id="org440f9f0"><span class="section-number-4">1.3.4</span> Creating Process Address Space</h4>
+<div id="outline-container-org8610075" class="outline-4">
+<h4 id="org8610075"><span class="section-number-4">1.3.4</span> Creating Process Address Space</h4>
 <div class="outline-text-4" id="text-1-3-4">
-</div><div id="outline-container-org7fa95f3" class="outline-5">
-<h5 id="org7fa95f3"><span class="section-number-5">1.3.4.1</span> fork</h5>
+</div><div id="outline-container-org4795c92" class="outline-5">
+<h5 id="org4795c92"><span class="section-number-5">1.3.4.1</span> fork</h5>
 <div class="outline-text-5" id="text-1-3-4-1">
 <p>
 一般情况下 fork 时的 copy_mm 是创建 process address space 的主要入口,
-参考 <a href="#orge36d5b1">Process page table 初始化</a>
+参考 <a href="#orga6ad376">Process page table 初始化</a>
 </p>
 </div>
 </div>
 
-<div id="outline-container-org849b3dc" class="outline-5">
-<h5 id="org849b3dc"><span class="section-number-5">1.3.4.2</span> exec</h5>
+<div id="outline-container-org23bba99" class="outline-5">
+<h5 id="org23bba99"><span class="section-number-5">1.3.4.2</span> exec</h5>
 </div>
 </div>
 
-<div id="outline-container-org0575445" class="outline-4">
-<h4 id="org0575445"><span class="section-number-4">1.3.5</span> Managing the Heap</h4>
+<div id="outline-container-orgca0c316" class="outline-4">
+<h4 id="orgca0c316"><span class="section-number-4">1.3.5</span> Managing the Heap</h4>
 <div class="outline-text-4" id="text-1-3-5">
 <p>
 Managing the heap, 主要是指 brk 系统调用
@@ -2902,11 +2902,11 @@ Managing the heap, 主要是指 brk 系统调用
 </div>
 </div>
 
-<div id="outline-container-org1a0ccbd" class="outline-4">
-<h4 id="org1a0ccbd"><span class="section-number-4">1.3.6</span> API</h4>
+<div id="outline-container-org864d282" class="outline-4">
+<h4 id="org864d282"><span class="section-number-4">1.3.6</span> API</h4>
 <div class="outline-text-4" id="text-1-3-6">
-</div><div id="outline-container-orgc2aa167" class="outline-5">
-<h5 id="orgc2aa167"><span class="section-number-5">1.3.6.1</span> mmap</h5>
+</div><div id="outline-container-org309d55b" class="outline-5">
+<h5 id="org309d55b"><span class="section-number-5">1.3.6.1</span> mmap</h5>
 <div class="outline-text-5" id="text-1-3-6-1">
 <p>
 mmap flags:
@@ -2924,33 +2924,33 @@ mmap flags:
 </div>
 </div>
 
-<div id="outline-container-org0cceffa" class="outline-5">
-<h5 id="org0cceffa"><span class="section-number-5">1.3.6.2</span> madvise</h5>
+<div id="outline-container-org7b8c8ec" class="outline-5">
+<h5 id="org7b8c8ec"><span class="section-number-5">1.3.6.2</span> madvise</h5>
 </div>
 
-<div id="outline-container-orgf61e6d1" class="outline-5">
-<h5 id="orgf61e6d1"><span class="section-number-5">1.3.6.3</span> mprotect</h5>
+<div id="outline-container-org799a258" class="outline-5">
+<h5 id="org799a258"><span class="section-number-5">1.3.6.3</span> mprotect</h5>
 </div>
 
-<div id="outline-container-org95ddfb8" class="outline-5">
-<h5 id="org95ddfb8"><span class="section-number-5">1.3.6.4</span> mlock</h5>
+<div id="outline-container-orgb2d915a" class="outline-5">
+<h5 id="orgb2d915a"><span class="section-number-5">1.3.6.4</span> mlock</h5>
 </div>
 
-<div id="outline-container-org2dc16e9" class="outline-5">
-<h5 id="org2dc16e9"><span class="section-number-5">1.3.6.5</span> mlockall</h5>
+<div id="outline-container-orge011b0d" class="outline-5">
+<h5 id="orge011b0d"><span class="section-number-5">1.3.6.5</span> mlockall</h5>
 </div>
 
-<div id="outline-container-orgc53b265" class="outline-5">
-<h5 id="orgc53b265"><span class="section-number-5">1.3.6.6</span> prctl</h5>
+<div id="outline-container-orgd5daa66" class="outline-5">
+<h5 id="orgd5daa66"><span class="section-number-5">1.3.6.6</span> prctl</h5>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgb928ba9" class="outline-3">
-<h3 id="orgb928ba9"><span class="section-number-3">1.4</span> 页面回收</h3>
+<div id="outline-container-org7bbe44c" class="outline-3">
+<h3 id="org7bbe44c"><span class="section-number-3">1.4</span> 页面回收</h3>
 <div class="outline-text-3" id="text-1-4">
-</div><div id="outline-container-orgd815257" class="outline-4">
-<h4 id="orgd815257"><span class="section-number-4">1.4.1</span> Overview</h4>
+</div><div id="outline-container-org69a7f5f" class="outline-4">
+<h4 id="org69a7f5f"><span class="section-number-4">1.4.1</span> Overview</h4>
 <div class="outline-text-4" id="text-1-4-1">
 <p>
 页面回收算法 (Page Frame Reclaiming Algorithm, PFRA) 的目标是选择一个 none-free page
@@ -3070,8 +3070,8 @@ page 应该优先</li>
 </div>
 </div>
 
-<div id="outline-container-orgb8a67d2" class="outline-4">
-<h4 id="orgb8a67d2"><span class="section-number-4">1.4.2</span> 反向映射</h4>
+<div id="outline-container-orgf2e55b1" class="outline-4">
+<h4 id="orgf2e55b1"><span class="section-number-4">1.4.2</span> 反向映射</h4>
 <div class="outline-text-4" id="text-1-4-2">
 <p>
 反向映射 (reversed mapping) 是指: 通过 PFRA 算法选择了一个 victim page
@@ -3093,8 +3093,8 @@ page descriptor 做某种聚合: 一类 page descriptor 相关的 PTE 用同一�
 </p>
 </div>
 
-<div id="outline-container-orgb832433" class="outline-5">
-<h5 id="orgb832433"><span class="section-number-5">1.4.2.1</span> Anonymous Pages</h5>
+<div id="outline-container-org0c650db" class="outline-5">
+<h5 id="org0c650db"><span class="section-number-5">1.4.2.1</span> Anonymous Pages</h5>
 <div class="outline-text-5" id="text-1-4-2-1">
 <p>
 对于 anonymous page, linux 使用的方法和前面描述的 "最简单方法" 类似:
@@ -3103,7 +3103,7 @@ page descriptor 中有一个称为 anon_vma 的 list_head. 但 list 中的成员
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="org67cfcb0"></a>Overview<br  /><div class="outline-text-6" id="text-1-4-2-1-1">
+<ol class="org-ol"><li><a id="org69a7f5f"></a>Overview<br  /><div class="outline-text-6" id="text-1-4-2-1-1">
 <p>
 Anonymous pages 可能会有多个 PTE 指向的它, 最常见的情形是 fork: fork
 时的复制了一块 vma, 则在父子进程中这块 vma 对应的 PTE 指向相同的
@@ -3153,7 +3153,7 @@ anonymous page.
 </div>
 </div></li>
 
-<li><a id="org15d52e0"></a>when Demanding Page<br  /><div class="outline-text-6" id="text-1-4-2-1-2">
+<li><a id="orgdf9e7d9"></a>when Demanding Page<br  /><div class="outline-text-6" id="text-1-4-2-1-2">
 <p>
 Demanding page 时将 page 的 anon_vma 指向 vma-&gt;anon_vma, 若有需要, 会
 分配 anon_vma, 初始化 list_head.
@@ -3188,7 +3188,7 @@ Demanding page 时将 page 的 anon_vma 指向 vma-&gt;anon_vma, 若有需要, �
 </div>
 </div></li>
 
-<li><a id="orgfc2aaee"></a>When Fork<br  /><div class="outline-text-6" id="text-1-4-2-1-3">
+<li><a id="org24fae0d"></a>When Fork<br  /><div class="outline-text-6" id="text-1-4-2-1-3">
 <p>
 fork 时会将新的 vma 加到 anon_vma 指示的 list 中
 </p>
@@ -3212,7 +3212,7 @@ fork 时会将新的 vma 加到 anon_vma 指示的 list 中
 </div>
 </div></li>
 
-<li><a id="org9088c48"></a>When Copy on Write<br  /><div class="outline-text-6" id="text-1-4-2-1-4">
+<li><a id="org4a9c74a"></a>When Copy on Write<br  /><div class="outline-text-6" id="text-1-4-2-1-4">
 <p>
 除了 demanding page, COW 时也会将 page 的 anon_vma 指向 vma-&gt;anon_vma
 </p>
@@ -3265,8 +3265,8 @@ vma<sub>A,B</sub> (实际需要扫描到 vma<sub>A,B,C</sub>), 因为这个 page
 </div></li></ol>
 </div>
 
-<div id="outline-container-org0a13d7f" class="outline-5">
-<h5 id="org0a13d7f"><span class="section-number-5">1.4.2.2</span> file mapped pages</h5>
+<div id="outline-container-org856862e" class="outline-5">
+<h5 id="org856862e"><span class="section-number-5">1.4.2.2</span> file mapped pages</h5>
 <div class="outline-text-5" id="text-1-4-2-2">
 <p>
 基于 anon_vma 链表的 reversed mapping 不适用于 file mapping pages.
@@ -3296,13 +3296,13 @@ VMA
 </div>
 </div>
 
-<div id="outline-container-org5af5391" class="outline-5">
-<h5 id="org5af5391"><span class="section-number-5">1.4.2.3</span> try_to_unmap</h5>
+<div id="outline-container-org2f8ce50" class="outline-5">
+<h5 id="org2f8ce50"><span class="section-number-5">1.4.2.3</span> try_to_unmap</h5>
 </div>
 </div>
 
-<div id="outline-container-orgb899e8b" class="outline-4">
-<h4 id="orgb899e8b"><span class="section-number-4">1.4.3</span> PFRA 的实现</h4>
+<div id="outline-container-org697aa6f" class="outline-4">
+<h4 id="org697aa6f"><span class="section-number-4">1.4.3</span> PFRA 的实现</h4>
 <div class="outline-text-4" id="text-1-4-3">
 
 <div class="figure">
@@ -3312,8 +3312,8 @@ VMA
 </div>
 
 
-<div id="outline-container-org70eb8b3" class="outline-5">
-<h5 id="org70eb8b3"><span class="section-number-5">1.4.3.1</span> LRU</h5>
+<div id="outline-container-orga3d70d2" class="outline-5">
+<h5 id="orga3d70d2"><span class="section-number-5">1.4.3.1</span> LRU</h5>
 <div class="outline-text-5" id="text-1-4-3-1">
 <p>
 PFRA 能回收的 page frame 中, user mode address space 占了绝大部分.
@@ -3321,7 +3321,7 @@ Linux 使用 LRU 机制来决定这部分 page 中哪些会被回收.
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="orga101326"></a>相关数据结构<br  /><div class="outline-text-6" id="text-1-4-3-1-1">
+<ol class="org-ol"><li><a id="orgadf9d80"></a>相关数据结构<br  /><div class="outline-text-6" id="text-1-4-3-1-1">
 <ol class="org-ol">
 <li><p>
 zone
@@ -3368,7 +3368,7 @@ page flags
 </ol>
 </div></li>
 
-<li><a id="orgd659f49"></a>Overview<br  /><div class="outline-text-6" id="text-1-4-3-1-2">
+<li><a id="org69a7f5f"></a>Overview<br  /><div class="outline-text-6" id="text-1-4-3-1-2">
 <p>
 zone 中已经分配的 page 中的一部分 (user mode address space 及 page
 cache) 被组织在两个不相关的链表中: active_list 和 inactive_list
@@ -3424,7 +3424,7 @@ PG_referenced, 同时将 page 放到 active_list, 否则, 仅仅将 PG_reference
 </p>
 </div></li>
 
-<li><a id="org231195b"></a>lru_cache_add / lru_cache_add_active<br  /><div class="outline-text-6" id="text-1-4-3-1-3">
+<li><a id="orge19d504"></a>lru_cache_add / lru_cache_add_active<br  /><div class="outline-text-6" id="text-1-4-3-1-3">
 <p>
 这两个函数决定了 zone 中已分配的 page 中哪些是受 LRU 管理的, 简单的说:
 </p>
@@ -3437,7 +3437,7 @@ lru_cache_add_active 加入到 active_list</li>
 </ol>
 </div></li>
 
-<li><a id="orgb14700b"></a>mark_page_accessed<br  /><div class="outline-text-6" id="text-1-4-3-1-4">
+<li><a id="org6eecdaa"></a>mark_page_accessed<br  /><div class="outline-text-6" id="text-1-4-3-1-4">
 <div class="org-src-container">
 
 <pre class="src src-c">mark_page_accessed(<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">page</span> *<span style="font-weight: bold; text-decoration: underline;">page</span>):
@@ -3475,7 +3475,7 @@ mark_page_accessed 在下面这些情况下被执行:
 </p>
 </div></li>
 
-<li><a id="org01cfb0a"></a>page_referenced<br  /><div class="outline-text-6" id="text-1-4-3-1-5">
+<li><a id="orgf126cda"></a>page_referenced<br  /><div class="outline-text-6" id="text-1-4-3-1-5">
 <p>
 PFRA 扫描时 (refill_inactive_zone) 会用 page_referenced 检查并清除
 PG_referenced 和 PTE 的 Accessed flag.
@@ -3507,7 +3507,7 @@ PG_referenced 和 PTE 的 Accessed flag.
 </p>
 </div></li>
 
-<li><a id="org1d3867f"></a>refill_inactive_zone<br  /><div class="outline-text-6" id="text-1-4-3-1-6">
+<li><a id="org2b50dce"></a>refill_inactive_zone<br  /><div class="outline-text-6" id="text-1-4-3-1-6">
 <p>
 refill_inactive_zone 是唯一可以将 active_list 中的 page 移动到
 inactive_list 的函数, 由于后面 shrink_list 时只会从 inactive_list 中找
@@ -3515,7 +3515,7 @@ victim, 所以 refill_inactive_zone 是 PFRA 中第一个关键的函数.
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="org090e939"></a>Swap Tendency<br  /><div class="outline-text-7" id="text-1-4-3-1-6-1">
+<ol class="org-ol"><li><a id="org803dad8"></a>Swap Tendency<br  /><div class="outline-text-7" id="text-1-4-3-1-6-1">
 <p>
 PFRA 计算了一个 swap tendency 来决定是否会把 active_list 中的 page 移
 动到 inactive_list 中.
@@ -3565,7 +3565,7 @@ mapped, 后者和 swap 并没有什么关系
 </p>
 </div></li>
 
-<li><a id="org6889f6f"></a>refill_inactive_zone<br  /><div class="outline-text-7" id="text-1-4-3-1-6-2">
+<li><a id="org2b50dce"></a>refill_inactive_zone<br  /><div class="outline-text-7" id="text-1-4-3-1-6-2">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">refill_inactive_zone</span>:
@@ -3627,7 +3627,7 @@ mapped, 后者和 swap 并没有什么关系
 </div>
 </div></li>
 
-<li><a id="orgf14e953"></a>通过 refill_inactive_zone 更新 LRU list<br  /><div class="outline-text-7" id="text-1-4-3-1-6-3">
+<li><a id="orged5e37d"></a>通过 refill_inactive_zone 更新 LRU list<br  /><div class="outline-text-7" id="text-1-4-3-1-6-3">
 <p>
 refill_inactive_zone 的作用, 除了从 active_list 移动一些 page 到
 inactive_list 外, 还起到维护 LRU 的作用.
@@ -3644,10 +3644,10 @@ inactive_list 外, 还起到维护 LRU 的作用.
 </div></li></ol></li></ol>
 </div>
 
-<div id="outline-container-org9f7c65f" class="outline-5">
-<h5 id="org9f7c65f"><span class="section-number-5">1.4.3.2</span> Low on Memory Reclaiming: try_to_free_pages</h5>
+<div id="outline-container-org09e4e05" class="outline-5">
+<h5 id="org09e4e05"><span class="section-number-5">1.4.3.2</span> Low on Memory Reclaiming: try_to_free_pages</h5>
 <div class="outline-text-5" id="text-1-4-3-2">
-</div><ol class="org-ol"><li><a id="orga2c681c"></a>Overview<br  /><div class="outline-text-6" id="text-1-4-3-2-1">
+</div><ol class="org-ol"><li><a id="org69a7f5f"></a>Overview<br  /><div class="outline-text-6" id="text-1-4-3-2-1">
 <p>
 try_to_free_pages 是 `low on memory` page reclaim 主要的入口, 它会重复
 的调用 shrink_caches 和 shrink_slab, 并且每次循环使用更高的优先级 (12
@@ -3674,7 +3674,7 @@ try_to_free_pages 是 `low on memory` page reclaim 主要的入口, 它会重复
 </div>
 </div></li>
 
-<li><a id="org3130c78"></a>shrink_list<br  /><div class="outline-text-6" id="text-1-4-3-2-2">
+<li><a id="org54d6728"></a>shrink_list<br  /><div class="outline-text-6" id="text-1-4-3-2-2">
 <p>
 shrink_list 是整个 PFRA 最主要的函数之一, 它的主要工作:
 </p>
@@ -3700,20 +3700,20 @@ buddy</li>
 </ol>
 </div></li>
 
-<li><a id="org6757feb"></a>shrink_slab<br  /><ol class="org-ol"><li><a id="org3d419be"></a>shrink_dcache_memory<br  /></li>
+<li><a id="org5a1b896"></a>shrink_slab<br  /><ol class="org-ol"><li><a id="org69abe51"></a>shrink_dcache_memory<br  /></li>
 
-<li><a id="org92924f5"></a>shrink_icache_memory<br  /></li></ol></li></ol>
+<li><a id="org249d8ac"></a>shrink_icache_memory<br  /></li></ol></li></ol>
 </div>
 
-<div id="outline-container-orgdb58b62" class="outline-5">
-<h5 id="orgdb58b62"><span class="section-number-5">1.4.3.3</span> Periodic Reclaiming: kswapd</h5>
+<div id="outline-container-orgb8cc475" class="outline-5">
+<h5 id="orgb8cc475"><span class="section-number-5">1.4.3.3</span> Periodic Reclaiming: kswapd</h5>
 <div class="outline-text-5" id="text-1-4-3-3">
 <p>
 除了 try_to_free_pages, PFRA 还会通过 kswapd 进行 periodic reclaiming.
 </p>
 
 <p>
-如前面 <a href="#org1ddc2fe">alloc_pages</a> 所述, alloc_pages 时如果发现所有 zone 的可用内存都
+如前面 <a href="#org876dcba">alloc_pages</a> 所述, alloc_pages 时如果发现所有 zone 的可用内存都
 低于 zone-&gt;page_low, 则会通过 wakeup_kswapd 唤醒 kswapd.
 </p>
 
@@ -3730,10 +3730,10 @@ buddy</li>
 </div>
 </div>
 
-<div id="outline-container-org4598b7c" class="outline-5">
-<h5 id="org4598b7c"><span class="section-number-5">1.4.3.4</span> Swapping</h5>
+<div id="outline-container-org7640f16" class="outline-5">
+<h5 id="org7640f16"><span class="section-number-5">1.4.3.4</span> Swapping</h5>
 <div class="outline-text-5" id="text-1-4-3-4">
-</div><ol class="org-ol"><li><a id="org72327d4"></a>Swap Area<br  /><div class="outline-text-6" id="text-1-4-3-4-1">
+</div><ol class="org-ol"><li><a id="orgb24c141"></a>Swap Area<br  /><div class="outline-text-6" id="text-1-4-3-4-1">
 <p>
 Swap area 即 swap file 或 swap device, linux 可以支持多个 swap area.
 </p>
@@ -3772,7 +3772,7 @@ PFRA 与 swap area 的主要接口:
 </ol>
 </div></li>
 
-<li><a id="org45aee20"></a>Swap Cache<br  /><div class="outline-text-6" id="text-1-4-3-4-2">
+<li><a id="org8e99953"></a>Swap Cache<br  /><div class="outline-text-6" id="text-1-4-3-4-2">
 <p>
 在 shrink_list 时, 通过 add_to_swap 并不是直接将 page 写入 swap area,
 而是先将 page 加入 swap cache 中, 然后再写入 swap area. Swap cache 主
@@ -3803,7 +3803,7 @@ cache 处理即可, 例如在 pageout 时调用 aosp-&gt;writepage
 </p>
 </div></li>
 
-<li><a id="orgb03d9e6"></a>Swap Out<br  /><div class="outline-text-6" id="text-1-4-3-4-3">
+<li><a id="org656c4b9"></a>Swap Out<br  /><div class="outline-text-6" id="text-1-4-3-4-3">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">shrink_list</span>:
@@ -3848,7 +3848,7 @@ cache 处理即可, 例如在 pageout 时调用 aosp-&gt;writepage
 </div>
 </div></li>
 
-<li><a id="orge20540a"></a>Swap In<br  /><div class="outline-text-6" id="text-1-4-3-4-4">
+<li><a id="orgd9d9339"></a>Swap In<br  /><div class="outline-text-6" id="text-1-4-3-4-4">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">do_swap_page</span>:
@@ -3871,8 +3871,8 @@ cache 处理即可, 例如在 pageout 时调用 aosp-&gt;writepage
 </div></li></ol>
 </div>
 
-<div id="outline-container-orgdb40fdd" class="outline-5">
-<h5 id="orgdb40fdd"><span class="section-number-5">1.4.3.5</span> Out Of Memory</h5>
+<div id="outline-container-org6838496" class="outline-5">
+<h5 id="org6838496"><span class="section-number-5">1.4.3.5</span> Out Of Memory</h5>
 <div class="outline-text-5" id="text-1-4-3-5">
 <p>
 当内存特别紧张时 __alloc_pages 最后会调用 out_of_memory 来杀死某个进程
@@ -3895,7 +3895,7 @@ select_bad_process 选择一个 victim, 选择的标准是:
 </ol>
 </div>
 
-<ol class="org-ol"><li><a id="org2a48fb5"></a>badness<br  /><ol class="org-ol"><li><a id="org23cd885"></a>oom_adjust<br  /></li></ol></li></ol>
+<ol class="org-ol"><li><a id="orgfec3b6f"></a>badness<br  /><ol class="org-ol"><li><a id="org6664a99"></a>oom_adjust<br  /></li></ol></li></ol>
 </div>
 </div>
 </div>
@@ -3919,7 +3919,7 @@ select_bad_process 选择一个 victim, 选择的标准是:
 <div class="footdef"><sup><a id="fn.4" class="footnum" href="#fnr.4">4</a></sup> <div class="footpara"><p class="footpara">
 通过 page entry 的 User/Supervisor flag 来限制访问, 但这里有一
 个例外: vsyscall page 位于 3G 以上 (0xffffe000), 但通过设置 page entry
-的 user flag 允许 user mode 访问, 具体参考 <a href="signal.rel.html#orgfd9a0e0">Linux Kernel: Signal</a>
+的 user flag 允许 user mode 访问, 具体参考 <a href="signal.rel.html#org6ea195a">Linux Kernel: Signal</a>
 </p></div></div>
 
 <div class="footdef"><sup><a id="fn.5" class="footnum" href="#fnr.5">5</a></sup> <div class="footpara"><p class="footpara">
@@ -3934,7 +3934,7 @@ swapper (或 idle 进程, init_task, 0 号进程) 是一个例外: 它会使
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-06-14 Tue&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-08-30 Tue 16:01</p>
+<p class="date">Created: 2016-08-30 Tue 20:35</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
