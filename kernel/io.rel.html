@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-08-30 Tue 02:50 -->
+<!-- 2016-08-30 Tue 10:03 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: IO</title>
@@ -64,26 +64,26 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org88f3f6e">1. Linux Kernel: IO</a>
+<li><a href="#org6c03ef8">1. Linux Kernel: IO</a>
 <ul>
-<li><a href="#orgf50c689">1.1. Accessing Files</a>
+<li><a href="#orgec5fee6">1.1. Accessing Files</a>
 <ul>
-<li><a href="#org81c9b5f">1.1.1. Reading File</a></li>
-<li><a href="#org623f483">1.1.2. Reading Block Device File</a></li>
-<li><a href="#orge0b23da">1.1.3. Writing File</a></li>
-<li><a href="#org14aeaf8">1.1.4. Writing Dirty Pages</a></li>
-<li><a href="#org50eed01">1.1.5. Read ahead</a></li>
-<li><a href="#orgec78a86">1.1.6. Memory Mapping</a></li>
+<li><a href="#org41034ed">1.1.1. Reading File</a></li>
+<li><a href="#org1448b08">1.1.2. Reading Block Device File</a></li>
+<li><a href="#org55f4aa7">1.1.3. Writing File</a></li>
+<li><a href="#org1f14e28">1.1.4. Writing Dirty Pages</a></li>
+<li><a href="#org804e95d">1.1.5. Read ahead</a></li>
+<li><a href="#orgf405605">1.1.6. Memory Mapping</a></li>
 </ul>
 </li>
-<li><a href="#orgf741f88">1.2. Architectures</a>
+<li><a href="#org09e32f2">1.2. Architectures</a>
 <ul>
-<li><a href="#orgb8145e4">1.2.1. Page Cache</a></li>
-<li><a href="#orgb782aeb">1.2.2. File system</a></li>
-<li><a href="#orgf597533">1.2.3. Generic Block Layer</a></li>
-<li><a href="#orgdb4acb8">1.2.4. bdev fs</a></li>
-<li><a href="#orgc4fc224">1.2.5. Block Device Driver</a></li>
-<li><a href="#org9c8d638">1.2.6. I/O Architecture</a></li>
+<li><a href="#orgb232344">1.2.1. Page Cache</a></li>
+<li><a href="#org023f641">1.2.2. File system</a></li>
+<li><a href="#orgee5d096">1.2.3. Generic Block Layer</a></li>
+<li><a href="#org9f00568">1.2.4. bdev fs</a></li>
+<li><a href="#org16e54de">1.2.5. Block Device Driver</a></li>
+<li><a href="#orgb771df7">1.2.6. I/O Architecture</a></li>
 </ul>
 </li>
 </ul>
@@ -91,14 +91,14 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
-<div id="outline-container-org88f3f6e" class="outline-2">
-<h2 id="org88f3f6e"><span class="section-number-2">1</span> Linux Kernel: IO</h2>
+<div id="outline-container-org6c03ef8" class="outline-2">
+<h2 id="org6c03ef8"><span class="section-number-2">1</span> Linux Kernel: IO</h2>
 <div class="outline-text-2" id="text-1">
-</div><div id="outline-container-orgf50c689" class="outline-3">
-<h3 id="orgf50c689"><span class="section-number-3">1.1</span> Accessing Files</h3>
+</div><div id="outline-container-orgec5fee6" class="outline-3">
+<h3 id="orgec5fee6"><span class="section-number-3">1.1</span> Accessing Files</h3>
 <div class="outline-text-3" id="text-1-1">
-</div><div id="outline-container-org81c9b5f" class="outline-4">
-<h4 id="org81c9b5f"><span class="section-number-4">1.1.1</span> Reading File</h4>
+</div><div id="outline-container-org41034ed" class="outline-4">
+<h4 id="org41034ed"><span class="section-number-4">1.1.1</span> Reading File</h4>
 <div class="outline-text-4" id="text-1-1-1">
 <p>
 读文件的最上层入口是 f_op-&gt;read, Linux 提供了一个 generic 的实现叫做
@@ -108,8 +108,8 @@ generic_file_read 做为 f_op-&gt;read 的实现.
 </p>
 </div>
 
-<div id="outline-container-orgffb290b" class="outline-5">
-<h5 id="orgffb290b"><span class="section-number-5">1.1.1.1</span> VFS</h5>
+<div id="outline-container-org49c737d" class="outline-5">
+<h5 id="org49c737d"><span class="section-number-5">1.1.1.1</span> VFS</h5>
 <div class="outline-text-5" id="text-1-1-1-1">
 <div class="org-src-container">
 
@@ -127,8 +127,8 @@ generic_file_read 做为 f_op-&gt;read 的实现.
 </div>
 </div>
 
-<div id="outline-container-orgf44c2ce" class="outline-5">
-<h5 id="orgf44c2ce"><span class="section-number-5">1.1.1.2</span> Page Cache</h5>
+<div id="outline-container-org033367d" class="outline-5">
+<h5 id="org033367d"><span class="section-number-5">1.1.1.2</span> Page Cache</h5>
 <div class="outline-text-5" id="text-1-1-1-2">
 <div class="org-src-container">
 
@@ -178,8 +178,8 @@ generic_file_read 做为 f_op-&gt;read 的实现.
 </div>
 </div>
 
-<div id="outline-container-orgfae7f6e" class="outline-5">
-<h5 id="orgfae7f6e"><span class="section-number-5">1.1.1.3</span> File System</h5>
+<div id="outline-container-org9c1df50" class="outline-5">
+<h5 id="org9c1df50"><span class="section-number-5">1.1.1.3</span> File System</h5>
 <div class="outline-text-5" id="text-1-1-1-3">
 <p>
 a_ops-&gt;readpage 是和具体文件系统打交道的函数, 它的作用是真正从设备读取
@@ -216,10 +216,10 @@ Layer 打交道, 它们只需要实现几个回调即可, 比如 get_block
 </div>
 </div>
 
-<div id="outline-container-org0ea3027" class="outline-5">
-<h5 id="org0ea3027"><span class="section-number-5">1.1.1.4</span> Generic Block Layer</h5>
+<div id="outline-container-orgfa6ada5" class="outline-5">
+<h5 id="orgfa6ada5"><span class="section-number-5">1.1.1.4</span> Generic Block Layer</h5>
 <div class="outline-text-5" id="text-1-1-1-4">
-</div><ol class="org-ol"><li><a id="org7f1fbfb"></a>mpage_readpage<br  /><div class="outline-text-6" id="text-1-1-1-4-1">
+</div><ol class="org-ol"><li><a id="org2335fb3"></a>mpage_readpage<br  /><div class="outline-text-6" id="text-1-1-1-4-1">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="color: #6272a4;">// </span><span style="color: #6272a4;">mpage_readpage &#24182;&#19981;&#38656;&#35201; file &#25351;&#38024;, &#22240;&#20026; page &#20013;&#24050;&#32463;&#21253;&#21547;&#20102;&#36275;&#22815;&#30340;&#20449;&#24687;:</span>
@@ -256,7 +256,7 @@ mpage_readpage(<span style="color: #ff79c6; font-weight: bold;">struct</span> <s
 </div>
 </div></li>
 
-<li><a id="orgdf5f296"></a>block_read_full_page<br  /><div class="outline-text-6" id="text-1-1-1-4-2">
+<li><a id="orgaabc1d5"></a>block_read_full_page<br  /><div class="outline-text-6" id="text-1-1-1-4-2">
 <p>
 block_read_full_page 与 mpage_readpage 类似, 也是构造相应的 BIO 并提交,
 但它并不会像 mpage_readpage 一样尝试用一个 BIO 表示连续的多个 block:
@@ -292,7 +292,7 @@ block_read_full_page(<span style="color: #ff79c6; font-weight: bold;">struct</sp
 </div>
 </div></li>
 
-<li><a id="org591fc51"></a>submit_bio<br  /><div class="outline-text-6" id="text-1-1-1-4-3">
+<li><a id="orge0e7e41"></a>submit_bio<br  /><div class="outline-text-6" id="text-1-1-1-4-3">
 <p>
 无论是 block_read_full_page 的 submit_bh 或 mpage_read 的
 mpage_bio_submit, 最终都会调用到 submit_bio:
@@ -314,8 +314,8 @@ bio-&gt;bi_end_io 都会在底层 IO 结束时被调用, 并且都会 unlock_pag
 </div>
 </div>
 
-<div id="outline-container-org623f483" class="outline-4">
-<h4 id="org623f483"><span class="section-number-4">1.1.2</span> Reading Block Device File</h4>
+<div id="outline-container-org1448b08" class="outline-4">
+<h4 id="org1448b08"><span class="section-number-4">1.1.2</span> Reading Block Device File</h4>
 <div class="outline-text-4" id="text-1-1-2">
 <p>
 读取块设备文件时与普通文件有些差别:
@@ -360,11 +360,11 @@ buffer_head
 </div>
 </div>
 
-<div id="outline-container-orge0b23da" class="outline-4">
-<h4 id="orge0b23da"><span class="section-number-4">1.1.3</span> Writing File</h4>
+<div id="outline-container-org55f4aa7" class="outline-4">
+<h4 id="org55f4aa7"><span class="section-number-4">1.1.3</span> Writing File</h4>
 <div class="outline-text-4" id="text-1-1-3">
-</div><div id="outline-container-org54dca6a" class="outline-5">
-<h5 id="org54dca6a"><span class="section-number-5">1.1.3.1</span> VFS</h5>
+</div><div id="outline-container-org18d1f2a" class="outline-5">
+<h5 id="org18d1f2a"><span class="section-number-5">1.1.3.1</span> VFS</h5>
 <div class="outline-text-5" id="text-1-1-3-1">
 <div class="org-src-container">
 
@@ -377,8 +377,8 @@ buffer_head
 </div>
 </div>
 
-<div id="outline-container-orgbb5db00" class="outline-5">
-<h5 id="orgbb5db00"><span class="section-number-5">1.1.3.2</span> Page Cache</h5>
+<div id="outline-container-org366f1e7" class="outline-5">
+<h5 id="org366f1e7"><span class="section-number-5">1.1.3.2</span> Page Cache</h5>
 <div class="outline-text-5" id="text-1-1-3-2">
 <div class="org-src-container">
 
@@ -417,8 +417,8 @@ buffer_head
 </div>
 </div>
 
-<div id="outline-container-org6670384" class="outline-5">
-<h5 id="org6670384"><span class="section-number-5">1.1.3.3</span> File System</h5>
+<div id="outline-container-org0275600" class="outline-5">
+<h5 id="org0275600"><span class="section-number-5">1.1.3.3</span> File System</h5>
 <div class="outline-text-5" id="text-1-1-3-3">
 <p>
 与 read 时的 readpage 类似, prepare_write 和 commit_write 是和文件系统
@@ -428,10 +428,10 @@ buffer_head
 </div>
 </div>
 
-<div id="outline-container-org25a9b56" class="outline-5">
-<h5 id="org25a9b56"><span class="section-number-5">1.1.3.4</span> Generic Block Layer</h5>
+<div id="outline-container-orgfe3abe4" class="outline-5">
+<h5 id="orgfe3abe4"><span class="section-number-5">1.1.3.4</span> Generic Block Layer</h5>
 <div class="outline-text-5" id="text-1-1-3-4">
-</div><ol class="org-ol"><li><a id="org7681854"></a>prepare_write<br  /><div class="outline-text-6" id="text-1-1-3-4-1">
+</div><ol class="org-ol"><li><a id="org8b2b614"></a>prepare_write<br  /><div class="outline-text-6" id="text-1-1-3-4-1">
 <p>
 prepare_write 的主要功能是: 确保 page 是一个 buffer page, 并且保证
 page 中已经有对应的原始数据, 所以它的代码与 block_read_full_page 有些
@@ -447,7 +447,7 @@ page 中已经有对应的原始数据, 所以它的代码与 block_read_full_pa
 </div>
 </div></li>
 
-<li><a id="org3a43316"></a>commit_write<br  /><div class="outline-text-6" id="text-1-1-3-4-2">
+<li><a id="org51865fa"></a>commit_write<br  /><div class="outline-text-6" id="text-1-1-3-4-2">
 <p>
 commit_write 主要功能是修改 buffer_head 和 page 本身的状态, 以便随后
 writepage 时能找到哪些 buffer_head 是 dirty 的.
@@ -466,12 +466,12 @@ writepage 时能找到哪些 buffer_head 是 dirty 的.
 </div>
 </div>
 
-<div id="outline-container-org14aeaf8" class="outline-4">
-<h4 id="org14aeaf8"><span class="section-number-4">1.1.4</span> Writing Dirty Pages</h4>
+<div id="outline-container-org1f14e28" class="outline-4">
+<h4 id="org1f14e28"><span class="section-number-4">1.1.4</span> Writing Dirty Pages</h4>
 </div>
 
-<div id="outline-container-org50eed01" class="outline-4">
-<h4 id="org50eed01"><span class="section-number-4">1.1.5</span> Read ahead</h4>
+<div id="outline-container-org804e95d" class="outline-4">
+<h4 id="org804e95d"><span class="section-number-4">1.1.5</span> Read ahead</h4>
 <div class="outline-text-4" id="text-1-1-5">
 <p>
 每次调用 do_generic_mapping_read 时, 在查找 page cache 之前, 会通过
@@ -507,16 +507,16 @@ window, 并通过 get_next_ra_size 分配一个新的(更大的) ahead window</l
 </ol>
 </div>
 
-<div id="outline-container-orgf36870f" class="outline-5">
-<h5 id="orgf36870f"><span class="section-number-5">1.1.5.1</span> page_cache_readahead</h5>
+<div id="outline-container-org361b91e" class="outline-5">
+<h5 id="org361b91e"><span class="section-number-5">1.1.5.1</span> page_cache_readahead</h5>
 </div>
 
-<div id="outline-container-orgb046d44" class="outline-5">
-<h5 id="orgb046d44"><span class="section-number-5">1.1.5.2</span> handle_ra_miss</h5>
+<div id="outline-container-orgf740715" class="outline-5">
+<h5 id="orgf740715"><span class="section-number-5">1.1.5.2</span> handle_ra_miss</h5>
 </div>
 
-<div id="outline-container-orgebccabd" class="outline-5">
-<h5 id="orgebccabd"><span class="section-number-5">1.1.5.3</span> utils</h5>
+<div id="outline-container-org347397b" class="outline-5">
+<h5 id="org347397b"><span class="section-number-5">1.1.5.3</span> utils</h5>
 <div class="outline-text-5" id="text-1-1-5-3">
 <ul class="org-ul">
 <li>readahead</li>
@@ -531,16 +531,16 @@ window, 并通过 get_next_ra_size 分配一个新的(更大的) ahead window</l
 </div>
 </div>
 
-<div id="outline-container-orgec78a86" class="outline-4">
-<h4 id="orgec78a86"><span class="section-number-4">1.1.6</span> Memory Mapping</h4>
+<div id="outline-container-orgf405605" class="outline-4">
+<h4 id="orgf405605"><span class="section-number-4">1.1.6</span> Memory Mapping</h4>
 <div class="outline-text-4" id="text-1-1-6">
 <p>
-refers to <a href="memory.html#org047eac4">Memory</a>
+refers to <a href="memory.relg.html#org8e78310">Memory</a>
 </p>
 </div>
 
-<div id="outline-container-orgdb15de0" class="outline-5">
-<h5 id="orgdb15de0"><span class="section-number-5">1.1.6.1</span> vm_area_struct</h5>
+<div id="outline-container-org49793e3" class="outline-5">
+<h5 id="org49793e3"><span class="section-number-5">1.1.6.1</span> vm_area_struct</h5>
 <div class="outline-text-5" id="text-1-1-6-1">
 <div class="org-src-container">
 
@@ -558,8 +558,8 @@ refers to <a href="memory.html#org047eac4">Memory</a>
 </div>
 </div>
 
-<div id="outline-container-orgcef6204" class="outline-5">
-<h5 id="orgcef6204"><span class="section-number-5">1.1.6.2</span> filemap_nopage</h5>
+<div id="outline-container-org1689955" class="outline-5">
+<h5 id="org1689955"><span class="section-number-5">1.1.6.2</span> filemap_nopage</h5>
 <div class="outline-text-5" id="text-1-1-6-2">
 <div class="org-src-container">
 
@@ -604,8 +604,8 @@ no_cached_page:
 </div>
 </div>
 
-<div id="outline-container-orgf847b60" class="outline-5">
-<h5 id="orgf847b60"><span class="section-number-5">1.1.6.3</span> do_page_fault</h5>
+<div id="outline-container-org8d55b66" class="outline-5">
+<h5 id="org8d55b66"><span class="section-number-5">1.1.6.3</span> do_page_fault</h5>
 <div class="outline-text-5" id="text-1-1-6-3">
 <div class="org-src-container">
 
@@ -633,56 +633,56 @@ no_cached_page:
 </div>
 </div>
 
-<div id="outline-container-orgf741f88" class="outline-3">
-<h3 id="orgf741f88"><span class="section-number-3">1.2</span> Architectures</h3>
+<div id="outline-container-org09e32f2" class="outline-3">
+<h3 id="org09e32f2"><span class="section-number-3">1.2</span> Architectures</h3>
 <div class="outline-text-3" id="text-1-2">
-</div><div id="outline-container-orgb8145e4" class="outline-4">
-<h4 id="orgb8145e4"><span class="section-number-4">1.2.1</span> Page Cache</h4>
+</div><div id="outline-container-orgb232344" class="outline-4">
+<h4 id="orgb232344"><span class="section-number-4">1.2.1</span> Page Cache</h4>
 </div>
 
-<div id="outline-container-orgb782aeb" class="outline-4">
-<h4 id="orgb782aeb"><span class="section-number-4">1.2.2</span> File system</h4>
+<div id="outline-container-org023f641" class="outline-4">
+<h4 id="org023f641"><span class="section-number-4">1.2.2</span> File system</h4>
 <div class="outline-text-4" id="text-1-2-2">
-</div><div id="outline-container-org1c50dd5" class="outline-5">
-<h5 id="org1c50dd5"><span class="section-number-5">1.2.2.1</span> readpage</h5>
+</div><div id="outline-container-orga816b6a" class="outline-5">
+<h5 id="orga816b6a"><span class="section-number-5">1.2.2.1</span> readpage</h5>
 </div>
 
-<div id="outline-container-org07bcd34" class="outline-5">
-<h5 id="org07bcd34"><span class="section-number-5">1.2.2.2</span> prepare_write</h5>
+<div id="outline-container-orga40ed5f" class="outline-5">
+<h5 id="orga40ed5f"><span class="section-number-5">1.2.2.2</span> prepare_write</h5>
 </div>
 
-<div id="outline-container-org6467f5d" class="outline-5">
-<h5 id="org6467f5d"><span class="section-number-5">1.2.2.3</span> commit_write</h5>
+<div id="outline-container-orgd80bbc3" class="outline-5">
+<h5 id="orgd80bbc3"><span class="section-number-5">1.2.2.3</span> commit_write</h5>
 </div>
 
-<div id="outline-container-org26150d8" class="outline-5">
-<h5 id="org26150d8"><span class="section-number-5">1.2.2.4</span> writepage</h5>
+<div id="outline-container-orgb6e37d9" class="outline-5">
+<h5 id="orgb6e37d9"><span class="section-number-5">1.2.2.4</span> writepage</h5>
 </div>
 
-<div id="outline-container-org75347bf" class="outline-5">
-<h5 id="org75347bf"><span class="section-number-5">1.2.2.5</span> getblock</h5>
+<div id="outline-container-org007494b" class="outline-5">
+<h5 id="org007494b"><span class="section-number-5">1.2.2.5</span> getblock</h5>
 </div>
 </div>
 
-<div id="outline-container-orgf597533" class="outline-4">
-<h4 id="orgf597533"><span class="section-number-4">1.2.3</span> Generic Block Layer</h4>
+<div id="outline-container-orgee5d096" class="outline-4">
+<h4 id="orgee5d096"><span class="section-number-4">1.2.3</span> Generic Block Layer</h4>
 <div class="outline-text-4" id="text-1-2-3">
-</div><div id="outline-container-org1bc72a3" class="outline-5">
-<h5 id="org1bc72a3"><span class="section-number-5">1.2.3.1</span> Data Structure</h5>
+</div><div id="outline-container-orgabefe38" class="outline-5">
+<h5 id="orgabefe38"><span class="section-number-5">1.2.3.1</span> Data Structure</h5>
 <div class="outline-text-5" id="text-1-2-3-1">
-</div><ol class="org-ol"><li><a id="org53f1038"></a>bio<br  /></li>
+</div><ol class="org-ol"><li><a id="org72e4b6b"></a>bio<br  /></li>
 
-<li><a id="org2157f96"></a>block_device<br  /></li>
+<li><a id="orgb731c61"></a>block_device<br  /></li>
 
-<li><a id="org06233a6"></a>gendisk<br  /></li>
+<li><a id="org0d5036d"></a>gendisk<br  /></li>
 
-<li><a id="orga75ba11"></a>request_queue<br  /></li>
+<li><a id="org28b8af2"></a>request_queue<br  /></li>
 
-<li><a id="orge850446"></a>request<br  /></li></ol>
+<li><a id="org47e0f65"></a>request<br  /></li></ol>
 </div>
 
-<div id="outline-container-org1d34c42" class="outline-5">
-<h5 id="org1d34c42"><span class="section-number-5">1.2.3.2</span> submit_bio</h5>
+<div id="outline-container-orgd6c82d1" class="outline-5">
+<h5 id="orgd6c82d1"><span class="section-number-5">1.2.3.2</span> submit_bio</h5>
 <div class="outline-text-5" id="text-1-2-3-2">
 <div class="org-src-container">
 
@@ -705,10 +705,10 @@ no_cached_page:
 </div>
 </div>
 
-<div id="outline-container-org109cb68" class="outline-5">
-<h5 id="org109cb68"><span class="section-number-5">1.2.3.3</span> IO Scheduler</h5>
+<div id="outline-container-org4325924" class="outline-5">
+<h5 id="org4325924"><span class="section-number-5">1.2.3.3</span> IO Scheduler</h5>
 <div class="outline-text-5" id="text-1-2-3-3">
-</div><ol class="org-ol"><li><a id="org451e58b"></a>driver plug/unplug<br  /><div class="outline-text-6" id="text-1-2-3-3-1">
+</div><ol class="org-ol"><li><a id="orgc318218"></a>driver plug/unplug<br  /><div class="outline-text-6" id="text-1-2-3-3-1">
 <p>
 IO scheduler 作用是将多个 bio delay 一段时间再统一交给 driver 的
 request_fn, 这段 delay 使得 IO scheduler 可以将 bio merger 到某个之前
@@ -735,7 +735,7 @@ request, 则 device 此时也会被 unplug</li>
 </ol>
 </div></li>
 
-<li><a id="org718c41a"></a>__make_request<br  /><div class="outline-text-6" id="text-1-2-3-3-2">
+<li><a id="org43e5404"></a>__make_request<br  /><div class="outline-text-6" id="text-1-2-3-3-2">
 <p>
 __make_request 是 request_queue-&gt;make_request_fn 的默认实现, 如果
 driver 希望使用 IO Scheduler 的功能, 则需要指定 make_request_fn 为 __make_request
@@ -805,7 +805,7 @@ driver, 后者会调用 request_fn 来真正启动 IO</li>
 </ol>
 </div></li>
 
-<li><a id="org00d30ce"></a>IO scheduler algorithm<br  /><ol class="org-ol"><li><a id="org958597e"></a>common purposes<br  /><div class="outline-text-7" id="text-1-2-3-3-3-1">
+<li><a id="orga055231"></a>IO scheduler algorithm<br  /><ol class="org-ol"><li><a id="org59a6319"></a>common purposes<br  /><div class="outline-text-7" id="text-1-2-3-3-3-1">
 <ol class="org-ol">
 <li>To minimize time wasted by hard disk seeks</li>
 
@@ -817,7 +817,7 @@ driver, 后者会调用 request_fn 来真正启动 IO</li>
 </ol>
 </div></li>
 
-<li><a id="orga89e9d9"></a>elevator_ops<br  /><div class="outline-text-7" id="text-1-2-3-3-3-2">
+<li><a id="org4cc2a44"></a>elevator_ops<br  /><div class="outline-text-7" id="text-1-2-3-3-3-2">
 <p>
 elevator_ops 是各个 elevator 算法需要实现的回调函数. __make_request 时
 调用的 elv_queue_empty, elv_merge, elv_add_request, elv_next_request 等
@@ -838,9 +838,9 @@ elevator_add_req_fn 添加一个新的 request</li>
 </ol>
 </div>
 
-<ol class="org-ol"><li><a id="orge57a65c"></a>elevator_queue_empty_fn<br  /></li>
+<ol class="org-ol"><li><a id="org680afeb"></a>elevator_queue_empty_fn<br  /></li>
 
-<li><a id="org9b8d264"></a>elevator_merge_fn<br  /><div class="outline-text-8" id="text-1-2-3-3-3-2-2">
+<li><a id="orgb71cc2d"></a>elevator_merge_fn<br  /><div class="outline-text-8" id="text-1-2-3-3-3-2-2">
 <p>
 虽然不同的 elevator 都会实现自己的 elevator_merge_fn, 但实现起来基本都
 是差不多的:
@@ -863,9 +863,9 @@ request_queue, deadline 会使用 hash, 而 anticipatory 会使用 rbtree
 </p>
 </div></li>
 
-<li><a id="orgb7150c9"></a>elevator_add_req_fn<br  /></li>
+<li><a id="org9d1f306"></a>elevator_add_req_fn<br  /></li>
 
-<li><a id="org5603f85"></a>elevator_next_req_fn<br  /><div class="outline-text-8" id="text-1-2-3-3-3-2-4">
+<li><a id="orgcd09592"></a>elevator_next_req_fn<br  /><div class="outline-text-8" id="text-1-2-3-3-3-2-4">
 <p>
 merge 只是 elevator 的一部分功能, elv_next_request (或
 elevator_next_req_fn) 才是 elevator 的主要功能.
@@ -935,20 +935,20 @@ elevator 在解决 IO 优先级, 防止 starvation 等方面会有不同.
 </p>
 </div></li></ol></li>
 
-<li><a id="orgdbcf39d"></a>algorithm<br  /><ol class="org-ol"><li><a id="org399fcb8"></a>noop<br  /><ol class="org-ol"><li><a id="org48a02bc"></a>elevator_merge_fn<br  /></li>
+<li><a id="org40370f7"></a>algorithm<br  /><ol class="org-ol"><li><a id="orga1472ed"></a>noop<br  /><ol class="org-ol"><li><a id="org5b35985"></a>elevator_merge_fn<br  /></li>
 
-<li><a id="org01b1ec5"></a>elevator_next_req_fn<br  /></li></ol></li>
+<li><a id="orgcd32306"></a>elevator_next_req_fn<br  /></li></ol></li>
 
-<li><a id="org1e8edbc"></a>deadline<br  /></li>
+<li><a id="org44c9150"></a>deadline<br  /></li>
 
-<li><a id="orgba9c6fd"></a>CFQ<br  /><ol class="org-ol"><li><a id="orgc2fcb63"></a>ionice<br  /></li></ol></li>
+<li><a id="orga10f98e"></a>CFQ<br  /><ol class="org-ol"><li><a id="org064b69e"></a>ionice<br  /></li></ol></li>
 
-<li><a id="org36b4538"></a>anticipatory<br  /></li></ol></li></ol></li></ol>
+<li><a id="orgfd5cc10"></a>anticipatory<br  /></li></ol></li></ol></li></ol>
 </div>
 </div>
 
-<div id="outline-container-orgdb4acb8" class="outline-4">
-<h4 id="orgdb4acb8"><span class="section-number-4">1.2.4</span> bdev fs</h4>
+<div id="outline-container-org9f00568" class="outline-4">
+<h4 id="org9f00568"><span class="section-number-4">1.2.4</span> bdev fs</h4>
 <div class="outline-text-4" id="text-1-2-4">
 <p>
 bdev 文件系统是一个很特殊的伪文件系统, 它和其它文件系统一样, 提供了各
@@ -956,8 +956,8 @@ bdev 文件系统是一个很特殊的伪文件系统, 它和其它文件系统�
 </p>
 </div>
 
-<div id="outline-container-org2d2eaa3" class="outline-5">
-<h5 id="org2d2eaa3"><span class="section-number-5">1.2.4.1</span> bdev fs 的作用</h5>
+<div id="outline-container-orgd1347d4" class="outline-5">
+<h5 id="orgd1347d4"><span class="section-number-5">1.2.4.1</span> bdev fs 的作用</h5>
 <div class="outline-text-5" id="text-1-2-4-1">
 <ol class="org-ol">
 <li>访问 block device file 时会关联到 bdev fs 定义的各种 ops, 但这种关
@@ -970,32 +970,32 @@ bdev 文件系统是一个很特殊的伪文件系统, 它和其它文件系统�
 </div>
 </div>
 
-<div id="outline-container-orgdf7f66c" class="outline-5">
-<h5 id="orgdf7f66c"><span class="section-number-5">1.2.4.2</span> bdev_cache_init</h5>
+<div id="outline-container-org377c614" class="outline-5">
+<h5 id="org377c614"><span class="section-number-5">1.2.4.2</span> bdev_cache_init</h5>
 </div>
 
-<div id="outline-container-orgd788b97" class="outline-5">
-<h5 id="orgd788b97"><span class="section-number-5">1.2.4.3</span> init_special_inode</h5>
+<div id="outline-container-org375be04" class="outline-5">
+<h5 id="org375be04"><span class="section-number-5">1.2.4.3</span> init_special_inode</h5>
 </div>
 
-<div id="outline-container-org263b878" class="outline-5">
-<h5 id="org263b878"><span class="section-number-5">1.2.4.4</span> bdget</h5>
+<div id="outline-container-org8b7fe1a" class="outline-5">
+<h5 id="org8b7fe1a"><span class="section-number-5">1.2.4.4</span> bdget</h5>
 </div>
 </div>
 
-<div id="outline-container-orgc4fc224" class="outline-4">
-<h4 id="orgc4fc224"><span class="section-number-4">1.2.5</span> Block Device Driver</h4>
+<div id="outline-container-org16e54de" class="outline-4">
+<h4 id="org16e54de"><span class="section-number-4">1.2.5</span> Block Device Driver</h4>
 <div class="outline-text-4" id="text-1-2-5">
-</div><div id="outline-container-orgde0b6f5" class="outline-5">
-<h5 id="orgde0b6f5"><span class="section-number-5">1.2.5.1</span> Initialization</h5>
+</div><div id="outline-container-org27bc83a" class="outline-5">
+<h5 id="org27bc83a"><span class="section-number-5">1.2.5.1</span> Initialization</h5>
 <div class="outline-text-5" id="text-1-2-5-1">
-</div><ol class="org-ol"><li><a id="orgd56dfa6"></a>register_blkdev<br  /></li>
+</div><ol class="org-ol"><li><a id="orgdd7a1fe"></a>register_blkdev<br  /></li>
 
-<li><a id="org965ac96"></a>blk_init_queue<br  /></li></ol>
+<li><a id="orge031b5e"></a>blk_init_queue<br  /></li></ol>
 </div>
 
-<div id="outline-container-org37e9b46" class="outline-5">
-<h5 id="org37e9b46"><span class="section-number-5">1.2.5.2</span> request_fn</h5>
+<div id="outline-container-org8b37887" class="outline-5">
+<h5 id="org8b37887"><span class="section-number-5">1.2.5.2</span> request_fn</h5>
 <div class="outline-text-5" id="text-1-2-5-2">
 <p>
 do_xxx_request
@@ -1003,20 +1003,20 @@ do_xxx_request
 </div>
 </div>
 
-<div id="outline-container-org738d9dc" class="outline-5">
-<h5 id="org738d9dc"><span class="section-number-5">1.2.5.3</span> interrupt handler</h5>
+<div id="outline-container-org6d236d0" class="outline-5">
+<h5 id="org6d236d0"><span class="section-number-5">1.2.5.3</span> interrupt handler</h5>
 </div>
 
-<div id="outline-container-orgde9ad49" class="outline-5">
-<h5 id="orgde9ad49"><span class="section-number-5">1.2.5.4</span> DMA</h5>
+<div id="outline-container-orgf436942" class="outline-5">
+<h5 id="orgf436942"><span class="section-number-5">1.2.5.4</span> DMA</h5>
 </div>
 </div>
 
-<div id="outline-container-org9c8d638" class="outline-4">
-<h4 id="org9c8d638"><span class="section-number-4">1.2.6</span> I/O Architecture</h4>
+<div id="outline-container-orgb771df7" class="outline-4">
+<h4 id="orgb771df7"><span class="section-number-4">1.2.6</span> I/O Architecture</h4>
 <div class="outline-text-4" id="text-1-2-6">
-</div><div id="outline-container-org0a42b5a" class="outline-5">
-<h5 id="org0a42b5a"><span class="section-number-5">1.2.6.1</span> I/O port</h5>
+</div><div id="outline-container-org02404b8" class="outline-5">
+<h5 id="org02404b8"><span class="section-number-5">1.2.6.1</span> I/O port</h5>
 </div>
 </div>
 </div>
@@ -1026,7 +1026,7 @@ do_xxx_request
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-05-16 Mon&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-08-30 Tue 02:50</p>
+<p class="date">Created: 2016-08-30 Tue 10:03</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
