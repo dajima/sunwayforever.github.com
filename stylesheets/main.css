@@ -6,13 +6,13 @@
     text-align: justify;
     font-size: 13pt;
     padding: 10px;
-    line-height: 1.5em;
+    line-height: 1.9em;
   }
 
   #table-of-contents {
     color: black;
     background: #FFF;
-    font-size: 80%;
+    font-size: 110%;
     padding: .5em;
     margin: 1em -2em 1em 1em;
     display: block;
@@ -108,7 +108,7 @@
   }
 
   li {
-    margin: -0.2em;
+    margin-left: -1.3em;
   }
 
   table {
