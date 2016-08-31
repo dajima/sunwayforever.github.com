@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-08-31 Wed 10:48 -->
+<!-- 2016-08-31 Wed 11:56 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: Program Exzecution</title>
@@ -104,7 +104,7 @@ for the JavaScript code in this tag.
     permission(inode, MAY_EXEC, &amp;nd);
     <span style="font-weight: bold;">return</span> dentry_open(nd.dentry, nd.mnt, O_RDONLY);
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sched_exec &#21644; cpu load balance &#26377;&#20851;, &#20855;&#20307;&#21442;&#32771;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">[[file:process_scheduling.org::*push%20task][push task]]</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">[[file:process_scheduling.rel.org::*push%20task][push task]]</span>
   sched_exec()
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">MAX_ARG_PAGES &#40664;&#35748;&#20026; 32, &#34920;&#31034;&#32473; argv &#21644; env &#39044;&#30041;&#26368;&#22810; 32 &#20010; page, &#33509;</span>
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">page &#20026; 4k, &#21017;&#26368;&#32456;&#39044;&#30041; 128K</span>
@@ -295,8 +295,8 @@ load_binary 成功为止.
 </div>
 </div>
 
-<div id="outline-container-org7c8b840" class="outline-5">
-<h5 id="org7c8b840"><span class="section-number-5">1.1.2.3</span> search_binary_handler</h5>
+<div id="outline-container-org85230b8" class="outline-5">
+<h5 id="org85230b8"><span class="section-number-5">1.1.2.3</span> search_binary_handler</h5>
 <div class="outline-text-5" id="text-1-1-2-3">
 <div class="org-src-container">
 
@@ -795,7 +795,7 @@ load_misc_binary 实现用户自定义的加载, 它的过程和 load_script 非
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-08-02 Tue&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-08-31 Wed 10:48</p>
+<p class="date">Created: 2016-08-31 Wed 11:56</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
