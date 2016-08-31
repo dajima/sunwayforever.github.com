@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-08-30 Tue 21:19 -->
+<!-- 2016-08-31 Wed 10:48 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: Synchronization</title>
@@ -64,31 +64,32 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgb9baf5d">1. Linux Kernel: Synchronization</a>
+<li><a href="#org308e436">1. Linux Kernel: Synchronization</a>
 <ul>
-<li><a href="#orgdd94f00">1.1. 内核抢占</a></li>
-<li><a href="#orgd0d2414">1.2. 原子操作</a>
+<li><a href="#orgbb30254">1.1. 内核抢占</a></li>
+<li><a href="#org35acdf1">1.2. 原子操作</a>
 <ul>
-<li><a href="#org9d9c77e">1.2.1. 单核 (UP)</a></li>
-<li><a href="#org660163a">1.2.2. 多核 (MP)</a></li>
-<li><a href="#org1bc6625">1.2.3. 高级语言中的原子操作</a></li>
+<li><a href="#orgdbcb867">1.2.1. 单核 (UP)</a></li>
+<li><a href="#org4c82b24">1.2.2. 多核 (MP)</a></li>
+<li><a href="#org7f1b7d0">1.2.3. 高级语言中的原子操作</a></li>
 </ul>
 </li>
-<li><a href="#orgce4002f">1.3. 屏障</a>
+<li><a href="#org4bffe17">1.3. 屏障</a>
 <ul>
-<li><a href="#org566ead2">1.3.1. 内存屏障</a></li>
-<li><a href="#org195c445">1.3.2. 优化屏障</a></li>
+<li><a href="#org2732e4a">1.3.1. 内存屏障</a></li>
+<li><a href="#orgf649a32">1.3.2. 优化屏障</a></li>
 </ul>
 </li>
-<li><a href="#orgaa2ed6a">1.4. 自旋锁</a>
+<li><a href="#org2dfe8a6">1.4. 自旋锁</a>
 <ul>
-<li><a href="#org20f0eac">1.4.1. spin_lock</a></li>
-<li><a href="#org8c17b2e">1.4.2. spin_unlock</a></li>
+<li><a href="#org49273e4">1.4.1. spin_lock</a></li>
+<li><a href="#orgfcbb162">1.4.2. spin_unlock</a></li>
 </ul>
 </li>
-<li><a href="#orgbd7cfe3">1.5. 信号量</a>
+<li><a href="#orge769ba2">1.5. 信号量</a>
 <ul>
-<li><a href="#orgcc3fdc6">1.5.1. kernel 中的 semaphore</a></li>
+<li><a href="#org8859f43">1.5.1. kernel 中的 semaphore</a></li>
+<li><a href="#org347cd0d">1.5.2. 信号量与自旋锁</a></li>
 </ul>
 </li>
 </ul>
@@ -96,14 +97,14 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
-<div id="outline-container-orgb9baf5d" class="outline-2">
-<h2 id="orgb9baf5d"><span class="section-number-2">1</span> Linux Kernel: Synchronization</h2>
+<div id="outline-container-org308e436" class="outline-2">
+<h2 id="org308e436"><span class="section-number-2">1</span> Linux Kernel: Synchronization</h2>
 <div class="outline-text-2" id="text-1">
-</div><div id="outline-container-orgdd94f00" class="outline-3">
-<h3 id="orgdd94f00"><span class="section-number-3">1.1</span> 内核抢占</h3>
+</div><div id="outline-container-orgbb30254" class="outline-3">
+<h3 id="orgbb30254"><span class="section-number-3">1.1</span> 内核抢占</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
-内核抢占 (kernel preemption) 在 <a href="interrupt.rel.html#org9ce7661">ret_from_intr</a> 时已经描述过, 简单的说,
+内核抢占 (kernel preemption) 在 <a href="interrupt.rel.html#orgf73b3ba">ret_from_intr</a> 时已经描述过, 简单的说,
 内核抢占是指:
 </p>
 
@@ -232,16 +233,16 @@ resume_kernel 时要求 preempt_count 为 0 才能进行内核抢占, 也就要�
 </div>
 </div>
 
-<div id="outline-container-orgd0d2414" class="outline-3">
-<h3 id="orgd0d2414"><span class="section-number-3">1.2</span> 原子操作</h3>
+<div id="outline-container-org35acdf1" class="outline-3">
+<h3 id="org35acdf1"><span class="section-number-3">1.2</span> 原子操作</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 x86 上原子操作 (aotmic operations) 的分类:
 </p>
 </div>
 
-<div id="outline-container-org9d9c77e" class="outline-4">
-<h4 id="org9d9c77e"><span class="section-number-4">1.2.1</span> 单核 (UP)</h4>
+<div id="outline-container-orgdbcb867" class="outline-4">
+<h4 id="orgdbcb867"><span class="section-number-4">1.2.1</span> 单核 (UP)</h4>
 <div class="outline-text-4" id="text-1-2-1">
 <p>
 单核系统上决定一个操作是不是原子操作的主要因素是 interrupt. 一般情况下,
@@ -250,8 +251,8 @@ CPU 每执行一条指令都会检查是否发生了 interrupt, 所以单条指�
 </div>
 </div>
 
-<div id="outline-container-org660163a" class="outline-4">
-<h4 id="org660163a"><span class="section-number-4">1.2.2</span> 多核 (MP)</h4>
+<div id="outline-container-org4c82b24" class="outline-4">
+<h4 id="org4c82b24"><span class="section-number-4">1.2.2</span> 多核 (MP)</h4>
 <div class="outline-text-4" id="text-1-2-2">
 <p>
 多核系统决定一个操作是否是原子操作的主要因素并不是 interrupt, 因为单条指令虽然不会被 interrupt 打断, 但却可能因为多核同时执行的原因变成非原子操作.
@@ -304,8 +305,8 @@ LOCK 前缀的 Read-Modify-Write 指令是原子的.
 </div>
 </div>
 
-<div id="outline-container-org1bc6625" class="outline-4">
-<h4 id="org1bc6625"><span class="section-number-4">1.2.3</span> 高级语言中的原子操作</h4>
+<div id="outline-container-org7f1b7d0" class="outline-4">
+<h4 id="org7f1b7d0"><span class="section-number-4">1.2.3</span> 高级语言中的原子操作</h4>
 <div class="outline-text-4" id="text-1-2-3">
 <p>
 一般情况下, 高级语言中的"疑似"原子操作的语句很多时候不是原子操作, 例如:
@@ -367,7 +368,7 @@ x++ 也可能被编译为:
 </ol>
 
 <p>
-所以高级语言中的基本操作无法保证是否是原子操作, 因为 kernel 使用汇编实现了一系统的 atomic_xxx 函数, 以支持原子操作, 例如:
+所以高级语言中的基本操作无法保证是否是原子操作, 因此 kernel 使用汇编实现了一系统的 atomic_xxx 函数, 以支持原子操作, 例如:
 </p>
 
 <div class="org-src-container">
@@ -384,8 +385,8 @@ x++ 也可能被编译为:
 </div>
 </div>
 
-<div id="outline-container-orgce4002f" class="outline-3">
-<h3 id="orgce4002f"><span class="section-number-3">1.3</span> 屏障</h3>
+<div id="outline-container-org4bffe17" class="outline-3">
+<h3 id="org4bffe17"><span class="section-number-3">1.3</span> 屏障</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 屏障 (barrier, fence) 是和乱序执行有关的概念. 编译器和 CPU 为了优化代码通常会采用乱序执行的方式, 乱序执行能充分的利用 CPU 的流水线功能
@@ -420,8 +421,8 @@ barrier
 </p>
 </div>
 
-<div id="outline-container-org566ead2" class="outline-4">
-<h4 id="org566ead2"><span class="section-number-4">1.3.1</span> 内存屏障</h4>
+<div id="outline-container-org2732e4a" class="outline-4">
+<h4 id="org2732e4a"><span class="section-number-4">1.3.1</span> 内存屏障</h4>
 <div class="outline-text-4" id="text-1-3-1">
 <p>
 内存屏障 (memory barrier), 是一类 CPU 指令, 这些指令会禁止 CPU 乱序执行, CPU 会保证 memory barrier 之前的指令先执行完才会执行 memory
@@ -454,8 +455,8 @@ Kernel 提供了一个 mb 宏做为 memory barrier, 其实现为:
 </div>
 </div>
 
-<div id="outline-container-org195c445" class="outline-4">
-<h4 id="org195c445"><span class="section-number-4">1.3.2</span> 优化屏障</h4>
+<div id="outline-container-orgf649a32" class="outline-4">
+<h4 id="orgf649a32"><span class="section-number-4">1.3.2</span> 优化屏障</h4>
 <div class="outline-text-4" id="text-1-3-2">
 <p>
 除了 memory barrier, 还存在一种叫做优化屏障 (optimization barrier) 的屏障, 这种 barrier 并不是一种 CPU 指令, 而是给编译器的一个提示.
@@ -490,8 +491,8 @@ CPU 乱序执行, 通过两者的配合, 可以确保程序确实是以代码上
 </div>
 </div>
 
-<div id="outline-container-orgaa2ed6a" class="outline-3">
-<h3 id="orgaa2ed6a"><span class="section-number-3">1.4</span> 自旋锁</h3>
+<div id="outline-container-org2dfe8a6" class="outline-3">
+<h3 id="org2dfe8a6"><span class="section-number-3">1.4</span> 自旋锁</h3>
 <div class="outline-text-3" id="text-1-4">
 <p>
 在介绍自旋锁 (spin lock) 之前, 先考虑一下在单核下不使用锁如何来保护临界区 (critical region)
@@ -531,8 +532,8 @@ interrupt 使用它. 而且 interrupt 返回前, exception 是不会执行的, �
 </p>
 </div>
 
-<div id="outline-container-org20f0eac" class="outline-4">
-<h4 id="org20f0eac"><span class="section-number-4">1.4.1</span> spin_lock</h4>
+<div id="outline-container-org49273e4" class="outline-4">
+<h4 id="org49273e4"><span class="section-number-4">1.4.1</span> spin_lock</h4>
 <div class="outline-text-4" id="text-1-4-1">
 <p>
 spin_lock 是由 BUILD_LOCK_OPS 这个宏定义的
@@ -558,8 +559,8 @@ spin_lock 是由 BUILD_LOCK_OPS 这个宏定义的
 </div>
 </div>
 
-<div id="outline-container-org798e8a5" class="outline-5">
-<h5 id="org798e8a5"><span class="section-number-5">1.4.1.1</span> UP 上的 spin_lock</h5>
+<div id="outline-container-orgc692217" class="outline-5">
+<h5 id="orgc692217"><span class="section-number-5">1.4.1.1</span> UP 上的 spin_lock</h5>
 <div class="outline-text-5" id="text-1-4-1-1">
 <div class="org-src-container">
 
@@ -574,8 +575,8 @@ spin_lock 是由 BUILD_LOCK_OPS 这个宏定义的
 </div>
 </div>
 
-<div id="outline-container-orgcc909a8" class="outline-5">
-<h5 id="orgcc909a8"><span class="section-number-5">1.4.1.2</span> MP 上的 spin_lock</h5>
+<div id="outline-container-org6eccd83" class="outline-5">
+<h5 id="org6eccd83"><span class="section-number-5">1.4.1.2</span> MP 上的 spin_lock</h5>
 <div class="outline-text-5" id="text-1-4-1-2">
 <div class="org-src-container">
 
@@ -601,8 +602,8 @@ spin_lock 是由 BUILD_LOCK_OPS 这个宏定义的
 </div>
 </div>
 
-<div id="outline-container-org8c17b2e" class="outline-4">
-<h4 id="org8c17b2e"><span class="section-number-4">1.4.2</span> spin_unlock</h4>
+<div id="outline-container-orgfcbb162" class="outline-4">
+<h4 id="orgfcbb162"><span class="section-number-4">1.4.2</span> spin_unlock</h4>
 <div class="outline-text-4" id="text-1-4-2">
 <p>
 UP 上的 spin_unlock 等同于 preempt_enable
@@ -623,11 +624,12 @@ MP 上的 spin_unlock 为:
 </div>
 </div>
 
-<div id="outline-container-orgbd7cfe3" class="outline-3">
-<h3 id="orgbd7cfe3"><span class="section-number-3">1.5</span> 信号量</h3>
+<div id="outline-container-orge769ba2" class="outline-3">
+<h3 id="orge769ba2"><span class="section-number-3">1.5</span> 信号量</h3>
 <div class="outline-text-3" id="text-1-5">
 <p>
-信号量 (semaphore) 是所有同步原语 (synchronization primitives) <sup><a id="fnr.2" class="footref" href="#fn.2">2</a></sup> 中最基本的一种, 实际上, 所有其它的同步原语 (mutex, lock, cond var, &#x2026;) 都可以用信号量来实现, 例如 mutex 可以用二元信号量 (binary semaphore) 来实现.
+信号量 (semaphore) 是同步原语 (synchronization primitives) <sup><a id="fnr.2" class="footref" href="#fn.2">2</a></sup> 的一种, 实际上, 许多其它的同步原语 (mutex, lock, &#x2026;) 都可以用信号量来实现,
+例如 mutex 可以用二元信号量 (binary semaphore) 来实现.
 </p>
 
 <p>
@@ -661,11 +663,11 @@ V/up 操作
 </p>
 </div>
 
-<div id="outline-container-orgcc3fdc6" class="outline-4">
-<h4 id="orgcc3fdc6"><span class="section-number-4">1.5.1</span> kernel 中的 semaphore</h4>
+<div id="outline-container-org8859f43" class="outline-4">
+<h4 id="org8859f43"><span class="section-number-4">1.5.1</span> kernel 中的 semaphore</h4>
 <div class="outline-text-4" id="text-1-5-1">
-</div><div id="outline-container-org36d4a76" class="outline-5">
-<h5 id="org36d4a76"><span class="section-number-5">1.5.1.1</span> down</h5>
+</div><div id="outline-container-orge2ab97e" class="outline-5">
+<h5 id="orge2ab97e"><span class="section-number-5">1.5.1.1</span> down</h5>
 <div class="outline-text-5" id="text-1-5-1-1">
 <div class="org-src-container">
 
@@ -722,8 +724,8 @@ V/up 操作
 </div>
 </div>
 
-<div id="outline-container-org7867a62" class="outline-5">
-<h5 id="org7867a62"><span class="section-number-5">1.5.1.2</span> up</h5>
+<div id="outline-container-org172b722" class="outline-5">
+<h5 id="org172b722"><span class="section-number-5">1.5.1.2</span> up</h5>
 <div class="outline-text-5" id="text-1-5-1-2">
 <div class="org-src-container">
 
@@ -748,6 +750,21 @@ V/up 操作
 </pre>
 </div>
 </div>
+</div>
+</div>
+
+<div id="outline-container-org347cd0d" class="outline-4">
+<h4 id="org347cd0d"><span class="section-number-4">1.5.2</span> 信号量与自旋锁</h4>
+<div class="outline-text-4" id="text-1-5-2">
+<p>
+spin lock 与 semaphore 都可以在 MP 上保证同步, 它们的区别是:
+</p>
+
+<ol class="org-ol">
+<li>spin lock 是通过 spin 来保证同步的, 不会发生进程切换, 所以在大多数的场景都可以使用, 但一般在不允许进程切换的场景下使用 spin lock</li>
+
+<li>使用 semaphore 时会发生进程切换, 代价比 spin lock 高, 在允许进程切换的场景一般优先使用 semaphore</li>
+</ol>
 </div>
 </div>
 </div>
@@ -776,7 +793,7 @@ passeren (通过), V 表示 vrijgeven (释放)
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-08-25 Thu&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-08-30 Tue 21:19</p>
+<p class="date">Created: 2016-08-31 Wed 10:48</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
