@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-08-31 Wed 10:48 -->
+<!-- 2016-09-01 Thu 17:49 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: Memory</title>
@@ -97,7 +97,7 @@ for the JavaScript code in this tag.
 </li>
 <li><a href="#orge4ad000">1.4. 页面回收</a>
 <ul>
-<li><a href="#orgabdeed5">1.4.1. Overview</a></li>
+<li><a href="#orgc44338f">1.4.1. Overview</a></li>
 <li><a href="#orgd28c4f5">1.4.2. 反向映射</a></li>
 <li><a href="#org43dcce4">1.4.3. PFRA 的实现</a></li>
 </ul>
@@ -146,7 +146,7 @@ for the JavaScript code in this tag.
 
 <p>
 对于 cs 寄存器, 它的低两位称为 CPL (Current Privilege Level), cs 的
-CPL 位始终与 CPU 当时的 privilege level (ring) 是一致的(参考 <a href="process.rel.html#orga20305b">关于系统调用</a>). 若当前处于 kernel mode, 则 CPU 为 ring 0, cs 的 CPL 也为 0, 若当前处于 user mode, 则 CPU 的 ring 和 cs 的 CPL 都为 3
+CPL 位始终与 CPU 当时的 privilege level (ring) 是一致的(参考 <a href="process.rel.html#org41689c1">关于系统调用</a>). 若当前处于 kernel mode, 则 CPU 为 ring 0, cs 的 CPL 也为 0, 若当前处于 user mode, 则 CPU 的 ring 和 cs 的 CPL 都为 3
 </p>
 
 <p>
@@ -268,7 +268,7 @@ page fault 这个 interrupt 在 idt_table 中对应的 index 为 14, 那么 ring
 <p>
 因为 int 指令可以指定任意 idt index, 所以每个 int 指令都需要去检查 CPL
 与 DPL. 但 int 通常都是用来实现 syscall 的, x86 又提供两个不需要检查
-DPL 的 `int 0x80` 指令: sysenter, syscall (参考 <a href="process.rel.html#orgaec1975">sysenter, syscall,
+DPL 的 `int 0x80` 指令: sysenter, syscall (参考 <a href="process.rel.html#org2dae0ed">sysenter, syscall,
 vsyscall</a>)
 </p>
 </div></li>
@@ -290,8 +290,8 @@ vsyscall</a>)
 </p>
 </div>
 
-<div id="outline-container-org7dfaa5a" class="outline-5">
-<h5 id="org7dfaa5a"><span class="section-number-5">1.1.2.1</span> Overview</h5>
+<div id="outline-container-orgc44338f" class="outline-5">
+<h5 id="orgc44338f"><span class="section-number-5">1.1.2.1</span> Overview</h5>
 <div class="outline-text-5" id="text-1-1-2-1">
 <p>
 Paging unit 的作用:
@@ -1133,6 +1133,8 @@ map_new_virtual:
    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
 
   vaddr = PKMAP_ADDR(last_pkmap_nr);
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">permanent_kmaps_init &#26102;&#23558; pkmap_page_table &#35774;&#32622;&#20102;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">swapper_pg_dir &#20013;&#23545;&#24212;&#30340;&#37096;&#20998;, &#25152;&#20197; kmap &#20462;&#25913;&#30340;&#26159; swapper_pg_dir         </span>
   set_pte(&amp;(pkmap_page_table[last_pkmap_nr]), mk_pte(page, kmap_prot));
   pkmap_count[last_pkmap_nr] = 1;
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">set_page_address &#20250;&#20462;&#25913; page_address_map &#36825;&#20010; list, &#35760;&#24405; page &#19982;</span>
@@ -1239,8 +1241,8 @@ block 能否与前后的 block 合并, 合并的条件是:
 </div>
 </div>
 
-<div id="outline-container-org405d3b9" class="outline-5">
-<h5 id="org405d3b9"><span class="section-number-5">1.2.6.2</span> 相关数据结构</h5>
+<div id="outline-container-org401bf8e" class="outline-5">
+<h5 id="org401bf8e"><span class="section-number-5">1.2.6.2</span> 相关数据结构</h5>
 <div class="outline-text-5" id="text-1-2-6-2">
 </div><ol class="org-ol"><li><a id="orgbe96c59"></a>zone<br  /><div class="outline-text-6" id="text-1-2-6-2-1">
 <p>
@@ -1454,8 +1456,8 @@ mm_struct 等, 通过维护一个针对这些常用数据结构的对象缓存, 
 </div>
 </div>
 
-<div id="outline-container-org695f5c6" class="outline-5">
-<h5 id="org695f5c6"><span class="section-number-5">1.2.7.2</span> 相关数据结构</h5>
+<div id="outline-container-org401bf8e" class="outline-5">
+<h5 id="org401bf8e"><span class="section-number-5">1.2.7.2</span> 相关数据结构</h5>
 <div class="outline-text-5" id="text-1-2-7-2">
 </div><ol class="org-ol"><li><a id="org2833472"></a>kmem_cache_t<br  /><div class="outline-text-6" id="text-1-2-7-2-1">
 <p>
@@ -1583,7 +1585,7 @@ slab-&gt;free 及 kmem_bufctl_t 的使用见 <a href="#org7ca2f4e">kmem_cache_al
 </p>
 </div></li>
 
-<li><a id="org2a8466a"></a>总结<br  /><div class="outline-text-6" id="text-1-2-7-2-4">
+<li><a id="org5e97beb"></a>总结<br  /><div class="outline-text-6" id="text-1-2-7-2-4">
 <p>
 Slab 分为 cache, slab, object 三个层次.
 </p>
@@ -1749,7 +1751,7 @@ cache_sizes 数组, slab 维护了 object size 分别为 32, 64, &#x2026; 128K �
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="org4fb20d9"></a>kmalloc<br  /><div class="outline-text-6" id="text-1-2-7-5-1">
+<ol class="org-ol"><li><a id="org8dad216"></a>kmalloc<br  /><div class="outline-text-6" id="text-1-2-7-5-1">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">inline</span> <span style="font-weight: bold; text-decoration: underline;">void</span> *<span style="font-weight: bold;">kmalloc</span>(<span style="font-weight: bold; text-decoration: underline;">size_t</span> <span style="font-weight: bold; font-style: italic;">size</span>, <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">flags</span>):
@@ -1889,8 +1891,8 @@ cache 的 gfporder 决定了一个 slab 占用多少个 page (参考 cache_grow 
 </div>
 </div>
 
-<div id="outline-container-org6f43663" class="outline-5">
-<h5 id="org6f43663"><span class="section-number-5">1.2.8.2</span> vmalloc</h5>
+<div id="outline-container-orgcf4935b" class="outline-5">
+<h5 id="orgcf4935b"><span class="section-number-5">1.2.8.2</span> vmalloc</h5>
 <div class="outline-text-5" id="text-1-2-8-2">
 <div class="org-src-container">
 
@@ -1973,7 +1975,8 @@ ps. 关于 get_vm_area, 参考 android binder 的 <a href="file:///home/sunway/D
 <ol class="org-ol">
 <li>vmalloc 用一个简单 vm_struct 链表通过 first_fit 方法来管理虚拟地址空间的分配</li>
 
-<li>除了分配虚拟地址空间, vmalloc 还会自己分配 page 并设置 page table</li>
+<li>除了分配虚拟地址空间, vmalloc 还会自己分配 page 并设置 page table,
+并且与 kmap 一样, vmalloc 也是操作的 swapper_pg_dir</li>
 </ol>
 </div></li></ol>
 </div>
@@ -2433,8 +2436,8 @@ mmap 系统调用用来建立 memory region
 <div id="outline-container-orga9da230" class="outline-4">
 <h4 id="orga9da230"><span class="section-number-4">1.3.3</span> Page Fault</h4>
 <div class="outline-text-4" id="text-1-3-3">
-</div><div id="outline-container-org2150275" class="outline-5">
-<h5 id="org2150275"><span class="section-number-5">1.3.3.1</span> Overview</h5>
+</div><div id="outline-container-orgc44338f" class="outline-5">
+<h5 id="orgc44338f"><span class="section-number-5">1.3.3.1</span> Overview</h5>
 <div class="outline-text-5" id="text-1-3-3-1">
 
 <div class="figure">
@@ -2618,7 +2621,7 @@ task 的页表, 参考 <a href="#org504c442">动态映射的部分 (ZONE_HIGHMEM
 <div id="outline-container-orged226ef" class="outline-5">
 <h5 id="orged226ef"><span class="section-number-5">1.3.3.5</span> expand_stack</h5>
 <div class="outline-text-5" id="text-1-3-3-5">
-</div><ol class="org-ol"><li><a id="org1aa9a8e"></a>expand_stack<br  /><div class="outline-text-6" id="text-1-3-3-5-1">
+</div><ol class="org-ol"><li><a id="orged226ef"></a>expand_stack<br  /><div class="outline-text-6" id="text-1-3-3-5-1">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">expand_stack</span>:
@@ -2871,8 +2874,8 @@ mmap flags:
 <div id="outline-container-orge4ad000" class="outline-3">
 <h3 id="orge4ad000"><span class="section-number-3">1.4</span> 页面回收</h3>
 <div class="outline-text-3" id="text-1-4">
-</div><div id="outline-container-orgabdeed5" class="outline-4">
-<h4 id="orgabdeed5"><span class="section-number-4">1.4.1</span> Overview</h4>
+</div><div id="outline-container-orgc44338f" class="outline-4">
+<h4 id="orgc44338f"><span class="section-number-4">1.4.1</span> Overview</h4>
 <div class="outline-text-4" id="text-1-4-1">
 <p>
 页面回收算法 (Page Frame Reclaiming Algorithm, PFRA) 的目标是选择一个 none-free page
@@ -3021,7 +3024,7 @@ page descriptor 中有一个称为 anon_vma 的 list_head. 但 list 中的成员
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="org05ff9a7"></a>Overview<br  /><div class="outline-text-6" id="text-1-4-2-1-1">
+<ol class="org-ol"><li><a id="orgc44338f"></a>Overview<br  /><div class="outline-text-6" id="text-1-4-2-1-1">
 <p>
 Anonymous pages 可能会有多个 PTE 指向的它, 最常见的情形是 fork: fork
 时的复制了一块 vma, 则在父子进程中这块 vma 对应的 PTE 指向相同的
@@ -3273,7 +3276,7 @@ page flags
 </ol>
 </div></li>
 
-<li><a id="orgd7c55e7"></a>Overview<br  /><div class="outline-text-6" id="text-1-4-3-1-2">
+<li><a id="orgc44338f"></a>Overview<br  /><div class="outline-text-6" id="text-1-4-3-1-2">
 <p>
 zone 中已经分配的 page 中的一部分 (user mode address space 及 page
 cache) 被组织在两个不相关的链表中: active_list 和 inactive_list
@@ -3463,7 +3466,7 @@ mapped, 后者和 swap 并没有什么关系
 </p>
 </div></li>
 
-<li><a id="orgf1cdbae"></a>refill_inactive_zone<br  /><div class="outline-text-7" id="text-1-4-3-1-6-2">
+<li><a id="org2d07eec"></a>refill_inactive_zone<br  /><div class="outline-text-7" id="text-1-4-3-1-6-2">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">refill_inactive_zone</span>:
@@ -3807,7 +3810,7 @@ select_bad_process 选择一个 victim, 选择的标准是:
 
 <div class="footdef"><sup><a id="fn.4" class="footnum" href="#fnr.4">4</a></sup> <div class="footpara"><p class="footpara">
 通过 page entry 的 User/Supervisor flag 来限制访问, 但这里有一个例外: vsyscall page 位于 3G 以上 (0xffffe000), 但通过设置 page entry
-的 user flag 允许 user mode 访问, 具体参考 <a href="signal.rel.html#org32c0112">Linux Kernel: Signal</a>
+的 user flag 允许 user mode 访问, 具体参考 <a href="signal.rel.html#org0a8cdf1">Linux Kernel: Signal</a>
 </p></div></div>
 
 <div class="footdef"><sup><a id="fn.5" class="footnum" href="#fnr.5">5</a></sup> <div class="footpara"><p class="footpara">
@@ -3821,7 +3824,7 @@ swapper (或 idle 进程, init_task, 0 号进程) 是一个例外: 它会使用 
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-06-14 Tue&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-08-31 Wed 10:48</p>
+<p class="date">Created: 2016-09-01 Thu 17:49</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
