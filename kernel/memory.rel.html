@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-09-01 Thu 18:07 -->
+<!-- 2016-09-01 Thu 18:11 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: Memory</title>
@@ -351,7 +351,7 @@ entry
 <p>
 由于 page frame 的地址是 4K 对齐的, 所以 page directory entry 和 page
 table entry 只需要 20 位就可以表示, 但 page directory entry 和 page
-table entry 都是用 32 位表示, 所以它们的低 12 位实际是空闲的, 可以用来表示一些和 page frame 相关的的额外信息, 比如权限.
+table entry 都是用 32 位表示, 所以它们的低 12 位实际是空闲的, 可以用来表示一些和 page frame 相关的的额外信息, 比如权限. 这 12 位空闲比特构成了 page directory/table entry 的 flag
 </p>
 </div>
 </div>
@@ -3830,7 +3830,7 @@ swapper (或 idle 进程, init_task, 0 号进程) 是一个例外: 它会使用 
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-06-14 Tue&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-09-01 Thu 18:07</p>
+<p class="date">Created: 2016-09-01 Thu 18:11</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
