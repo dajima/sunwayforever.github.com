@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-09-01 Thu 11:01 -->
+<!-- 2016-09-01 Thu 11:54 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: Process</title>
@@ -852,9 +852,10 @@ END(syscall)
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#28982;&#32780; SAVE_ALL &#26102;&#20063;&#20250;&#20445;&#23384;&#19968;&#27425; %eax &#21040; pt_regs-&gt;eax..., &#36825;&#20004;&#20010; eax</span>
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#30340;&#20316;&#29992;&#26159;?</span>
     <span style="font-weight: bold; font-style: italic;">// </span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">pt_regs-&gt;eax &#27599;&#27425; interrupt &#37117;&#20250;&#35774;&#32622;, &#36890;&#36807; pt_regs-&gt;eax &#26080;&#27861;&#21028;&#26029;&#24403;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21069;&#26159;&#21542;&#26159; syscall. &#36890;&#36807;&#21482;&#22312; system_call &#26102;&#35774;&#32622; orig_eax &#21487;&#20197;&#25226;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">orig_eax &#20570;&#25104; syscall &#30340;&#26631;&#35760;    </span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">pt_regs-&gt;eax &#27599;&#27425; interrupt &#37117;&#20250;&#35774;&#32622;, &#36890;&#36807; pt_regs-&gt;eax &#26080;&#27861;&#21028;&#26029;</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#24403;&#21069;&#26159;&#21542;&#26159; syscall. &#36890;&#36807;&#21482;&#22312; system_call &#26102;&#35774;&#32622; orig_eax &#21487;&#20197;&#25226;</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">orig_eax &#20570;&#25104; syscall &#30340;&#26631;&#35760; (&#22788;&#29702; irq &#26102;&#20063;&#20250; push &#19968;&#20010; orig_eax,</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20294;&#20026;&#19968;&#20010;&#36127;&#25968;, &#21487;&#20197;&#19982; syscall &#21306;&#20998;, &#20855;&#20307;&#21442;&#32771; do_IRQ)      </span>
     pushl %eax
     SAVE_ALL
     GET_THREAD_INFO(%ebp)
@@ -1830,7 +1831,7 @@ kernel 启动的最后阶段, 调用了 rest_init 来启动 1 号进程 (init), 
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-07-08 Fri&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-09-01 Thu 11:01</p>
+<p class="date">Created: 2016-09-01 Thu 11:54</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

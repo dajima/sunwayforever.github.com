@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-09-01 Thu 11:01 -->
+<!-- 2016-09-01 Thu 11:54 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: Signal</title>
@@ -711,7 +711,7 @@ siginfo 的指针.
 <p>
 sa_handler 执行结束后, 按照 c 默认的调用约定和前面描述的栈布局, 会跳转到 __kernel_sigreturn 函数, __kernel_sigreturn 函数是保存在 vsyscall
 page 中的一个函数, 所以应用可以直接访问, 关于 vsyscall page, 参考
-<a href="process.rel.html#orgc3b3d46">sysenter, syscall, vsyscall</a>
+<a href="process.rel.html#org2dae0ed">sysenter, syscall, vsyscall</a>
 </p>
 
 <p>
@@ -848,7 +848,10 @@ Dump of assembler code for function __kernel_vsyscall:
    0xf7fd8d41 &lt;+1&gt;:     push   %edx
    0xf7fd8d42 &lt;+2&gt;:     push   %ebp
    0xf7fd8d43 &lt;+3&gt;:     mov    %esp,%ebp
-   0xf7fd8d45 &lt;+5&gt;:     sysenter 
+   0xf7fd8d45 &lt;+5&gt;:     sysenter
+   // 这里的 int $0x80 是什么意思? 和
+   // [[file:process.rel.org::*sysenter,%20syscall,%20vsyscall][sysenter,
+   // syscall, vsyscall]] 中 dump 的 __kernel_vsyscall 不一样...     
    0xf7fd8d47 &lt;+7&gt;:     int    $0x80
    0xf7fd8d49 &lt;+9&gt;:     pop    %ebp
    0xf7fd8d4a &lt;+10&gt;:    pop    %edx
@@ -1007,7 +1010,7 @@ handle_signal
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-08-10 Wed&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-09-01 Thu 11:01</p>
+<p class="date">Created: 2016-09-01 Thu 11:54</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
