@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-08-31 Wed 10:48 -->
+<!-- 2016-09-01 Thu 11:01 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: Signal</title>
@@ -711,7 +711,7 @@ siginfo 的指针.
 <p>
 sa_handler 执行结束后, 按照 c 默认的调用约定和前面描述的栈布局, 会跳转到 __kernel_sigreturn 函数, __kernel_sigreturn 函数是保存在 vsyscall
 page 中的一个函数, 所以应用可以直接访问, 关于 vsyscall page, 参考
-<a href="process.rel.html#org455222b">sysenter, syscall, vsyscall</a>
+<a href="process.rel.html#orgc3b3d46">sysenter, syscall, vsyscall</a>
 </p>
 
 <p>
@@ -972,6 +972,7 @@ handle_signal
       <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">fallthrough </span><span style="font-weight: bold; font-style: italic;">*/</span>
       <span style="font-weight: bold;">case</span> -ERESTARTNOINTR:
         regs-&gt;eax = regs-&gt;orig_eax;
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19981;&#35770; int 0x80 &#25110; sysenter, &#25351;&#20196;&#38271;&#24230;&#37117;&#26159; 2 bytes             </span>
         regs-&gt;eip -= 2;
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
   setup_frame
@@ -1006,7 +1007,7 @@ handle_signal
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-08-10 Wed&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-08-31 Wed 10:48</p>
+<p class="date">Created: 2016-09-01 Thu 11:01</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
