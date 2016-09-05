@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-09-01 Thu 17:57 -->
+<!-- 2016-09-05 Mon 15:25 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: Process Scheduling</title>
@@ -64,45 +64,45 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgafca958">1. Linux Kernel: Process Scheduling</a>
+<li><a href="#org95b5479">1. Linux Kernel: Process Scheduling</a>
 <ul>
-<li><a href="#org59e2206">1.1. Overview</a></li>
-<li><a href="#orgf978450">1.2. 相关数据结构</a>
+<li><a href="#orgd526b14">1.1. Overview</a></li>
+<li><a href="#org9417613">1.2. 相关数据结构</a>
 <ul>
-<li><a href="#org1e9391b">1.2.1. runqueue</a></li>
-<li><a href="#org2cb0746">1.2.2. task_struct</a></li>
-<li><a href="#orge70b0d1">1.2.3. priority</a></li>
+<li><a href="#orgb55ded0">1.2.1. runqueue</a></li>
+<li><a href="#org0433571">1.2.2. task_struct</a></li>
+<li><a href="#org2aa29f2">1.2.3. priority</a></li>
 </ul>
 </li>
-<li><a href="#orgcfca2b9">1.3. 相关的函数</a>
+<li><a href="#orgde0d9c9">1.3. 相关的函数</a>
 <ul>
-<li><a href="#org59357bc">1.3.1. scheduler_tick</a></li>
-<li><a href="#org82aa008">1.3.2. try_to_wake_up</a></li>
-<li><a href="#org26b9f5b">1.3.3. schedule</a></li>
-<li><a href="#orgb0edb1c">1.3.4. set_tsk_need_resched</a></li>
+<li><a href="#org3dc45fb">1.3.1. scheduler_tick</a></li>
+<li><a href="#org622c1c8">1.3.2. try_to_wake_up</a></li>
+<li><a href="#org7818728">1.3.3. schedule</a></li>
+<li><a href="#org0ca2342">1.3.4. set_tsk_need_resched</a></li>
 </ul>
 </li>
-<li><a href="#org39fcc01">1.4. 各种 scheduler</a>
+<li><a href="#org43d7efd">1.4. 各种 scheduler</a>
 <ul>
-<li><a href="#org7fd3da9">1.4.1. SCHED_FIFO</a></li>
-<li><a href="#orgaf15973">1.4.2. SCHED_RR</a></li>
-<li><a href="#orgbf32d75">1.4.3. SCHED_NORMAL</a></li>
+<li><a href="#org475fa9e">1.4.1. SCHED_FIFO</a></li>
+<li><a href="#org84eeedc">1.4.2. SCHED_RR</a></li>
+<li><a href="#org52fb269">1.4.3. SCHED_NORMAL</a></li>
 </ul>
 </li>
-<li><a href="#org1e30975">1.5. CPU 负载均衡</a>
+<li><a href="#org35e25ea">1.5. CPU 负载均衡</a>
 <ul>
-<li><a href="#org2a0b9d7">1.5.1. pull task</a></li>
-<li><a href="#org1aa1986">1.5.2. push task</a></li>
+<li><a href="#org20fbf70">1.5.1. pull task</a></li>
+<li><a href="#org57aaf04">1.5.2. push task</a></li>
 </ul>
 </li>
-<li><a href="#org4fbe0e7">1.6. 相关 API</a>
+<li><a href="#org3b4de3c">1.6. 相关 API</a>
 <ul>
-<li><a href="#org244173c">1.6.1. nice</a></li>
-<li><a href="#org268a57e">1.6.2. sched_yield</a></li>
-<li><a href="#orgd9986e1">1.6.3. sched_setscheduler</a></li>
-<li><a href="#org73c7bcc">1.6.4. sched_setaffinity</a></li>
-<li><a href="#org2c604e7">1.6.5. fork</a></li>
-<li><a href="#orgf62f389">1.6.6. See also</a></li>
+<li><a href="#org0fcb825">1.6.1. nice</a></li>
+<li><a href="#org1c37e65">1.6.2. sched_yield</a></li>
+<li><a href="#orgce189b6">1.6.3. sched_setscheduler</a></li>
+<li><a href="#org2fbb3b4">1.6.4. sched_setaffinity</a></li>
+<li><a href="#org6cfb3be">1.6.5. fork</a></li>
+<li><a href="#orgc0b1e76">1.6.6. See also</a></li>
 </ul>
 </li>
 </ul>
@@ -110,11 +110,11 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
-<div id="outline-container-orgafca958" class="outline-2">
-<h2 id="orgafca958"><span class="section-number-2">1</span> Linux Kernel: Process Scheduling</h2>
+<div id="outline-container-org95b5479" class="outline-2">
+<h2 id="org95b5479"><span class="section-number-2">1</span> Linux Kernel: Process Scheduling</h2>
 <div class="outline-text-2" id="text-1">
-</div><div id="outline-container-org59e2206" class="outline-3">
-<h3 id="org59e2206"><span class="section-number-3">1.1</span> Overview</h3>
+</div><div id="outline-container-orgd526b14" class="outline-3">
+<h3 id="orgd526b14"><span class="section-number-3">1.1</span> Overview</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 linux 2.6.11 的进程调度的主要特征:
@@ -147,11 +147,11 @@ roundrobin 分配给 "交互式进程" 更多的执行机会</li>
 </div>
 </div>
 
-<div id="outline-container-orgf978450" class="outline-3">
-<h3 id="orgf978450"><span class="section-number-3">1.2</span> 相关数据结构</h3>
+<div id="outline-container-org9417613" class="outline-3">
+<h3 id="org9417613"><span class="section-number-3">1.2</span> 相关数据结构</h3>
 <div class="outline-text-3" id="text-1-2">
-</div><div id="outline-container-org1e9391b" class="outline-4">
-<h4 id="org1e9391b"><span class="section-number-4">1.2.1</span> runqueue</h4>
+</div><div id="outline-container-orgb55ded0" class="outline-4">
+<h4 id="orgb55ded0"><span class="section-number-4">1.2.1</span> runqueue</h4>
 <div class="outline-text-4" id="text-1-2-1">
 <p>
 runqueue 是一个 Per-CPU variable, 即每个 CPU 都有一个 runqueue, 这个
@@ -160,7 +160,6 @@ scheduler 需要从这个队列中选择进程来执行
 </p>
 
 <div class="org-src-container">
-
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">runqueue</span> {
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">runqueue &#32500;&#25252;&#30340;&#25152;&#26377; running &#36827;&#31243;&#30340;&#20010;&#25968;, &#26159; active &#21644; expired &#20043;&#21644;.</span>
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#20010;&#20540;&#21453;&#24212;&#20102;&#24403;&#21069; cpu &#30340;&#36127;&#36733;&#31243;&#24230;    </span>
@@ -194,15 +193,14 @@ scheduler 需要从这个队列中选择进程来执行
 </div>
 </div>
 
-<div id="outline-container-org2cb0746" class="outline-4">
-<h4 id="org2cb0746"><span class="section-number-4">1.2.2</span> task_struct</h4>
+<div id="outline-container-org0433571" class="outline-4">
+<h4 id="org0433571"><span class="section-number-4">1.2.2</span> task_struct</h4>
 <div class="outline-text-4" id="text-1-2-2">
 <p>
-具体的参考 <a href="process.rel.html#orgfc1cee6">task_struct</a>, 其中和 scheduler 相关的部分:
+具体的参考 <a href="process.rel.html#org9acfd63">task_struct</a>, 其中和 scheduler 相关的部分:
 </p>
 
 <div class="org-src-container">
-
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span> {
     <span style="font-weight: bold;">volatile</span> <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">state</span>;
 
@@ -243,8 +241,8 @@ scheduler 需要从这个队列中选择进程来执行
 </div>
 </div>
 
-<div id="outline-container-orge70b0d1" class="outline-4">
-<h4 id="orge70b0d1"><span class="section-number-4">1.2.3</span> priority</h4>
+<div id="outline-container-org2aa29f2" class="outline-4">
+<h4 id="org2aa29f2"><span class="section-number-4">1.2.3</span> priority</h4>
 <div class="outline-text-4" id="text-1-2-3">
 <p>
 dynamic priority 的范围为 0~139, 但上层 API 中 priority 的含义与
@@ -281,8 +279,8 @@ nice 为 0</li>
 </div>
 
 
-<div id="outline-container-orgcfca2b9" class="outline-3">
-<h3 id="orgcfca2b9"><span class="section-number-3">1.3</span> 相关的函数</h3>
+<div id="outline-container-orgde0d9c9" class="outline-3">
+<h3 id="orgde0d9c9"><span class="section-number-3">1.3</span> 相关的函数</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 进程调度的主要入口是 schedule 函数, 但 schedule 函数工作时要依赖于两个数据的维护:
@@ -309,8 +307,8 @@ task_struct-&gt;prio
 </ol>
 </div>
 
-<div id="outline-container-org59357bc" class="outline-4">
-<h4 id="org59357bc"><span class="section-number-4">1.3.1</span> scheduler_tick</h4>
+<div id="outline-container-org3dc45fb" class="outline-4">
+<h4 id="org3dc45fb"><span class="section-number-4">1.3.1</span> scheduler_tick</h4>
 <div class="outline-text-4" id="text-1-3-1">
 <p>
 每次时钟中断发生时<sup><a id="fnr.1" class="footref" href="#fn.1">1</a></sup>, scheduler_tick 会被调用, 更新当前进程的
@@ -318,11 +316,10 @@ slice_time
 </p>
 </div>
 
-<div id="outline-container-orgf8a4719" class="outline-5">
-<h5 id="orgf8a4719"><span class="section-number-5">1.3.1.1</span> scheduler_tick</h5>
+<div id="outline-container-orgf9bc1c6" class="outline-5">
+<h5 id="orgf9bc1c6"><span class="section-number-5">1.3.1.1</span> scheduler_tick</h5>
 <div class="outline-text-5" id="text-1-3-1-1">
 <div class="org-src-container">
-
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">scheduler_tick</span>:
   <span style="font-weight: bold; text-decoration: underline;">runqueue_t</span> *<span style="font-weight: bold; font-style: italic;">rq</span> = this_rq();
   <span style="font-weight: bold; text-decoration: underline;">task_t</span> *<span style="font-weight: bold; font-style: italic;">p</span> = current;
@@ -381,15 +378,14 @@ slice_time
 </div>
 </div>
 
-<div id="outline-container-org97c1fab" class="outline-5">
-<h5 id="org97c1fab"><span class="section-number-5">1.3.1.2</span> task_timeslice</h5>
+<div id="outline-container-org9caba6e" class="outline-5">
+<h5 id="org9caba6e"><span class="section-number-5">1.3.1.2</span> task_timeslice</h5>
 <div class="outline-text-5" id="text-1-3-1-2">
 <p>
 task_timeslice 是根据 static_prio 来决定 task 的 time_slice
 </p>
 
 <div class="org-src-container">
-
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold;">task_timeslice</span>(<span style="font-weight: bold; text-decoration: underline;">task_t</span> *<span style="font-weight: bold; font-style: italic;">p</span>)
   <span style="font-weight: bold;">if</span> (p-&gt;static_prio &lt; NICE_TO_PRIO(0)):
     <span style="font-weight: bold;">return</span> SCALE_PRIO(<span style="font-weight: bold; text-decoration: underline;">DEF_TIMESLICE</span>*4, p-&gt;static_prio);
@@ -408,8 +404,8 @@ task_timeslice 是根据 static_prio 来决定 task 的 time_slice
 </div>
 </div>
 
-<div id="outline-container-org3dba2c6" class="outline-5">
-<h5 id="org3dba2c6"><span class="section-number-5">1.3.1.3</span> effective_prio</h5>
+<div id="outline-container-orgb5575ff" class="outline-5">
+<h5 id="orgb5575ff"><span class="section-number-5">1.3.1.3</span> effective_prio</h5>
 <div class="outline-text-5" id="text-1-3-1-3">
 <p>
 effective_prio 是根据 static_prio 和 sleep_avg 来计算 prio, 至于
@@ -429,7 +425,6 @@ sleep_avg 的计算, 是通过后面的 recalc_task_prio 函数
 </ol>
 
 <div class="org-src-container">
-
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">effective_prio</span>:
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#20110; rt_task, &#30452;&#25509;&#36820;&#22238;</span>
   <span style="font-weight: bold;">if</span> (rt_task(p)):
@@ -449,20 +444,19 @@ sleep_avg 的计算, 是通过后面的 recalc_task_prio 函数
 </div>
 </div>
 
-<div id="outline-container-orgeb5ee26" class="outline-5">
-<h5 id="orgeb5ee26"><span class="section-number-5">1.3.1.4</span> TASK_INTERACTIVE</h5>
+<div id="outline-container-org4536e52" class="outline-5">
+<h5 id="org4536e52"><span class="section-number-5">1.3.1.4</span> TASK_INTERACTIVE</h5>
 </div>
 
-<div id="outline-container-orgdf8b16c" class="outline-5">
-<h5 id="orgdf8b16c"><span class="section-number-5">1.3.1.5</span> EXPIRED_STARVING</h5>
+<div id="outline-container-org6711cd4" class="outline-5">
+<h5 id="org6711cd4"><span class="section-number-5">1.3.1.5</span> EXPIRED_STARVING</h5>
 </div>
 </div>
 
-<div id="outline-container-org82aa008" class="outline-4">
-<h4 id="org82aa008"><span class="section-number-4">1.3.2</span> try_to_wake_up</h4>
+<div id="outline-container-org622c1c8" class="outline-4">
+<h4 id="org622c1c8"><span class="section-number-4">1.3.2</span> try_to_wake_up</h4>
 <div class="outline-text-4" id="text-1-3-2">
 <div class="org-src-container">
-
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">try_to_wake_up</span>:
   activate_task()
     recalc_task_prio()
@@ -486,7 +480,7 @@ recalc_task_prio 作用是当 task 从睡眠状态唤醒时 (try_to_wake_up) 时
 </p>
 
 <p>
-p-&gt;timestamp 的赋值主要是在 schedule 函数中 (<a href="#org26b9f5b">schedule</a>), 即 schedule 时会将 prev-&gt;timestamp 和 next-&gt;timestamp 均设置为 now
+p-&gt;timestamp 的赋值主要是在 schedule 函数中 (<a href="#org7818728">schedule</a>), 即 schedule 时会将 prev-&gt;timestamp 和 next-&gt;timestamp 均设置为 now
 </p>
 
 <p>
@@ -515,11 +509,10 @@ recalc_task_prio 负责 sleep_avg 的增加, 而 schedule 负责 sleep_avg 的�
 </div>
 </div>
 
-<div id="outline-container-org26b9f5b" class="outline-4">
-<h4 id="org26b9f5b"><span class="section-number-4">1.3.3</span> schedule</h4>
+<div id="outline-container-org7818728" class="outline-4">
+<h4 id="org7818728"><span class="section-number-4">1.3.3</span> schedule</h4>
 <div class="outline-text-4" id="text-1-3-3">
 <div class="org-src-container">
-
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">schedule</span>:
   prev = current;
   rq = this_rq();
@@ -563,13 +556,13 @@ conventional process 的 starvation.
 </p>
 
 <p>
-不同 scheduler 会以不同的方式影响进程在 active 和 expired 中的位置, 从而影响 schedule, 具体参考 <a href="#org39fcc01">各种 scheduler</a>
+不同 scheduler 会以不同的方式影响进程在 active 和 expired 中的位置, 从而影响 schedule, 具体参考 <a href="#org43d7efd">各种 scheduler</a>
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgb0edb1c" class="outline-4">
-<h4 id="orgb0edb1c"><span class="section-number-4">1.3.4</span> set_tsk_need_resched</h4>
+<div id="outline-container-org0ca2342" class="outline-4">
+<h4 id="org0ca2342"><span class="section-number-4">1.3.4</span> set_tsk_need_resched</h4>
 <div class="outline-text-4" id="text-1-3-4">
 <p>
 除了主动调用 schedule, kernel 还可以通过 set_tsk_need_resched 给当前
@@ -596,8 +589,8 @@ preemption, 具体参考 interrupt).
 </div>
 </div>
 
-<div id="outline-container-org39fcc01" class="outline-3">
-<h3 id="org39fcc01"><span class="section-number-3">1.4</span> 各种 scheduler</h3>
+<div id="outline-container-org43d7efd" class="outline-3">
+<h3 id="org43d7efd"><span class="section-number-3">1.4</span> 各种 scheduler</h3>
 <div class="outline-text-3" id="text-1-4">
 <p>
 各种 scheduler 并没有抽象成单独的实体, 所有 scheduler 的逻辑都散布在相应的函数中, 例如 scheduler_tick, recalc_task_prio, schedule,
@@ -605,8 +598,8 @@ effective_prio, task_timeslice, set_user_nice, sys_sched_yield 等
 </p>
 </div>
 
-<div id="outline-container-org7fd3da9" class="outline-4">
-<h4 id="org7fd3da9"><span class="section-number-4">1.4.1</span> SCHED_FIFO</h4>
+<div id="outline-container-org475fa9e" class="outline-4">
+<h4 id="org475fa9e"><span class="section-number-4">1.4.1</span> SCHED_FIFO</h4>
 <div class="outline-text-4" id="text-1-4-1">
 <p>
 SCHED_FIFO 是 real time scheduler, 它的主要特征有:
@@ -634,8 +627,8 @@ SCHED_FIFO 是 real time scheduler, 它的主要特征有:
 </div>
 </div>
 
-<div id="outline-container-orgaf15973" class="outline-4">
-<h4 id="orgaf15973"><span class="section-number-4">1.4.2</span> SCHED_RR</h4>
+<div id="outline-container-org84eeedc" class="outline-4">
+<h4 id="org84eeedc"><span class="section-number-4">1.4.2</span> SCHED_RR</h4>
 <div class="outline-text-4" id="text-1-4-2">
 <p>
 SCHED_RR 也是一种 real time scheduler, 在 SCHED_FIFO 上加入了
@@ -649,8 +642,8 @@ SCHED_RR 时间片长度与普通进程一样, 都是基于 static_prio
 </div>
 </div>
 
-<div id="outline-container-orgbf32d75" class="outline-4">
-<h4 id="orgbf32d75"><span class="section-number-4">1.4.3</span> SCHED_NORMAL</h4>
+<div id="outline-container-org52fb269" class="outline-4">
+<h4 id="org52fb269"><span class="section-number-4">1.4.3</span> SCHED_NORMAL</h4>
 <div class="outline-text-4" id="text-1-4-3">
 <p>
 SCHED_NORMAL 是 conventional (非 real time) 进程使用的 scheduler, 它的主要特征:
@@ -673,8 +666,8 @@ batch 进程, 会被放到 expired 中, 通过这种方式使 interactive 进程
 </div>
 </div>
 
-<div id="outline-container-org1e30975" class="outline-3">
-<h3 id="org1e30975"><span class="section-number-3">1.5</span> CPU 负载均衡</h3>
+<div id="outline-container-org35e25ea" class="outline-3">
+<h3 id="org35e25ea"><span class="section-number-3">1.5</span> CPU 负载均衡</h3>
 <div class="outline-text-3" id="text-1-5">
 <p>
 在 O(1) scheduler 之前 (O(n) scheduler), 所有 CPU 共享同一个 runqueue,
@@ -719,8 +712,8 @@ load balance 主要有两种:
 </ol>
 </div>
 
-<div id="outline-container-org2a0b9d7" class="outline-4">
-<h4 id="org2a0b9d7"><span class="section-number-4">1.5.1</span> pull task</h4>
+<div id="outline-container-org20fbf70" class="outline-4">
+<h4 id="org20fbf70"><span class="section-number-4">1.5.1</span> pull task</h4>
 <div class="outline-text-4" id="text-1-5-1">
 <p>
 pull task 即 "把其它更忙的 cpu 的 task 拉到当前 cpu 执行", 在
@@ -728,11 +721,10 @@ scheduler_tick 时会通过 load_balance 实现 pull task
 </p>
 </div>
 
-<div id="outline-container-orgd48bb38" class="outline-5">
-<h5 id="orgd48bb38"><span class="section-number-5">1.5.1.1</span> load_balance</h5>
+<div id="outline-container-org41c38be" class="outline-5">
+<h5 id="org41c38be"><span class="section-number-5">1.5.1.1</span> load_balance</h5>
 <div class="outline-text-5" id="text-1-5-1-1">
 <div class="org-src-container">
-
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">scheduler_tick</span>:
   rebalance_tick(cpu, rq, NOT_IDLE);
     this_load = this_rq-&gt;nr_running * SCHED_LOAD_SCALE;
@@ -776,11 +768,10 @@ scheduler_tick 时会通过 load_balance 实现 pull task
 </div>
 </div>
 
-<div id="outline-container-orgddadd34" class="outline-5">
-<h5 id="orgddadd34"><span class="section-number-5">1.5.1.2</span> can_migrate_task</h5>
+<div id="outline-container-org8097ddc" class="outline-5">
+<h5 id="org8097ddc"><span class="section-number-5">1.5.1.2</span> can_migrate_task</h5>
 <div class="outline-text-5" id="text-1-5-1-2">
 <div class="org-src-container">
-
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">can_migrate_task</span>:
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19977;&#31181;&#24773;&#20917;&#19979; migrate &#20250;&#22833;&#36133;:</span>
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">1. p &#26159; busiest-&gt;current, &#21363;&#23427;&#27491;&#22312; busiest &#19978;&#36816;&#34892;, &#26174;&#28982;&#26080;&#27861;&#34987;</span>
@@ -800,19 +791,18 @@ scheduler_tick 时会通过 load_balance 实现 pull task
 </div>
 </div>
 
-<div id="outline-container-org1aa1986" class="outline-4">
-<h4 id="org1aa1986"><span class="section-number-4">1.5.2</span> push task</h4>
+<div id="outline-container-org57aaf04" class="outline-4">
+<h4 id="org57aaf04"><span class="section-number-4">1.5.2</span> push task</h4>
 <div class="outline-text-4" id="text-1-5-2">
 <p>
 push task 即 "将 task push 到空闲的 cpu 去执行", 一个例子就是 do_execve 时的 sched_exec
 </p>
 </div>
 
-<div id="outline-container-orgc74f114" class="outline-5">
-<h5 id="orgc74f114"><span class="section-number-5">1.5.2.1</span> sched_exec</h5>
+<div id="outline-container-orgda8d23b" class="outline-5">
+<h5 id="orgda8d23b"><span class="section-number-5">1.5.2.1</span> sched_exec</h5>
 <div class="outline-text-5" id="text-1-5-2-1">
 <div class="org-src-container">
-
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">do_execve</span>:
   sched_exec();
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#24403;&#21069; cpu &#24050;&#32463;&#24456;&#31354;&#38386;, &#19981;&#20877; push    </span>
@@ -833,14 +823,13 @@ push task 即 "将 task push 到空闲的 cpu 去执行", 一个例子就是 do_
 </div>
 </div>
 
-<div id="outline-container-org4fbe0e7" class="outline-3">
-<h3 id="org4fbe0e7"><span class="section-number-3">1.6</span> 相关 API</h3>
+<div id="outline-container-org3b4de3c" class="outline-3">
+<h3 id="org3b4de3c"><span class="section-number-3">1.6</span> 相关 API</h3>
 <div class="outline-text-3" id="text-1-6">
-</div><div id="outline-container-org244173c" class="outline-4">
-<h4 id="org244173c"><span class="section-number-4">1.6.1</span> nice</h4>
+</div><div id="outline-container-org0fcb825" class="outline-4">
+<h4 id="org0fcb825"><span class="section-number-4">1.6.1</span> nice</h4>
 <div class="outline-text-4" id="text-1-6-1">
 <div class="org-src-container">
-
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">set_user_nice</span>:
   <span style="font-weight: bold;">if</span> (rt_task(p)):
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#20110; rt_task, static_prio &#20063;&#20250;&#34987; nice &#20462;&#25913;, &#22240;&#20026;&#35745;&#31639; time_slice</span>
@@ -869,11 +858,10 @@ push task 即 "将 task push 到空闲的 cpu 去执行", 一个例子就是 do_
 </div>
 </div>
 
-<div id="outline-container-org268a57e" class="outline-4">
-<h4 id="org268a57e"><span class="section-number-4">1.6.2</span> sched_yield</h4>
+<div id="outline-container-org1c37e65" class="outline-4">
+<h4 id="org1c37e65"><span class="section-number-4">1.6.2</span> sched_yield</h4>
 <div class="outline-text-4" id="text-1-6-2">
 <div class="org-src-container">
-
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">sys_sched_yield</span>:
   <span style="font-weight: bold; text-decoration: underline;">runqueue_t</span> *<span style="font-weight: bold; font-style: italic;">rq</span> = this_rq_lock();
   <span style="font-weight: bold; text-decoration: underline;">prio_array_t</span> *<span style="font-weight: bold; font-style: italic;">array</span> = current-&gt;array;
@@ -897,19 +885,18 @@ push task 即 "将 task push 到空闲的 cpu 去执行", 一个例子就是 do_
 </div>
 </div>
 
-<div id="outline-container-orgd9986e1" class="outline-4">
-<h4 id="orgd9986e1"><span class="section-number-4">1.6.3</span> sched_setscheduler</h4>
+<div id="outline-container-orgce189b6" class="outline-4">
+<h4 id="orgce189b6"><span class="section-number-4">1.6.3</span> sched_setscheduler</h4>
 </div>
 
-<div id="outline-container-org73c7bcc" class="outline-4">
-<h4 id="org73c7bcc"><span class="section-number-4">1.6.4</span> sched_setaffinity</h4>
+<div id="outline-container-org2fbb3b4" class="outline-4">
+<h4 id="org2fbb3b4"><span class="section-number-4">1.6.4</span> sched_setaffinity</h4>
 </div>
 
-<div id="outline-container-org2c604e7" class="outline-4">
-<h4 id="org2c604e7"><span class="section-number-4">1.6.5</span> fork</h4>
+<div id="outline-container-org6cfb3be" class="outline-4">
+<h4 id="org6cfb3be"><span class="section-number-4">1.6.5</span> fork</h4>
 <div class="outline-text-4" id="text-1-6-5">
 <div class="org-src-container">
-
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">fork</span>:
   sched_fork(p)
     p-&gt;state = TASK_RUNNING;
@@ -947,8 +934,8 @@ push task 即 "将 task push 到空闲的 cpu 去执行", 一个例子就是 do_
 </div>
 </div>
 
-<div id="outline-container-orgf62f389" class="outline-4">
-<h4 id="orgf62f389"><span class="section-number-4">1.6.6</span> See also</h4>
+<div id="outline-container-orgc0b1e76" class="outline-4">
+<h4 id="orgc0b1e76"><span class="section-number-4">1.6.6</span> See also</h4>
 <div class="outline-text-4" id="text-1-6-6">
 <ol class="org-ol">
 <li><a href="https://en.wikipedia.org/wiki/O(1)_scheduler">O(1) scheduler from Wikipedia</a></li>
@@ -981,7 +968,7 @@ push task 即 "将 task push 到空闲的 cpu 去执行", 一个例子就是 do_
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-07-14 Thu&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-09-01 Thu 17:57</p>
+<p class="date">Created: 2016-09-05 Mon 15:25</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
