@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-09-01 Thu 17:57 -->
+<!-- 2016-09-05 Mon 12:02 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: Signal</title>
@@ -92,7 +92,8 @@ for the JavaScript code in this tag.
 <li><a href="#orge668f25">1.6. Appendix</a>
 <ul>
 <li><a href="#org5421e28">1.6.1. 系统调用的中断与重启</a></li>
-<li><a href="#org2bb37a8">1.6.2. 信号与线程</a></li>
+<li><a href="#org23ef483">1.6.2. 信号与 longjmp</a></li>
+<li><a href="#org2bb37a8">1.6.3. 信号与线程</a></li>
 </ul>
 </li>
 </ul>
@@ -982,12 +983,54 @@ handle_signal
 </pre>
 </div></li>
 </ol>
+
+<p>
+编程时需要考虑 syscall 被信号打断的情况时, 一般使用如下的代码:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="font-weight: bold;">do</span> {
+    rc = (<span style="font-weight: bold; text-decoration: underline;">int</span>)the_sys_call();
+} <span style="font-weight: bold;">while</span>(rc &lt; 0 &amp;&amp; errno == EINTR);
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org23ef483" class="outline-4">
+<h4 id="org23ef483"><span class="section-number-4">1.6.2</span> 信号与 longjmp</h4>
+<div class="outline-text-4" id="text-1-6-2">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="font-weight: bold;">#include</span> <span style="font-style: italic;">&lt;setjmp.h&gt;</span>
+
+<span style="font-weight: bold; text-decoration: underline;">jmp_buf</span> <span style="font-weight: bold; font-style: italic;">buff</span>;
+
+<span style="font-weight: bold; text-decoration: underline;">void</span> <span style="font-weight: bold;">foo</span>(<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">sig</span>) {
+    printf(<span style="font-style: italic;">"foo\n"</span>);
+    longjmp(buff, 1);
+}
+
+<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold;">main</span>(<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">argc</span>, <span style="font-weight: bold; text-decoration: underline;">char</span> *<span style="font-weight: bold; font-style: italic;">argv</span>[]) {
+    <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">x</span> = setjmp(buff);
+    signal(11, foo);
+    printf(<span style="font-style: italic;">"hello %d\n"</span>, x);
+    sleep(20);
+    <span style="font-weight: bold;">return</span> 0;
+}
+</pre>
+</div>
+
+<p>
+由于 longjmp 不会返回, 所以栈上的 __kernel_sigreturn 并不会被调用, 所以 longjmp 后不会再返回到被信号打断的位置.
+</p>
 </div>
 </div>
 
 <div id="outline-container-org2bb37a8" class="outline-4">
-<h4 id="org2bb37a8"><span class="section-number-4">1.6.2</span> 信号与线程</h4>
-<div class="outline-text-4" id="text-1-6-2">
+<h4 id="org2bb37a8"><span class="section-number-4">1.6.3</span> 信号与线程</h4>
+<div class="outline-text-4" id="text-1-6-3">
 <p>
 通过 fork 时的 copy_process 代码, 可以看到:
 </p>
@@ -1010,7 +1053,7 @@ handle_signal
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-08-10 Wed&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-09-01 Thu 17:57</p>
+<p class="date">Created: 2016-09-05 Mon 12:02</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
