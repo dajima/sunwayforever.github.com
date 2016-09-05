@@ -1,6 +1,6 @@
 (setq org-publish-cache (make-hash-table :test 'equal :weakness nil :size 100))
 (puthash ":project:" "extra" org-publish-cache)
-(puthash ":cache-file:" "/home/sunway/.org-timestamps/extra.cache" org-publish-cache)
+(puthash ":cache-file:" "/home/sunway/.github.pages/extra.cache" org-publish-cache)
 (puthash "X0307ac201ea43c9849dd8b61ea5a076f4074f340" 1468310928 org-publish-cache)
 (puthash "Xd6b4b7c82409dfe0af72144aa71fdadd38a5f6d2" 1471419396 org-publish-cache)
 (puthash "X7687beddb79041a2c4795443f5dffb8fb9985064" 1470115612 org-publish-cache)
