@@ -3,10 +3,10 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-09-06 Tue 17:18 -->
+<!-- 2016-09-07 Wed 17:53 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Insertion Sort</title>
+<title>Algorithm: Insertion Sort</title>
 <meta name="generator" content="Org-mode" />
 <meta name="author" content="Wei Sun (孙伟)" />
 <link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
@@ -59,55 +59,52 @@ for the JavaScript code in this tag.
 </head>
 <body>
 <div id="content">
-<h1 class="title">Insertion Sort</h1>
+<h1 class="title">Algorithm: Insertion Sort</h1>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org6ef306d">1. Insertion Sort</a></li>
+<li><a href="#org69038d5">1. Algorithm: Insertion Sort</a></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org6ef306d" class="outline-2">
-<h2 id="org6ef306d"><span class="section-number-2">1</span> Insertion Sort</h2>
+<div id="outline-container-org69038d5" class="outline-2">
+<h2 id="org69038d5"><span class="section-number-2">1</span> Algorithm: Insertion Sort</h2>
 <div class="outline-text-2" id="text-1">
 <div class="org-src-container">
 <pre class="src src-python"><span style="font-weight: bold;">class</span> <span style="font-weight: bold; text-decoration: underline;">Solution</span>(<span style="font-weight: bold;">object</span>):
     <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">insertionSort</span>(<span style="font-weight: bold;">self</span>, A):
         <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        1 2 4 3</span>
+<span style="font-style: italic;">          j   i</span>
 <span style="font-style: italic;">        """</span>
-        <span style="font-weight: bold;">for</span> j <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(1, <span style="font-weight: bold;">len</span>(A)):
-            <span style="font-weight: bold; font-style: italic;">current</span> = A[j]
-            <span style="font-weight: bold; font-style: italic;">i</span> = j - 1
-            <span style="font-weight: bold;">while</span> (i &gt;= 0 <span style="font-weight: bold;">and</span> A[i] &gt; current):
-                <span style="font-weight: bold; font-style: italic;">A</span>[i+1] = A[i]
-                <span style="font-weight: bold; font-style: italic;">i</span> = i - 1
-            <span style="font-weight: bold; font-style: italic;">A</span>[i+1] = current
+        <span style="font-weight: bold;">for</span> i <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(1, <span style="font-weight: bold;">len</span>(A)):
+            <span style="font-weight: bold;">for</span> j <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(i-1, -1, -1):
+                <span style="font-weight: bold;">if</span> (A[j] &lt; A[j+1]):
+                    <span style="font-weight: bold;">break</span>;
+                A[j], <span style="font-weight: bold; font-style: italic;">A</span>[j+1] = A[j+1], A[j]
         <span style="font-weight: bold;">print</span>(A)
 
     <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">insertionSort2</span>(<span style="font-weight: bold;">self</span>, A):
         <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        1 2 4 3</span>
+<span style="font-style: italic;">            j i</span>
 <span style="font-style: italic;">        """</span>
-        <span style="font-weight: bold;">for</span> j <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(1, <span style="font-weight: bold;">len</span>(A)):
-            <span style="font-weight: bold; font-style: italic;">current</span> = A[j]
-            <span style="font-weight: bold;">for</span> i <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(0,j):
-                <span style="font-weight: bold;">if</span> (A[i] &gt; current):
+        <span style="font-weight: bold;">for</span> i <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(1, <span style="font-weight: bold;">len</span>(A)):
+            <span style="font-weight: bold; font-style: italic;">current</span> = A[i]
+            <span style="font-weight: bold;">for</span> j <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(0, i):
+                <span style="font-weight: bold;">if</span> (A[j] &gt; current):
                     <span style="font-weight: bold;">break</span>
             <span style="font-weight: bold;">else</span>:
-                <span style="font-weight: bold; font-style: italic;">i</span> += 1
+                <span style="font-weight: bold; font-style: italic;">j</span> += 1
 
-            <span style="font-weight: bold;">for</span> k <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(j, i, -1):
+            <span style="font-weight: bold;">for</span> k <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(i, j, -1):
                 <span style="font-weight: bold; font-style: italic;">A</span>[k] = A[k-1]
+            <span style="font-weight: bold; font-style: italic;">A</span>[j] = current
 
-            <span style="font-weight: bold; font-style: italic;">A</span>[i] = current
         <span style="font-weight: bold;">print</span>(A)
 
-Solution().insertionSort2([1,2,4,3,6,2,2]);
-Solution().insertionSort2([1, 2, -1, -2, 2, 3]);
-Solution().insertionSort2([1,-1, -2]);
-Solution().insertionSort2([1,-1]);
-Solution().insertionSort2([1]);
-Solution().insertionSort2([]);
+Solution().insertionSort([1,2,4,3,6,2,2,1,-1,-2]);
 </pre>
 </div>
 </div>
@@ -117,7 +114,7 @@ Solution().insertionSort2([]);
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-09-06 Tue&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-09-06 Tue 17:18</p>
+<p class="date">Created: 2016-09-07 Wed 17:53</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
