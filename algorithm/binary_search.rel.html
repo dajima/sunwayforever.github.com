@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2016-09-08 Thu 11:16 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Algorithm: Binary Search</title>
+<meta name="generator" content="Org-mode" />
+<meta name="author" content="Wei Sun (孙伟)" />
+<link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Algorithm: Binary Search</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgc3f334b">1. Algorithm: Binary Search</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgc3f334b" class="outline-2">
+<h2 id="orgc3f334b"><span class="section-number-2">1</span> Algorithm: Binary Search</h2>
+<div class="outline-text-2" id="text-1">
+<div class="org-src-container">
+<pre class="src src-python"><span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">-*- coding: utf-8 -*-</span>
+<span style="font-weight: bold;">class</span> <span style="font-weight: bold; text-decoration: underline;">Solution</span>(<span style="font-weight: bold;">object</span>):
+
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">binarySearch</span>(<span style="font-weight: bold;">self</span>, A, value):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        1 2 4 5 : 2 =&gt; 1</span>
+<span style="font-style: italic;">        returns: i for A[i] == value</span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold; font-style: italic;">f</span> = 0
+        <span style="font-weight: bold; font-style: italic;">t</span> = <span style="font-weight: bold;">len</span>(A) - 1
+
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        &#24490;&#29615;&#19981;&#21464;&#37327;:</span>
+<span style="font-style: italic;">        A[f..t] &#20043;&#22806;&#30340;&#37096;&#20998;&#19981;&#28385;&#36275; A[x] == value</span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold;">while</span> (<span style="font-weight: bold; text-decoration: underline;">True</span>):
+            <span style="font-weight: bold;">if</span> (f &gt; t):
+                <span style="font-weight: bold;">return</span> -1
+            <span style="font-weight: bold;">elif</span> (f == t):
+                <span style="font-weight: bold;">if</span> (A[f] == value):
+                    <span style="font-weight: bold;">return</span> f
+                <span style="font-weight: bold;">else</span>:
+                    <span style="font-weight: bold;">return</span> -1
+            <span style="font-weight: bold;">else</span>:
+                <span style="font-weight: bold; font-style: italic;">mid</span> = <span style="font-weight: bold;">int</span>((f + t) / 2)
+                <span style="font-weight: bold;">if</span> (A[mid] == value):
+                    <span style="font-weight: bold;">return</span> mid
+                <span style="font-weight: bold;">elif</span> (A[mid] &gt; value):
+                    <span style="font-weight: bold; font-style: italic;">t</span> = mid - 1
+                <span style="font-weight: bold;">else</span>:
+                    <span style="font-weight: bold; font-style: italic;">f</span> = mid + 1
+
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">binarySearch2</span>(<span style="font-weight: bold;">self</span>, A, value):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        1 2 4 5 : 3 =&gt; 2</span>
+<span style="font-style: italic;">        returns: min(i for  A[i] &gt;= value)</span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold; font-style: italic;">f</span> = 0
+        <span style="font-weight: bold; font-style: italic;">t</span> = <span style="font-weight: bold;">len</span>(A) - 1
+        <span style="font-weight: bold; font-style: italic;">ret</span> = -1
+        <span style="font-weight: bold;">while</span> (<span style="font-weight: bold; text-decoration: underline;">True</span>):
+            <span style="font-weight: bold;">if</span> (f &gt; t):
+                <span style="font-weight: bold;">return</span> ret
+            <span style="font-weight: bold;">elif</span> (f == t):
+                <span style="font-weight: bold;">if</span> (A[f] &gt;= value):
+                    <span style="font-weight: bold;">return</span> f
+                <span style="font-weight: bold;">else</span>:
+                    <span style="font-weight: bold;">return</span> ret
+            <span style="font-weight: bold;">else</span>:
+                <span style="font-weight: bold; font-style: italic;">mid</span> = <span style="font-weight: bold;">int</span>((f + t) / 2)
+                <span style="font-weight: bold;">if</span> (A[mid] == value):
+                    <span style="font-weight: bold;">return</span> mid
+                <span style="font-weight: bold;">elif</span> (A[mid] &gt; value):
+                    <span style="font-weight: bold; font-style: italic;">t</span> = mid - 1
+                    <span style="font-weight: bold; font-style: italic;">ret</span> = mid
+                <span style="font-weight: bold;">else</span>:
+                    <span style="font-weight: bold; font-style: italic;">f</span> = mid + 1
+
+<span style="font-weight: bold;">print</span>(Solution().binarySearch([1, 2, 4, 5], 0))
+<span style="font-weight: bold;">print</span>(Solution().binarySearch2([1, 2, 4, 5], 0))
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-09-08 Thu&gt;</span></span></p>
+<p class="author">Author: Wei Sun (孙伟)</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2016-09-08 Thu 11:16</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

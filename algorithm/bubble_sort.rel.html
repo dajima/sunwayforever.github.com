@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2016-09-08 Thu 11:16 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Algorithm: Bubble Sort</title>
+<meta name="generator" content="Org-mode" />
+<meta name="author" content="Wei Sun (孙伟)" />
+<link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Algorithm: Bubble Sort</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgb3c4890">1. Algorithm: Bubble Sort</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgb3c4890" class="outline-2">
+<h2 id="orgb3c4890"><span class="section-number-2">1</span> Algorithm: Bubble Sort</h2>
+<div class="outline-text-2" id="text-1">
+<div class="org-src-container">
+<pre class="src src-python"><span style="font-weight: bold; font-style: italic;">#</span><span style="font-weight: bold; font-style: italic;">!/usr/bin/env python3</span>
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">-*- coding: utf-8 -*-</span>
+
+
+<span style="font-weight: bold;">class</span> <span style="font-weight: bold; text-decoration: underline;">Solution</span>(<span style="font-weight: bold;">object</span>):
+
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">bubbleSort</span>(<span style="font-weight: bold;">self</span>, A):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        1 2 3 4 3</span>
+
+<span style="font-style: italic;">        &#24490;&#29615;&#19981;&#21464;&#37327;:</span>
+<span style="font-style: italic;">        A[0..(i-1)] &#26159;&#21319;&#24207;&#30340;&#19988;&#19981;&#22823;&#20110; A[i,...] </span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold;">for</span> i <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(<span style="font-weight: bold;">len</span>(A)):
+            <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">            &#24490;&#29615;&#19981;&#21464;&#37327;:</span>
+<span style="font-style: italic;">            A[j] &#19981;&#22823;&#20110; A[j+1,...]</span>
+<span style="font-style: italic;">            """</span>
+            <span style="font-weight: bold;">for</span> j <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(<span style="font-weight: bold;">len</span>(A) - 1, i - 1, -1):
+                <span style="font-weight: bold;">if</span> (A[j] &lt; A[j - 1]):
+                    A[j], <span style="font-weight: bold; font-style: italic;">A</span>[j - 1] = A[j - 1], A[j]
+
+        <span style="font-weight: bold;">print</span>(A)
+
+Solution().bubbleSort([1, 2, 3, 4, -2, 3, -1])
+Solution().bubbleSort([1])
+Solution().bubbleSort([])
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-09-07 Wed&gt;</span></span></p>
+<p class="author">Author: Wei Sun (孙伟)</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2016-09-08 Thu 11:16</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
