@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-09-05 Mon 15:25 -->
+<!-- 2016-09-10 Sat 21:22 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: Interrupt</title>
@@ -64,48 +64,48 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org5070f50">1. Linux Kernel: Interrupt</a>
+<li><a href="#orgab1ea98">1. Linux Kernel: Interrupt</a>
 <ul>
-<li><a href="#org4429584">1.1. Overview</a></li>
-<li><a href="#orgcb4a105">1.2. PIC</a>
+<li><a href="#org04f411c">1.1. Overview</a></li>
+<li><a href="#org63c5e4e">1.2. PIC</a>
 <ul>
-<li><a href="#org0762822">1.2.1. 8259a</a></li>
-<li><a href="#orgf15a053">1.2.2. APIC</a></li>
+<li><a href="#org77c3781">1.2.1. 8259a</a></li>
+<li><a href="#org67dbbf7">1.2.2. APIC</a></li>
 </ul>
 </li>
-<li><a href="#org6cb0fb0">1.3. IDT</a>
+<li><a href="#org2015e38">1.3. IDT</a>
 <ul>
-<li><a href="#org312e206">1.3.1. Interrupt Descriptor</a></li>
-<li><a href="#orgb88a004">1.3.2. IDT 初始化</a></li>
+<li><a href="#org1226384">1.3.1. Interrupt Descriptor</a></li>
+<li><a href="#org476cd8b">1.3.2. IDT 初始化</a></li>
 </ul>
 </li>
-<li><a href="#org904f178">1.4. ret_from_intr</a></li>
-<li><a href="#org1e6aba5">1.5. do_IRQ</a>
+<li><a href="#org54c5671">1.4. ret_from_intr</a></li>
+<li><a href="#orgb09e789">1.5. do_IRQ</a>
 <ul>
-<li><a href="#org6190621">1.5.1. do_IRQ</a></li>
-<li><a href="#orgaeb2300">1.5.2. request_irq</a></li>
+<li><a href="#orgb09e789">1.5.1. do_IRQ</a></li>
+<li><a href="#org9ceb28c">1.5.2. request_irq</a></li>
 </ul>
 </li>
-<li><a href="#org28caf12">1.6. softirq</a>
+<li><a href="#orgc9e8cfa">1.6. softirq</a>
 <ul>
-<li><a href="#orgf398221">1.6.1. open_softirq</a></li>
-<li><a href="#org6f777ba">1.6.2. raise_softirq</a></li>
-<li><a href="#org7dd1c4d">1.6.3. do_softirq</a></li>
+<li><a href="#org349c5bd">1.6.1. open_softirq</a></li>
+<li><a href="#orgf487371">1.6.2. raise_softirq</a></li>
+<li><a href="#org4380489">1.6.3. do_softirq</a></li>
 </ul>
 </li>
-<li><a href="#orgeaac64c">1.7. tasklet</a>
+<li><a href="#org57aa51f">1.7. tasklet</a>
 <ul>
-<li><a href="#orgc602cae">1.7.1. tasklet_struct</a></li>
-<li><a href="#orgf79b3c7">1.7.2. tasklet_init</a></li>
-<li><a href="#orgda0eaeb">1.7.3. tasklet_schedule</a></li>
-<li><a href="#org7a772c1">1.7.4. tasklet_action</a></li>
+<li><a href="#orga2e29da">1.7.1. tasklet_struct</a></li>
+<li><a href="#org729075e">1.7.2. tasklet_init</a></li>
+<li><a href="#org0230909">1.7.3. tasklet_schedule</a></li>
+<li><a href="#org86877ce">1.7.4. tasklet_action</a></li>
 </ul>
 </li>
-<li><a href="#org445de76">1.8. workqueue</a></li>
-<li><a href="#org8b9bc0c">1.9. Appendix</a>
+<li><a href="#orgc4fe19b">1.8. workqueue</a></li>
+<li><a href="#org49fe3fe">1.9. Appendix</a>
 <ul>
-<li><a href="#org23abe56">1.9.1. IO interrupt handler 内为什么不能睡眠</a></li>
-<li><a href="#org0d2c5b5">1.9.2. fault 与 SIGSEGV</a></li>
+<li><a href="#orgfb59508">1.9.1. IO interrupt handler 内为什么不能睡眠</a></li>
+<li><a href="#org8807f05">1.9.2. fault 与 SIGSEGV</a></li>
 </ul>
 </li>
 </ul>
@@ -113,11 +113,11 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
-<div id="outline-container-org5070f50" class="outline-2">
-<h2 id="org5070f50"><span class="section-number-2">1</span> Linux Kernel: Interrupt</h2>
+<div id="outline-container-orgab1ea98" class="outline-2">
+<h2 id="orgab1ea98"><span class="section-number-2">1</span> Linux Kernel: Interrupt</h2>
 <div class="outline-text-2" id="text-1">
-</div><div id="outline-container-org4429584" class="outline-3">
-<h3 id="org4429584"><span class="section-number-3">1.1</span> Overview</h3>
+</div><div id="outline-container-org04f411c" class="outline-3">
+<h3 id="org04f411c"><span class="section-number-3">1.1</span> Overview</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 Interrupt, 按照 Intel 的分类, 主要分为两类:
@@ -145,7 +145,7 @@ Exception
 除了 IO interrupt 之外的 interrupt 称为 exception, 这一类一般是由
 CPU 主动产生的 (同步的), 也称为同步中断, 内部中断. 例如除零错, page
 fault, 断点, 浮点数异常等,另外还包括 int 指令产生的 interrupt, 关于
-exception, 在 <a href="process.rel.html#orgd608a38">Creating-Processes</a> 已经以 syscall 为例进行描述, 为避免混淆, 后面的内容主要讨论 IO interrupt
+exception, 在 <a href="process.rel.html#org6dbdb86">Creating-Processes</a> 已经以 syscall 为例进行描述, 为避免混淆, 后面的内容主要讨论 IO interrupt
 </p>
 
 <p>
@@ -220,11 +220,11 @@ handler 的功能分为两部分: top half 与 bottom half. top half 是指那�
 </div>
 </div>
 
-<div id="outline-container-orgcb4a105" class="outline-3">
-<h3 id="orgcb4a105"><span class="section-number-3">1.2</span> PIC</h3>
+<div id="outline-container-org63c5e4e" class="outline-3">
+<h3 id="org63c5e4e"><span class="section-number-3">1.2</span> PIC</h3>
 <div class="outline-text-3" id="text-1-2">
-</div><div id="outline-container-org0762822" class="outline-4">
-<h4 id="org0762822"><span class="section-number-4">1.2.1</span> 8259a</h4>
+</div><div id="outline-container-org77c3781" class="outline-4">
+<h4 id="org77c3781"><span class="section-number-4">1.2.1</span> 8259a</h4>
 <div class="outline-text-4" id="text-1-2-1">
 <p>
 IO interrupt 的起点是 PIC, 传统的 PIC 是 intel 8259a
@@ -265,8 +265,8 @@ IO interrupt 的起点是 PIC, 传统的 PIC 是 intel 8259a
 </div>
 </div>
 
-<div id="outline-container-orga7e66b9" class="outline-5">
-<h5 id="orga7e66b9"><span class="section-number-5">1.2.1.1</span> 中断屏蔽</h5>
+<div id="outline-container-orga6a62e0" class="outline-5">
+<h5 id="orga6a62e0"><span class="section-number-5">1.2.1.1</span> 中断屏蔽</h5>
 <div class="outline-text-5" id="text-1-2-1-1">
 <p>
 通过向 8259a 的 IMR 写入特定的 irq_mask, 可以屏蔽某些 IRQ line, 具体的,
@@ -286,8 +286,8 @@ linux 通过 mask_and_ack_8259A 函数来屏蔽特定的 IRQ line.
 </div>
 </div>
 
-<div id="outline-container-orgf15a053" class="outline-4">
-<h4 id="orgf15a053"><span class="section-number-4">1.2.2</span> APIC</h4>
+<div id="outline-container-org67dbbf7" class="outline-4">
+<h4 id="org67dbbf7"><span class="section-number-4">1.2.2</span> APIC</h4>
 <div class="outline-text-4" id="text-1-2-2">
 <p>
 8259a 涉及到多核时无法工作: 一个 8259a 的 INTR 如何接到多个 CPU 对应的引脚?
@@ -311,8 +311,8 @@ APIC, 从而解决多核的问题. 一般情况下 kernel 不需要关心 IRQ �
 </div>
 </div>
 
-<div id="outline-container-org6cb0fb0" class="outline-3">
-<h3 id="org6cb0fb0"><span class="section-number-3">1.3</span> IDT</h3>
+<div id="outline-container-org2015e38" class="outline-3">
+<h3 id="org2015e38"><span class="section-number-3">1.3</span> IDT</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 CPU 从 PIC 得到中断向量后, 第一步就是从 IDT 中找到对应的中断描述符
@@ -330,8 +330,8 @@ CPU 可以通过 idtr 找到 IDT 的基址, kernel 可以通过 lidt 给 idtr �
 </p>
 </div>
 
-<div id="outline-container-org312e206" class="outline-4">
-<h4 id="org312e206"><span class="section-number-4">1.3.1</span> Interrupt Descriptor</h4>
+<div id="outline-container-org1226384" class="outline-4">
+<h4 id="org1226384"><span class="section-number-4">1.3.1</span> Interrupt Descriptor</h4>
 <div class="outline-text-4" id="text-1-3-1">
 <p>
 IDT 中的元素称为 Interrupt Descriptor, 大小为 8 字节. 这个 descriptor
@@ -389,11 +389,11 @@ Trap gate 与 interrupt gate 基本相同, 但硬件不会主动关中断
 </div>
 </div>
 
-<div id="outline-container-orgb88a004" class="outline-4">
-<h4 id="orgb88a004"><span class="section-number-4">1.3.2</span> IDT 初始化</h4>
+<div id="outline-container-org476cd8b" class="outline-4">
+<h4 id="org476cd8b"><span class="section-number-4">1.3.2</span> IDT 初始化</h4>
 <div class="outline-text-4" id="text-1-3-2">
-</div><div id="outline-container-orgd115b72" class="outline-5">
-<h5 id="orgd115b72"><span class="section-number-5">1.3.2.1</span> idtr 的初始化</h5>
+</div><div id="outline-container-orga2e27ac" class="outline-5">
+<h5 id="orga2e27ac"><span class="section-number-5">1.3.2.1</span> idtr 的初始化</h5>
 <div class="outline-text-5" id="text-1-3-2-1">
 <div class="org-src-container">
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">cpu_init</span>:
@@ -408,10 +408,10 @@ Trap gate 与 interrupt gate 基本相同, 但硬件不会主动关中断
 </div>
 </div>
 
-<div id="outline-container-orgdd0a046" class="outline-5">
-<h5 id="orgdd0a046"><span class="section-number-5">1.3.2.2</span> idt_table 的初始化</h5>
+<div id="outline-container-org5ca1f71" class="outline-5">
+<h5 id="org5ca1f71"><span class="section-number-5">1.3.2.2</span> idt_table 的初始化</h5>
 <div class="outline-text-5" id="text-1-3-2-2">
-</div><ol class="org-ol"><li><a id="org66d3b7e"></a>setup_idt<br  /><div class="outline-text-6" id="text-1-3-2-2-1">
+</div><ol class="org-ol"><li><a id="orgc096319"></a>setup_idt<br  /><div class="outline-text-6" id="text-1-3-2-2-1">
 <p>
 setup_idt 是最初的初始化阶段, idt_table 中的每一项都被初始化为相同中的
 descriptor:
@@ -454,7 +454,7 @@ descriptor:
 </div>
 </div></li>
 
-<li><a id="orgd8892f0"></a>trap_init<br  /><div class="outline-text-6" id="text-1-3-2-2-2">
+<li><a id="orgf343c16"></a>trap_init<br  /><div class="outline-text-6" id="text-1-3-2-2-2">
 <p>
 trap_init 是 idt_table 初始化的第二个阶段, exception 对应的 descriptor
 在这时被初始化
@@ -498,7 +498,7 @@ trap_init 是 idt_table 初始化的第二个阶段, exception 对应的 descrip
 </ol>
 </div>
 
-<ol class="org-ol"><li><a id="org26fb5ee"></a>set_intr_gate<br  /><div class="outline-text-7" id="text-1-3-2-2-2-1">
+<ol class="org-ol"><li><a id="org412989a"></a>set_intr_gate<br  /><div class="outline-text-7" id="text-1-3-2-2-2-1">
 <div class="org-src-container">
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">set_intr_gate</span>:
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">1. 14 &#34920;&#31034; type, &#23545;&#24212; gate descriptor &#30340; 43~40 bit, &#20998;&#21035;&#20026; 1110, &#34920;</span>
@@ -510,7 +510,7 @@ trap_init 是 idt_table 初始化的第二个阶段, exception 对应的 descrip
 </div>
 </div></li>
 
-<li><a id="org2bedc74"></a>set_trap_gate<br  /><div class="outline-text-7" id="text-1-3-2-2-2-2">
+<li><a id="orgfdc2212"></a>set_trap_gate<br  /><div class="outline-text-7" id="text-1-3-2-2-2-2">
 <div class="org-src-container">
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">set_trap_gate</span>:
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19982; set_intr_gate &#22522;&#26412;&#30456;&#21516;, &#38500;&#20102;&#36825;&#37324;&#30340; flag &#20026; 15 (1111), &#34920;&#31034;&#19981;</span>
@@ -520,7 +520,7 @@ trap_init 是 idt_table 初始化的第二个阶段, exception 对应的 descrip
 </div>
 </div></li>
 
-<li><a id="org13b5606"></a>set_system_gate<br  /><div class="outline-text-7" id="text-1-3-2-2-2-3">
+<li><a id="org4a224e8"></a>set_system_gate<br  /><div class="outline-text-7" id="text-1-3-2-2-2-3">
 <div class="org-src-container">
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">set_system_gate</span>:
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19982; set_trap_gate &#19981;&#21516;&#30340;&#19968;&#28857;&#26159;&#20854; DPL &#20026; 3, &#34920;&#31034; user mode &#20063;&#21487;&#20197;&#21457;&#36215;</span>
@@ -530,7 +530,7 @@ trap_init 是 idt_table 初始化的第二个阶段, exception 对应的 descrip
 </div>
 </div></li></ol></li>
 
-<li><a id="org08036b8"></a>init_IRQ<br  /><div class="outline-text-6" id="text-1-3-2-2-3">
+<li><a id="orgd35990e"></a>init_IRQ<br  /><div class="outline-text-6" id="text-1-3-2-2-3">
 <p>
 init_IRQ 负责将 idt_table 中剩余的部分初始化为 do_IRQ, do_IRQ 是所有 IO
 interrupt 的统一的 interrupt handler
@@ -584,11 +584,11 @@ ENTRY(<span style="font-weight: bold; text-decoration: underline;">interrupt</sp
 </div>
 </div>
 
-<div id="outline-container-org904f178" class="outline-3">
-<h3 id="org904f178"><span class="section-number-3">1.4</span> ret_from_intr</h3>
+<div id="outline-container-org54c5671" class="outline-3">
+<h3 id="org54c5671"><span class="section-number-3">1.4</span> ret_from_intr</h3>
 <div class="outline-text-3" id="text-1-4">
 <p>
-关于 interrupt 进入与返回的部分参考之前的 <a href="process.rel.html#orgd608a38">Creating Processes</a> 部分, 这里仅仅描述 interrupt 返回时的操作, 这一部分和 Creating Processes 时使用的 syscall_exit_work 差不多.
+关于 interrupt 进入与返回的部分参考之前的 <a href="process.rel.html#org6dbdb86">Creating Processes</a> 部分, 这里仅仅描述 interrupt 返回时的操作, 这一部分和 Creating Processes 时使用的 syscall_exit_work 差不多.
 </p>
 
 <div class="org-src-container">
@@ -642,13 +642,13 @@ need_resched:
 </div>
 
 <p>
-关于内核抢占与 preempt_count, 参考 <a href="synchronization.rel.html#orgd73349d">内核抢占</a>
+关于内核抢占与 preempt_count, 参考 <a href="synchronization.rel.html#org43d4966">内核抢占</a>
 </p>
 </div>
 </div>
 
-<div id="outline-container-org1e6aba5" class="outline-3">
-<h3 id="org1e6aba5"><span class="section-number-3">1.5</span> do_IRQ</h3>
+<div id="outline-container-orgb09e789" class="outline-3">
+<h3 id="orgb09e789"><span class="section-number-3">1.5</span> do_IRQ</h3>
 <div class="outline-text-3" id="text-1-5">
 <p>
 init_IRQ 之后, 和 IO interrupt 处理相关的问题就可以从 do_IRQ 开始, 而不必再关注更底层的 gate 和 interrupt handler.
@@ -676,8 +676,8 @@ do_IRQ 需要能处理这种 IRQ 共享的情况</li>
 </ol>
 </div>
 
-<div id="outline-container-org6190621" class="outline-4">
-<h4 id="org6190621"><span class="section-number-4">1.5.1</span> do_IRQ</h4>
+<div id="outline-container-orgb09e789" class="outline-4">
+<h4 id="orgb09e789"><span class="section-number-4">1.5.1</span> do_IRQ</h4>
 <div class="outline-text-4" id="text-1-5-1">
 <div class="org-src-container">
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">do_IRQ</span>:
@@ -727,8 +727,8 @@ do_IRQ 需要能处理这种 IRQ 共享的情况</li>
 </div>
 </div>
 
-<div id="outline-container-org01c41b5" class="outline-5">
-<h5 id="org01c41b5"><span class="section-number-5">1.5.1.1</span> irq_desc</h5>
+<div id="outline-container-orgf690b05" class="outline-5">
+<h5 id="orgf690b05"><span class="section-number-5">1.5.1.1</span> irq_desc</h5>
 <div class="outline-text-5" id="text-1-5-1-1">
 <div class="org-src-container">
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">irq_desc</span> {
@@ -746,8 +746,8 @@ do_IRQ 需要能处理这种 IRQ 共享的情况</li>
 </div>
 </div>
 
-<div id="outline-container-org122ba82" class="outline-5">
-<h5 id="org122ba82"><span class="section-number-5">1.5.1.2</span> irqaction</h5>
+<div id="outline-container-org3b337bc" class="outline-5">
+<h5 id="org3b337bc"><span class="section-number-5">1.5.1.2</span> irqaction</h5>
 <div class="outline-text-5" id="text-1-5-1-2">
 <div class="org-src-container">
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">irqaction</span> {
@@ -765,8 +765,8 @@ do_IRQ 需要能处理这种 IRQ 共享的情况</li>
 </div>
 </div>
 
-<div id="outline-container-orgaeb2300" class="outline-4">
-<h4 id="orgaeb2300"><span class="section-number-4">1.5.2</span> request_irq</h4>
+<div id="outline-container-org9ceb28c" class="outline-4">
+<h4 id="org9ceb28c"><span class="section-number-4">1.5.2</span> request_irq</h4>
 <div class="outline-text-4" id="text-1-5-2">
 <p>
 do_IRQ 之前, driver 都需要调用 request_irq(irq, ISR, flags, &#x2026;) 注册一个 ISR, 但这里的 "request" 并不是 "分配" 一个 IRQ, 因为设备使用的
@@ -813,11 +813,11 @@ irq_desc[IRQ]-&gt;action 链表中, 和 "request" 关系并不大.
 </div>
 </div>
 
-<div id="outline-container-org28caf12" class="outline-3">
-<h3 id="org28caf12"><span class="section-number-3">1.6</span> softirq</h3>
+<div id="outline-container-orgc9e8cfa" class="outline-3">
+<h3 id="orgc9e8cfa"><span class="section-number-3">1.6</span> softirq</h3>
 <div class="outline-text-3" id="text-1-6">
-</div><div id="outline-container-orgf398221" class="outline-4">
-<h4 id="orgf398221"><span class="section-number-4">1.6.1</span> open_softirq</h4>
+</div><div id="outline-container-org349c5bd" class="outline-4">
+<h4 id="org349c5bd"><span class="section-number-4">1.6.1</span> open_softirq</h4>
 <div class="outline-text-4" id="text-1-6-1">
 <p>
 存在一个 softirq_vec 数组, 数组一共 6 项, 代表 6 种不同的 softirq:
@@ -852,8 +852,8 @@ softirq 只能对应一个回调, 所以基本上 open_softirq 针对每种 soft
 </div>
 </div>
 
-<div id="outline-container-org6f777ba" class="outline-4">
-<h4 id="org6f777ba"><span class="section-number-4">1.6.2</span> raise_softirq</h4>
+<div id="outline-container-orgf487371" class="outline-4">
+<h4 id="orgf487371"><span class="section-number-4">1.6.2</span> raise_softirq</h4>
 <div class="outline-text-4" id="text-1-6-2">
 <p>
 raise_softirq 作用是修改一个全局的 __softirq_pending 变量, 这个变量的
@@ -871,8 +871,8 @@ bit n 表示 softirq_vec[n] 是否需要被执行
 </div>
 </div>
 
-<div id="outline-container-org7dd1c4d" class="outline-4">
-<h4 id="org7dd1c4d"><span class="section-number-4">1.6.3</span> do_softirq</h4>
+<div id="outline-container-org4380489" class="outline-4">
+<h4 id="org4380489"><span class="section-number-4">1.6.3</span> do_softirq</h4>
 <div class="outline-text-4" id="text-1-6-3">
 <p>
 检查是否有 softirq pending (raised), 如果有, 则根据 pending 的值依次调用 softirq_action
@@ -948,15 +948,15 @@ ksoftirqd
 </div>
 </div>
 
-<div id="outline-container-orgeaac64c" class="outline-3">
-<h3 id="orgeaac64c"><span class="section-number-3">1.7</span> tasklet</h3>
+<div id="outline-container-org57aa51f" class="outline-3">
+<h3 id="org57aa51f"><span class="section-number-3">1.7</span> tasklet</h3>
 <div class="outline-text-3" id="text-1-7">
-</div><div id="outline-container-orgc602cae" class="outline-4">
-<h4 id="orgc602cae"><span class="section-number-4">1.7.1</span> tasklet_struct</h4>
+</div><div id="outline-container-orga2e29da" class="outline-4">
+<h4 id="orga2e29da"><span class="section-number-4">1.7.1</span> tasklet_struct</h4>
 </div>
 
-<div id="outline-container-orgf79b3c7" class="outline-4">
-<h4 id="orgf79b3c7"><span class="section-number-4">1.7.2</span> tasklet_init</h4>
+<div id="outline-container-org729075e" class="outline-4">
+<h4 id="org729075e"><span class="section-number-4">1.7.2</span> tasklet_init</h4>
 <div class="outline-text-4" id="text-1-7-2">
 <div class="org-src-container">
 <pre class="src src-c">asklet_init(t,func,<span style="font-weight: bold; text-decoration: underline;">data</span>):
@@ -970,8 +970,8 @@ ksoftirqd
 </div>
 </div>
 
-<div id="outline-container-orgda0eaeb" class="outline-4">
-<h4 id="orgda0eaeb"><span class="section-number-4">1.7.3</span> tasklet_schedule</h4>
+<div id="outline-container-org0230909" class="outline-4">
+<h4 id="org0230909"><span class="section-number-4">1.7.3</span> tasklet_schedule</h4>
 <div class="outline-text-4" id="text-1-7-3">
 <div class="org-src-container">
 <pre class="src src-c">__tasklet_schedule(<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">tasklet_struct</span> *<span style="font-weight: bold; text-decoration: underline;">t</span>):
@@ -988,8 +988,8 @@ ksoftirqd
 </div>
 </div>
 
-<div id="outline-container-org7a772c1" class="outline-4">
-<h4 id="org7a772c1"><span class="section-number-4">1.7.4</span> tasklet_action</h4>
+<div id="outline-container-org86877ce" class="outline-4">
+<h4 id="org86877ce"><span class="section-number-4">1.7.4</span> tasklet_action</h4>
 <div class="outline-text-4" id="text-1-7-4">
 <p>
 tasklet 是基于 softirq 的, 所有的 tasklet 构成一个链表, 由
@@ -999,15 +999,15 @@ TASKLET_SOFTIRQ 对应的 softirq_action: tasklet_action 来处理
 </div>
 </div>
 
-<div id="outline-container-org445de76" class="outline-3">
-<h3 id="org445de76"><span class="section-number-3">1.8</span> workqueue</h3>
+<div id="outline-container-orgc4fe19b" class="outline-3">
+<h3 id="orgc4fe19b"><span class="section-number-3">1.8</span> workqueue</h3>
 </div>
 
-<div id="outline-container-org8b9bc0c" class="outline-3">
-<h3 id="org8b9bc0c"><span class="section-number-3">1.9</span> Appendix</h3>
+<div id="outline-container-org49fe3fe" class="outline-3">
+<h3 id="org49fe3fe"><span class="section-number-3">1.9</span> Appendix</h3>
 <div class="outline-text-3" id="text-1-9">
-</div><div id="outline-container-org23abe56" class="outline-4">
-<h4 id="org23abe56"><span class="section-number-4">1.9.1</span> IO interrupt handler 内为什么不能睡眠</h4>
+</div><div id="outline-container-orgfb59508" class="outline-4">
+<h4 id="orgfb59508"><span class="section-number-4">1.9.1</span> IO interrupt handler 内为什么不能睡眠</h4>
 <div class="outline-text-4" id="text-1-9-1">
 <ol class="org-ol">
 <li><p>
@@ -1034,11 +1034,11 @@ interrupt, 结果 handler 2 嵌套执行时睡眠了, 那 handler 1 也相当于
 </div>
 </div>
 
-<div id="outline-container-org0d2c5b5" class="outline-4">
-<h4 id="org0d2c5b5"><span class="section-number-4">1.9.2</span> fault 与 SIGSEGV</h4>
+<div id="outline-container-org8807f05" class="outline-4">
+<h4 id="org8807f05"><span class="section-number-4">1.9.2</span> fault 与 SIGSEGV</h4>
 <div class="outline-text-4" id="text-1-9-2">
 <p>
-如前面 <a href="#org4429584">Overview</a> 所述, page_fault 时保存的 eip 是导致 fault 的 eip 而不是下一条 eip, 所以下面两个测试程序的输出是?
+如前面 <a href="#org04f411c">Overview</a> 所述, page_fault 时保存的 eip 是导致 fault 的 eip 而不是下一条 eip, 所以下面两个测试程序的输出是?
 </p>
 
 <div class="org-src-container">
@@ -1085,7 +1085,7 @@ interrupt, 结果 handler 2 嵌套执行时睡眠了, 那 handler 1 也相当于
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-07-28 Thu&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-09-05 Mon 15:25</p>
+<p class="date">Created: 2016-09-10 Sat 21:22</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

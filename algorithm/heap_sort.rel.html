@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-09-09 五 12:00 -->
+<!-- 2016-09-10 Sat 21:21 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Algorithm: Heap Sort</title>
@@ -134,28 +134,89 @@ for the JavaScript code in this tag.
             <span style="font-weight: bold; font-style: italic;">size</span> -= 1
             <span style="font-weight: bold;">self</span>.maxHeapify(A, 0, size)
 
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">__climbUp</span>(<span style="font-weight: bold;">self</span>, A, i):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold;">while</span> (i != 0):
+            <span style="font-weight: bold; font-style: italic;">j</span> = <span style="font-weight: bold;">self</span>.PARENT(i)
+            <span style="font-weight: bold;">if</span> (A[i] &lt;= A[j]):
+                <span style="font-weight: bold;">break</span>
+            A[i], <span style="font-weight: bold; font-style: italic;">A</span>[j] = A[j], A[i]
+            <span style="font-weight: bold; font-style: italic;">i</span> = j
+
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">assertIsHeap</span>(<span style="font-weight: bold;">self</span>, A):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold; font-style: italic;">size</span>= <span style="font-weight: bold;">len</span>(A)
+        <span style="font-weight: bold;">for</span> i <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(0, size):
+            <span style="font-weight: bold; font-style: italic;">left</span> = <span style="font-weight: bold;">self</span>.LEFT(i)
+            <span style="font-weight: bold; font-style: italic;">right</span> = <span style="font-weight: bold;">self</span>.RIGHT(i)
+
+            <span style="font-weight: bold;">if</span> (left &gt;= size):
+                <span style="font-weight: bold; font-style: italic;">leftValue</span> = -math.inf
+            <span style="font-weight: bold;">else</span>:
+                <span style="font-weight: bold; font-style: italic;">leftValue</span> = A[left]
+
+            <span style="font-weight: bold;">if</span> (right &gt;= size):
+                <span style="font-weight: bold; font-style: italic;">rightValue</span> = -math.inf
+            <span style="font-weight: bold;">else</span>:
+                <span style="font-weight: bold; font-style: italic;">rightValue</span> = A[right]
+
+            <span style="font-weight: bold;">assert</span>(A[i] &gt;= leftValue <span style="font-weight: bold;">and</span> A[i] &gt;= rightValue)
+
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">heapInsert</span>(<span style="font-weight: bold;">self</span>, A, n):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        """</span>
+        A.append(n)
+
+        <span style="font-weight: bold; font-style: italic;">i</span> = <span style="font-weight: bold;">len</span>(A) - 1
+        <span style="font-weight: bold;">self</span>.__climbUp(A, i)
+
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">heapRemove</span>(<span style="font-weight: bold;">self</span>, A, i):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold; font-style: italic;">A</span>[i] = A[-1]
+        <span style="font-weight: bold;">del</span>(A[-1])
+        <span style="font-weight: bold;">if</span> (i == <span style="font-weight: bold;">len</span>(A)):
+            <span style="font-weight: bold;">return</span>
+        <span style="font-weight: bold;">self</span>.maxHeapify(A, i, <span style="font-weight: bold;">len</span>(A))
+        <span style="font-weight: bold;">self</span>.__climbUp(A, i)
+
 <span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">A = [1, 2, 3, 1, 0, 2, 1]</span>
 <span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">A = [3,2,1]</span>
-<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">Solution().maxHeapify(A, 0)</span>
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">Solution().maxHeapify(A, 0, len(A))</span>
 <span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">print(A)</span>
 
 <span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">A = [1, 2, 3, 4, 5, 6, 9, 7, -1]</span>
 <span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">Solution().buildMaxHeap(A)</span>
 <span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">print(A)</span>
 
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">A = [1, 2, 3, 4, 5, 6, 9, 7, -1]</span>
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">Solution().heapSort(A)</span>
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">print(A)</span>
+
 <span style="font-weight: bold; font-style: italic;">A</span> = [1, 2, 3, 4, 5, 6, 9, 7, -1]
-Solution().heapSort(A)
+Solution().buildMaxHeap(A)
 <span style="font-weight: bold;">print</span>(A)
+Solution().assertIsHeap(A)
+
+Solution().heapInsert(A, 0)
+<span style="font-weight: bold;">print</span>(A)
+Solution().assertIsHeap(A)
+
+Solution().heapRemove(A, 2)
+<span style="font-weight: bold;">print</span>(A)
+Solution().assertIsHeap(A)
 </pre>
 </div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-09-09 五&gt;</span></span></p>
+<p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-09-09 Fri&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-09-09 五 12:00</p>
+<p class="date">Created: 2016-09-10 Sat 21:21</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
