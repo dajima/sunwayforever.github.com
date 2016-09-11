@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Android: Sparse Image</title>
+<!-- 2016-09-11 Sun 23:32 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Wei Sun (孙伟)" />
+<link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Android: Sparse Image</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Android: Sparse Image</a>
+<ul>
+<li><a href="#sec-1-1">1.1. 格式</a></li>
+<li><a href="#sec-1-2">1.2. 实验</a></li>
+<li><a href="#sec-1-3">1.3. 关于 CHUNK_TYPE_DONT_CARE</a></li>
+<li><a href="#sec-1-4">1.4. 参考</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Android: Sparse Image</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+android 的 sparse image 的概念和 linux 的 sparse file 类似, 即使用更少的数据表示更多的"无用"的数据, 不同的是:
+</p>
+
+<ol class="org-ol">
+<li>linux sparse file 是利用了文件系统对 lseek 的支持, 可以透明的对连续的"0"进行压缩表示
+</li>
+
+<li>android sparse image 是通过显式的方法将 raw image 压缩为另一个
+sparse image, 所以不是透明的. 但是 sparse image 除了表示连续的 "0",
+还可以表示连续的任意数据 (通过 CHUNK_TYPE_FILL), 而且它还支持
+CHUNK_TYPE_DONT_CARE 来表示那些无用的数据.
+</li>
+</ol>
+</div>
+
+<div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> 格式</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+sparse image 的格式参考 system/core/libsparse/sparse_format.h, 简单的说, 它的格式是:
+</p>
+
+<ol class="org-ol">
+<li>文件头
+
+<ol class="org-ol">
+<li>MAGIC
+</li>
+
+<li>blk_sz, 原始文件每一个 block 的大小, 固定为 4K
+</li>
+
+<li>total_blks, 原始文件有多少个 block
+</li>
+
+<li>total_chunks, sparse image 有多少个 chunk
+</li>
+</ol>
+</li>
+
+<li>CHUNK[]
+
+<p>
+文件头后是连续的多个 chunk, 每个 chunk 包括 chunk header 和 chunk
+type 相关的数据
+</p>
+
+<ol class="org-ol">
+<li>chunk header (12 字节)
+
+<ol class="org-ol">
+<li>chunk_type
+
+<ol class="org-ol">
+<li>CHUNK_TYPE_RAW
+</li>
+
+<li>CHUNK_TYPE_DONT_CARE
+</li>
+
+<li>CHUNK_TYPE_FILL
+</li>
+</ol>
+</li>
+
+<li>chunk_size, 该 chunk 包含多少个 block
+</li>
+</ol>
+</li>
+
+<li>chunk type 相关数据
+
+<ol class="org-ol">
+<li>对于 CHUNK_TYPE_RAW, 相关数据即为 chunk_size 个 block 的原始数据
+</li>
+
+<li>对于 CHUNK_TYPE_DONT_CARE, 相关数据为空
+</li>
+
+<li>对于 CHUNK_TYPE_FILL, 相关数据为 4 个字节的 fill data
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 实验</h3>
+<div class="outline-text-3" id="text-1-2">
+<ol class="org-ol">
+<li>通过 img2simg 可以将原始文件转换为 sparse image
+</li>
+
+<li>通过 simg_dump 可以 dump sparse image. 
+</li>
+</ol>
+
+<p>
+img2simg 其实不是只能操作 ext4 image: 只要原始文件的大小是 4K 对齐的就可以. 所以我们尝试使用 dd 生成的 sparse file 做为原始文件来测试.
+</p>
+
+<pre class="example">
+$&gt; dd if=/dev/urandom bs=4096 seek=100 count=2 of=file_with_holes
+2+0 records in
+2+0 records out
+8192 bytes (8.2 kB) copied, 0.000890936 s, 9.2 MB/s
+$&gt; img2simg file_with_holes file_with_holes_sparse
+$&gt; du file_with_holes
+8       file_with_holes
+$&gt; du -h  file_with_holes
+8.0K    file_with_holes
+$&gt; du -h --apparent-size  file_with_holes
+408K    file_with_holes
+$&gt; du -h file_with_holes_sparse
+12K     file_with_holes_sparse
+$&gt; du -h --apparent-size file_with_holes_sparse
+8.1K    file_with_holes_sparse
+$&gt; simg_dump -v file_with_holes_sparse 
+file_with_holes_sparse: Total of 102 4096-byte output blocks in 2 input chunks.
+            input_bytes      output_blocks
+chunk    offset     number  offset  number
+   1         40          4       0     100 Fill with 0x00000000
+
+   2         56       8192     100       2 Raw data
+           8248                102         End
+</pre>
+
+<p>
+解读 simg_dump 的结果:
+</p>
+
+<ol class="org-ol">
+<li>Total of 102 4096-byte output blocks in 2 input chunks, 表示原始文件有 102 个 block, 每个 block 4K, 生成的 sparse image 有两个 chunk
+</li>
+
+<li>第一个 chunk 的类型为 CHUNK_TYPE_FILL, fill data 为 0x00000000,
+chunk_size 为 100.
+</li>
+
+<li>chunk 1 的 offset = 40, number = 4 是表示该 chunk header 的末尾在
+sparse image 文件的 offset (40 字节) 以及后面的数据部分的长度 (4 字节), chunk 1 位于 sparse image 文件的 40 字节处, 加上 chunk header
+(12) 及 chunk_data (4 字节的 fill_data), 刚好等于 chunk 2 的起始
+offset (56 字节).
+
+<p>
+chunk 1 的 header 的末尾的 offset 为 40, 是因为 28 (file_header) +
+12 (chunk header), 具体的见 simg_dump 中的代码:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="font-weight: bold; font-style: italic;">header_bin</span> = FH.read(28)
+<span style="font-weight: bold; font-style: italic;">header</span> = struct.unpack(<span style="font-style: italic;">"&lt;I4H4I"</span>, header_bin)
+
+<span style="font-weight: bold; font-style: italic;">header_bin</span> = FH.read(12)
+<span style="font-weight: bold; font-style: italic;">header</span> = struct.unpack(<span style="font-style: italic;">"&lt;2H2I"</span>, header_bin)
+
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">FH.tell() &#21363; offset</span>
+<span style="font-weight: bold;">print</span>(<span style="font-style: italic;">"%4u %10u %10u %7u %7u"</span> % (i, FH.tell(), data_sz, offset, chunk_sz),
+      end=<span style="font-style: italic;">" "</span>)
+</pre>
+</div>
+</li>
+
+<li>第二个 chunk 的类型为 CHUNK_TYPE_RAW, chunk_size 为 2
+</li>
+</ol>
+
+<p>
+给 file_with_holes 后面追加 4K 的 0x31 再试试:
+</p>
+
+<pre class="example">
+$&gt; du -b one 
+4096    one
+$&gt; od -h one
+0000000 3131 3131 3131 3131 3131 3131 3131 3131
+*
+0010000
+$&gt; cat one &gt;&gt; file_with_holes
+$&gt; img2simg file_with_holes file_with_holes_sparse
+$&gt; simg_dump -v file_with_holes_sparse 
+file_with_holes_sparse: Total of 103 4096-byte output blocks in 3 input chunks.
+            input_bytes      output_blocks
+chunk    offset     number  offset  number
+   1         40          4       0     100 Fill with 0x00000000
+
+   2         56       8192     100       2 Raw data
+   3       8260          4     102       1 Fill with 0x31313131
+
+           8264                103         End
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 关于 CHUNK_TYPE_DONT_CARE</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+可能和 ext4 的格式有关, 目前没有想到一个正常的原始文件为什么会产生这种类型的 chunk.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> 参考</h3>
+<div class="outline-text-3" id="text-1-4">
+<ol class="org-ol">
+<li><a href="http://www.2net.co.uk/tutorial/android-sparse-image-format">http://www.2net.co.uk/tutorial/android-sparse-image-format</a>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Wei Sun (孙伟)</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2016-09-11 Sun 23:32</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
