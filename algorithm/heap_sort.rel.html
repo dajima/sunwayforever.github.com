@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-09-10 Sat 21:21 -->
+<!-- 2016-09-11 Sun 11:04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Algorithm: Heap Sort</title>
@@ -144,10 +144,10 @@ for the JavaScript code in this tag.
             A[i], <span style="font-weight: bold; font-style: italic;">A</span>[j] = A[j], A[i]
             <span style="font-weight: bold; font-style: italic;">i</span> = j
 
-    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">assertIsHeap</span>(<span style="font-weight: bold;">self</span>, A):
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">assertHeapify</span>(<span style="font-weight: bold;">self</span>, A):
         <span style="font-style: italic;">"""</span>
 <span style="font-style: italic;">        """</span>
-        <span style="font-weight: bold; font-style: italic;">size</span>= <span style="font-weight: bold;">len</span>(A)
+        <span style="font-weight: bold; font-style: italic;">size</span> = <span style="font-weight: bold;">self</span>.PARENT(<span style="font-weight: bold;">len</span>(A) - 1) + 1
         <span style="font-weight: bold;">for</span> i <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(0, size):
             <span style="font-weight: bold; font-style: italic;">left</span> = <span style="font-weight: bold;">self</span>.LEFT(i)
             <span style="font-weight: bold; font-style: italic;">right</span> = <span style="font-weight: bold;">self</span>.RIGHT(i)
@@ -198,15 +198,15 @@ for the JavaScript code in this tag.
 <span style="font-weight: bold; font-style: italic;">A</span> = [1, 2, 3, 4, 5, 6, 9, 7, -1]
 Solution().buildMaxHeap(A)
 <span style="font-weight: bold;">print</span>(A)
-Solution().assertIsHeap(A)
+Solution().assertHeapify(A)
 
 Solution().heapInsert(A, 0)
 <span style="font-weight: bold;">print</span>(A)
-Solution().assertIsHeap(A)
+Solution().assertHeapify(A)
 
 Solution().heapRemove(A, 2)
 <span style="font-weight: bold;">print</span>(A)
-Solution().assertIsHeap(A)
+Solution().assertHeapify(A)
 </pre>
 </div>
 </div>
@@ -216,7 +216,7 @@ Solution().assertIsHeap(A)
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-09-09 Fri&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-09-10 Sat 21:21</p>
+<p class="date">Created: 2016-09-11 Sun 11:04</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-09-10 Sat 21:21 -->
+<!-- 2016-09-11 Sun 11:04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Algorithm: Binary Search</title>
@@ -90,11 +90,6 @@ for the JavaScript code in this tag.
         <span style="font-weight: bold;">while</span> (<span style="font-weight: bold; text-decoration: underline;">True</span>):
             <span style="font-weight: bold;">if</span> (f &gt; t):
                 <span style="font-weight: bold;">return</span> -1
-            <span style="font-weight: bold;">elif</span> (f == t):
-                <span style="font-weight: bold;">if</span> (A[f] == value):
-                    <span style="font-weight: bold;">return</span> f
-                <span style="font-weight: bold;">else</span>:
-                    <span style="font-weight: bold;">return</span> -1
             <span style="font-weight: bold;">else</span>:
                 <span style="font-weight: bold; font-style: italic;">mid</span> = <span style="font-weight: bold;">int</span>((f + t) / 2)
                 <span style="font-weight: bold;">if</span> (A[mid] == value):
@@ -104,7 +99,7 @@ for the JavaScript code in this tag.
                 <span style="font-weight: bold;">else</span>:
                     <span style="font-weight: bold; font-style: italic;">f</span> = mid + 1
 
-    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">binarySearch2</span>(<span style="font-weight: bold;">self</span>, A, value):
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">binarySearchLarger</span>(<span style="font-weight: bold;">self</span>, A, value):
         <span style="font-style: italic;">"""</span>
 <span style="font-style: italic;">        1 2 4 5 : 3 =&gt; 2</span>
 <span style="font-style: italic;">        returns: min(i for  A[i] &gt;= value)</span>
@@ -115,11 +110,6 @@ for the JavaScript code in this tag.
         <span style="font-weight: bold;">while</span> (<span style="font-weight: bold; text-decoration: underline;">True</span>):
             <span style="font-weight: bold;">if</span> (f &gt; t):
                 <span style="font-weight: bold;">return</span> ret
-            <span style="font-weight: bold;">elif</span> (f == t):
-                <span style="font-weight: bold;">if</span> (A[f] &gt;= value):
-                    <span style="font-weight: bold;">return</span> f
-                <span style="font-weight: bold;">else</span>:
-                    <span style="font-weight: bold;">return</span> ret
             <span style="font-weight: bold;">else</span>:
                 <span style="font-weight: bold; font-style: italic;">mid</span> = <span style="font-weight: bold;">int</span>((f + t) / 2)
                 <span style="font-weight: bold;">if</span> (A[mid] == value):
@@ -130,8 +120,9 @@ for the JavaScript code in this tag.
                 <span style="font-weight: bold;">else</span>:
                     <span style="font-weight: bold; font-style: italic;">f</span> = mid + 1
 
-<span style="font-weight: bold;">print</span>(Solution().binarySearch([1, 2, 4, 5], 0))
-<span style="font-weight: bold;">print</span>(Solution().binarySearch2([1, 2, 4, 5], 0))
+<span style="font-weight: bold;">print</span>(Solution().binarySearch([1, 2, 4, 5], 1))
+<span style="font-weight: bold;">print</span>(Solution().binarySearch([], 1))
+<span style="font-weight: bold;">print</span>(Solution().binarySearchLarger([1, 2, 4, 5], 3))
 </pre>
 </div>
 </div>
@@ -141,7 +132,7 @@ for the JavaScript code in this tag.
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-09-08 Thu&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-09-10 Sat 21:21</p>
+<p class="date">Created: 2016-09-11 Sun 11:04</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
