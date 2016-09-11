@@ -3,12 +3,11 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-09-10 Sat 21:21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: Ext2</title>
-<meta name="generator" content="Org-mode" />
-<meta name="author" content="Wei Sun (孙伟)" />
+<!-- 2016-09-11 Sun 23:20 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Wei Sun (孙伟)" />
 <link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
 <script type="text/javascript">
 /*
@@ -64,109 +63,103 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgcf67c45">1. Linux Kernel: Ext2</a>
+<li><a href="#sec-1">1. Linux Kernel: Ext2</a>
 <ul>
-<li><a href="#org12920ef">1.1. Ext2 的磁盘布局</a>
+<li><a href="#sec-1-1">1.1. Ext2 的磁盘布局</a>
 <ul>
-<li><a href="#org576cf26">1.1.1. super block</a></li>
-<li><a href="#org9382ba3">1.1.2. group descriptors</a></li>
-<li><a href="#org8173604">1.1.3. block bitmap</a></li>
-<li><a href="#org52341d4">1.1.4. inode bitmap</a></li>
-<li><a href="#org64fd4cd">1.1.5. inode table</a></li>
+<li><a href="#sec-1-1-1">1.1.1. super block</a></li>
+<li><a href="#sec-1-1-2">1.1.2. group descriptors</a></li>
+<li><a href="#sec-1-1-3">1.1.3. block bitmap</a></li>
+<li><a href="#sec-1-1-4">1.1.4. inode bitmap</a></li>
+<li><a href="#sec-1-1-5">1.1.5. inode table</a></li>
 </ul>
 </li>
-<li><a href="#org783887d">1.2. 管理 Ext2 磁盘空间</a>
+<li><a href="#sec-1-2">1.2. 管理 Ext2 磁盘空间</a>
 <ul>
-<li><a href="#orgdd6b53b">1.2.1. 创建 inode</a></li>
-<li><a href="#orgc3262ff">1.2.2. 删除 inode</a></li>
-<li><a href="#org5244d54">1.2.3. data block</a></li>
+<li><a href="#sec-1-2-1">1.2.1. 创建 inode</a></li>
+<li><a href="#sec-1-2-2">1.2.2. 删除 inode</a></li>
+<li><a href="#sec-1-2-3">1.2.3. data block</a></li>
 </ul>
 </li>
-<li><a href="#org3dce716">1.3. Ext2 file holes</a>
+<li><a href="#sec-1-3">1.3. Ext2 file holes</a>
 <ul>
-<li><a href="#org8ccdcf0">1.3.1. File holes on disk</a></li>
-<li><a href="#orgdd1046c">1.3.2. Read from file holes</a></li>
+<li><a href="#sec-1-3-1">1.3.1. File holes on disk</a></li>
+<li><a href="#sec-1-3-2">1.3.2. Read from file holes</a></li>
 </ul>
 </li>
-<li><a href="#orgf2b7d43">1.4. 使用 debugfs 观察磁盘布局</a></li>
-<li><a href="#org6d2e2d2">1.5. Journaling</a></li>
-<li><a href="#org0bbbcba">1.6. Appendix</a>
+<li><a href="#sec-1-4">1.4. 使用 debugfs 观察磁盘布局</a></li>
+<li><a href="#sec-1-5">1.5. Journaling</a></li>
+<li><a href="#sec-1-6">1.6. Appendix</a>
 <ul>
-<li><a href="#orgd5d251c">1.6.1. immutable files</a></li>
-<li><a href="#org0f58197">1.6.2. reserved block</a></li>
-<li><a href="#org3eb33ee">1.6.3. Ext2 directory layout</a></li>
-<li><a href="#org42808f6">1.6.4. extended attribute</a></li>
-<li><a href="#org56de15a">1.6.5. bitmap 如何被 sync 到磁盘</a></li>
-<li><a href="#org9d2cbeb">1.6.6. Ext2 会占用多少磁盘空间</a></li>
-<li><a href="#org14eb029">1.6.7. Utility</a></li>
+<li><a href="#sec-1-6-1">1.6.1. immutable files</a></li>
+<li><a href="#sec-1-6-2">1.6.2. reserved block</a></li>
+<li><a href="#sec-1-6-3">1.6.3. Ext2 directory layout</a></li>
+<li><a href="#sec-1-6-4">1.6.4. extended attribute</a></li>
+<li><a href="#sec-1-6-5">1.6.5. bitmap 如何被 sync 到磁盘</a></li>
+<li><a href="#sec-1-6-6">1.6.6. Ext2 会占用多少磁盘空间</a></li>
+<li><a href="#sec-1-6-7">1.6.7. Utility</a></li>
 </ul>
 </li>
-<li><a href="#org3816901">1.7. See also</a></li>
+<li><a href="#sec-1-7">1.7. See also</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-<div id="outline-container-orgcf67c45" class="outline-2">
-<h2 id="orgcf67c45"><span class="section-number-2">1</span> Linux Kernel: Ext2</h2>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Linux Kernel: Ext2</h2>
 <div class="outline-text-2" id="text-1">
-</div><div id="outline-container-org12920ef" class="outline-3">
-<h3 id="org12920ef"><span class="section-number-3">1.1</span> Ext2 的磁盘布局</h3>
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Ext2 的磁盘布局</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 Ext2 将磁盘分割为几个连续的, 大小相同的 block group, 每个 group 的结构为:
 </p>
 
 <ol class="org-ol">
-<li><p>
-super block
-</p>
+<li>super block
 
 <p>
  占一个 block (如果没有特别说明, 这里及以后所指的的 block 都是指
 mkfs 时指定的 block size, 与物理设备的 block (sector)无关)
-</p></li>
-
-<li><p>
-group descriptors
 </p>
+</li>
+
+<li>group descriptors
 
 <p>
  占用多个 block, 表示所有的 group 的相关信息 (而并非仅保存当前
 group 的信息)
-</p></li>
-
-<li><p>
-block bitmap
 </p>
+</li>
+
+<li>block bitmap
 
 <p>
 占一个 block
-</p></li>
-
-<li><p>
-inode bitmap
 </p>
+</li>
+
+<li>inode bitmap
 
 <p>
 一个 block
-</p></li>
-
-<li><p>
-inode table
 </p>
+</li>
+
+<li>inode table
 
 <p>
 占用多个 block
-</p></li>
-
-<li><p>
-data blocks
 </p>
+</li>
+
+<li>data blocks
 
 <p>
 占用多个 block 直到 group 末尾
-</p></li>
+</p>
+</li>
 </ol>
 
 <p>
@@ -174,8 +167,8 @@ data blocks
 </p>
 </div>
 
-<div id="outline-container-org576cf26" class="outline-4">
-<h4 id="org576cf26"><span class="section-number-4">1.1.1</span> super block</h4>
+<div id="outline-container-sec-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> super block</h4>
 <div class="outline-text-4" id="text-1-1-1">
 <p>
 super block 和 group descriptors 在每个 group 都有一个, 但平时只有
@@ -187,110 +180,97 @@ super block 的主要成员:
 </p>
 
 <ol class="org-ol">
-<li><p>
-s_inodes_count
-</p>
+<li>s_inodes_count
 
 <p>
 文件系统能容纳的最大的 inode 个数
-</p></li>
-
-<li><p>
-s_block_count
 </p>
+</li>
+
+<li>s_block_count
 
 <p>
 文件系统的大小
-</p></li>
-
-<li><p>
-s_r_blocks_count
 </p>
+</li>
+
+<li>s_r_blocks_count
 
 <p>
 reserved 的 block 数目
-</p></li>
-
-<li><p>
-s_groups_count
 </p>
+</li>
+
+<li>s_groups_count
 
 <p>
 group 数目
-</p></li>
-
-<li><p>
-s_free_inodes_count
 </p>
+</li>
+
+<li>s_free_inodes_count
 
 <p>
 可用的 inode 数, s_free_inodes_count/s_groups_count 可计算出每个
 group 平均的 inode 数, 后续创建 inode 时会根据这个值选择相应的 group
-</p></li>
-
-<li><p>
-s_free_blocks_count
 </p>
+</li>
+
+<li>s_free_blocks_count
 
 <p>
 可用的 block 数
-</p></li>
-
-<li><p>
-s_log_block_size
 </p>
+</li>
+
+<li>s_log_block_size
 
 <p>
 block 大小
-</p></li>
-
-<li><p>
-s_blocks_per_group
 </p>
+</li>
+
+<li>s_blocks_per_group
 
 <p>
 每个 group 的 block 数
-</p></li>
-
-<li><p>
-s_inodes_per_group
 </p>
+</li>
+
+<li>s_inodes_per_group
 
 <p>
 每个 group 的 inode 数
-</p></li>
-
-<li><p>
-s_mtime/s_wtime
 </p>
+</li>
+
+<li>s_mtime/s_wtime
 
 <p>
 最近的 mount 时间和修改时间
-</p></li>
-
-<li><p>
-s_mnt_count
 </p>
+</li>
+
+<li>s_mnt_count
 
 <p>
 mount 次数
-</p></li>
-
-<li><p>
-s_def_resuid/s_def_resgid
 </p>
+</li>
+
+<li>s_def_resuid/s_def_resgid
 
 <p>
 可用使用 reserved block 的 uid/gid
-</p></li>
-
-<li><p>
-s_last_mounted
 </p>
+</li>
+
+<li>s_last_mounted
 
 <p>
 最近一次被挂载到哪
-</p></li>
+</p>
+</li>
 </ol>
 
 <p>
@@ -299,49 +279,46 @@ mkfs 或 tune2fs 指定的:
 </p>
 
 <ol class="org-ol">
-<li><p>
-s_r_blocks_count
-</p>
+<li>s_r_blocks_count
 
 <p>
 默认的 reserved block 数目是 s_block_count 的 5%
-</p></li>
-
-<li><p>
-s_log_block_size
 </p>
+</li>
+
+<li>s_log_block_size
 
 <p>
 block 大小默认为 1024B
-</p></li>
-
-<li><p>
-s_blocks_per_group
 </p>
+</li>
+
+<li>s_blocks_per_group
 
 <p>
 大小和 block 大小有关: 因为一个 group 只用一个 block 来保存 block
 bitmap, 所以对于 1024B 的 block 来说, block bitmap 最多只能表示
 1024*8*1024=8MB 的大小, 即 1024*8 = 8192 个 block
-</p></li>
-
-<li><p>
-s_inodes_per_group
 </p>
+</li>
+
+<li>s_inodes_per_group
 
 <p>
 和磁盘大小有关, 默认情况下, 每个 inode 需要至少 8KB, 所以假设 block
 size 为 1K, 若磁盘大小为 256K, 则 inode 总数是 256/8 = 32, group 为
 1, s_inodes_per_group 为 32.
-</p></li>
+</p>
+</li>
 
-<li>s_def_resuid/s_def_resgid</li>
+<li>s_def_resuid/s_def_resgid
+</li>
 </ol>
 </div>
 </div>
 
-<div id="outline-container-org9382ba3" class="outline-4">
-<h4 id="org9382ba3"><span class="section-number-4">1.1.2</span> group descriptors</h4>
+<div id="outline-container-sec-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> group descriptors</h4>
 <div class="outline-text-4" id="text-1-1-2">
 <p>
 group descriptors 是一系列的 group descriptor 的集合, 占用多个 block,
@@ -349,38 +326,36 @@ group descriptors 是一系列的 group descriptor 的集合, 占用多个 block
 </p>
 
 <ol class="org-ol">
-<li><p>
-bg_block_bitmap
-</p>
+<li>bg_block_bitmap
 
 <p>
 block bitmap 对应的 block number
-</p></li>
-
-<li><p>
-bg_inode_bitmap
 </p>
+</li>
+
+<li>bg_inode_bitmap
 
 <p>
 inode bitamp 对应的 block number
-</p></li>
-
-<li><p>
-bg_inode_table
 </p>
+</li>
+
+<li>bg_inode_table
 
 <p>
 inode table 起始 block 对应的 block number, 因为有
 s_inodes_per_group, 所以这里不需要记录 inode table 的大小
-</p></li>
+</p>
+</li>
 
-<li>&#x2026;</li>
+<li>&#x2026;
+</li>
 </ol>
 </div>
 </div>
 
-<div id="outline-container-org8173604" class="outline-4">
-<h4 id="org8173604"><span class="section-number-4">1.1.3</span> block bitmap</h4>
+<div id="outline-container-sec-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> block bitmap</h4>
 <div class="outline-text-4" id="text-1-1-3">
 <p>
 block bitmap 占用一个 block, 记录的是 group 所有 data block 是否已经分配, 这个 block 的大小决定了每个 group 能容纳多少 data block.
@@ -388,8 +363,8 @@ block bitmap 占用一个 block, 记录的是 group 所有 data block 是否已�
 </div>
 </div>
 
-<div id="outline-container-org52341d4" class="outline-4">
-<h4 id="org52341d4"><span class="section-number-4">1.1.4</span> inode bitmap</h4>
+<div id="outline-container-sec-1-1-4" class="outline-4">
+<h4 id="sec-1-1-4"><span class="section-number-4">1.1.4</span> inode bitmap</h4>
 <div class="outline-text-4" id="text-1-1-4">
 <p>
 占用一个 block, 记录 group 的某个 inode 是否已经被使用.
@@ -397,8 +372,8 @@ block bitmap 占用一个 block, 记录的是 group 所有 data block 是否已�
 </div>
 </div>
 
-<div id="outline-container-org64fd4cd" class="outline-4">
-<h4 id="org64fd4cd"><span class="section-number-4">1.1.5</span> inode table</h4>
+<div id="outline-container-sec-1-1-5" class="outline-4">
+<h4 id="sec-1-1-5"><span class="section-number-4">1.1.5</span> inode table</h4>
 <div class="outline-text-4" id="text-1-1-5">
 <p>
 占用多个 block, 这个 table 中每一项都是一个 128B 的 inode 结构, 所以
@@ -415,11 +390,11 @@ inode number 为: x * s_inodes_per_group + y, 反之, 根据 inode number 可以
 </div>
 </div>
 
-<div id="outline-container-org783887d" class="outline-3">
-<h3 id="org783887d"><span class="section-number-3">1.2</span> 管理 Ext2 磁盘空间</h3>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 管理 Ext2 磁盘空间</h3>
 <div class="outline-text-3" id="text-1-2">
-</div><div id="outline-container-orgdd6b53b" class="outline-4">
-<h4 id="orgdd6b53b"><span class="section-number-4">1.2.1</span> 创建 inode</h4>
+</div><div id="outline-container-sec-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> 创建 inode</h4>
 <div class="outline-text-4" id="text-1-2-1">
 <p>
 创建 inode 的过程主要是需要分配一个 inode number, 或者说找到一个合适的
@@ -431,6 +406,7 @@ group, 并且在这个 group 的 inode table 中找到某一个 entry.
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_new_inode</span>:
   inode = new_inode(sb);
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25214;&#19968;&#20010;&#21512;&#36866;&#30340; group</span>
@@ -462,24 +438,27 @@ group, 并且在这个 group 的 inode table 中找到某一个 entry.
 <li>若新建的 inode 对应一个目录:
 
 <ol class="org-ol">
-<li>若 parent 是 root inode, 则 inode 会尽量平均分布在各个 group: 选择 free inode 和 free block 大于平均值的 group</li>
+<li>若 parent 是 root inode, 则 inode 会尽量平均分布在各个 group: 选择 free inode 和 free block 大于平均值的 group
+</li>
 
 <li>对于 parent 不是 root 的 inode, 会尽量选择 parent inode 所在的
-group, 除非这个 group 有太多的目录或者 free inode 已经很少</li>
+group, 除非这个 group 有太多的目录或者 free inode 已经很少
+</li>
 
 <li>做为 1 和 2 的 fallback, 如果 1 和 2 没有找到合适的 group, 则从
 parent inode 所在的 group 开始, 找一个 free inode 大于平均值的
-group</li>
-</ol></li>
+group
+</li>
+</ol>
+</li>
 
-<li><p>
-若新建 inode 是一个文件:
-</p>
+<li>若新建 inode 是一个文件:
 
 <p>
 从 parent inode 所在的 group 开始 (假设为 i), 跳跃式的查找一个可用的 inode, 大约是这样跳的: i, i+1, i+1+2, i+1+2+4 &#x2026;, 代码如下:
 </p>
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">for</span> (i = 1; i &lt; ngroups; i &lt;&lt;= 1) {
     group += i;
     <span style="font-weight: bold;">if</span> (group &gt;= ngroups)
@@ -496,6 +475,7 @@ group</li>
 若上面的查找失败, 进行线性查找:
 </p>
 <div class="org-src-container">
+
 <pre class="src src-c">group = parent_group;
 <span style="font-weight: bold;">for</span> (i = 0; i &lt; ngroups; i++) {
     <span style="font-weight: bold;">if</span> (++group &gt;= ngroups)
@@ -507,7 +487,8 @@ group</li>
         <span style="font-weight: bold;">goto</span> <span style="font-weight: bold; text-decoration: underline;">found</span>;
 }
 </pre>
-</div></li>
+</div>
+</li>
 </ol>
 
 <p>
@@ -515,15 +496,17 @@ group</li>
 </p>
 
 <ol class="org-ol">
-<li>inode 尽量与 parent inode 位于同一个 group</li>
+<li>inode 尽量与 parent inode 位于同一个 group
+</li>
 
-<li>inode 尽量的分散到不同的 group</li>
+<li>inode 尽量的分散到不同的 group
+</li>
 </ol>
 </div>
 </div>
 
-<div id="outline-container-orgc3262ff" class="outline-4">
-<h4 id="orgc3262ff"><span class="section-number-4">1.2.2</span> 删除 inode</h4>
+<div id="outline-container-sec-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> 删除 inode</h4>
 <div class="outline-text-4" id="text-1-2-2">
 <p>
 ext2_free_inode 负责删除 inode 本身 (修改 inode bitmap), 至于 unlink
@@ -532,6 +515,7 @@ inode, 修改 parent directory 的 dentry, 删除 inode 的 data block, 以及�
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_free_inode</span>:
   block_group = (ino - 1) / EXT2_INODES_PER_GROUP(sb);
   bit = (ino - 1) % EXT2_INODES_PER_GROUP(sb);
@@ -552,13 +536,14 @@ unlink 调用 ext2_free_inode 的逻辑为:
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">sys_unlink</span>:
   path_lookup(name, LOOKUP_PARENT, &amp;nd);
   vfs_unlink(nd.dentry-&gt;d_inode, dentry);
     ext2_unlink ()
       ext2_delete_entry (de, page);
       ext2_dec_count(inode);
-  iput(inode);  <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">truncate the inode here </span><span style="font-weight: bold; font-style: italic;">*/</span>
+  iput(inode);        <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">truncate the inode here </span><span style="font-weight: bold; font-style: italic;">*/</span>
     iput_final(inode)
     generic_drop_inode(inode)
       <span style="font-weight: bold;">if</span> (!inode-&gt;i_nlink):
@@ -574,11 +559,11 @@ unlink 调用 ext2_free_inode 的逻辑为:
 </div>
 </div>
 
-<div id="outline-container-org5244d54" class="outline-4">
-<h4 id="org5244d54"><span class="section-number-4">1.2.3</span> data block</h4>
+<div id="outline-container-sec-1-2-3" class="outline-4">
+<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> data block</h4>
 <div class="outline-text-4" id="text-1-2-3">
-</div><div id="outline-container-orgfdfc2b0" class="outline-5">
-<h5 id="orgfdfc2b0"><span class="section-number-5">1.2.3.1</span> Locate data block</h5>
+</div><div id="outline-container-sec-1-2-3-1" class="outline-5">
+<h5 id="sec-1-2-3-1"><span class="section-number-5">1.2.3.1</span> Locate data block</h5>
 <div class="outline-text-5" id="text-1-2-3-1">
 <p>
 一个 inode 对应的 data block 通过 ext2_inode-&gt;i_block[EXT2_N_BLOCKS]
@@ -586,18 +571,23 @@ unlink 调用 ext2_free_inode 的逻辑为:
 </p>
 
 <ol class="org-ol">
-<li>0~11 是直接索引</li>
-<li>12 是一级间接索引</li>
-<li>13 是二级间接索引</li>
-<li>14 是三级间接索引</li>
+<li>0~11 是直接索引
+</li>
+<li>12 是一级间接索引
+</li>
+<li>13 是二级间接索引
+</li>
+<li>14 是三级间接索引
+</li>
 </ol>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">EXT2_NDIR_BLOCKS</span>                12
-<span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">EXT2_IND_BLOCK</span>                  EXT2_NDIR_BLOCKS
-<span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">EXT2_DIND_BLOCK</span>                 (EXT2_IND_BLOCK + 1)
-<span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">EXT2_TIND_BLOCK</span>                 (EXT2_DIND_BLOCK + 1)
-<span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">EXT2_N_BLOCKS</span>                   (EXT2_TIND_BLOCK + 1)
+
+<pre class="src src-c"><span style="font-weight: bold;">#define</span>       <span style="font-weight: bold; font-style: italic;">EXT2_NDIR_BLOCKS</span>                12
+<span style="font-weight: bold;">#define</span>       <span style="font-weight: bold; font-style: italic;">EXT2_IND_BLOCK</span>                  EXT2_NDIR_BLOCKS
+<span style="font-weight: bold;">#define</span>       <span style="font-weight: bold; font-style: italic;">EXT2_DIND_BLOCK</span>                 (EXT2_IND_BLOCK + 1)
+<span style="font-weight: bold;">#define</span>       <span style="font-weight: bold; font-style: italic;">EXT2_TIND_BLOCK</span>                 (EXT2_DIND_BLOCK + 1)
+<span style="font-weight: bold;">#define</span>       <span style="font-weight: bold; font-style: italic;">EXT2_N_BLOCKS</span>                   (EXT2_TIND_BLOCK + 1)
 </pre>
 </div>
 
@@ -629,6 +619,7 @@ i_blocks 最多只能表示 2T.
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c">ext2_get_block(<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode</span> *<span style="font-weight: bold; font-style: italic;">inode</span>, <span style="font-weight: bold; text-decoration: underline;">sector_t</span> <span style="font-weight: bold; font-style: italic;">iblock</span>, <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">buffer_head</span> *<span style="font-weight: bold; font-style: italic;">bh_result</span>, <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; text-decoration: underline;">create</span>):
   <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">offsets</span>[4];
   <span style="font-weight: bold; text-decoration: underline;">Indirect</span> <span style="font-weight: bold; font-style: italic;">chain</span>[4];
@@ -680,8 +671,8 @@ i_blocks 最多只能表示 2T.
 </div>
 </div>
 
-<div id="outline-container-org65b965c" class="outline-5">
-<h5 id="org65b965c"><span class="section-number-5">1.2.3.2</span> Allocate data block</h5>
+<div id="outline-container-sec-1-2-3-2" class="outline-5">
+<h5 id="sec-1-2-3-2"><span class="section-number-5">1.2.3.2</span> Allocate data block</h5>
 <div class="outline-text-5" id="text-1-2-3-2">
 <p>
 分配 data block 与分配 inode 类似, 也是使用了某种 heuristic. 与分配
@@ -689,11 +680,14 @@ inode 不同的是, 分配 data block 主要考虑的是 locality, 简单的说:
 </p>
 
 <ol class="org-ol">
-<li>能连续分配的尽量连续分配</li>
-<li>同一个 inode 的 block 应该尽量分配在一起</li>
+<li>能连续分配的尽量连续分配
+</li>
+<li>同一个 inode 的 block 应该尽量分配在一起
+</li>
 </ol>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_get_block</span>:
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20551;&#35774;&#21069;&#38754;&#30340;&#20195;&#30721;&#27809;&#26377;&#25214;&#21040;&#23545;&#24212;&#30340; block, &#35828;&#26126;&#38656;&#35201;&#20998;&#37197;&#19968;&#20010;&#26032;&#30340; block</span>
 
@@ -739,8 +733,8 @@ inode 不同的是, 分配 data block 主要考虑的是 locality, 简单的说:
 </div>
 </div>
 
-<div id="outline-container-org3df8fb6" class="outline-5">
-<h5 id="org3df8fb6"><span class="section-number-5">1.2.3.3</span> Release data block</h5>
+<div id="outline-container-sec-1-2-3-3" class="outline-5">
+<h5 id="sec-1-2-3-3"><span class="section-number-5">1.2.3.3</span> Release data block</h5>
 <div class="outline-text-5" id="text-1-2-3-3">
 <p>
 前面提到的 unlink 已经提到释放 data block 的过程: unlink 时通过
@@ -752,11 +746,11 @@ bitmap
 </div>
 </div>
 
-<div id="outline-container-org3dce716" class="outline-3">
-<h3 id="org3dce716"><span class="section-number-3">1.3</span> Ext2 file holes</h3>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Ext2 file holes</h3>
 <div class="outline-text-3" id="text-1-3">
-</div><div id="outline-container-org8ccdcf0" class="outline-4">
-<h4 id="org8ccdcf0"><span class="section-number-4">1.3.1</span> File holes on disk</h4>
+</div><div id="outline-container-sec-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> File holes on disk</h4>
 <div class="outline-text-4" id="text-1-3-1">
 <pre class="example">
 #&gt; dd if=/dev/zero of=hole bs=4096 count=1 seek=5
@@ -780,10 +774,11 @@ debugfs:  bmap hole 5
 </div>
 </div>
 
-<div id="outline-container-orgdd1046c" class="outline-4">
-<h4 id="orgdd1046c"><span class="section-number-4">1.3.2</span> Read from file holes</h4>
+<div id="outline-container-sec-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> Read from file holes</h4>
 <div class="outline-text-4" id="text-1-3-2">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">block_read_full_page</span>:
   get_block(inode, iblock, bh, 0)
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#20110;&#31354;&#27934;&#37096;&#20998;&#30340; block, get_block &#36820;&#22238; BH_mapped &#20026; false</span>
@@ -799,8 +794,8 @@ debugfs:  bmap hole 5
 </div>
 </div>
 
-<div id="outline-container-orgf2b7d43" class="outline-3">
-<h3 id="orgf2b7d43"><span class="section-number-3">1.4</span> 使用 debugfs 观察磁盘布局</h3>
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> 使用 debugfs 观察磁盘布局</h3>
 <div class="outline-text-3" id="text-1-4">
 <pre class="example">
 ~@dell-work&gt; sudo debugfs
@@ -939,24 +934,27 @@ octal 而不是 hex
 </div>
 </div>
 
-<div id="outline-container-org6d2e2d2" class="outline-3">
-<h3 id="org6d2e2d2"><span class="section-number-3">1.5</span> Journaling</h3>
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> Journaling</h3>
 </div>
 
-<div id="outline-container-org0bbbcba" class="outline-3">
-<h3 id="org0bbbcba"><span class="section-number-3">1.6</span> Appendix</h3>
+<div id="outline-container-sec-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> Appendix</h3>
 <div class="outline-text-3" id="text-1-6">
-</div><div id="outline-container-orgd5d251c" class="outline-4">
-<h4 id="orgd5d251c"><span class="section-number-4">1.6.1</span> immutable files</h4>
+</div><div id="outline-container-sec-1-6-1" class="outline-4">
+<h4 id="sec-1-6-1"><span class="section-number-4">1.6.1</span> immutable files</h4>
 <div class="outline-text-4" id="text-1-6-1">
 <p>
 通过 chattr/lsattr 可以修改/查看文件的 attribute, 这里的 attribute 包括:
 </p>
 
 <ul class="org-ul">
-<li>S_IMMUTABLE, 文件不可更改, 删除, 改名等</li>
-<li>S_APPEND, 文件只能追加</li>
-<li>&#x2026;</li>
+<li>S_IMMUTABLE, 文件不可更改, 删除, 改名等
+</li>
+<li>S_APPEND, 文件只能追加
+</li>
+<li>&#x2026;
+</li>
 </ul>
 
 <p>
@@ -966,8 +964,8 @@ attribute:
 </p>
 </div>
 
-<div id="outline-container-orgcd27e14" class="outline-5">
-<h5 id="orgcd27e14"><span class="section-number-5">1.6.1.1</span> VFS 中的 IS_IMMUTABLE 宏</h5>
+<div id="outline-container-sec-1-6-1-1" class="outline-5">
+<h5 id="sec-1-6-1-1"><span class="section-number-5">1.6.1.1</span> VFS 中的 IS_IMMUTABLE 宏</h5>
 <div class="outline-text-5" id="text-1-6-1-1">
 <p>
 VFS 在许多地方都会调用 IS_IMMUTABLE 一类的宏来判断 inode-&gt;i_flags,
@@ -975,6 +973,7 @@ ext2 在 read inode 时会负责初始化 inode-&gt;i_flags
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_read_inode</span>:
   ext2_set_inode_flags(inode)
     <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">flags</span> = EXT2_I(inode)-&gt;i_flags;
@@ -986,10 +985,11 @@ ext2 在 read inode 时会负责初始化 inode-&gt;i_flags
 </div>
 </div>
 
-<div id="outline-container-orgc1ad866" class="outline-5">
-<h5 id="orgc1ad866"><span class="section-number-5">1.6.1.2</span> 支持 chattr/lsattr</h5>
+<div id="outline-container-sec-1-6-1-2" class="outline-5">
+<h5 id="sec-1-6-1-2"><span class="section-number-5">1.6.1.2</span> 支持 chattr/lsattr</h5>
 <div class="outline-text-5" id="text-1-6-1-2">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_ioctl</span>:
   <span style="font-weight: bold;">switch</span> (cmd) {
     <span style="font-weight: bold;">case</span> EXT2_IOC_GETFLAGS:
@@ -1004,10 +1004,11 @@ ext2 在 read inode 时会负责初始化 inode-&gt;i_flags
 </div>
 </div>
 
-<div id="outline-container-org0f58197" class="outline-4">
-<h4 id="org0f58197"><span class="section-number-4">1.6.2</span> reserved block</h4>
+<div id="outline-container-sec-1-6-2" class="outline-4">
+<h4 id="sec-1-6-2"><span class="section-number-4">1.6.2</span> reserved block</h4>
 <div class="outline-text-4" id="text-1-6-2">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_new_block</span>:
   reserve_blocks()
     free_blocks = percpu_counter_read_positive(&amp;sbi-&gt;s_freeblocks_counter);
@@ -1031,27 +1032,28 @@ ext2 在 read inode 时会负责初始化 inode-&gt;i_flags
 </div>
 </div>
 
-<div id="outline-container-org3eb33ee" class="outline-4">
-<h4 id="org3eb33ee"><span class="section-number-4">1.6.3</span> Ext2 directory layout</h4>
+<div id="outline-container-sec-1-6-3" class="outline-4">
+<h4 id="sec-1-6-3"><span class="section-number-4">1.6.3</span> Ext2 directory layout</h4>
 <div class="outline-text-4" id="text-1-6-3">
 <p>
 ext2 的目录的 data block 保存着一系列的 ext2_dir_entry_2:
 </p>
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">ext2_dir_entry_2</span> {
-    <span style="font-weight: bold; text-decoration: underline;">__le32</span>      <span style="font-weight: bold; font-style: italic;">inode</span>;                  <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Inode number </span><span style="font-weight: bold; font-style: italic;">*/</span>
-    <span style="font-weight: bold; text-decoration: underline;">__le16</span>      <span style="font-weight: bold; font-style: italic;">rec_len</span>;                <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Directory entry length </span><span style="font-weight: bold; font-style: italic;">*/</span>
-    <span style="font-weight: bold; text-decoration: underline;">__u8</span>        <span style="font-weight: bold; font-style: italic;">name_len</span>;               <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Name length </span><span style="font-weight: bold; font-style: italic;">*/</span>
-    <span style="font-weight: bold; text-decoration: underline;">__u8</span>        <span style="font-weight: bold; font-style: italic;">file_type</span>;
-    <span style="font-weight: bold; text-decoration: underline;">char</span>        <span style="font-weight: bold; font-style: italic;">name</span>[EXT2_NAME_LEN];    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">File name </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold; text-decoration: underline;">__le32</span>    <span style="font-weight: bold; font-style: italic;">inode</span>;                  <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Inode number </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold; text-decoration: underline;">__le16</span>    <span style="font-weight: bold; font-style: italic;">rec_len</span>;                <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Directory entry length </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold; text-decoration: underline;">__u8</span>      <span style="font-weight: bold; font-style: italic;">name_len</span>;               <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Name length </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold; text-decoration: underline;">__u8</span>      <span style="font-weight: bold; font-style: italic;">file_type</span>;
+    <span style="font-weight: bold; text-decoration: underline;">char</span>      <span style="font-weight: bold; font-style: italic;">name</span>[EXT2_NAME_LEN];    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">File name </span><span style="font-weight: bold; font-style: italic;">*/</span>
 };
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org42808f6" class="outline-4">
-<h4 id="org42808f6"><span class="section-number-4">1.6.4</span> extended attribute</h4>
+<div id="outline-container-sec-1-6-4" class="outline-4">
+<h4 id="sec-1-6-4"><span class="section-number-4">1.6.4</span> extended attribute</h4>
 <div class="outline-text-4" id="text-1-6-4">
 <p>
 Ext2 支持 inode 扩展属性, 扩展属性并不像普通 inode 属性那样保存在 128B
@@ -1062,12 +1064,12 @@ extended attribute 主要用来实现 ACL (例如 user1, user2 可以访问这�
 </div>
 </div>
 
-<div id="outline-container-org56de15a" class="outline-4">
-<h4 id="org56de15a"><span class="section-number-4">1.6.5</span> bitmap 如何被 sync 到磁盘</h4>
+<div id="outline-container-sec-1-6-5" class="outline-4">
+<h4 id="sec-1-6-5"><span class="section-number-4">1.6.5</span> bitmap 如何被 sync 到磁盘</h4>
 <div class="outline-text-4" id="text-1-6-5">
 <p>
 从 fsync 代码可以看到 inode 对应的 data 部分 (address_space) 和 inode
-部分 (实际对应于 inode table) 最终会通过 writepage 写到磁盘 (<a href="vfs.rel.html#orgdd9097f">fsync 导致的 write_inode</a> ), 但 superblock, inode bitmap 以及 block bitmap 如何被写到磁盘?
+部分 (实际对应于 inode table) 最终会通过 writepage 写到磁盘 (<a href="vfs.rel.html">fsync 导致的 write_inode</a> ), 但 superblock, inode bitmap 以及 block bitmap 如何被写到磁盘?
 </p>
 
 <p>
@@ -1075,6 +1077,7 @@ extended attribute 主要用来实现 ACL (例如 user1, user2 可以访问这�
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">sys_sync</span>:
   sync_inodes(); <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">All mappings, inodes and their blockdevs </span><span style="font-weight: bold; font-style: italic;">*/</span>
     <span style="font-weight: bold;">while</span> ((sb = get_super_to_sync()) != <span style="font-weight: bold; text-decoration: underline;">NULL</span>):
@@ -1094,8 +1097,8 @@ extended attribute 主要用来实现 ACL (例如 user1, user2 可以访问这�
 </div>
 </div>
 
-<div id="outline-container-org9d2cbeb" class="outline-4">
-<h4 id="org9d2cbeb"><span class="section-number-4">1.6.6</span> Ext2 会占用多少磁盘空间</h4>
+<div id="outline-container-sec-1-6-6" class="outline-4">
+<h4 id="sec-1-6-6"><span class="section-number-4">1.6.6</span> Ext2 会占用多少磁盘空间</h4>
 <div class="outline-text-4" id="text-1-6-6">
 <p>
 新建的 ext2 文件系统占用的磁盘空间, 主要依赖于 groups 的个数和 inode
@@ -1108,10 +1111,12 @@ extended attribute 主要用来实现 ACL (例如 user1, user2 可以访问这�
 
 <ol class="org-ol">
 <li>一个 group 能索引的空间大小为 1K*8*1K = 8M, 则一共需要 128G/8M =
-16384 个 group, 这些 group 的 block bitmap 和 inode bitmap 一共需要占用 16384 * 2K = 32MB</li>
+16384 个 group, 这些 group 的 block bitmap 和 inode bitmap 一共需要占用 16384 * 2K = 32MB
+</li>
 
 <li>默认配置下, 每 8 KB 分配一个 inode, 则一共 128G/8K = 16777216 个
-inode, 每个 inode 占 128B, 一共需要 2G</li>
+inode, 每个 inode 占 128B, 一共需要 2G
+</li>
 </ol>
 
 <p>
@@ -1120,19 +1125,19 @@ inode, 每个 inode 占 128B, 一共需要 2G</li>
 </div>
 </div>
 
-<div id="outline-container-org14eb029" class="outline-4">
-<h4 id="org14eb029"><span class="section-number-4">1.6.7</span> Utility</h4>
+<div id="outline-container-sec-1-6-7" class="outline-4">
+<h4 id="sec-1-6-7"><span class="section-number-4">1.6.7</span> Utility</h4>
 <div class="outline-text-4" id="text-1-6-7">
-</div><div id="outline-container-org444dbb0" class="outline-5">
-<h5 id="org444dbb0"><span class="section-number-5">1.6.7.1</span> tune2fs</h5>
+</div><div id="outline-container-sec-1-6-7-1" class="outline-5">
+<h5 id="sec-1-6-7-1"><span class="section-number-5">1.6.7.1</span> tune2fs</h5>
 </div>
 
-<div id="outline-container-org080b8d8" class="outline-5">
-<h5 id="org080b8d8"><span class="section-number-5">1.6.7.2</span> dumpe2fs</h5>
+<div id="outline-container-sec-1-6-7-2" class="outline-5">
+<h5 id="sec-1-6-7-2"><span class="section-number-5">1.6.7.2</span> dumpe2fs</h5>
 </div>
 
-<div id="outline-container-org320d25d" class="outline-5">
-<h5 id="org320d25d"><span class="section-number-5">1.6.7.3</span> blktrace</h5>
+<div id="outline-container-sec-1-6-7-3" class="outline-5">
+<h5 id="sec-1-6-7-3"><span class="section-number-5">1.6.7.3</span> blktrace</h5>
 <div class="outline-text-5" id="text-1-6-7-3">
 <pre class="example">
 // dev/sda2 是 /home/sunway 所在的设备
@@ -1169,82 +1174,92 @@ Inode   Pathname
 </div>
 </div>
 
-<div id="outline-container-orgefe0a54" class="outline-5">
-<h5 id="orgefe0a54"><span class="section-number-5">1.6.7.4</span> debugfs</h5>
+<div id="outline-container-sec-1-6-7-4" class="outline-5">
+<h5 id="sec-1-6-7-4"><span class="section-number-5">1.6.7.4</span> debugfs</h5>
 <div class="outline-text-5" id="text-1-6-7-4">
-</div><ol class="org-ol"><li><a id="orgfccfd60"></a>stats<br  /></li>
+</div><ol class="org-ol"><li><a id="sec-1-6-7-4-1" name="sec-1-6-7-4-1"></a>stats<br  /></li>
 
-<li><a id="org455ea82"></a>stat<br  /></li>
+<li><a id="sec-1-6-7-4-2" name="sec-1-6-7-4-2"></a>stat<br  /></li>
 
-<li><a id="org580dab8"></a>id<br  /><div class="outline-text-6" id="text-1-6-7-4-3">
+<li><a id="sec-1-6-7-4-3" name="sec-1-6-7-4-3"></a>id<br  /><div class="outline-text-6" id="text-1-6-7-4-3">
 <p>
 dump inode
 </p>
-</div></li>
+</div>
+</li>
 
-<li><a id="org0cfe739"></a>bd<br  /><div class="outline-text-6" id="text-1-6-7-4-4">
+<li><a id="sec-1-6-7-4-4" name="sec-1-6-7-4-4"></a>bd<br  /><div class="outline-text-6" id="text-1-6-7-4-4">
 <p>
 dump block
 </p>
-</div></li>
+</div>
+</li>
 
-<li><a id="orgcd36ef0"></a>dump<br  /><div class="outline-text-6" id="text-1-6-7-4-5">
+<li><a id="sec-1-6-7-4-5" name="sec-1-6-7-4-5"></a>dump<br  /><div class="outline-text-6" id="text-1-6-7-4-5">
 <p>
 dump file
 </p>
-</div></li>
+</div>
+</li>
 
-<li><a id="orge308d5b"></a>blocks<br  /><div class="outline-text-6" id="text-1-6-7-4-6">
+<li><a id="sec-1-6-7-4-6" name="sec-1-6-7-4-6"></a>blocks<br  /><div class="outline-text-6" id="text-1-6-7-4-6">
 <p>
 show data blocks of a file
 </p>
-</div></li>
+</div>
+</li>
 
-<li><a id="org5ebcb21"></a>icheck<br  /><div class="outline-text-6" id="text-1-6-7-4-7">
+<li><a id="sec-1-6-7-4-7" name="sec-1-6-7-4-7"></a>icheck<br  /><div class="outline-text-6" id="text-1-6-7-4-7">
 <p>
 block -&gt; inode
 </p>
-</div></li>
+</div>
+</li>
 
-<li><a id="org367af92"></a>ncheck<br  /><div class="outline-text-6" id="text-1-6-7-4-8">
+<li><a id="sec-1-6-7-4-8" name="sec-1-6-7-4-8"></a>ncheck<br  /><div class="outline-text-6" id="text-1-6-7-4-8">
 <p>
 inode -&gt; file name
 </p>
-</div></li>
+</div>
+</li>
 
-<li><a id="orge1234eb"></a>imap<br  /><div class="outline-text-6" id="text-1-6-7-4-9">
+<li><a id="sec-1-6-7-4-9" name="sec-1-6-7-4-9"></a>imap<br  /><div class="outline-text-6" id="text-1-6-7-4-9">
 <p>
 inode -&gt; inode table entry
 </p>
-</div></li>
+</div>
+</li>
 
-<li><a id="org8506614"></a>bmap<br  /><div class="outline-text-6" id="text-1-6-7-4-10">
+<li><a id="sec-1-6-7-4-10" name="sec-1-6-7-4-10"></a>bmap<br  /><div class="outline-text-6" id="text-1-6-7-4-10">
 <p>
 logical block -&gt; physical block
 </p>
-</div></li>
+</div>
+</li>
 
-<li><a id="org56a1962"></a>mi<br  /><div class="outline-text-6" id="text-1-6-7-4-11">
+<li><a id="sec-1-6-7-4-11" name="sec-1-6-7-4-11"></a>mi<br  /><div class="outline-text-6" id="text-1-6-7-4-11">
 <p>
 modify inode by inode structure
 </p>
-</div></li>
+</div>
+</li>
 
-<li><a id="orga3d0ebc"></a>lsdel<br  /></li>
+<li><a id="sec-1-6-7-4-12" name="sec-1-6-7-4-12"></a>lsdel<br  /></li>
 
-<li><a id="orgdb18b4c"></a>undel<br  /></li>
+<li><a id="sec-1-6-7-4-13" name="sec-1-6-7-4-13"></a>undel<br  /></li>
 
-<li><a id="org49f9f17"></a>write<br  /><div class="outline-text-6" id="text-1-6-7-4-14">
+<li><a id="sec-1-6-7-4-14" name="sec-1-6-7-4-14"></a>write<br  /><div class="outline-text-6" id="text-1-6-7-4-14">
 <p>
 copy file from host
 </p>
-</div></li></ol>
+</div>
+</li></ol>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org3816901" class="outline-3">
-<h3 id="org3816901"><span class="section-number-3">1.7</span> See also</h3>
+<div id="outline-container-sec-1-7" class="outline-3">
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> See also</h3>
 <div class="outline-text-3" id="text-1-7">
 <p>
 <a href="http://www.nongnu.org/ext2-doc/">http://www.nongnu.org/ext2-doc/</a>
@@ -1257,7 +1272,8 @@ copy file from host
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-05-16 Mon&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-09-10 Sat 21:21</p>
+<p class="date">Created: 2016-09-11 Sun 23:20</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
