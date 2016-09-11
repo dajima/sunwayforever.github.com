@@ -24,7 +24,7 @@
 (puthash "Xd9dea1233e07f34f85329db1a146092994a5a44f" 1473079388 org-publish-cache)
 (puthash "Xe1c302e877c9b9a6f86268ea731aea9d6f509d35" 1472650060 org-publish-cache)
 (puthash "/home/sunway/note/index.org" '(:crossrefs nil :index nil) org-publish-cache)
-(puthash "Xbca19483a2b440622a5979df87da2cab01ce9e9e" 1473563024 org-publish-cache)
+(puthash "Xbca19483a2b440622a5979df87da2cab01ce9e9e" 1473565098 org-publish-cache)
 (puthash "/home/sunway/note/algorithm/insertion_sort.rel.org" '(:title "Algorithm: Insertion Sort" :crossrefs (((other "Algorithm:" "Insertion" "Sort") . 110115029) ((headline "Algorithm:" "Insertion" "Sort") . 110115029)) :index nil) org-publish-cache)
 (puthash "Xcf2f166336cc9df8f7b3209e461c3151a576339b" 1473256628 org-publish-cache)
 (puthash "/home/sunway/note/algorithm/merge_sort.rel.org" '(:title "Algorithm: Merge Sort" :crossrefs (((other "Algorithm:" "Merge" "Sort") . 220782077) ((headline "Algorithm:" "Merge" "Sort") . 220782077)) :index nil) org-publish-cache)
