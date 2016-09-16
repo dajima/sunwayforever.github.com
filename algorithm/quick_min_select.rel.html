@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>Algorithm: Bubble Sort</title>
+<title>Quick Min Select</title>
 <!-- 2016-09-16 Fri 12:57 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
@@ -58,17 +58,17 @@ for the JavaScript code in this tag.
 </head>
 <body>
 <div id="content">
-<h1 class="title">Algorithm: Bubble Sort</h1>
+<h1 class="title">Quick Min Select</h1>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. Algorithm: Bubble Sort</a></li>
+<li><a href="#sec-1">1. Quick Min Select</a></li>
 </ul>
 </div>
 </div>
 <div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> Algorithm: Bubble Sort</h2>
+<h2 id="sec-1"><span class="section-number-2">1</span> Quick Min Select</h2>
 <div class="outline-text-2" id="text-1">
 <div class="org-src-container">
 
@@ -78,34 +78,45 @@ for the JavaScript code in this tag.
 
 <span style="font-weight: bold;">class</span> <span style="font-weight: bold; text-decoration: underline;">Solution</span>(<span style="font-weight: bold;">object</span>):
 
-    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">bubbleSort</span>(<span style="font-weight: bold;">self</span>, A):
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">quickMinSelect</span>(<span style="font-weight: bold;">self</span>, A, f, t, n):
         <span style="font-style: italic;">"""</span>
-<span style="font-style: italic;">        1 2 3 4 3</span>
-
-<span style="font-style: italic;">        &#24490;&#29615;&#19981;&#21464;&#37327;:</span>
-<span style="font-style: italic;">        A[0..(i-1)] &#26159;&#21319;&#24207;&#30340;&#19988;&#19981;&#22823;&#20110; A[i,...] </span>
+<span style="font-style: italic;">        1 2 3 4 5 6</span>
+<span style="font-style: italic;">        0   2     5</span>
+<span style="font-style: italic;">        f   s     t</span>
 <span style="font-style: italic;">        """</span>
-        <span style="font-weight: bold;">for</span> i <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(<span style="font-weight: bold;">len</span>(A)):
-            <span style="font-style: italic;">"""</span>
-<span style="font-style: italic;">            &#24490;&#29615;&#19981;&#21464;&#37327;:</span>
-<span style="font-style: italic;">            A[j] &#19981;&#22823;&#20110; A[j+1,...]</span>
-<span style="font-style: italic;">            """</span>
-            <span style="font-weight: bold;">for</span> j <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(<span style="font-weight: bold;">len</span>(A) - 1, i - 1, -1):
-                <span style="font-weight: bold;">if</span> (A[j] &lt; A[j - 1]):
-                    A[j], <span style="font-weight: bold; font-style: italic;">A</span>[j - 1] = A[j - 1], A[j]
+        <span style="font-weight: bold;">if</span> (n &lt;= 0 <span style="font-weight: bold;">or</span> f &gt;= t):
+            <span style="font-weight: bold;">return</span>
+        <span style="font-weight: bold;">if</span> (n &gt; t - f + 1):
+            <span style="font-weight: bold; font-style: italic;">n</span> = t - f + 1
+        <span style="font-weight: bold; font-style: italic;">s</span> = <span style="font-weight: bold;">self</span>.partition(A, f, t)
+        <span style="font-weight: bold;">self</span>.quickMinSelect(A, f, s - 1, n)
+        <span style="font-weight: bold;">self</span>.quickMinSelect(A, s + 1, t, n - s + f - 1)
 
-        <span style="font-weight: bold;">print</span>(A)
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">partition</span>(<span style="font-weight: bold;">self</span>, A, f, t):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        1 2 3 4 5</span>
+<span style="font-style: italic;">        s f     t</span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold; font-style: italic;">s</span> = f
+        <span style="font-weight: bold; font-style: italic;">f</span> += 1
+        <span style="font-weight: bold;">for</span> i <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(f, t + 1):
+            <span style="font-weight: bold;">if</span> (A[f] &lt; A[s]):
+                A[f], <span style="font-weight: bold; font-style: italic;">A</span>[s + 1] = A[s + 1], A[f]
+                A[s], <span style="font-weight: bold; font-style: italic;">A</span>[s + 1] = A[s + 1], A[s]
+                <span style="font-weight: bold; font-style: italic;">s</span> += 1
+            <span style="font-weight: bold; font-style: italic;">f</span> += 1
+        <span style="font-weight: bold;">return</span> s
 
-Solution().bubbleSort([1, 2, 3, 4, -2, 3, -1])
-Solution().bubbleSort([1])
-Solution().bubbleSort([])
+<span style="font-weight: bold; font-style: italic;">A</span> = [2, 6, 1, 2, 6, 4, 5, 6, 10, -1, 100, -1, 9, 8]
+Solution().quickMinSelect(A, 0, <span style="font-weight: bold;">len</span>(A) - 1, 5)
+<span style="font-weight: bold;">print</span>(A)
 </pre>
 </div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-09-07 Wed&gt;</span></span></p>
+<p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-09-16 五&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
 <p class="date">Created: 2016-09-16 Fri 12:57</p>

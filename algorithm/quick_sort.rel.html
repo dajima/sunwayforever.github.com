@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Algorithm: Quick Sort</title>
+<!-- 2016-09-16 Fri 12:57 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Wei Sun (孙伟)" />
+<link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Algorithm: Quick Sort</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Algorithm: Quick Sort</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Algorithm: Quick Sort</h2>
+<div class="outline-text-2" id="text-1">
+<div class="org-src-container">
+
+<pre class="src src-python"><span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">-*- coding: utf-8 -*-</span>
+<span style="font-weight: bold;">import</span> random
+
+
+<span style="font-weight: bold;">class</span> <span style="font-weight: bold; text-decoration: underline;">Solution</span>(<span style="font-weight: bold;">object</span>):
+
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">quickSort</span>(<span style="font-weight: bold;">self</span>, A, f, t):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold;">if</span> (f &gt;= t):
+            <span style="font-weight: bold;">return</span>
+
+        <span style="font-weight: bold; font-style: italic;">s</span> = <span style="font-weight: bold;">self</span>.partition(A, f, t)
+        <span style="font-weight: bold;">self</span>.quickSort(A, f, s - 1)
+        <span style="font-weight: bold;">self</span>.quickSort(A, s + 1, t)
+
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">partition</span>(<span style="font-weight: bold;">self</span>, A, f, t):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        1 2 3 4</span>
+<span style="font-style: italic;">        s f   t</span>
+<span style="font-style: italic;">        &#24490;&#29615;&#19981;&#21464;&#37327;:</span>
+<span style="font-style: italic;">        A[s] &gt; A[orig_f .. s-1] &#19988; A[s] &lt;= A[s+1 .. f-1]</span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold; font-style: italic;">s</span> = f
+        <span style="font-weight: bold; font-style: italic;">f</span> += 1
+        <span style="font-weight: bold;">if</span> (f &lt;= t):
+            <span style="font-weight: bold; font-style: italic;">tmp</span> = random.randint(s, t)
+            A[s], <span style="font-weight: bold; font-style: italic;">A</span>[tmp] = A[tmp], A[s]
+
+        <span style="font-weight: bold;">while</span> (f &lt;= t):
+            <span style="font-weight: bold;">if</span> (A[f] &lt; A[s]):
+                <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">                1 2 3 4 1    </span>
+<span style="font-style: italic;">                    i   f   t</span>
+<span style="font-style: italic;">                """</span>
+                A[s + 1], <span style="font-weight: bold; font-style: italic;">A</span>[f] = A[f], A[s + 1]
+                A[s], <span style="font-weight: bold; font-style: italic;">A</span>[s + 1] = A[s + 1], A[s]
+                <span style="font-weight: bold; font-style: italic;">s</span> += 1
+            <span style="font-weight: bold; font-style: italic;">f</span> += 1
+        <span style="font-weight: bold;">return</span> s
+
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">stablePartition</span>(<span style="font-weight: bold;">self</span>, A, f, t):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        quick sort &#24182;&#19981;&#26159;&#31283;&#23450;&#30340;, &#20027;&#35201;&#21407;&#22240;&#22312; partition &#20989;&#25968;.</span>
+<span style="font-style: italic;">        &#36890;&#36807;&#20351;&#29992; copy &#32780;&#19981;&#26159;&#20004;&#27425; swap &#21487;&#20197;&#20351;&#20854;&#31283;&#23450;, &#20294; copy &#30340;&#20195;&#20215;&#22826;&#39640;</span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold; font-style: italic;">s</span> = f
+        <span style="font-weight: bold; font-style: italic;">f</span> += 1
+        <span style="font-weight: bold;">while</span> (f &lt;= t):
+            <span style="font-weight: bold;">if</span> (A[f] &lt; A[s]):
+                <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">                1 2 3 4 1    </span>
+<span style="font-style: italic;">                    s   f   t</span>
+<span style="font-style: italic;">                """</span>
+                <span style="font-weight: bold; font-style: italic;">tmp</span> = A[f]
+                <span style="font-weight: bold;">for</span> i <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(f, s, -1):
+                    <span style="font-weight: bold; font-style: italic;">A</span>[i] = A[i - 1]
+                <span style="font-weight: bold; font-style: italic;">A</span>[s] = tmp
+                <span style="font-weight: bold; font-style: italic;">s</span> += 1
+            <span style="font-weight: bold; font-style: italic;">f</span> += 1
+        <span style="font-weight: bold;">return</span> s
+
+
+<span style="font-weight: bold; font-style: italic;">A</span> = [1, 2, 3, 4, 5, 0, -1, 0]
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">s = Solution().partition(A, 0, len(A) - 1)</span>
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">print(A)</span>
+Solution().quickSort(A, 0, <span style="font-weight: bold;">len</span>(A) - 1)
+<span style="font-weight: bold;">print</span>(A)
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-09-13 二&gt;</span></span></p>
+<p class="author">Author: Wei Sun (孙伟)</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2016-09-16 Fri 12:57</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
