@@ -1,0 +1,1173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Dalvik: 对象分配与垃圾回收</title>
+<!-- 2016-09-16 Fri 15:53 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Wei Sun (孙伟)" />
+<link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Dalvik: 对象分配与垃圾回收</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Dalvik: 对象分配与垃圾回收</a>
+<ul>
+<li><a href="#sec-1-1">1.1. Glossary</a></li>
+<li><a href="#sec-1-2">1.2. dvmAllocObject</a></li>
+<li><a href="#sec-1-3">1.3. dvmCollectGarbageInternal</a>
+<ul>
+<li><a href="#sec-1-3-1">1.3.1. dvmHeapMarkRootSet</a></li>
+<li><a href="#sec-1-3-2">1.3.2. dvmHeapScanMarkedObjects</a></li>
+<li><a href="#sec-1-3-3">1.3.3. dvmHeapProcessReferences</a></li>
+<li><a href="#sec-1-3-4">1.3.4. dvmHeapSourceSwapBitmaps</a></li>
+<li><a href="#sec-1-3-5">1.3.5. dvmHeapSweepUnmarkedObjects</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-4">1.4. Daemons 与 ReferenceQueue</a></li>
+<li><a href="#sec-1-5">1.5. HeapWorker</a></li>
+<li><a href="#sec-1-6">1.6. Concurrent GC</a></li>
+<li><a href="#sec-1-7">1.7. Copying GC</a>
+<ul>
+<li><a href="#sec-1-7-1">1.7.1. dvmHeapSourceAlloc</a></li>
+<li><a href="#sec-1-7-2">1.7.2. dvmScavengeRoots</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-8">1.8. softLimit 与 footprint</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Dalvik: 对象分配与垃圾回收</h2>
+<div class="outline-text-2" id="text-1">
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Glossary</h3>
+<div class="outline-text-3" id="text-1-1">
+<ul class="org-ul">
+<li>HeapSource
+</li>
+
+<li>GcHeap
+</li>
+
+<li>MarkSweep
+</li>
+
+<li>Copying
+</li>
+
+<li>Mspace &amp; dlmalloc
+</li>
+
+<li>liveBits
+</li>
+
+<li>markBits
+</li>
+
+<li>markStack
+</li>
+
+<li>cardTable
+</li>
+
+<li>HeapWorker
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> dvmAllocObject</h3>
+<div class="outline-text-3" id="text-1-2">
+<div class="org-src-container">
+
+<pre class="src src-c">Object* <span style="font-weight: bold;">dvmAllocObject</span>(ClassObject* clazz, <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">flags</span>)
+  newObj = (<span style="font-weight: bold; text-decoration: underline;">Object</span>*)dvmMalloc(clazz-&gt;objectSize, flags);
+    ptr = tryMalloc(size);
+      ptr = dvmHeapSourceAlloc(size);
+      <span style="font-weight: bold;">if</span> (ptr != <span style="font-weight: bold; text-decoration: underline;">NULL</span>):
+        <span style="font-weight: bold;">return</span> ptr;
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20998;&#37197;&#22833;&#36133;, &#24320;&#22987; GC, false &#34920;&#31034; SoftReferences &#19981;&#34987; GC</span>
+      gcForMalloc(<span style="font-weight: bold; text-decoration: underline;">false</span>);
+        dvmCollectGarbageInternal(GC_FOR_MALLOC);
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#31532;&#20108;&#27425; malloc  </span>
+      ptr = dvmHeapSourceAlloc(size);
+        ptr = mspace_malloc(heap-&gt;msp, n);
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">countAllocation &#20250;&#23558; hs-&gt;liveBits &#23545;&#24212;&#30340;&#32622; 1</span>
+        countAllocation(heap, ptr);
+      <span style="font-weight: bold;">if</span> (ptr != <span style="font-weight: bold; text-decoration: underline;">NULL</span>): <span style="font-weight: bold;">return</span> ptr;
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#31532;&#19977;&#27425; ... &#21069;&#20004;&#27425;&#30340; alloc &#20250;&#21463; softLimit &#30340;&#24433;&#21709;&#23548;&#33268;&#20998;&#37197;&#22833;&#36133;</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#19968;&#27425;&#20250;&#39318;&#20808;&#23581;&#35797;&#21435;&#25481; softLimit, &#33509;&#36824;&#19981;&#34892;, &#21017;&#21435;&#25481; footprint &#30340;&#38480;&#21046;</span>
+      ptr = dvmHeapSourceAllocAndGrow(size);
+      <span style="font-weight: bold;">if</span> (ptr != <span style="font-weight: bold; text-decoration: underline;">NULL</span>): <span style="font-weight: bold;">return</span> ptr;
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21363;&#20351; Heap Grow &#20102;&#36824;&#26159;&#19981;&#34892;, &#20877;&#27425; GC, true &#34920;&#31034; SoftReferences &#20063;&#34987; GC</span>
+      gcForMalloc(<span style="font-weight: bold; text-decoration: underline;">true</span>);
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#31532;&#22235;&#27425; ...</span>
+      ptr = dvmHeapSourceAllocAndGrow(size);
+      <span style="font-weight: bold;">if</span> (ptr != <span style="font-weight: bold; text-decoration: underline;">NULL</span>): <span style="font-weight: bold;">return</span> ptr;
+      <span style="font-weight: bold;">return</span> null;
+    <span style="font-weight: bold;">if</span> (ptr == <span style="font-weight: bold; text-decoration: underline;">NULL</span>):
+      throwOOME();
+  DVM_OBJECT_INIT(newObj, clazz);
+    dvmSetFieldObject(obj, OFFSETOF_MEMBER(Object, clazz), clazz_)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> dvmCollectGarbageInternal</h3>
+<div class="outline-text-3" id="text-1-3">
+<div class="org-src-container">
+
+<pre class="src src-c">dvmCollectGarbageInternal(spec)
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19968;&#20849;&#26377;&#22235;&#31181;&#31867;&#22411;&#30340; GC:</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">1. GC_FOR_MALLOC, &#23545;&#24212;&#20110; dvmMalloc &#26102;&#30340;&#31532;&#19968;&#27425; GC (&#19981;&#28165;&#29702; SoftReferences)</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">2. GC_CONCURRENT, &#30001; HeapWorker &#21457;&#36215;&#30340; GC</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">3. GC_EXPLICIT, &#30001; System.gc() &#21457;&#36215;&#30340; GC</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">4. GC_BEFORE_OOM, &#23545;&#24212;&#20110; dvmMalloc &#26102;&#31532;&#20108;&#27425; GC (&#28165;&#29702; SoftReferences)</span>
+  <span style="font-weight: bold;">if</span> (spec == GC_FOR_MALLOC):
+    ATRACE_BEGIN(<span style="font-style: italic;">"GC (Alic)"</span>);
+  <span style="font-weight: bold;">else</span> <span style="font-weight: bold;">if</span> (spec == GC_CONCURRENT):
+    ATRACE_BEGIN(<span style="font-style: italic;">"GC (concurrent)"</span>);
+  <span style="font-weight: bold;">else</span> <span style="font-weight: bold;">if</span> (spec == GC_EXPLICIT):
+    ATRACE_BEGIN(<span style="font-style: italic;">"GC (explicit)"</span>);
+  <span style="font-weight: bold;">else</span> <span style="font-weight: bold;">if</span> (spec == GC_BEFORE_OOM):
+    ATRACE_BEGIN(<span style="font-style: italic;">"GC (before OOM)"</span>);
+  <span style="font-weight: bold;">else</span>:
+    ATRACE_BEGIN(<span style="font-style: italic;">"GC (unknown)"</span>);
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21442;&#32771;: dalvik thread dvmSuspendAllThreads</span>
+  dvmSuspendAllThreads(SUSPEND_FOR_GC);
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">mark &#38454;&#27573;</span>
+  <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Mark the set of objects that are strongly reachable from the roots.</span>
+<span style="font-weight: bold; font-style: italic;">  </span><span style="font-weight: bold; font-style: italic;">*/</span>
+  dvmHeapMarkRootSet();
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; spec &#34920;&#26126;&#35813; gc &#30001; HeapWorker &#21457;&#36215;, &#21017; dvmHeapScanMarkedObjects</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26102;&#24182;&#19981; stop the world. &#36825;&#20063;&#26159; Concurrent GC &#30340;&#26412;&#24847;.</span>
+  <span style="font-weight: bold;">if</span> (spec-&gt;isConcurrent):
+    dvmClearCardTable();
+    dvmResumeAllThreads(SUSPEND_FOR_GC);
+  <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Recursively mark any objects that marked objects point to strongly.</span>
+<span style="font-weight: bold; font-style: italic;">  * If we're not collecting soft references, soft-reachable</span>
+<span style="font-weight: bold; font-style: italic;">  * objects will also be marked.</span>
+<span style="font-weight: bold; font-style: italic;">  </span><span style="font-weight: bold; font-style: italic;">*/</span>
+  dvmHeapScanMarkedObjects();
+  <span style="font-weight: bold;">if</span> (spec-&gt;isConcurrent):
+    dvmSuspendAllThreads(SUSPEND_FOR_GC);
+    dvmHeapReMarkRootSet();
+    dvmHeapReScanMarkedObjects();
+  <span style="font-weight: bold; font-style: italic;">/*</span>
+<span style="font-weight: bold; font-style: italic;">  * All strongly-reachable objects have now been marked.  Process</span>
+<span style="font-weight: bold; font-style: italic;">  * weakly-reachable objects discovered while tracing.</span>
+<span style="font-weight: bold; font-style: italic;">  </span><span style="font-weight: bold; font-style: italic;">*/</span>
+  dvmHeapProcessReferences();
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sweep &#38454;&#27573;</span>
+  dvmHeapSweepSystemWeaks();
+  <span style="font-weight: bold; font-style: italic;">/*</span>
+<span style="font-weight: bold; font-style: italic;">  * Live objects have a bit set in the mark bitmap, swap the mark</span>
+<span style="font-weight: bold; font-style: italic;">  * and live bitmaps.  The sweep can proceed concurrently viewing</span>
+<span style="font-weight: bold; font-style: italic;">  * the new live bitmap as the old mark bitmap, and vice versa.</span>
+<span style="font-weight: bold; font-style: italic;">  </span><span style="font-weight: bold; font-style: italic;">*/</span>
+  dvmHeapSourceSwapBitmaps();
+  dvmHeapSweepUnmarkedObjects();
+
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26681;&#25454; utilization, maxFree, minFree &#30340;&#20540;&#37325;&#26032;&#35774;&#32622; softLimit</span>
+  dvmHeapSourceGrowForUtilization();
+
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23558;&#26412;&#27425; GC &#20135;&#29983;&#30340; white reference &#21644; finalizer reference &#36890;&#30693;&#32473;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">java &#23618;&#30340; ReferenceQueueDaemon</span>
+  dvmEnqueueClearedReferences(&amp;gDvm.gcHeap-&gt;clearedReferences);
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> dvmHeapMarkRootSet</h4>
+<div class="outline-text-4" id="text-1-3-1">
+<div class="org-src-container">
+
+<pre class="src src-c">rootMarkObjectVisitor(<span style="font-weight: bold; text-decoration: underline;">void</span> *<span style="font-weight: bold; font-style: italic;">addr</span>, <span style="font-weight: bold; text-decoration: underline;">u4</span> <span style="font-weight: bold; font-style: italic;">thread</span>, ...)
+  markObjectNonNull(obj, ctx, <span style="font-weight: bold; text-decoration: underline;">false</span>);
+
+<span style="font-weight: bold; text-decoration: underline;">dvmHeapMarkRootSet</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">rootMarkObjectVisitor &#26159;&#19968;&#20010; callback, &#23545;&#27599;&#19968;&#20010; gc root &#20013;&#30340;&#23545;&#35937;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#37117;&#20250;&#35843;&#29992;&#36825;&#20010; visitor</span>
+  <span style="font-weight: bold;">dvmVisitRoots</span>(rootMarkObjectVisitor, &amp;gcHeap-&gt;markContext);
+    visitHashTable(visitor, gDvm.loadedClasses, ROOT_STICKY_CLASS, arg);
+    visitPrimitiveTypes(visitor, arg);
+    visitHashTable(visitor, gDvm.literalStrings, ROOT_INTERNED_STRING, arg);
+    visitIndirectRefTable(visitor, &amp;gDvm.jniGlobalRefTable, 0, ROOT_JNI_GLOBAL, arg);
+    visitReferenceTable(visitor, &amp;gDvm.jniPinRefTable, 0, ROOT_VM_INTERNAL, arg);
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">visitThreads &#26159;&#26368;&#20027;&#35201;&#30340;&#19968;&#36807; scan &#36807;&#31243;: GC root &#22823;&#37096;&#20998;&#20363;&#22914; static &#23545;&#35937;,</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23616;&#37096;&#23545;&#35937;&#31561;&#37117;&#21253;&#21547;&#22312; stack frame &#20013;, visitThreads &#36127;&#36131;&#25195;&#25551;&#25152;&#26377;</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">stack frame</span>
+    visitThreads(visitor, arg);
+      <span style="font-weight: bold;">for</span> each thread:
+        (*visitor)(&amp;thread-&gt;threadObj, threadId, ROOT_THREAD_OBJECT, arg);
+        (*visitor)(&amp;thread-&gt;exception, threadId, ROOT_NATIVE_STACK, arg);
+        visitIndirectRefTable(visitor, &amp;thread-&gt;jniLocalRefTable, threadId, ...);
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">visitThreadStack &#36127;&#36131;&#25195;&#25551;&#25152;&#26377;&#30340; stack frame, &#24182;&#26681;&#25454; stack</span>
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">frame &#20013; register &#30340;&#20351;&#29992;&#24773;&#20917;&#26469;&#21028;&#26029;&#26159;&#21542;&#35201; mark</span>
+        visitThreadStack(visitor, thread, arg);
+          <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36941;&#21382;&#25152;&#26377; frame</span>
+          <span style="font-weight: bold;">for</span> (<span style="font-weight: bold; text-decoration: underline;">u4</span> *<span style="font-weight: bold; font-style: italic;">fp</span> = (<span style="font-weight: bold; text-decoration: underline;">u4</span> *)thread-&gt;interpSave.curFrame;
+                fp != <span style="font-weight: bold; text-decoration: underline;">NULL</span>;
+                fp = (<span style="font-weight: bold; text-decoration: underline;">u4</span> *)saveArea-&gt;prevFrame):
+            <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509;&#27492;&#26102;&#23384;&#22312; register map, &#21017;&#26681;&#25454; register map &#24471;&#21040;</span>
+            <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">register &#20351;&#29992;&#24773;&#20917;, &#21542;&#21017;, &#25195;&#25551;&#25152;&#26377;&#30340; register</span>
+            <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#27599;&#19968;&#20010;&#21487;&#33021;&#20351;&#29992;&#30340; register, &#36890;&#36807; liveBits &#21487;&#20197;&#21028;&#26029;</span>
+            <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20986;&#36825;&#20010; register &#23545;&#24212;&#30340;&#22320;&#22336;&#26159;&#21542;&#26159;&#19968;&#20010; java &#23545;&#35937;</span>
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3-1-1" class="outline-5">
+<h5 id="sec-1-3-1-1"><span class="section-number-5">1.3.1.1</span> 关于 bitmap 的操作</h5>
+<div class="outline-text-5" id="text-1-3-1-1">
+<p>
+对于 markBits 和 liveBits 一样
+</p>
+
+<p>
+markObjectNonNull 的过程是: 根据 addr 换算出对象在 bitmap 中的 bit
+index, 将 bitmap 该 bit 置 1, 因为 dalvik 中所有的对象都是 8 bytes 对齐的, 所以 bitmap 中每 bit 代表 heap 的 8 bytes.
+</p>
+
+<p>
+假设 gc heap 大小为 32 bytes, 则 markBits 的大小为 4 bits, 假设一共有两个对象需要 mark, 地址相对于 heap-&gt;base 的 offset 分别为 0, 16, 则
+markBits 的值为 1010, 即 markBits 只标记对象的地址, 和对象的大小无关.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> dvmHeapScanMarkedObjects</h4>
+<div class="outline-text-4" id="text-1-3-2">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">dvmHeapScanMarkedObjects</span>
+  <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">The bitmaps currently have bits set for the root set.</span>
+<span style="font-weight: bold; font-style: italic;">  * Walk across the bitmaps and scan each object.</span>
+<span style="font-weight: bold; font-style: italic;">  </span><span style="font-weight: bold; font-style: italic;">*/</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">dvmHeapBitmapScanWalk &#36127;&#36131;&#25195;&#25551; markBits, &#23545;&#30452;&#25509;&#24341;&#29992;&#30340;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">filed &#31561;&#36827;&#34892; mark, &#24182;&#25918;&#21040; markStack &#20013;</span>
+  <span style="font-weight: bold;">dvmHeapBitmapScanWalk</span>(ctx-&gt;bitmap, scanBitmapCallback, ctx);
+  processMarkStack(ctx);
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22312; scanObject &#36807;&#31243;&#20013;, markStack &#20250;&#22686;&#38271;, &#36890;&#36807; markStack, &#23558;&#36882;&#24402;</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36807;&#31243;&#21464;&#20026;&#36845;&#20195;</span>
+    <span style="font-weight: bold; text-decoration: underline;">GcMarkStack</span> *<span style="font-weight: bold; font-style: italic;">stack</span> = &amp;ctx-&gt;stack;
+    <span style="font-weight: bold;">while</span> (stack-&gt;top &gt; stack-&gt;base):
+      <span style="font-weight: bold;">const</span> Object *obj = markStackPop(stack);
+      scanObject(obj, ctx);
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> dvmHeapProcessReferences</h4>
+<div class="outline-text-4" id="text-1-3-3">
+<p>
+到此, 所有 strong references 的对象都被 mark 了, 但 soft, weak,
+phantom references 并没有被 mark.
+</p>
+
+<p>
+dvmHeapProcessReferences 负责将 reference 放到 reference queue 中, 另外, 对 soft reference, 会根据上层 dvmCollectGarbageInternal 使用的
+spec, 决定是否将 soft reference 也进行 mark
+</p>
+
+<p>
+gcHeap 本身对所有 soft, weak, phantom reference 对象都维护着一个列表, 保存着这些 Reference 对象, 以便这里可以方便的遍历. 每次 GC 时在 scan 阶段都会重新生成这些列表, 这些列表中保存的 reference 对象本身肯定是 marked.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">scanObject</span>
+  <span style="font-weight: bold;">scanDataObject</span>(obj, ctx);
+    <span style="font-weight: bold;">if</span> (IS_CLASS_FLAG_SET(obj-&gt;clazz, CLASS_ISREFERENCE)):
+      delayReferenceReferent((<span style="font-weight: bold; text-decoration: underline;">Object</span> *)obj, ctx);
+        enqueuePendingReference(obj, list);
+</pre>
+</div>
+
+<p>
+另外, gcHeap 还维护着一个 finalizerReferences 列表, 这个队列中的成员不是用户通过 new 生成的 reference, 而是一些那些定义了 finalize 函数的对象.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c">dvmHeapProcessReferences
+  <span style="font-weight: bold;">if</span> (!gDvm.zygote &amp;&amp; !clearSoftRefs):
+    preserveSomeSoftReferences(softReferences);
+      <span style="font-weight: bold;">while</span> (*list != <span style="font-weight: bold; text-decoration: underline;">NULL</span>) {
+        <span style="font-weight: bold; text-decoration: underline;">Object</span> *<span style="font-weight: bold; font-style: italic;">ref</span> = dequeuePendingReference(list);
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">referent &#26159; Reference &#31867;&#30340;&#19968;&#20010;&#25104;&#21592;, &#25351;&#21521; reference &#24341;&#29992;&#30340;&#23545;&#35937;</span>
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20363;&#22914; new WeakReference&lt;Object&gt;(o), &#21017; referent &#25351;&#21521; o</span>
+        <span style="font-weight: bold; text-decoration: underline;">Object</span> *<span style="font-weight: bold; font-style: italic;">referent</span> = dvmGetFieldObject(ref, referentOffset);
+        <span style="font-weight: bold; text-decoration: underline;">bool</span> <span style="font-weight: bold; font-style: italic;">marked</span> = isMarked(referent, ctx);
+        <span style="font-weight: bold;">if</span> (!marked &amp;&amp; ((++counter) &amp; 1)):
+          <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Referent is white and biased toward saving, mark it. </span><span style="font-weight: bold; font-style: italic;">*/</span>
+          markObject(referent, ctx);
+          marked = <span style="font-weight: bold; text-decoration: underline;">true</span>;
+        <span style="font-weight: bold;">if</span> (!marked):
+          <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Referent is white, queue it for clearing. </span><span style="font-weight: bold; font-style: italic;">*/</span>
+          enqueuePendingReference(ref, &amp;clear);
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25152;&#35859;&#30340; white reference, &#26159;&#21542; referent &#27809;&#26377;&#34987; mark &#30340; reference       </span>
+  clearWhiteReferences(softReferences);
+  clearWhiteReferences(weakReferences);
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; finalizerReferences &#20013;&#30340; reference &#30340; referent &#27809;&#26377; mark, &#21017;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23558;&#36825;&#20010; reference &#25918;&#21040; f-queue &#20013;, HeapWorker &#20250;&#36127;&#36131;&#25191;&#34892;&#23427;&#30340;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">finalize &#20989;&#25968;. &#20294;&#26159;&#27491;&#22240;&#20026; HeapWorker &#36824;&#38656;&#35201;&#35775;&#38382; referent, &#25152;&#20197;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">referent &#20250;&#34987;&#37325;&#26032;&#32622;&#20026; marked</span>
+  enqueueFinalizerReferences(finalizerReferences);
+
+  <span style="font-weight: bold; font-style: italic;">/*</span>
+<span style="font-weight: bold; font-style: italic;">  * Clear all f-reachable soft and weak references with white</span>
+<span style="font-weight: bold; font-style: italic;">  * referents.</span>
+<span style="font-weight: bold; font-style: italic;">  </span><span style="font-weight: bold; font-style: italic;">*/</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#20004;&#21477;&#21448;&#34987;&#35843;&#29992;&#19968;&#27425;? &#22240;&#20026; enqueueFinalizerReferences &#21487;&#33021;&#23548;&#33268;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26032;&#30340; referent &#21464;&#20026; unmarked, &#36827;&#32780;&#23548;&#33268;&#36825;&#20123; referent &#20013;&#30340;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">reference &#25104;&#21592;&#20063;&#21464;&#20026; unmarked, &#36827;&#32780;&#34987;&#21152;&#20837; references &#21015;&#34920;&#20013;, &#25152;&#20197;&#38656;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#35201;&#23545;&#36825;&#20123;&#26032;&#21152;&#20837;&#30340; reference &#23545;&#35937;&#26412;&#36523;&#20877; clear &#19968;&#27425;. </span>
+
+  clearWhiteReferences(softReferences);
+  clearWhiteReferences(weakReferences);
+
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">phantom &#22312;&#26368;&#21518;&#34987; clear, &#32780;&#19981;&#26159;&#20687; weak, soft &#37027;&#26679;&#22312;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">enqueueFinalizerReferences &#21069;&#23601;&#36827;&#34892;&#19968;&#27425; clear. &#20026;&#21861; weak, soft &#30340;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19981;&#33021;&#20687; phantom &#19968;&#26679;&#21482;&#22312; enqueueFinalizerReferences &#21518;&#36827;&#34892;&#19968;&#27425;?</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22240;&#20026; soft, weak &#23545;&#35937;&#26412;&#36523;&#26377;&#19968;&#20010; referent &#24341;&#29992;...&#32780; phantom &#26159;&#19981;&#21253;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25324;&#36825;&#20010;&#25104;&#21592;&#30340;: &#33509;&#26032; enqueueFinalizerReferences &#20877; clear weak</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">references, &#26377;&#21487;&#33021;&#20250;&#21457;&#29983;&#26412;&#35813; clear &#30340; weak reference &#27809;&#26377; clear:</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22240;&#20026; enqueueFinalizerReferences &#23558;&#26576;&#20010; weak reference &#30340; referent</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21464;&#20026; marked &#20102;...</span>
+
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">phantom &#30340;&#36825;&#20010;&#29305;&#28857;&#20063;&#20351;&#23427;&#36866;&#21512;&#29992;&#26469;&#20195;&#26367; finalize &#20989;&#25968;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21442;&#32771; jvm &#20351;&#29992; PhantomReference &#36991;&#20813; finalize()</span>
+  clearWhiteReferences(phantomReferences);
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3-3-1" class="outline-5">
+<h5 id="sec-1-3-3-1"><span class="section-number-5">1.3.3.1</span> FinalizerReference</h5>
+<div class="outline-text-5" id="text-1-3-3-1">
+<p>
+FinalizerReference 是一个 java 类, 但在 java 层并不可见: dalvik 在初始化一个 Object 时, 若发现该对象实现了 finalize() 方法, 则会通过
+dvmSetFinalizable (通过 FinalizerReference.add) 方法添加一个
+FinalizerReference 对象对 FinalizerReference 的一个静态成员. 后续 GC
+scan 时一定会找到这个 FinalizerReference.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3-4" class="outline-4">
+<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> dvmHeapSourceSwapBitmaps</h4>
+<div class="outline-text-4" id="text-1-3-4">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">HeapBitmap</span> <span style="font-weight: bold; font-style: italic;">tmp</span> = gHs-&gt;liveBits;
+gHs-&gt;liveBits = gHs-&gt;markBits;
+gHs-&gt;markBits = tmp;
+</pre>
+</div>
+
+<p>
+简单的交换一下 liveBits 与 markBits, 以便进行下次 GC.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3-5" class="outline-4">
+<h4 id="sec-1-3-5"><span class="section-number-4">1.3.5</span> dvmHeapSweepUnmarkedObjects</h4>
+<div class="outline-text-4" id="text-1-3-5">
+<p>
+Walk through the list of objects that haven't been marked and free
+them.  Assumes the bitmaps have been swapped.
+</p>
+
+<p>
+真正的 sweep 阶段:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">dvmHeapSweepUnmarkedObjects</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#27599;&#19968;&#20010; garbage object &#25191;&#34892;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22914;&#20309;&#25214;&#21040; garbage object? (liveBits &amp; ~markBits) = 1 &#34920;&#31034; garbage object</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#27880;&#24847;&#36825;&#37324;&#30340; markBits, liveBits &#25351;&#30340;&#26159; swap &#21069;&#30340; bitmap, &#32780;&#19988;&#36825;&#20010;&#25805;&#20316;&#24182;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19981;&#31561;&#20215;&#20110; "&#24322;&#25110;" &#25805;&#20316;.</span>
+  <span style="font-weight: bold;">dvmHeapBitmapSweepWalk</span>(sweepBitmapCallback,...)
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre class="src src-c">sweepBitmapCallback(<span style="font-weight: bold; text-decoration: underline;">size_t</span> <span style="font-weight: bold; font-style: italic;">numPtrs</span>, <span style="font-weight: bold; text-decoration: underline;">void</span> **<span style="font-weight: bold; font-style: italic;">ptrs</span>, <span style="font-weight: bold; text-decoration: underline;">void</span> *<span style="font-weight: bold; font-style: italic;">arg</span>)
+  dvmHeapSourceFreeList(numPtrs, ptrs);
+    mspace_bulk_free(msp, ptrs, numPtrs);
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Daemons 与 ReferenceQueue</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+clearWhiteReferences 和 enqueueFinalizerReferences 最终会将 reference
+对象放在 gDvm.gcHeap-&gt;clearedReferences 这个列表中.
+</p>
+
+<p>
+对于 FinalizerReference, 其 referent 对应的 finalize() 函数需要被调用.对于 weak, soft, phantom reference, 其 ReferenceQueue 的 poll 或 remove
+需要结束阻塞并返回该 reference. 如何做到?
+</p>
+
+<p>
+在 GC 的最后阶段, dvmEnqueueClearedReferences 会负责将这些 reference通知给 java 层的 ReferenceQueueDaemon:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c">dvmEnqueueClearedReferences
+  <span style="font-weight: bold; text-decoration: underline;">Method</span> *<span style="font-weight: bold; font-style: italic;">meth</span> = gDvm.methJavaLangRefReferenceQueueAdd;
+  dvmCallMethod(self, meth, <span style="font-weight: bold; text-decoration: underline;">NULL</span>, &amp;unused, reference);
+</pre>
+</div>
+
+<p>
+实际上就是调用了 ReferenceQueue 的静态方法: add
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-java"><span style="font-weight: bold;">static</span> <span style="font-weight: bold; text-decoration: underline;">void</span> <span style="font-weight: bold;">add</span>(<span style="font-weight: bold; text-decoration: underline;">Reference</span>&lt;?&gt; <span style="font-weight: bold; font-style: italic;">list</span>) {
+    <span style="font-weight: bold;">synchronized</span> (ReferenceQueue.<span style="font-weight: bold;">class</span>) {
+        <span style="font-weight: bold;">if</span> (unenqueued == <span style="font-weight: bold; text-decoration: underline;">null</span>) {
+            unenqueued = list;
+        } <span style="font-weight: bold;">else</span> {
+            <span style="font-weight: bold; text-decoration: underline;">Reference</span>&lt;?&gt; <span style="font-weight: bold; font-style: italic;">next</span> = unenqueued.pendingNext;
+            unenqueued.pendingNext = list.pendingNext;
+            list.pendingNext = next;
+        }
+        ReferenceQueue.<span style="font-weight: bold;">class</span>.notifyAll();
+    }
+}
+</pre>
+</div>
+
+<p>
+静态的 ReferenceQueue 拿到了所有的 white reference 和 finalize
+reference, 但是 notifyAll 是通知谁?
+</p>
+
+<p>
+答案就是 ReferenceQueueDaemon !
+</p>
+
+<p>
+Daemons 是一个 java 类, 实际上就是对 Thread 的一个简单包装. 
+当 zygote fork 后, 会通过 Daemons.start 启动如下的线程:
+</p>
+
+<ol class="org-ol">
+<li>ReferenceQueueDaemon
+</li>
+
+<li>FinalizerDaemon
+</li>
+
+<li>FinalizerWatchdogDaemon
+</li>
+</ol>
+
+<p>
+ReferenceQueueDaemon 负责在 ReferenceQueue 上 wait, 等待 dalvik 的通知,一旦拿到 reference, 会把消息分发给各个 reference
+</p>
+
+<ol class="org-ol">
+<li>对于 weak, soft, phantom 等 white reference 来说, 就是通知各自的
+ReferenceQueue 对象.
+</li>
+
+<li>对于 FinalizerReference 来说, 就是通知 FinalizerDaemon 开始工作: 调用 finalize() 函数.
+</li>
+</ol>
+
+<p>
+还有一个 FinalizerWatchdogDaemon 是负责监视 finalize 函数的执行的, 执行过久的进程会被 kill.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> HeapWorker</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+dalvik 启动时会启动 HeapWorker 线程, 负责 concurrent GC.
+</p>
+
+<p>
+HeapWorker 对应于这个 native thread:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold; text-decoration: underline;">void</span> *<span style="font-weight: bold;">gcDaemonThread</span>(<span style="font-weight: bold; text-decoration: underline;">void</span>* <span style="font-weight: bold; font-style: italic;">arg</span>)
+{
+    dvmChangeStatus(<span style="font-weight: bold; text-decoration: underline;">NULL</span>, THREAD_VMWAIT);
+    <span style="font-weight: bold; text-decoration: underline;">bool</span> <span style="font-weight: bold; font-style: italic;">trim</span> = <span style="font-weight: bold; text-decoration: underline;">false</span>;
+    <span style="font-weight: bold;">if</span> (gHs-&gt;gcThreadTrimNeeded) {
+        <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">result</span> = dvmRelativeCondWait(&amp;gHs-&gt;gcThreadCond, &amp;gHs-&gt;gcThreadMutex,
+                                         HEAP_TRIM_IDLE_TIME_MS, 0);
+        <span style="font-weight: bold;">if</span> (result == ETIMEDOUT) {
+            <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Timed out waiting for a GC request, schedule a heap trim. </span><span style="font-weight: bold; font-style: italic;">*/</span>
+            trim = <span style="font-weight: bold; text-decoration: underline;">true</span>;
+        }
+    } <span style="font-weight: bold;">else</span> {
+        dvmWaitCond(&amp;gHs-&gt;gcThreadCond, &amp;gHs-&gt;gcThreadMutex);
+    }
+
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">Many JDWP requests cause allocation. We can't take the heap lock and wait to</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">transition to runnable so we can start a GC if a debugger is connected, because</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">we don't know that the JDWP thread isn't about to allocate and require the</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">heap lock itself, leading to deadlock. http://b/8191824.</span>
+    <span style="font-weight: bold;">if</span> (gDvm.debuggerConnected) {
+        <span style="font-weight: bold;">continue</span>;
+    }
+
+    dvmLockHeap();
+    <span style="font-weight: bold; font-style: italic;">/*</span>
+<span style="font-weight: bold; font-style: italic;">     * Another thread may have started a concurrent garbage</span>
+<span style="font-weight: bold; font-style: italic;">     * collection before we were scheduled.  Check for this</span>
+<span style="font-weight: bold; font-style: italic;">     * condition before proceeding.</span>
+<span style="font-weight: bold; font-style: italic;">     </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold;">if</span> (!gDvm.gcHeap-&gt;gcRunning) {
+        dvmChangeStatus(<span style="font-weight: bold; text-decoration: underline;">NULL</span>, THREAD_RUNNING);
+        <span style="font-weight: bold;">if</span> (trim) {
+            trimHeaps();
+            gHs-&gt;gcThreadTrimNeeded = <span style="font-weight: bold; text-decoration: underline;">false</span>;
+        } <span style="font-weight: bold;">else</span> {
+            dvmCollectGarbageInternal(GC_CONCURRENT);
+            gHs-&gt;gcThreadTrimNeeded = <span style="font-weight: bold; text-decoration: underline;">true</span>;
+        }
+        dvmChangeStatus(<span style="font-weight: bold; text-decoration: underline;">NULL</span>, THREAD_VMWAIT);
+    }
+    dvmUnlockHeap();
+    dvmChangeStatus(<span style="font-weight: bold; text-decoration: underline;">NULL</span>, THREAD_RUNNING);
+    <span style="font-weight: bold;">return</span> <span style="font-weight: bold; text-decoration: underline;">NULL</span>;
+}
+</pre>
+</div>
+
+<p>
+可见, HeapWorker 是否工作取决于 gHs-&gt;gcThreadCond, 参考
+dvmHeapSourceAlloc 的代码:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c">dvmHeapSourceAlloc
+  <span style="font-weight: bold;">if</span> (heap-&gt;bytesAllocated &gt; heap-&gt;concurrentStartBytes):
+    <span style="font-weight: bold; font-style: italic;">/*</span>
+<span style="font-weight: bold; font-style: italic;">    * We have exceeded the allocation threshold.  Wake up the</span>
+<span style="font-weight: bold; font-style: italic;">    * garbage collector.</span>
+<span style="font-weight: bold; font-style: italic;">    </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    dvmSignalCond(&amp;gHs-&gt;gcThreadCond);
+</pre>
+</div>
+
+<p>
+所以, 如果当前已经发配的内存大于 heap-&gt;concurrentStartBytes 时 (默认的配置是 freeBytes - CONCURRENT_START(128KB), 即当可用内存 (相对于
+softLimit) 少于 128KB 时), HeapWorker 会开始工作, 并且若最近
+(HEAP_TRIM_IDLE_TIME_MS) 没有执行过 ConcurrentGc, 则执行 trimHeaps 使
+dlmalloc 尽量释放内存给操作系统 (例如通过 sbrk, munmap 或通过自定义的
+morecore, 对 dalvik 来说, 实际是通过自定义的 morecore 最终调用
+mprotect)
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> Concurrent GC</h3>
+<div class="outline-text-3" id="text-1-6">
+<p>
+HeapWorker 实际上就是实现了 Concurrent Mark Sweep (CMS), 说它是
+concurrent, 不是因为它会周期性的执行, 而是因为它允许在
+dvmHeapScanMarkedObjects() 时各个 java 继续执行, 而不必`stop the
+world` (并发标记).
+</p>
+
+<p>
+关于 CMS:
+</p>
+
+<p>
+<a href="http://dl.acm.org/citation.cfm?id=362422.362480">http://dl.acm.org/citation.cfm?id=362422.362480</a>
+</p>
+
+<p>
+"This paper reports our experiences with a mostly-concurrent
+incremental garbage collector, implemented in the context of a high
+performance virtual machine for the Java™ programming language. The
+garbage collector is based on the “mostly parallel” collection
+algorithm of Boehm et al. and can be used as the old generation of a
+generational memory system. It overloads efficient write-barrier code
+already generated to support generational garbage collection to also
+identify objects that were modified during concurrent marking. These
+objects must be rescanned to ensure that the concurrent marking phase
+marks all live objects. This algorithm minimises maximum garbage
+collection pause times, while having only a small impact on the
+average garbage collection pause time and overall execution time. We
+support our claims with experimental results, for both a synthetic
+benchmark and real programs."
+</p>
+
+<p>
+CMS 一般分为四个阶段:
+</p>
+
+<ol class="org-ol">
+<li>初始标记
+
+<p>
+对应于 dvmCollectGarbageInternal 的 dvmHeapMarkRootSet
+</p>
+</li>
+
+<li>并发标记
+
+<p>
+对应于 dvmHeapScanMarkedObjects
+</p>
+</li>
+
+<li>重新标记
+
+<p>
+对应于 dvmHeapReMarkRootSet 与 dvmHeapReScanMarkedObjects
+</p>
+</li>
+
+<li>清除
+</li>
+</ol>
+
+<p>
+CMS 可以更快, 是因为并发标记期间并没有 `stop the world`, 但带来的后果是并发标记结束后有可能会因为其他线程的执行产生新的可达对象, 这时就需要重新标记. 但是重新标记不能像初始标记和并发标记那样从头扫描一次, 这样就速度太慢没有意义.
+</p>
+
+<p>
+要做到快速重新标记, 需要一个叫做 CardTable 的东西与之配合.
+</p>
+
+<p>
+CardTable 实际就是一个 write barrier, GC Heap 被分割为固定大小的 card
+保存在 CardTable 中, 每次对 GC Heap 的修改会导致 CardTable 中相应的
+card 被标记为 dirty. 如此一来, 重新标记时只需要考虑这些 dirty 的 card
+对应的内存中的对象.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">scanDirtyCards</span>:
+  <span style="font-weight: bold; text-decoration: underline;">HeapBitmap</span> *<span style="font-weight: bold; font-style: italic;">markBits</span> = ctx-&gt;bitmap;
+  <span style="font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">u1</span> *<span style="font-weight: bold; font-style: italic;">card</span> = start, *<span style="font-weight: bold; font-style: italic;">prevAddr</span> = <span style="font-weight: bold; text-decoration: underline;">NULL</span>;
+  <span style="font-weight: bold;">while</span> (card &lt; end):
+    <span style="font-weight: bold;">if</span> (*card != GC_CARD_DIRTY):
+      <span style="font-weight: bold;">return</span> card;
+    <span style="font-weight: bold;">while</span> (ptr &lt; limit):
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25152;&#35859;&#30340; gray object, &#26159;&#25351;&#35813; object &#24050;&#32463;&#25195;&#25551;&#21040;, &#20294;&#27809;&#26377;&#21518;&#32493;&#36827;&#19968;&#27493;&#25195;&#25551;</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">dalvic GC mark &#37096;&#20998;&#20195;&#30721;&#39057;&#32321;&#25552;&#21040; black, white, gray, &#24212;&#35813;&#26159;&#25351; dalvik</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20351;&#29992;&#20102; tri-color marking (&#19977;&#33394;&#26631;&#35760;&#31639;&#27861;)</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#37325;&#26032;&#26631;&#35760;&#30340;&#30446;&#30340;&#19981;&#26159;&#20026;&#20102;&#25226;&#24050;&#32463; mark &#30340; unmark, &#32780;&#26159;</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23558;&#26032;&#20135;&#29983;&#30340;&#21487;&#36798;&#30340; object &#37325;&#26032; mark, &#30830;&#20445;&#27809;&#26377;&#27491;&#22312;&#20351;&#29992;</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#30340;&#23545;&#35937;&#34987; GC</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">Additionally, although the</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">collector guarantees to identify all live objects during a</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">marking phase, some objects may become garbage during that phase</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">and they will not be reclaimed until the next old</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">generation collection. Such objects are referred to as floating garbage.</span>
+      Object *obj = nextGrayObject(ptr, limit, markBits);
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">nextGrayObject &#30340;&#36807;&#31243;&#26159;&#22312; dirty card &#34920;&#31034;&#30340;&#20869;&#23384;&#30340;&#33539;&#22260;&#20869;</span>
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#27599;&#19968;&#20010; 8 bytes &#23545;&#40784;&#30340;&#22320;&#22336;&#22312; markBits &#20013;&#26597;&#25214;, &#30475;&#30475;&#26159;&#19981;&#26159;&#19968;&#20010;</span>
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#35937;.</span>
+        <span style="font-weight: bold;">for</span> (ptr = base; ptr &lt; limit; ptr += HB_OBJECT_ALIGNMENT) {
+          <span style="font-weight: bold;">if</span> (dvmHeapBitmapIsObjectBitSet(markBits, ptr)):
+            <span style="font-weight: bold;">return</span> (<span style="font-weight: bold; text-decoration: underline;">Object</span> *)ptr;
+      scanObject(obj, ctx);
+      ptr = (<span style="font-weight: bold; text-decoration: underline;">u1</span>*)obj + ALIGN_UP(objectSize(obj), HB_OBJECT_ALIGNMENT);
+
+    <span style="font-weight: bold;">if</span> (ptr &lt; limit) {
+    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Ended within the current card, advance to the next card. </span><span style="font-weight: bold; font-style: italic;">*/</span>
+      ++card;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-7" class="outline-3">
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> Copying GC</h3>
+<div class="outline-text-3" id="text-1-7">
+<p>
+上面提到的都是关于 MarkSweep GC 的, 包含 markBits, liveBits,
+Concurrent GC 等都是和 MarkSweep GC 相关. 因为 android 默认的就是
+MarkSweep GC.
+</p>
+
+<p>
+实际上, android 还实现了一个 Copying GC, 还两种 GC 对外都是实现了
+HeapSource 这一接口, 例如 dvmHeapSourceAlloc 这个负责分配内存的函数在
+HeapSource.cpp (对应 MarkSweep) 和 Copying.cpp (对应 Copying) 中都有实现. 编译时只会编译某一个进行 (否则会发生重复定义), 所以两者只能在编译时确定使用哪个, 无法动态切换.
+</p>
+
+<p>
+Copying GC 把整个 GC Heap 分为大小为 512 Bytes 的 block, 并且通过一个
+blockSpace 数组来记录各个 block 的状态, 目前定义了四种状态:
+</p>
+
+<ul class="org-ul">
+<li>BLOCK_FREE
+</li>
+
+<li>BLOCK_FROM_SPACE
+</li>
+
+<li>BLOCK_TO_SPACE
+</li>
+
+<li>BLOCK_CONTINUED
+</li>
+</ul>
+
+<p>
+即, Copying GC 并没有像传统的 Copying GC 那样, 把 heap 分为两个固定大小的空间, 也没有像 hotspot 那样分为一个 eden 和两个 survivor.
+</p>
+</div>
+
+
+<div id="outline-container-sec-1-7-1" class="outline-4">
+<h4 id="sec-1-7-1"><span class="section-number-4">1.7.1</span> dvmHeapSourceAlloc</h4>
+<div class="outline-text-4" id="text-1-7-1">
+<p>
+初始状态下所有 block 都为 free, 当每次调用 dvmHeapSourceAlloc 时,
+Copying GC 会通过两个指针记录当前正在"使用"的 block:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">/* Start of free space in the current block. */
+u1 *allocPtr;
+/* Exclusive limit of free space in the current block. */
+u1 *allocLimit;
+</pre>
+</div>
+
+<p>
+若要分配的对象大小还能放在当前正在"使用"的 block 中, 则直接通过
+advance allocPtr 的方法来分配. 
+</p>
+
+<p>
+若当前 block 大小不够了, 则通过 allocateBlocks(heapSource, blocks) 分配一个或多个新的连续 block, 然后把这些 block 在 blockSpace 中标记为
+BLOCK_TO_SPACE, 并且修改 allocPtr 和 allocLimit, 把当前正在"使用" 的
+block 指向新的 block.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-7-2" class="outline-4">
+<h4 id="sec-1-7-2"><span class="section-number-4">1.7.2</span> dvmScavengeRoots</h4>
+<div class="outline-text-4" id="text-1-7-2">
+<p>
+与 MarkSweep 把 GC 分为 mark 阶段和 sweep 阶段不同, copying 只有一个
+scavenge 阶段.
+</p>
+
+<p>
+Copying GC 与 MarkSweep 一样, 都是通过 Heap.cpp 的
+dvmCollectGarbageInternal 开始 GC 的
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">dvmCollectGarbageInternal</span>
+  <span style="font-weight: bold;">dvmHeapMarkRootSet</span>();
+    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">do nothing </span><span style="font-weight: bold; font-style: italic;">*/</span>
+  dvmHeapScanMarkedObjects();
+    <span style="font-weight: bold; text-decoration: underline;">dvmScavengeRoots</span>
+  <span style="font-weight: bold;">dvmHeapProcessReferences</span>();
+    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">do nothing </span><span style="font-weight: bold; font-style: italic;">*/</span>
+  dvmHeapSweepUnmarkedObjects();
+    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">do nothing </span><span style="font-weight: bold; font-style: italic;">*/</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
+</pre>
+</div>
+
+<p>
+可见, 为了把后写的 Copying GC 放到之前按照 MarkSweep 实现的框架,Copying
+GC 写了许多空的 stub 函数. 最终只有一个 dvmScavengeRoots 是有用的.
+</p>
+
+<p>
+dvmScavengeRoots 需要解决几个问题:
+</p>
+
+<ol class="org-ol">
+<li>把对象从 BLOCK_FROM_SPACE 的 block 复制到 BLOCK_TO_SPACE
+</li>
+
+<li>修改引用关系
+</li>
+
+<li>对 `pinning` 的对象要特殊处理
+</li>
+
+<li>处理 hashcode
+</li>
+</ol>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">dvmScavengeRoots</span>
+  <span style="font-weight: bold;">dvmHeapSourceFlip</span>();
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25226;&#31867;&#22411;&#20026; BLOCK_TO_SPACE &#30340; block &#21464;&#20026; BLOCK_FROM_SPACE</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22240;&#20026; dvmHeapSourceAlloc &#20998;&#37197;&#30340;&#23545;&#35937;&#37117;&#25918;&#22312; BLOCK_TO_SPACE &#20013;</span>
+
+  <span style="font-weight: bold; font-style: italic;">/*</span>
+<span style="font-weight: bold; font-style: italic;">  * Promote blocks with stationary objects.</span>
+<span style="font-weight: bold; font-style: italic;">  </span><span style="font-weight: bold; font-style: italic;">*/</span>
+  pinThreadList();
+  pinReferenceTable(&amp;gDvm.jniGlobalRefTable);
+  pinReferenceTable(&amp;gDvm.jniPinRefTable);
+  pinHashTableEntries(gDvm.loadedClasses);
+  pinHashTableEntries(gDvm.dbgRegistry);
+  pinPrimitiveClasses();
+  pinInternedStrings();
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25152;&#35859;&#30340; pin, &#23601;&#26159;&#25226;&#19968;&#20010; object &#25152;&#22312;&#30340; block &#30001; BLOCK_FROM_SPACE</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21464;&#20026; BLOCK_TO_SPACE</span>
+    promoteBlockByAddr(*addr)
+      heapSource-&gt;blockSpace[block] = BLOCK_TO_SPACE;
+      enqueueBlock(heapSource, block);
+
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#37325;&#32622; allocPtr &#21644; allocLimit</span>
+  gDvm.gcHeap-&gt;heapSource-&gt;allocPtr = allocateBlocks(gDvm.gcHeap-&gt;heapSource, 1);
+  gDvm.gcHeap-&gt;heapSource-&gt;allocLimit = gDvm.gcHeap-&gt;heapSource-&gt;allocPtr + BLOCK_SIZE;
+
+  scavengeThreadList();
+  scavengeReference(&amp;gDvm.outOfMemoryObj);
+  scavengeReference(&amp;gDvm.internalErrorObj);
+  scavengeReference(&amp;gDvm.noClassDefFoundErrorObj);
+  scavengeInternedStrings();
+
+  scavengeBlockQueue();
+
+  preserveSoftReferences(&amp;gDvm.gcHeap-&gt;softReferences);
+  clearWhiteReferences(&amp;gDvm.gcHeap-&gt;weakReferences);
+  processFinalizableReferences();
+  clearWhiteReferences(&amp;gDvm.gcHeap-&gt;softReferences);
+  clearWhiteReferences(&amp;gDvm.gcHeap-&gt;weakReferences);
+  clearWhiteReferences(&amp;gDvm.gcHeap-&gt;phantomReferences);
+  clearFromSpace(gcHeap-&gt;heapSource);
+</pre>
+</div>
+
+<p>
+与 MarkSweep 采用一个 markStack 来迭代 mark 类似, Copying GC 使用一个
+blockQueue 进行迭代式的 scavenge.
+</p>
+
+<p>
+在上面的函数中, scavengeBlockQueue 之前的各种 scavangeXxx 类似于
+MarkSweep 的 scanRootSet, 这些函数会负责对 GC root 进行初步的scavange,
+主要是通过 allocateGray 在 BLOCK_TO_SPACE 生成 GC ROOT 的copy. 这个新对象被称为 gray object, 是因为它们还需要后续的处理:
+</p>
+
+<ol class="org-ol">
+<li>它引用到的其他对象还没处理
+</li>
+
+<li>它引用的对象的指针需要被调整
+</li>
+</ol>
+
+<p>
+以下面的对象为例:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-java"><span style="font-weight: bold;">class</span> <span style="font-weight: bold; text-decoration: underline;">A</span> {
+    <span style="font-weight: bold; text-decoration: underline;">B</span> <span style="font-weight: bold; font-style: italic;">b</span>;
+    <span style="font-weight: bold; text-decoration: underline;">C</span> <span style="font-weight: bold; font-style: italic;">c</span>;
+}
+
+<span style="font-weight: bold;">class</span> <span style="font-weight: bold; text-decoration: underline;">B</span> {
+    <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">x</span>;
+}
+
+<span style="font-weight: bold;">class</span> <span style="font-weight: bold; text-decoration: underline;">C</span> {
+    <span style="font-weight: bold; text-decoration: underline;">B</span> <span style="font-weight: bold; font-style: italic;">b2</span>;
+}
+</pre>
+</div>
+
+<p>
+假设 A 对象有 GC root, 则
+</p>
+
+<ol class="org-ol">
+<li>scavange a, blockQueue 为 {a'}, 但其 a'.b, a'.c 都指向旧的 b,c 的地址.
+</li>
+
+<li>scavange a', 导致 b,c 被 copy 到 b',c', 此时 blockQueue 为 {b',c'}
+</li>
+
+<li>scavange b'
+</li>
+
+<li>scavange c', blockQueue 为 {b2'}
+</li>
+
+<li>scavange b2'
+</li>
+</ol>
+
+<p>
+可见, scavange 过程是一个 BFS 过程.
+</p>
+
+<p>
+BFS 中对每个节点的处理, 主要是 scavengeObject
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c">scavengeObject
+  scavengeDataObject
+    scavengeReference((<span style="font-weight: bold; text-decoration: underline;">Object</span> **) obj);
+    <span style="font-weight: bold;">for</span> every field:
+      Object **ref = (<span style="font-weight: bold; text-decoration: underline;">Object</span> **)((<span style="font-weight: bold; text-decoration: underline;">u1</span> *)obj + offset);
+      scavengeReference(ref);
+</pre>
+</div>
+
+<p>
+最主要的代码是在 scavengeReference, 当我们对 a'-&gt;b 调用 scavengeReference 时,
+会导致:
+</p>
+
+<ol class="org-ol">
+<li>a'-&gt;b 被复制到 b' 
+</li>
+
+<li>a'-&gt;b 这个引用被修改为 a'-&gt;b'
+</li>
+
+<li>b' 被加入 blockQueue 中
+</li>
+</ol>
+
+<div class="org-src-container">
+
+<pre class="src src-c">scavengeReference(Object ** obj)
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">toSpaceContains, &#35828;&#26126; *obj &#24050;&#32463;&#26159;&#22797;&#21046;&#21518;&#30340;&#23545;&#35937;(&#25110;&#32773;&#35813;&#23545;&#35937;&#26159; pin &#29366;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#24577;),&#19988;&#19978;&#23618;&#24341;&#29992;&#30340;&#20063;&#26159;&#26032;&#30340;&#23545;&#35937;&#20102;, &#30452;&#25509;&#36820;&#22238;</span>
+  <span style="font-weight: bold;">if</span> (toSpaceContains(*obj)):
+    LOG_SCAV(<span style="font-style: italic;">"scavengeReference skipping pinned object @ %p"</span>, *obj);
+    <span style="font-weight: bold;">return</span>;
+  <span style="font-weight: bold;">if</span> (isForward(*obj)):
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#35828;&#26126; a'-&gt;b &#25351;&#21521;&#36824;&#26159;&#26087;&#30340; b &#23545;&#35937;, &#20294;&#26159;&#26087;&#30340; b &#23545;&#35937;&#24050;&#32463;&#34987;&#26631;&#35760;&#20026; forward</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21363; b' &#24050;&#32463;&#29983;&#25104;, &#36890;&#36807; getForward &#21487;&#20197;&#25343;&#21040;&#36825;&#20010; b'</span>
+    *obj = (<span style="font-weight: bold; text-decoration: underline;">Object</span> *)getForward(*obj);
+    <span style="font-weight: bold;">return</span>;
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">a'-&gt;b &#36824;&#27809;&#32463;&#36807; copy</span>
+  toObj = transportObject(fromObj);
+    assert(fromSpaceContains(fromObj));
+    toObj = allocateGray(allocSize);
+      addr = dvmHeapSourceAlloc(size);
+      block = addressToBlock(heapSource, (<span style="font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">u1</span> *)addr);
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26032;&#30340; gray object &#36827;&#34892; blockQueue</span>
+      enqueueBlock(heapSource, block);
+    memcpy(toObj, fromObj, copySize);
+  setForward(toObj, fromObj);
+    *(<span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span> *)fromObj = (<span style="font-weight: bold; text-decoration: underline;">uintptr_t</span>)toObj | 0x1;
+  *obj = (<span style="font-weight: bold; text-decoration: underline;">Object</span> *)toObj;
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-1-7-2-1" class="outline-5">
+<h5 id="sec-1-7-2-1"><span class="section-number-5">1.7.2.1</span> forward</h5>
+<div class="outline-text-5" id="text-1-7-2-1">
+<p>
+getForward, isForward, setForward 这三个函数是用来实现对象移动后指针的重定位的.
+</p>
+
+<p>
+例如, 假设 a-&gt;b 和 c-&gt;b2 本来指向的是同一个 B 对象. 当 scavenge a 的过程中, b 被复制到 b', 那么 scavenge c 时, 如果把 c'-&gt;b2 指向 b'?
+</p>
+
+<p>
+当 b 被复制到 b' 时, 会调用 setForward(b',b), 即
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c">*(<span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span> *)b = (<span style="font-weight: bold; text-decoration: underline;">uintptr_t</span>)b<span style="font-weight: bold;">'</span><span style="font-style: italic;"> | 0x1;</span>
+</pre>
+</div>
+
+<p>
+可见, setForward 后, 原来的 b 对象不再是一个有效的 java 对象, 因为它的每一个 long 会被改写为 b' 的地址加一个 0x1 的标记 (这种 b' | 0x1 是有效的, 因为 b' 保证是 8 bytes 对齐的), 这种改写虽然破坏了 b 对象, 但信息通过 b' 已经保存了下来, 没有什么问题.
+</p>
+
+<p>
+当 scavenge c' 时, 通过对 c'-&gt;b2 执行 isForward 判断, 可以知道 b2' 是否存在, 若已经存在, 则直接通过 getForward 从 b2 中获得 b2' 地址即可.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-7-2-2" class="outline-5">
+<h5 id="sec-1-7-2-2"><span class="section-number-5">1.7.2.2</span> hashcode</h5>
+<div class="outline-text-5" id="text-1-7-2-2">
+<div class="org-src-container">
+
+<pre class="src src-c">Object *<span style="font-weight: bold;">transportObject</span>(<span style="font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">Object</span> *<span style="font-weight: bold; font-style: italic;">fromObj</span>)
+  <span style="font-weight: bold;">if</span> (LW_HASH_STATE(fromObj-&gt;lock) != LW_HASH_STATE_UNHASHED):
+    <span style="font-weight: bold; font-style: italic;">/*</span>
+<span style="font-weight: bold; font-style: italic;">    * The object has been hashed or hashed and moved.  We must</span>
+<span style="font-weight: bold; font-style: italic;">    * reserve an additional word for a hash code.</span>
+<span style="font-weight: bold; font-style: italic;">    </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    allocSize += <span style="font-weight: bold;">sizeof</span>(u4);
+  toObj = allocateGray(allocSize);
+  <span style="font-weight: bold;">if</span> (LW_HASH_STATE(fromObj-&gt;lock) == LW_HASH_STATE_HASHED):
+    <span style="font-weight: bold; font-style: italic;">/*</span>
+<span style="font-weight: bold; font-style: italic;">    * The object has had its hash code exposed.  Append it to the</span>
+<span style="font-weight: bold; font-style: italic;">    * instance and set a bit so we know to look for it there.</span>
+<span style="font-weight: bold; font-style: italic;">    </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    *(<span style="font-weight: bold; text-decoration: underline;">u4</span> *)(((<span style="font-weight: bold; text-decoration: underline;">char</span> *)toObj) + copySize) = (<span style="font-weight: bold; text-decoration: underline;">u4</span>)fromObj &gt;&gt; 3;
+    toObj-&gt;lock |= LW_HASH_STATE_HASHED_AND_MOVED &lt;&lt; LW_HASH_STATE_SHIFT;
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-1-8" class="outline-3">
+<h3 id="sec-1-8"><span class="section-number-3">1.8</span> softLimit 与 footprint</h3>
+<div class="outline-text-3" id="text-1-8">
+<p>
+softLimit 总是和 utilization 对应的, 每次 GC 结束时都会通过
+dvmHeapSourceGrowForUtilization 将 softLimit 设置为一个稍微大于
+bytesAllocated 的值, 以防止有过多的垃圾被保留.
+</p>
+
+<p>
+footprint 在 softLimit 去掉后仍不能分配成功时会临时性的增长为
+growthLimit, 待分配完毕后会被设为 bytesAllocated, 但是当
+dvmHeapSourceGrowForUtilization 时 dalvik 会保证 footprint 一定不小于
+softLimit.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c">setSoftLimit()
+  <span style="font-weight: bold; text-decoration: underline;">size_t</span> <span style="font-weight: bold; font-style: italic;">currentHeapSize</span> = mspace_footprint(msp);
+  <span style="font-weight: bold;">if</span> (softLimit &lt; currentHeapSize):
+    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Don't let the heap grow any more, and impose a soft limit.</span>
+<span style="font-weight: bold; font-style: italic;">    </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    mspace_set_footprint_limit(msp, currentHeapSize);
+    hs-&gt;softLimit = softLimit;
+  <span style="font-weight: bold;">else</span>:
+    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Let the heap grow to the requested max, and remove any</span>
+<span style="font-weight: bold; font-style: italic;">    * soft limit, if set.</span>
+<span style="font-weight: bold; font-style: italic;">    </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    mspace_set_footprint_limit(msp, softLimit);
+    hs-&gt;softLimit = SIZE_MAX;
+</pre>
+</div>
+
+<p>
+所以这种情况是可能的:
+</p>
+
+<p>
+因为不停的分配而不释放, footprint 被增长到很大. 后来大批垃圾被 GC,
+footprint 仍会保留为原先那个较大的值 (代码中没有看到 footprint 会在 GC
+后被缩小), 此时 heap 可能显示有大量的剩余, 但因为 softLimit 总是维持在一个比较小的范围, 所以此时进行内存分配时还是可能发生 GC.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Wei Sun (孙伟)</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2016-09-16 Fri 15:53</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
