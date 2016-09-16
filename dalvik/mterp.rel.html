@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Dalvik: mterp</title>
+<!-- 2016-09-16 Fri 15:35 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Wei Sun (孙伟)" />
+<link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Dalvik: mterp</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Dalvik: mterp</a>
+<ul>
+<li><a href="#sec-1-1">1.1. dalvik byte code</a></li>
+<li><a href="#sec-1-2">1.2. 指令分发</a>
+<ul>
+<li><a href="#sec-1-2-1">1.2.1. mterp-portable 的指令分发</a></li>
+<li><a href="#sec-1-2-2">1.2.2. mterp-arm 中的指令分发</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Dalvik: mterp</h2>
+<div class="outline-text-2" id="text-1">
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> dalvik byte code</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+dalvik byte code 是以 16 bits 为单位的, 即一个 byte code 至少 16
+bits. 其中前 8 bits 是 opcode, 后面的部分根据 opcode 不同而有不同的意义. 所以 dalvik 最多可以支持 256 个 opcode (目前使用的范围是 00-e2).
+</p>
+
+<p>
+例如:
+</p>
+
+<ul class="org-ul">
+<li>NOP 指令是 0000, 其中前两个 00 是 opcode, 后面的 00 是占位符
+</li>
+
+<li>MOVE 指令是 01AB, 其中 01 是 opcode, A 表示一个 4 bits 的目的寄存器,
+B 表示一个 4 bits 的源寄存器
+</li>
+
+<li>MOVE/FROM16 指令是 02AA BBBB, 02 是 opcode, AA 表示 8 bits 的目的寄存器, BBBB 表示一个 16 bits 的源寄存器. 这个指令一共是 32 bits.
+</li>
+
+<li>MOVE/16 指令是 0300 AAAA BBBB, 03 是 opcode, 00 表示占位符, AAAA 表示
+16 bits 的目的寄存器, BBBB 表示 16 bits 的源寄存器. 这个指令一共 48
+bits.
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 指令分发</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+自己实现一个最简单的指令分发可能是这样的:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="font-weight: bold;">while</span> (<span style="font-weight: bold; text-decoration: underline;">true</span>) {
+      op = get_op(pc);
+      <span style="font-weight: bold;">if</span> (op == OP_A) {
+         <span style="font-weight: bold; font-style: italic;">//</span>
+      } <span style="font-weight: bold;">else</span> <span style="font-weight: bold;">if</span> (op == OP_B) {
+        <span style="font-weight: bold; font-style: italic;">///</span>
+      } <span style="font-weight: bold;">else</span> <span style="font-weight: bold;">if</span> (...) {
+        <span style="font-weight: bold; font-style: italic;">//</span>
+      }
+}
+</pre>
+</div>
+</div>
+
+<div id="outline-container-sec-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> mterp-portable 的指令分发</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">void</span> * <span style="font-weight: bold; font-style: italic;">handlerTable</span>[] = {
+     op_OP_NOP;
+     op_OP_MOVE;
+     <span style="font-weight: bold; font-style: italic;">//</span><span style="font-weight: bold; font-style: italic;">...</span>
+}
+
+op_OP_NOP:
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
+
+op_OP_MOVE:
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
+</pre>
+</div>
+
+<p>
+并且每次一条指令执行完后并不是跳转到开头, 而是在指令结尾通过一个
+FINISH 宏直接进行跳转
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">FINISH</span> <span style="font-weight: bold;">goto</span> *handlerTable[inst];
+</pre>
+</div>
+
+<p>
+mterp-portable 使用跳转表去掉一次条件判断, 使用 FINISH 宏避免一次跳转
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> mterp-arm 中的指令分发</h4>
+<div class="outline-text-4" id="text-1-2-2">
+<p>
+mterp 中也有一个 类似于 handlerTable 的跳转表, 但是跳转表中的 entry 并不是指向代码的指针, 而是真正的代码, 并且每一个 case 对应的代码要求是
+64 字节对齐的.
+</p>
+
+<p>
+类似这样的结构:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">void</span> * <span style="font-weight: bold; font-style: italic;">handlerTable</span> = op_OP_NOP;
+.balign 64
+op_OP_NOP:
+<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
+.balign 64
+op_OP_MOVE:
+<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
+</pre>
+</div>
+
+<p>
+这样可以在跳转时减少一个内存读取, 代价是每一个 OP 对应的指令不能超过
+64 字节. 
+</p>
+
+<p>
+跳转语句为:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-text">#define GOTO_OPCODE(_reg)       add     pc, rIBASE, _reg, lsl #6
+</pre>
+</div>
+
+<p>
+其中 rIBASE 是 op_OP_NOP 的地址, 即跳转表的基址, lsl #6 表示 64 (逻辑左移 6 位)
+</p>
+
+<p>
+mterp-arm 在 mterp-portable 基础上通过固定长度的代码避免内存读取.
+</p>
+
+<p>
+具体描述见: <a href="http://blog.csdn.net/crosskernel/article/details/21168603">http://blog.csdn.net/crosskernel/article/details/21168603</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Wei Sun (孙伟)</p>
+<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
+<p class="date">Created: 2016-09-16 Fri 15:35</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
