@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Linux Kernel: Memory</title>
-<!-- 2016-09-18 Sun 15:11 -->
+<!-- 2016-09-18 Sun 15:55 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -2973,9 +2973,17 @@ libc 有两个和 brk 相应的函数:
 <div class="org-src-container">
 
 <pre class="src src-c">sys_brk(<span style="font-weight: bold; text-decoration: underline;">brk</span>):
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; brk &#23567;&#20110;&#24403;&#21069;&#30340; end_code, &#30452;&#25509;&#36820;&#22238;&#24403;&#21069;&#30340; brk, &#33267;&#20110;&#20026;&#21861;&#26159; end_code</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#32780;&#19981;&#26159; brk ... &#24182;&#19981;&#30693;&#36947;.</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20294;&#36825;&#19968;&#34892;&#20195;&#30721;&#23548;&#33268; sys_brk &#21487;&#20197;&#25903;&#25345; libc &#30340; sbrk(0)   </span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; brk &#23567;&#20110;&#24403;&#21069;&#30340; end_code, &#30452;&#25509;&#36820;&#22238;&#24403;&#21069;&#30340; brk, &#33267;&#20110;&#20026;&#21861;&#26159;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">end_code&#32780;&#19981;&#26159; start_brk ... &#25105;&#26159;&#24819;&#19981;&#36890;&#30340;, &#22240;&#20026;&#20869;&#23384;&#24067;&#23616;&#19978;&#22522;&#26412;&#26159;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">[start_code, end_code] [start_data, end_data] [start_brk, brk].</span>
+  <span style="font-weight: bold; font-style: italic;">// </span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">kernel 3.18 &#24182;&#19981;&#26159;&#21644; end_code &#27604;&#36739;, &#32780;&#26159;&#21644; start_brk &#25110; end_data &#27604;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36739; (&#21462;&#20915;&#20110; brk &#26159;&#21542;&#26377; randomize &#30340;&#37197;&#32622;), &#25152;&#20197;&#25105;&#35748;&#20026;&#36825;&#21487;&#33021;&#26159; kernel</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">2.6.11  &#30340; bug...</span>
+  <span style="font-weight: bold; font-style: italic;">// </span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20294;&#36825;&#19968;&#34892;&#20195;&#30721;&#23548;&#33268; sys_brk &#21487;&#20197;&#25903;&#25345; libc &#30340; sbrk(0)    </span>
+
   <span style="font-weight: bold;">if</span> (brk &lt; mm-&gt;end_code):
     <span style="font-weight: bold;">goto</span> <span style="font-weight: bold; text-decoration: underline;">out</span>;
 
@@ -4214,7 +4222,7 @@ swapper (或 idle 进程, init_task, 0 号进程) 是一个例外: 它会使用 
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-06-14 Tue&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-09-18 Sun 15:11</p>
+<p class="date">Created: 2016-09-18 Sun 15:55</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
