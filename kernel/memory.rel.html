@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Linux Kernel: Memory</title>
-<!-- 2016-09-19 Mon 18:09 -->
+<!-- 2016-09-19 Mon 18:16 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -1888,22 +1888,22 @@ object 数为 (4096-20)/300 = 13, 则不考虑 colouring 的情况下, slab 的�
 </p>
 
 <ol class="org-ol">
-<li>slab<sup><a id="fnr.6" name="fnr.6" class="footref" href="#fn.6">6</a></sup> 的 offset 为 0
+<li>slab(0) 的 offset 为 0
 </li>
-<li>slab<sup><a id="fnr.7" name="fnr.7" class="footref" href="#fn.7">7</a></sup> 32
+<li>slab(1) 32
 </li>
-<li>slab<sup><a id="fnr.8" name="fnr.8" class="footref" href="#fn.8">8</a></sup> 64
+<li>slab(2) 64
 </li>
-<li>slab<sup><a id="fnr.9" name="fnr.9" class="footref" href="#fn.9">9</a></sup> 96
+<li>slab(3) 96
 </li>
-<li>slab<sup><a id="fnr.10" name="fnr.10" class="footref" href="#fn.10">10</a></sup> 128
+<li>slab(4) 128
 </li>
-<li>slab<sup><a id="fnr.11" name="fnr.11" class="footref" href="#fn.11">11</a></sup> 又回绕到 0
+<li>slab(5) 又回绕到 0
 </li>
 </ol>
 
 <p>
-可见 slab<sup><a id="fnr.6.100" name="fnr.6.100" class="footref" href="#fn.6">6</a></sup> 到 slab<sup><a id="fnr.10.100" name="fnr.10.100" class="footref" href="#fn.10">10</a></sup> 的 offset 依次相差一个 cache line 的大小. 相对而言这些 slab 中的对象被 cache 到同一条 cache line 的可能性会小一些.
+可见 slab<sup><a id="fnr.6" name="fnr.6" class="footref" href="#fn.6">6</a></sup> 到 slab<sup><a id="fnr.7" name="fnr.7" class="footref" href="#fn.7">7</a></sup> 的 offset 依次相差一个 cache line 的大小. 相对而言这些 slab 中的对象被 cache 到同一条 cache line 的可能性会小一些.
 </p>
 </div>
 </div>
@@ -4251,14 +4251,6 @@ swapper (或 idle 进程, init_task, 0 号进程) 是一个例外: 它会使用 
 <div class="footdef"><sup><a id="fn.6" name="fn.6" class="footnum" href="#fnr.6">6</a></sup> <p>DEFINITION NOT FOUND.</p></div>
 
 <div class="footdef"><sup><a id="fn.7" name="fn.7" class="footnum" href="#fnr.7">7</a></sup> <p>DEFINITION NOT FOUND.</p></div>
-
-<div class="footdef"><sup><a id="fn.8" name="fn.8" class="footnum" href="#fnr.8">8</a></sup> <p>DEFINITION NOT FOUND.</p></div>
-
-<div class="footdef"><sup><a id="fn.9" name="fn.9" class="footnum" href="#fnr.9">9</a></sup> <p>DEFINITION NOT FOUND.</p></div>
-
-<div class="footdef"><sup><a id="fn.10" name="fn.10" class="footnum" href="#fnr.10">10</a></sup> <p>DEFINITION NOT FOUND.</p></div>
-
-<div class="footdef"><sup><a id="fn.11" name="fn.11" class="footnum" href="#fnr.11">11</a></sup> <p>DEFINITION NOT FOUND.</p></div>
 
 
 </div>
