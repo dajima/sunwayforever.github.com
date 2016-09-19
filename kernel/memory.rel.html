@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Linux Kernel: Memory</title>
-<!-- 2016-09-18 Sun 15:55 -->
+<!-- 2016-09-19 Mon 11:12 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -2951,9 +2951,13 @@ COW, 参考 <a href="#sec-1-1-2-4-2">Copy On Write</a>
 <h4 id="sec-1-3-5"><span class="section-number-4">1.3.5</span> Managing the Heap</h4>
 <div class="outline-text-4" id="text-1-3-5">
 <p>
-Managing the heap, 主要是指 brk 系统调用.
+Managing the heap, linux 下主要是依靠 brk 系统调用
 </p>
+</div>
 
+<div id="outline-container-sec-1-3-5-1" class="outline-5">
+<h5 id="sec-1-3-5-1"><span class="section-number-5">1.3.5.1</span> brk</h5>
+<div class="outline-text-5" id="text-1-3-5-1">
 <p>
 libc 有两个和 brk 相应的函数:
 </p>
@@ -3014,6 +3018,47 @@ out:
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sys_brk &#20250;&#36820;&#22238;&#24403;&#21069;&#30340; brk</span>
   retval = mm-&gt;brk;
 </pre>
+</div>
+
+<p>
+heap 为何会与其它的vma 产生 intersection?  参考 <a href="#sec-1-3-2-4">get_unmapped_area</a>
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-1-3-5-2" class="outline-5">
+<h5 id="sec-1-3-5-2"><span class="section-number-5">1.3.5.2</span> 关于 malloc</h5>
+<div class="outline-text-5" id="text-1-3-5-2">
+<p>
+malloc 涉及到底层内存分配时, 如果发现 heap 需要扩展, 则会使用如下的逻辑:
+</p>
+
+<ol class="org-ol">
+<li>优先使用 MORECORE 来扩展, MORECORE 是 libc 中对 "sbrk-style system
+routine" 的称呼, 一般来说 MORECORE 就是 sbrk, 但也允许用其它方式来模拟 sbrk 的过程
+</li>
+
+<li>若 MORECORE 失败, 例如 sbrk 因为 vma intersection 的原因无法扩展,
+则 libc 会尝试 MMAP 来扩展 heap.
+</li>
+
+<li>若一次 malloc 的大小超过 DEFAULT_MMAP_THRESHOLD (256K), 则会直接使用
+MMAP 来分配
+</li>
+</ol>
+
+<p>
+以上是 malloc 的逻辑.
+</p>
+
+<p>
+除此之外, libc 还支持 mspace<sub>malloc, free, realloc, &#x2026;</sub>, mspace_xxx
+支持用户自己通过 create_space 创建一块内存池, 后续的 mspace_xxx 都会操作这块 mspace, 而不再与 heap 打交道.
+</p>
+
+<p>
+例如, dalvik 把对象都分配在 Dalvik/ART heap 上, Dalvik/ART heap 实际上就是一个 mspace, Dalvik/ART 最终是依靠 mspace_malloc 来分配 java 对象的
+</p>
 </div>
 </div>
 </div>
@@ -4222,7 +4267,7 @@ swapper (或 idle 进程, init_task, 0 号进程) 是一个例外: 它会使用 
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-06-14 Tue&gt;</span></span></p>
 <p class="author">Author: Wei Sun (孙伟)</p>
 <p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-09-18 Sun 15:55</p>
+<p class="date">Created: 2016-09-19 Mon 11:12</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
