@@ -1,6 +1,6 @@
 (setq org-publish-cache (make-hash-table :test 'equal :weakness nil :size 100))
 (puthash ":project:" "note" org-publish-cache)
-(puthash ":cache-file:" "/home/sunway/.github.pages/note.cache" org-publish-cache)
+(puthash ":cache-file:" "/home/sunway/.github.pages/org-cache/note.cache" org-publish-cache)
 (puthash "/home/sunway/note/algorithm/quick_min_select.rel.org" '(:title "Algorithm: Quick Min Select" :numbering ((("Algorithm:" "Quick" "Min" "Select") 1)) :index nil) org-publish-cache)
 (puthash "/home/sunway/note/algorithm/min_max_select.rel.org" '(:title "Algorithm: Min Max Select" :numbering ((("Algorithm:" "Min" "Max" "Select") 1)) :index nil) org-publish-cache)
 (puthash "/home/sunway/note/algorithm/median_of_two_sorted_array.rel.org" '(:title "Algorithm: Median Of Two Sorted Array" :numbering ((("Algorithm:" "Median" "Of" "Two" "Sorted" "Array") 1)) :index nil) org-publish-cache)
@@ -56,4 +56,4 @@
 (puthash "Xd9dea1233e07f34f85329db1a146092994a5a44f" 1473048029 org-publish-cache)
 (puthash "Xe1c302e877c9b9a6f86268ea731aea9d6f509d35" 1472611385 org-publish-cache)
 (puthash "/home/sunway/note/index.org" '(:numbering nil :index nil) org-publish-cache)
-(puthash "Xbca19483a2b440622a5979df87da2cab01ce9e9e" 1474279261 org-publish-cache)
+(puthash "Xbca19483a2b440622a5979df87da2cab01ce9e9e" 1474279764 org-publish-cache)
