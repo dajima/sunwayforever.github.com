@@ -3,12 +3,11 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-09-10 Sat 21:21 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: VFS</title>
-<meta name="generator" content="Org-mode" />
-<meta name="author" content="Wei Sun (孙伟)" />
+<!-- 2016-09-19 Mon 18:01 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Wei Sun (孙伟)" />
 <link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
 <script type="text/javascript">
 /*
@@ -64,60 +63,60 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgd8bc490">1. Linux Kernel: VFS</a>
+<li><a href="#sec-1">1. Linux Kernel: VFS</a>
 <ul>
-<li><a href="#org7f0861f">1.1. Data Structure</a>
+<li><a href="#sec-1-1">1.1. Data Structure</a>
 <ul>
-<li><a href="#orgc97ddfe">1.1.1. file_system_type</a></li>
-<li><a href="#orgb4356cb">1.1.2. super_block</a></li>
-<li><a href="#org46a63ce">1.1.3. inode</a></li>
-<li><a href="#org98904de">1.1.4. dentry</a></li>
-<li><a href="#org6e617fc">1.1.5. file</a></li>
-<li><a href="#org2fa35c9">1.1.6. vfsmount</a></li>
-<li><a href="#org80e7a41">1.1.7. nameidata</a></li>
-<li><a href="#org538eed4">1.1.8. task_struct</a></li>
-<li><a href="#orgac8a4d0">1.1.9. address_space</a></li>
+<li><a href="#sec-1-1-1">1.1.1. file_system_type</a></li>
+<li><a href="#sec-1-1-2">1.1.2. super_block</a></li>
+<li><a href="#sec-1-1-3">1.1.3. inode</a></li>
+<li><a href="#sec-1-1-4">1.1.4. dentry</a></li>
+<li><a href="#sec-1-1-5">1.1.5. file</a></li>
+<li><a href="#sec-1-1-6">1.1.6. vfsmount</a></li>
+<li><a href="#sec-1-1-7">1.1.7. nameidata</a></li>
+<li><a href="#sec-1-1-8">1.1.8. task_struct</a></li>
+<li><a href="#sec-1-1-9">1.1.9. address_space</a></li>
 </ul>
 </li>
-<li><a href="#org403c2fd">1.2. Operations</a>
+<li><a href="#sec-1-2">1.2. Operations</a>
 <ul>
-<li><a href="#org5fee65f">1.2.1. super_operations</a></li>
-<li><a href="#orgc314675">1.2.2. inode_operations</a></li>
-<li><a href="#orgcb7f084">1.2.3. file_operations</a></li>
-<li><a href="#org2e1960c">1.2.4. address_space_operations</a></li>
-<li><a href="#org88a0e5b">1.2.5. 总结</a></li>
+<li><a href="#sec-1-2-1">1.2.1. super_operations</a></li>
+<li><a href="#sec-1-2-2">1.2.2. inode_operations</a></li>
+<li><a href="#sec-1-2-3">1.2.3. file_operations</a></li>
+<li><a href="#sec-1-2-4">1.2.4. address_space_operations</a></li>
+<li><a href="#sec-1-2-5">1.2.5. 总结</a></li>
 </ul>
 </li>
-<li><a href="#org4ef4984">1.3. Details</a>
+<li><a href="#sec-1-3">1.3. Details</a>
 <ul>
-<li><a href="#org8934b01">1.3.1. sys_mount</a></li>
-<li><a href="#org831abb3">1.3.2. mount the root</a></li>
-<li><a href="#org2fe66a6">1.3.3. path_lookup</a></li>
-<li><a href="#org17801b6">1.3.4. open</a></li>
-<li><a href="#orgd9654f4">1.3.5. readdir</a></li>
-<li><a href="#org727ea29">1.3.6. write</a></li>
-<li><a href="#orgfc6722d">1.3.7. read</a></li>
-<li><a href="#orga8a10f3">1.3.8. permission</a></li>
-<li><a href="#org17dcd46">1.3.9. dentry cache</a></li>
-<li><a href="#org0044357">1.3.10. page cache</a></li>
+<li><a href="#sec-1-3-1">1.3.1. sys_mount</a></li>
+<li><a href="#sec-1-3-2">1.3.2. mount the root</a></li>
+<li><a href="#sec-1-3-3">1.3.3. path_lookup</a></li>
+<li><a href="#sec-1-3-4">1.3.4. open</a></li>
+<li><a href="#sec-1-3-5">1.3.5. readdir</a></li>
+<li><a href="#sec-1-3-6">1.3.6. write</a></li>
+<li><a href="#sec-1-3-7">1.3.7. read</a></li>
+<li><a href="#sec-1-3-8">1.3.8. permission</a></li>
+<li><a href="#sec-1-3-9">1.3.9. dentry cache</a></li>
+<li><a href="#sec-1-3-10">1.3.10. page cache</a></li>
 </ul>
 </li>
-<li><a href="#org924b155">1.4. File Systems</a>
+<li><a href="#sec-1-4">1.4. File Systems</a>
 <ul>
-<li><a href="#org0b16690">1.4.1. procfs</a></li>
-<li><a href="#orgbc4bd34">1.4.2. debugfs</a></li>
-<li><a href="#org638a314">1.4.3. ramfs</a></li>
-<li><a href="#org6ae3e36">1.4.4. ext2</a></li>
+<li><a href="#sec-1-4-1">1.4.1. procfs</a></li>
+<li><a href="#sec-1-4-2">1.4.2. debugfs</a></li>
+<li><a href="#sec-1-4-3">1.4.3. ramfs</a></li>
+<li><a href="#sec-1-4-4">1.4.4. ext2</a></li>
 </ul>
 </li>
-<li><a href="#org3fb5b88">1.5. Appendix</a>
+<li><a href="#sec-1-5">1.5. Appendix</a>
 <ul>
-<li><a href="#org03f8b3d">1.5.1. special inode</a></li>
-<li><a href="#orge06dfe9">1.5.2. inode-&gt;i_size</a></li>
-<li><a href="#org31c198c">1.5.3. .(single dot) 与 ..(double dots)</a></li>
-<li><a href="#orgffc8639">1.5.4. atime / mtime</a></li>
-<li><a href="#orgfa1bdf6">1.5.5. ramfs, rootfs, initramfs</a></li>
-<li><a href="#org5a6db1f">1.5.6. getcwd</a></li>
+<li><a href="#sec-1-5-1">1.5.1. special inode</a></li>
+<li><a href="#sec-1-5-2">1.5.2. inode-&gt;i_size</a></li>
+<li><a href="#sec-1-5-3">1.5.3. .(single dot) 与 ..(double dots)</a></li>
+<li><a href="#sec-1-5-4">1.5.4. atime / mtime</a></li>
+<li><a href="#sec-1-5-5">1.5.5. ramfs, rootfs, initramfs</a></li>
+<li><a href="#sec-1-5-6">1.5.6. getcwd</a></li>
 </ul>
 </li>
 </ul>
@@ -125,16 +124,17 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
-<div id="outline-container-orgd8bc490" class="outline-2">
-<h2 id="orgd8bc490"><span class="section-number-2">1</span> Linux Kernel: VFS</h2>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Linux Kernel: VFS</h2>
 <div class="outline-text-2" id="text-1">
-</div><div id="outline-container-org7f0861f" class="outline-3">
-<h3 id="org7f0861f"><span class="section-number-3">1.1</span> Data Structure</h3>
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Data Structure</h3>
 <div class="outline-text-3" id="text-1-1">
-</div><div id="outline-container-orgc97ddfe" class="outline-4">
-<h4 id="orgc97ddfe"><span class="section-number-4">1.1.1</span> file_system_type</h4>
+</div><div id="outline-container-sec-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> file_system_type</h4>
 <div class="outline-text-4" id="text-1-1-1">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">file_system_type</span> {
     <span style="font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">char</span> *<span style="font-weight: bold; font-style: italic;">name</span>;
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">super_block</span> *(*<span style="font-weight: bold;">get_sb</span>) (<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">file_system_type</span> *, <span style="font-weight: bold; text-decoration: underline;">int</span>,
@@ -146,16 +146,17 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-orgb4356cb" class="outline-4">
-<h4 id="orgb4356cb"><span class="section-number-4">1.1.2</span> super_block</h4>
+<div id="outline-container-sec-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> super_block</h4>
 <div class="outline-text-4" id="text-1-1-2">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">super_block</span> {
-    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>                <span style="font-weight: bold; font-style: italic;">s_blocksize</span>;
+    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>              <span style="font-weight: bold; font-style: italic;">s_blocksize</span>;
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">super_operations</span>     *<span style="font-weight: bold; font-style: italic;">s_op</span>;
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">dentry</span>               *<span style="font-weight: bold; font-style: italic;">s_root</span>;
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">list_head</span>             <span style="font-weight: bold; font-style: italic;">s_inodes</span>;      
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">list_head</span>             <span style="font-weight: bold; font-style: italic;">s_dirty</span>;       
+    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">dentry</span>             *<span style="font-weight: bold; font-style: italic;">s_root</span>;
+    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">list_head</span>             <span style="font-weight: bold; font-style: italic;">s_inodes</span>;    
+    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">list_head</span>             <span style="font-weight: bold; font-style: italic;">s_dirty</span>;     
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">block_device</span>         *<span style="font-weight: bold; font-style: italic;">s_bdev</span>;
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
 }
@@ -164,23 +165,24 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org46a63ce" class="outline-4">
-<h4 id="org46a63ce"><span class="section-number-4">1.1.3</span> inode</h4>
+<div id="outline-container-sec-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> inode</h4>
 <div class="outline-text-4" id="text-1-1-3">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode</span> {
-    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>            <span style="font-weight: bold; font-style: italic;">i_ino</span>;
-    <span style="font-weight: bold; text-decoration: underline;">umode_t</span>                  <span style="font-weight: bold; font-style: italic;">i_mode</span>;
-    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">int</span>             <span style="font-weight: bold; font-style: italic;">i_nlink</span>;
-    <span style="font-weight: bold; text-decoration: underline;">uid_t</span>                    <span style="font-weight: bold; font-style: italic;">i_uid</span>;
-    <span style="font-weight: bold; text-decoration: underline;">gid_t</span>                    <span style="font-weight: bold; font-style: italic;">i_gid</span>;
-    <span style="font-weight: bold; text-decoration: underline;">loff_t</span>                   <span style="font-weight: bold; font-style: italic;">i_size</span>;
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">timespec</span>          <span style="font-weight: bold; font-style: italic;">i_atime</span>;
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">timespec</span>          <span style="font-weight: bold; font-style: italic;">i_mtime</span>;
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">timespec</span>          <span style="font-weight: bold; font-style: italic;">i_ctime</span>;
-    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>            <span style="font-weight: bold; font-style: italic;">i_blocks</span>;
+    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>          <span style="font-weight: bold; font-style: italic;">i_ino</span>;
+    <span style="font-weight: bold; text-decoration: underline;">umode_t</span>                <span style="font-weight: bold; font-style: italic;">i_mode</span>;
+    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">int</span>           <span style="font-weight: bold; font-style: italic;">i_nlink</span>;
+    <span style="font-weight: bold; text-decoration: underline;">uid_t</span>                  <span style="font-weight: bold; font-style: italic;">i_uid</span>;
+    <span style="font-weight: bold; text-decoration: underline;">gid_t</span>                  <span style="font-weight: bold; font-style: italic;">i_gid</span>;
+    <span style="font-weight: bold; text-decoration: underline;">loff_t</span>                 <span style="font-weight: bold; font-style: italic;">i_size</span>;
+    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">timespec</span>        <span style="font-weight: bold; font-style: italic;">i_atime</span>;
+    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">timespec</span>        <span style="font-weight: bold; font-style: italic;">i_mtime</span>;
+    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">timespec</span>        <span style="font-weight: bold; font-style: italic;">i_ctime</span>;
+    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>          <span style="font-weight: bold; font-style: italic;">i_blocks</span>;
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode_operations</span> *<span style="font-weight: bold; font-style: italic;">i_op</span>;
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">file_operations</span>  *<span style="font-weight: bold; font-style: italic;">i_fop</span>;     
+    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">file_operations</span>  *<span style="font-weight: bold; font-style: italic;">i_fop</span>;   
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">super_block</span>      *<span style="font-weight: bold; font-style: italic;">i_sb</span>;
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">address_space</span>    *<span style="font-weight: bold; font-style: italic;">i_mapping</span>;
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
@@ -190,10 +192,11 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org98904de" class="outline-4">
-<h4 id="org98904de"><span class="section-number-4">1.1.4</span> dentry</h4>
+<div id="outline-container-sec-1-1-4" class="outline-4">
+<h4 id="sec-1-1-4"><span class="section-number-4">1.1.4</span> dentry</h4>
 <div class="outline-text-4" id="text-1-1-4">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">dentry</span> {
     <span style="font-weight: bold; text-decoration: underline;">atomic_t</span>                  <span style="font-weight: bold; font-style: italic;">d_count</span>;
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode</span>             *<span style="font-weight: bold; font-style: italic;">d_inode</span>;
@@ -210,17 +213,18 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org6e617fc" class="outline-4">
-<h4 id="org6e617fc"><span class="section-number-4">1.1.5</span> file</h4>
+<div id="outline-container-sec-1-1-5" class="outline-4">
+<h4 id="sec-1-1-5"><span class="section-number-4">1.1.5</span> file</h4>
 <div class="outline-text-4" id="text-1-1-5">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">file</span> {
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">dentry</span>          *<span style="font-weight: bold; font-style: italic;">f_dentry</span>;
+    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">dentry</span>        *<span style="font-weight: bold; font-style: italic;">f_dentry</span>;
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">vfsmount</span>        *<span style="font-weight: bold; font-style: italic;">f_vfsmnt</span>;
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">file_operations</span> *<span style="font-weight: bold; font-style: italic;">f_op</span>;
-    <span style="font-weight: bold; text-decoration: underline;">loff_t</span>                  <span style="font-weight: bold; font-style: italic;">f_pos</span>;
-    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">int</span>            <span style="font-weight: bold; font-style: italic;">f_uid</span>, <span style="font-weight: bold; font-style: italic;">f_gid</span>;
-    <span style="font-weight: bold; text-decoration: underline;">void</span>                   *<span style="font-weight: bold; font-style: italic;">private_data</span>;
+    <span style="font-weight: bold; text-decoration: underline;">loff_t</span>                <span style="font-weight: bold; font-style: italic;">f_pos</span>;
+    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">int</span>          <span style="font-weight: bold; font-style: italic;">f_uid</span>, <span style="font-weight: bold; font-style: italic;">f_gid</span>;
+    <span style="font-weight: bold; text-decoration: underline;">void</span>                 *<span style="font-weight: bold; font-style: italic;">private_data</span>;
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">address_space</span>   *<span style="font-weight: bold; font-style: italic;">f_mapping</span>;
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
 };
@@ -229,14 +233,15 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org2fa35c9" class="outline-4">
-<h4 id="org2fa35c9"><span class="section-number-4">1.1.6</span> vfsmount</h4>
+<div id="outline-container-sec-1-1-6" class="outline-4">
+<h4 id="sec-1-1-6"><span class="section-number-4">1.1.6</span> vfsmount</h4>
 <div class="outline-text-4" id="text-1-1-6">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">vfsmount</span>
 {
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">vfsmount</span>    *<span style="font-weight: bold; font-style: italic;">mnt_parent</span>;     
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">dentry</span>      *<span style="font-weight: bold; font-style: italic;">mnt_mountpoint</span>; 
+    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">vfsmount</span>    *<span style="font-weight: bold; font-style: italic;">mnt_parent</span>;   
+    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">dentry</span>      *<span style="font-weight: bold; font-style: italic;">mnt_mountpoint</span>;       
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">dentry</span>      *<span style="font-weight: bold; font-style: italic;">mnt_root</span>;
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">super_block</span> *<span style="font-weight: bold; font-style: italic;">mnt_sb</span>;
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
@@ -246,10 +251,11 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org80e7a41" class="outline-4">
-<h4 id="org80e7a41"><span class="section-number-4">1.1.7</span> nameidata</h4>
+<div id="outline-container-sec-1-1-7" class="outline-4">
+<h4 id="sec-1-1-7"><span class="section-number-4">1.1.7</span> nameidata</h4>
 <div class="outline-text-4" id="text-1-1-7">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">nameidata</span> {
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">dentry</span>   *<span style="font-weight: bold; font-style: italic;">dentry</span>;
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">vfsmount</span> *<span style="font-weight: bold; font-style: italic;">mnt</span>;
@@ -263,10 +269,11 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org538eed4" class="outline-4">
-<h4 id="org538eed4"><span class="section-number-4">1.1.8</span> task_struct</h4>
+<div id="outline-container-sec-1-1-8" class="outline-4">
+<h4 id="sec-1-1-8"><span class="section-number-4">1.1.8</span> task_struct</h4>
 <div class="outline-text-4" id="text-1-1-8">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span> {
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">fs_struct</span> *<span style="font-weight: bold; font-style: italic;">fs</span>;
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">files_struct</span> *<span style="font-weight: bold; font-style: italic;">files</span>;
@@ -276,19 +283,19 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-orgac8a4d0" class="outline-4">
-<h4 id="orgac8a4d0"><span class="section-number-4">1.1.9</span> address_space</h4>
+<div id="outline-container-sec-1-1-9" class="outline-4">
+<h4 id="sec-1-1-9"><span class="section-number-4">1.1.9</span> address_space</h4>
 </div>
 </div>
 
-<div id="outline-container-org403c2fd" class="outline-3">
-<h3 id="org403c2fd"><span class="section-number-3">1.2</span> Operations</h3>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Operations</h3>
 <div class="outline-text-3" id="text-1-2">
-</div><div id="outline-container-org5fee65f" class="outline-4">
-<h4 id="org5fee65f"><span class="section-number-4">1.2.1</span> super_operations</h4>
+</div><div id="outline-container-sec-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> super_operations</h4>
 <div class="outline-text-4" id="text-1-2-1">
-</div><div id="outline-container-orge60108f" class="outline-5">
-<h5 id="orge60108f"><span class="section-number-5">1.2.1.1</span> alloc_inode</h5>
+</div><div id="outline-container-sec-1-2-1-1" class="outline-5">
+<h5 id="sec-1-2-1-1"><span class="section-number-5">1.2.1.1</span> alloc_inode</h5>
 <div class="outline-text-5" id="text-1-2-1-1">
 <p>
 alloc_inode 分配一个 struct inode, 并做一些简单的初始化,后续的
@@ -300,6 +307,7 @@ alloc_inode 典型的调用栈:
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">xxx_lookup</span>:
   iget(ino)
     inode = ifind_fast(sb, head, ino);
@@ -318,6 +326,7 @@ alloc_inode 典型的调用栈:
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode</span> *<span style="font-weight: bold;">ext2_alloc_inode</span>(<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">super_block</span> *<span style="font-weight: bold; font-style: italic;">sb</span>):
   <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">ext2_inode_info</span> *ei;
   ei = (<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">ext2_inode_info</span> *)kmem_cache_alloc(ext2_inode_cachep, SLAB_KERNEL);
@@ -332,8 +341,8 @@ alloc_inode 典型的调用栈:
 </div>
 </div>
 
-<div id="outline-container-orgfcf0700" class="outline-5">
-<h5 id="orgfcf0700"><span class="section-number-5">1.2.1.2</span> read_inode</h5>
+<div id="outline-container-sec-1-2-1-2" class="outline-5">
+<h5 id="sec-1-2-1-2"><span class="section-number-5">1.2.1.2</span> read_inode</h5>
 <div class="outline-text-5" id="text-1-2-1-2">
 <p>
 read_inode 是从具体文件系统加载数据对 alloc_inode 分配的 inode 进行填充. 它典型的调用栈如上面 "alloc_inode 的调用栈" 所示: alloc_inode 后会紧接一个 read_inode.
@@ -349,6 +358,7 @@ read_inode 的行为完全由文件系统的 i_op-&gt;read_inode 决定.
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">void</span> <span style="font-weight: bold;">ext2_read_inode</span> (<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode</span> * <span style="font-weight: bold; font-style: italic;">inode</span>):
   <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">ext2_inode_info</span> *ei = EXT2_I(inode);
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">read_inode &#35843;&#29992;&#36890;&#24120;&#26469;&#33258; lookup, &#32780; lookup &#22312;&#35843;&#29992; read_inode &#21069;&#20250;&#36127;&#36131;</span>
@@ -365,11 +375,12 @@ read_inode 的行为完全由文件系统的 i_op-&gt;read_inode 决定.
 </div>
 </div>
 
-<div id="outline-container-org2ec408a" class="outline-5">
-<h5 id="org2ec408a"><span class="section-number-5">1.2.1.3</span> write_inode</h5>
+<div id="outline-container-sec-1-2-1-3" class="outline-5">
+<h5 id="sec-1-2-1-3"><span class="section-number-5">1.2.1.3</span> write_inode</h5>
 <div class="outline-text-5" id="text-1-2-1-3">
-</div><ol class="org-ol"><li><a id="orge2f1fcd"></a>fsync 导致的 write_inode<br  /><div class="outline-text-6" id="text-1-2-1-3-1">
+</div><ol class="org-ol"><li><a id="sec-1-2-1-3-1" name="sec-1-2-1-3-1"></a>fsync 导致的 write_inode<br  /><div class="outline-text-6" id="text-1-2-1-3-1">
 <div class="org-src-container">
+
 <pre class="src src-c">sys_fsync(<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; text-decoration: underline;">fd</span>):
   <span style="font-weight: bold;">if</span> (!file-&gt;f_op || !file-&gt;f_op-&gt;fsync):
     <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Why?  We can still call filemap_fdatawrite </span><span style="font-weight: bold; font-style: italic;">*/</span>
@@ -388,10 +399,12 @@ read_inode 的行为完全由文件系统的 i_op-&gt;read_inode 决定.
                 <span style="font-weight: bold;">inode</span>-&gt;i_sb-&gt;s_op-&gt;write_inode(inode, sync);
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="orge45e344"></a>dirty page balance 导致的 write_inode (vm_dirty_ratio)<br  /><div class="outline-text-6" id="text-1-2-1-3-2">
+<li><a id="sec-1-2-1-3-2" name="sec-1-2-1-3-2"></a>dirty page balance 导致的 write_inode (vm_dirty_ratio)<br  /><div class="outline-text-6" id="text-1-2-1-3-2">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">generic_file_buffered_write</span>:
   balance_dirty_pages
     writeback_inodes
@@ -399,15 +412,16 @@ read_inode 的行为完全由文件系统的 i_op-&gt;read_inode 决定.
         <span style="font-weight: bold; font-style: italic;">__writeback_single_inode</span>
 </pre>
 </div>
-</div></li></ol>
+</div>
+</li></ol>
 </div>
 </div>
 
-<div id="outline-container-orgc314675" class="outline-4">
-<h4 id="orgc314675"><span class="section-number-4">1.2.2</span> inode_operations</h4>
+<div id="outline-container-sec-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> inode_operations</h4>
 <div class="outline-text-4" id="text-1-2-2">
-</div><div id="outline-container-org1e1a2ca" class="outline-5">
-<h5 id="org1e1a2ca"><span class="section-number-5">1.2.2.1</span> lookup</h5>
+</div><div id="outline-container-sec-1-2-2-1" class="outline-5">
+<h5 id="sec-1-2-2-1"><span class="section-number-5">1.2.2.1</span> lookup</h5>
 <div class="outline-text-5" id="text-1-2-2-1">
 <p>
 lookup 是 i_op 中非常重要的一个回调函数, 它负责将路径名转换为相应的
@@ -419,6 +433,7 @@ inode, 例如, open, mkdir, stat, rename 等都需要先通过 lookup 获得对�
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">filp_open</span>():
   error = open_namei(filename, namei_flags, mode, &amp;nd);
     path_lookup(pathname, LOOKUP_PARENT|LOOKUP_OPEN|LOOKUP_CREATE, nd);
@@ -457,17 +472,20 @@ inode, 例如, open, mkdir, stat, rename 等都需要先通过 lookup 获得对�
 </p>
 
 <ol class="org-ol">
-<li>正常的 dentry 指针</li>
+<li>正常的 dentry 指针
+</li>
 
-<li>- ENOENT 这种负值, 表示异常情况</li>
+<li>- ENOENT 这种负值, 表示异常情况
+</li>
 
-<li>NULL, 表示 negative dentry, 表示 dentry 有效但 inode 不存在</li>
+<li>NULL, 表示 negative dentry, 表示 dentry 有效但 inode 不存在
+</li>
 </ol>
 </div>
 </div>
 
-<div id="outline-container-orga8a10f3" class="outline-5">
-<h5 id="orga8a10f3"><span class="section-number-5">1.2.2.2</span> permission</h5>
+<div id="outline-container-sec-1-2-2-2" class="outline-5">
+<h5 id="sec-1-2-2-2"><span class="section-number-5">1.2.2.2</span> permission</h5>
 <div class="outline-text-5" id="text-1-2-2-2">
 <p>
 vfs 对许多行为会进行 permission 检查, 并且会调用到 i_op-&gt;permission 函数.
@@ -477,6 +495,7 @@ vfs 对许多行为会进行 permission 检查, 并且会调用到 i_op-&gt;perm
 以 open 为例, permission 的调用链为:
 </p>
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">filp_open</span>():
   open_namei()
     path_lookup()
@@ -490,6 +509,7 @@ vfs 对许多行为会进行 permission 检查, 并且会调用到 i_op-&gt;perm
 </div>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold;">permission</span>(<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode</span> *<span style="font-weight: bold; font-style: italic;">inode</span>, <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">mask</span>, <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">nameidata</span> *<span style="font-weight: bold; font-style: italic;">nd</span>):
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">inode &#34920;&#31034;&#35201;&#26816;&#26597;&#30340; inode</span>
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">mask &#34920;&#31034;&#38656;&#35201;&#30340;&#26435;&#38480;</span>
@@ -508,8 +528,8 @@ vfs 对许多行为会进行 permission 检查, 并且会调用到 i_op-&gt;perm
 </div>
 </div>
 
-<div id="outline-container-org417abf2" class="outline-5">
-<h5 id="org417abf2"><span class="section-number-5">1.2.2.3</span> getattr / setattr</h5>
+<div id="outline-container-sec-1-2-2-3" class="outline-5">
+<h5 id="sec-1-2-2-3"><span class="section-number-5">1.2.2.3</span> getattr / setattr</h5>
 <div class="outline-text-5" id="text-1-2-2-3">
 <p>
 getattr 和 stat 系统调用有关, 大多数涉及到修改 inode 的系统调用例如
@@ -517,8 +537,9 @@ chmod, utime 等和 setattr 的关.
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="orgef9d679"></a>getattr<br  /><div class="outline-text-6" id="text-1-2-2-3-1">
+<ol class="org-ol"><li><a id="sec-1-2-2-3-1" name="sec-1-2-2-3-1"></a>getattr<br  /><div class="outline-text-6" id="text-1-2-2-3-1">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">vfs_stat</span>:
   user_path_walk(name, &amp;nd);
   vfs_getattr(nd.mnt, nd.dentry, stat);
@@ -546,7 +567,7 @@ chmod, utime 等和 setattr 的关.
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="orgefdd652"></a>关于文件大小<br  /><div class="outline-text-7" id="text-1-2-2-3-1-1">
+<ol class="org-ol"><li><a id="sec-1-2-2-3-1-1" name="sec-1-2-2-3-1-1"></a>关于文件大小<br  /><div class="outline-text-7" id="text-1-2-2-3-1-1">
 <p>
 stat 返回的信息中, 有两个和文件大小相关的值: stat-&gt;size 和
 stat-&gt;blocks
@@ -570,10 +591,13 @@ $&gt; du -k a
 $&gt; du --apparent-size -k a
 30720   a
 </pre>
-</div></li></ol></li>
+</div>
+</li></ol>
+</li>
 
-<li><a id="org3ad1b30"></a>setattr<br  /><ol class="org-ol"><li><a id="orgfc11467"></a>UID<br  /><div class="outline-text-7" id="text-1-2-2-3-2-1">
+<li><a id="sec-1-2-2-3-2" name="sec-1-2-2-3-2"></a>setattr<br  /><ol class="org-ol"><li><a id="sec-1-2-2-3-2-1" name="sec-1-2-2-3-2-1"></a>UID<br  /><div class="outline-text-7" id="text-1-2-2-3-2-1">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">sys_chmod</span>:
   notify_change(nd.dentry, &amp;newattrs);
     <span style="font-weight: bold;">if</span> (inode-&gt;i_op &amp;&amp; inode-&gt;i_op-&gt;setattr):
@@ -587,39 +611,42 @@ $&gt; du --apparent-size -k a
         mark_inode_dirty(inode);
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org3c8ba14"></a>ATIME / MTIME<br  /><div class="outline-text-7" id="text-1-2-2-3-2-2">
+<li><a id="sec-1-2-2-3-2-2" name="sec-1-2-2-3-2-2"></a>ATIME / MTIME<br  /><div class="outline-text-7" id="text-1-2-2-3-2-2">
 <p>
 读写文件时 atime/mtime 会相应变化, vfs 在 generic_file_read / write 处做了实现, 如果某个 fs 的文件读写不是通过 generic_file_read / write, 需要自己处理 ATIME/MTIME
 </p>
-</div></li></ol></li></ol>
+</div>
+</li></ol>
+</li></ol>
 </div>
 </div>
 
 
-<div id="outline-container-orgcb7f084" class="outline-4">
-<h4 id="orgcb7f084"><span class="section-number-4">1.2.3</span> file_operations</h4>
+<div id="outline-container-sec-1-2-3" class="outline-4">
+<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> file_operations</h4>
 <div class="outline-text-4" id="text-1-2-3">
-</div><div id="outline-container-orgfc6722d" class="outline-5">
-<h5 id="orgfc6722d"><span class="section-number-5">1.2.3.1</span> read</h5>
+</div><div id="outline-container-sec-1-2-3-1" class="outline-5">
+<h5 id="sec-1-2-3-1"><span class="section-number-5">1.2.3.1</span> read</h5>
 </div>
 
-<div id="outline-container-org727ea29" class="outline-5">
-<h5 id="org727ea29"><span class="section-number-5">1.2.3.2</span> write</h5>
+<div id="outline-container-sec-1-2-3-2" class="outline-5">
+<h5 id="sec-1-2-3-2"><span class="section-number-5">1.2.3.2</span> write</h5>
 </div>
 
-<div id="outline-container-orgd9654f4" class="outline-5">
-<h5 id="orgd9654f4"><span class="section-number-5">1.2.3.3</span> readdir</h5>
+<div id="outline-container-sec-1-2-3-3" class="outline-5">
+<h5 id="sec-1-2-3-3"><span class="section-number-5">1.2.3.3</span> readdir</h5>
 </div>
 </div>
 
-<div id="outline-container-org2e1960c" class="outline-4">
-<h4 id="org2e1960c"><span class="section-number-4">1.2.4</span> address_space_operations</h4>
+<div id="outline-container-sec-1-2-4" class="outline-4">
+<h4 id="sec-1-2-4"><span class="section-number-4">1.2.4</span> address_space_operations</h4>
 </div>
 
-<div id="outline-container-org88a0e5b" class="outline-4">
-<h4 id="org88a0e5b"><span class="section-number-4">1.2.5</span> 总结</h4>
+<div id="outline-container-sec-1-2-5" class="outline-4">
+<h4 id="sec-1-2-5"><span class="section-number-4">1.2.5</span> 总结</h4>
 <div class="outline-text-4" id="text-1-2-5">
 <p>
 四种 ops 的区别与联系:
@@ -627,27 +654,27 @@ $&gt; du --apparent-size -k a
 
 <ol class="org-ol">
 <li>s_op 代表对底层文件系统的真正的读写操作, 包括读写 inode,
-super_block 等. 以 inode 为例, 当上层修改了 inode 时, inode 被标记为 dirty, 最终在 sync 时通过 s_op 中的 write_inode 写回到设备上.</li>
+super_block 等. 以 inode 为例, 当上层修改了 inode 时, inode 被标记为 dirty, 最终在 sync 时通过 s_op 中的 write_inode 写回到设备上.
+</li>
 
-<li><p>
-f_op 需要从 i_op 中分离出来, 可能有两方面原因:
-</p>
+<li>f_op 需要从 i_op 中分离出来, 可能有两方面原因:
 
 <ol class="org-ol">
 <li>file (fd) 不仅仅是文件 (inode) 的抽象, 也是 socket, timer 等的抽象, 它们共同的 "数据流读写" 部分被抽象为 file, 比如 read, write,
-mmap</li>
+mmap
+</li>
 
 <li>由于同一个 inode 可以通过多次打开对应多个 file, 和 file-&gt;f_pos
-相关的操作必须分离到 f_op 中, 例如 read, write, readdir 等</li>
+      相关的操作必须分离到 f_op 中, 例如 read, write, readdir 等
+</li>
 </ol>
 <p>
 f_op 可能主要代表上层对数据 (而非元数据) 的操作.
-</p></li>
-
-<li><p>
-i_op 代表对单个 inode 的元数据的操作, 例如 lookup, create, permission,
-readlink, getattr &#x2026;
 </p>
+</li>
+
+<li>i_op 代表对单个 inode 的元数据的操作, 例如 lookup, create, permission,
+readlink, getattr &#x2026;
 
 <p>
 f_op 中的 open, readdir, create, 以及 f_op 工作时用到的 permission
@@ -662,11 +689,10 @@ rename, getattr 等都需要 i_op 去实现.
 <p>
 i_op 中关于 inode 修改的操作都只针对内存中的数据, 真正的读写需要由
 s_op 去实现. 
-</p></li>
-
-<li><p>
-a_op 可以看做是 "file 数据流抽象" 的一种通用实现.
 </p>
+</li>
+
+<li>a_op 可以看做是 "file 数据流抽象" 的一种通用实现.
 
 <p>
 若 f_op 中 read, write, mmap 等使用 generic 的实现 (例如
@@ -677,22 +703,25 @@ generic_file_read), 则 a_op 中相应的 readpage, writepage 等会被调用.
 文件系统要支持 read, write 可以有两种选择:
 </p>
 <ol class="org-ol">
-<li>在 f_op 中实现自己的 read, write.</li>
-<li>使用 generic_file_read/write, 在 a_op 中实现 readpage, writepage</li>
+<li>在 f_op 中实现自己的 read, write.
+</li>
+<li>使用 generic_file_read/write, 在 a_op 中实现 readpage, writepage
+</li>
 </ol>
 <p>
 一般选择后者, 因为可以利用 pagecache.
-</p></li>
+</p>
+</li>
 </ol>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org4ef4984" class="outline-3">
-<h3 id="org4ef4984"><span class="section-number-3">1.3</span> Details</h3>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Details</h3>
 <div class="outline-text-3" id="text-1-3">
-</div><div id="outline-container-org8934b01" class="outline-4">
-<h4 id="org8934b01"><span class="section-number-4">1.3.1</span> sys_mount</h4>
+</div><div id="outline-container-sec-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> sys_mount</h4>
 <div class="outline-text-4" id="text-1-3-1">
 <p>
 sys_mount 的主要功能是:
@@ -701,19 +730,26 @@ sys_mount 的主要功能是:
 <ol class="org-ol">
 <li>kern_mount
 <ol class="org-ol">
-<li>通过 fs 注册的 get_sb 生成对应的 super_block</li>
-<li>super_block 包含 fs 对应的 root dentry</li>
+<li>通过 fs 注册的 get_sb 生成对应的 super_block
+</li>
+<li>super_block 包含 fs 对应的 root dentry
+</li>
 <li>生成 vfmount, 并把上一步生成的 root dentry 设置 vfsmount 的
-mnt_root</li>
-</ol></li>
+mnt_root
+</li>
+</ol>
+</li>
 
 <li>do_add_mount
 <ol class="org-ol">
-<li>将 vfsmount 与某个 dentry 关联 (通过 vfsmount-&gt;mnt_mountpoint)</li>
-</ol></li>
+<li>将 vfsmount 与某个 dentry 关联 (通过 vfsmount-&gt;mnt_mountpoint)
+</li>
+</ol>
+</li>
 </ol>
 
 <div class="org-src-container">
+
 <pre class="src src-c">kern_mount
   do_kern_mount
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#29983;&#25104; vfsmount</span>
@@ -731,6 +767,7 @@ mnt_root</li>
 </div>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">sys_mount</span>:
   do_mount(dev_name, dir_name, ...)
     path_lookup(dir_name, LOOKUP_FOLLOW, &amp;nd);
@@ -747,13 +784,14 @@ mnt_root</li>
 </div>
 </div>
 
-<div id="outline-container-org831abb3" class="outline-4">
-<h4 id="org831abb3"><span class="section-number-4">1.3.2</span> mount the root</h4>
+<div id="outline-container-sec-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> mount the root</h4>
 <div class="outline-text-4" id="text-1-3-2">
-</div><div id="outline-container-org7082dc9" class="outline-5">
-<h5 id="org7082dc9"><span class="section-number-5">1.3.2.1</span> Stage 1: mount rootfs</h5>
+</div><div id="outline-container-sec-1-3-2-1" class="outline-5">
+<h5 id="sec-1-3-2-1"><span class="section-number-5">1.3.2.1</span> Stage 1: mount rootfs</h5>
 <div class="outline-text-5" id="text-1-3-2-1">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">start_kernel</span>:
   vfs_caches_init
     <span style="font-weight: bold; text-decoration: underline;">mnt_init</span>
@@ -780,10 +818,11 @@ mnt_root</li>
 </div>
 </div>
 
-<div id="outline-container-org193d455" class="outline-5">
-<h5 id="org193d455"><span class="section-number-5">1.3.2.2</span> Stage 2: mount real root</h5>
+<div id="outline-container-sec-1-3-2-2" class="outline-5">
+<h5 id="sec-1-3-2-2"><span class="section-number-5">1.3.2.2</span> Stage 2: mount real root</h5>
 <div class="outline-text-5" id="text-1-3-2-2">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">kernel space `init`</span>
 <span style="font-weight: bold; text-decoration: underline;">init</span>:
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23581;&#35797;&#20351;&#29992; initramfs</span>
@@ -798,8 +837,9 @@ mnt_root</li>
 </div>
 </div>
 
-<ol class="org-ol"><li><a id="org0672dd0"></a>populate_rootfs<br  /><div class="outline-text-6" id="text-1-3-2-2-1">
+<ol class="org-ol"><li><a id="sec-1-3-2-2-1" name="sec-1-3-2-2-1"></a>populate_rootfs<br  /><div class="outline-text-6" id="text-1-3-2-2-1">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">populate_rootfs</span>:
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">__initramfs_start &#26159; initramfs &#38236;&#20687;&#25552;&#21069;&#34987;&#21152;&#36733;&#21040;&#30340;&#20869;&#23384;&#20301;&#32622;</span>
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">unpack_to_rootfs &#38656;&#35201;&#20570;&#20004;&#20214;&#20107;:</span>
@@ -825,16 +865,19 @@ mnt_root</li>
           <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">xxx</span>
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org688c4c9"></a>prepare_namespace<br  /><div class="outline-text-6" id="text-1-3-2-2-2">
+<li><a id="sec-1-3-2-2-2" name="sec-1-3-2-2-2"></a>prepare_namespace<br  /><div class="outline-text-6" id="text-1-3-2-2-2">
 <p>
 若:
 </p>
 <ol class="org-ol">
-<li>存在 initramfs, 且成功加载到 rootfs</li>
+<li>存在 initramfs, 且成功加载到 rootfs
+</li>
 
-<li>initramfs 中包含 /init</li>
+<li>initramfs 中包含 /init
+</li>
 </ol>
 
 <p>
@@ -842,6 +885,7 @@ mnt_root</li>
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">prepare_namespace</span>:
   sys_mount(<span style="font-style: italic;">"devfs"</span>, <span style="font-style: italic;">"/dev"</span>, <span style="font-style: italic;">"devfs"</span>, 0, <span style="font-weight: bold; text-decoration: underline;">NULL</span>);
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">root_device_name &#26159; boot &#26102;&#25351;&#23450;&#30340; kernel &#21442;&#25968;</span>
@@ -869,9 +913,10 @@ mnt_root</li>
   sys_chdir(<span style="font-style: italic;">"/root"</span>);
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org5dda905"></a>initrd_load<br  /><div class="outline-text-6" id="text-1-3-2-2-3">
+<li><a id="sec-1-3-2-2-3" name="sec-1-3-2-2-3"></a>initrd_load<br  /><div class="outline-text-6" id="text-1-3-2-2-3">
 <p>
 initrd (initialized RAM disk) 与 initramfs 类似, 都是一种镜像文件, 通过将镜像文件加载到内存做为基本的 root fs.
 </p>
@@ -882,25 +927,29 @@ initrd (initialized RAM disk) 与 initramfs 类似, 都是一种镜像文件, �
 
 <ol class="org-ol">
 <li>initramfs 本质是一个 gzip 压缩的 cpio 文件, 创建和读取都比较简单,
-而且 kernel 读取 initramfs 时不必通过 page cache</li>
+而且 kernel 读取 initramfs 时不必通过 page cache
+</li>
 
-<li>initrd 是一个 ext2 的镜像文件, 需要 kernel 支持 ext2, 而且 ext2 的读取需要通过 page cache, 导致内存浪费.</li>
+<li>initrd 是一个 ext2 的镜像文件, 需要 kernel 支持 ext2, 而且 ext2 的读取需要通过 page cache, 导致内存浪费.
+</li>
 </ol>
-</div></li>
+</div>
+</li>
 
-<li><a id="orgc2a7849"></a>为什么需要 initrd / initramfs<br  /><div class="outline-text-6" id="text-1-3-2-2-4">
+<li><a id="sec-1-3-2-2-4" name="sec-1-3-2-2-4"></a>为什么需要 initrd / initramfs<br  /><div class="outline-text-6" id="text-1-3-2-2-4">
 <ol class="org-ol">
-<li>可以提供一个只读的基本 root fs (比如 android 的作法)</li>
+<li>可以提供一个只读的基本 root fs (比如 android 的作法)
+</li>
 
 <li>将 kernel 中许多功能编译成模块打包到 initrd 并按需加载中减小 kernel
-的大小和内存占用</li>
+的大小和内存占用
+</li>
 
-<li>linux 安装时可以通过硬件检测将必要的模块打包到 initrd 中</li>
+<li>linux 安装时可以通过硬件检测将必要的模块打包到 initrd 中
+</li>
 
-<li><p>
-initramfs 中的 /init 可以接管 prepare_namespace 中关于 mount real
+<li>initramfs 中的 /init 可以接管 prepare_namespace 中关于 mount real
 fs 的工作, 而 mount real fs 越来越复杂, 放在 userspace 更合理一些.
-</p>
 
 <p>
 Quote from:
@@ -925,28 +974,34 @@ mounted, strangely partitioned, and so on.
 This kind of complexity (which inevitably includes policy) is
 rightly handled in userspace.
 </p>
-</blockquote></li>
+</blockquote>
+</li>
 </ol>
-</div></li>
+</div>
+</li>
 
-<li><a id="orgb01c9fe"></a>为什么需要先 mount 一个 rootfs<br  /><div class="outline-text-6" id="text-1-3-2-2-5">
+<li><a id="sec-1-3-2-2-5" name="sec-1-3-2-2-5"></a>为什么需要先 mount 一个 rootfs<br  /><div class="outline-text-6" id="text-1-3-2-2-5">
 <ol class="org-ol">
-<li>对于需要使用 initramfs 或 initrd 的情形, rootfs 显然是必要的</li>
+<li>对于需要使用 initramfs 或 initrd 的情形, rootfs 显然是必要的
+</li>
 
 <li>即使不需要 initramfs, rootfs 也使得后续所有的 mount 相关操作都是一致的, 不需要考虑 "/" 是否存在的情况, 比如 userspace 要 mount 新的
-root 在逻辑上会变的非常简单.</li>
+root 在逻辑上会变的非常简单.
+</li>
 </ol>
-</div></li></ol>
+</div>
+</li></ol>
 </div>
 </div>
 
-<div id="outline-container-org2fe66a6" class="outline-4">
-<h4 id="org2fe66a6"><span class="section-number-4">1.3.3</span> path_lookup</h4>
+<div id="outline-container-sec-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> path_lookup</h4>
 <div class="outline-text-4" id="text-1-3-3">
-</div><div id="outline-container-org2fe66a6" class="outline-5">
-<h5 id="org2fe66a6"><span class="section-number-5">1.3.3.1</span> path_lookup</h5>
+</div><div id="outline-container-sec-1-3-3-1" class="outline-5">
+<h5 id="sec-1-3-3-1"><span class="section-number-5">1.3.3.1</span> path_lookup</h5>
 <div class="outline-text-5" id="text-1-3-3-1">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">path_lookup</span>:
   <span style="font-weight: bold;">if</span> (*name==<span style="font-style: italic;">'/'</span>):
     nd-&gt;mnt = current-&gt;fs-&gt;rootmnt;
@@ -962,10 +1017,11 @@ root 在逻辑上会变的非常简单.</li>
 </div>
 </div>
 
-<div id="outline-container-orga9b4ff2" class="outline-5">
-<h5 id="orga9b4ff2"><span class="section-number-5">1.3.3.2</span> link_path_walk</h5>
+<div id="outline-container-sec-1-3-3-2" class="outline-5">
+<h5 id="sec-1-3-3-2"><span class="section-number-5">1.3.3.2</span> link_path_walk</h5>
 <div class="outline-text-5" id="text-1-3-3-2">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">link_path_walk</span>:
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">ignore leading '/'</span>
   <span style="font-weight: bold;">while</span> (*name==<span style="font-style: italic;">'/'</span>):
@@ -1033,10 +1089,11 @@ root 在逻辑上会变的非常简单.</li>
 </div>
 </div>
 
-<div id="outline-container-org33535b5" class="outline-5">
-<h5 id="org33535b5"><span class="section-number-5">1.3.3.3</span> follow_dotdot</h5>
+<div id="outline-container-sec-1-3-3-3" class="outline-5">
+<h5 id="sec-1-3-3-3"><span class="section-number-5">1.3.3.3</span> follow_dotdot</h5>
 <div class="outline-text-5" id="text-1-3-3-3">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">follow_dotdot</span>: (mnt, dentry)
   <span style="font-weight: bold;">while</span> (1):
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#24403;&#21069; dentry &#26159; root fs &#30340;&#26681;&#30446;&#24405;</span>
@@ -1068,7 +1125,7 @@ root 在逻辑上会变的非常简单.</li>
 </pre>
 </div>
 
-<ol class="org-ol"><li><a id="org54513b4"></a>关于 follow_dotdot 最后的 follow_mount<br  /><div class="outline-text-6" id="text-1-3-3-3-1">
+<ol class="org-ol"><li><a id="sec-1-3-3-3-1" name="sec-1-3-3-3-1"></a>关于 follow_dotdot 最后的 follow_mount<br  /><div class="outline-text-6" id="text-1-3-3-3-1">
 <p>
 一般情况下, follow_mount 是无意义的操作: 上面提到的三个例子都不需要使用 follow_mount. 但考虑下面的例子:
 </p>
@@ -1098,13 +1155,15 @@ Device: 802h/2050d      Inode: 21725293    Links: 2
 如果没有上面那句 follow_mount, 最后一次 stat 的结果会是 21717951 (a)
 而不是 21725293 (d)
 </p>
-</div></li></ol>
+</div>
+</li></ol>
 </div>
 
-<div id="outline-container-orgc11fb1f" class="outline-5">
-<h5 id="orgc11fb1f"><span class="section-number-5">1.3.3.4</span> do_lookup</h5>
+<div id="outline-container-sec-1-3-3-4" class="outline-5">
+<h5 id="sec-1-3-3-4"><span class="section-number-5">1.3.3.4</span> do_lookup</h5>
 <div class="outline-text-5" id="text-1-3-3-4">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">do_lookup</span>:
   <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">vfsmount</span> *<span style="font-weight: bold; font-style: italic;">mnt</span> = nd-&gt;mnt;
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26597;&#25214; dcache, &#20854;&#20013; dentry+qstr &#26500;&#25104; hash key</span>
@@ -1117,10 +1176,11 @@ Device: 802h/2050d      Inode: 21725293    Links: 2
 </div>
 </div>
 
-<div id="outline-container-org1cbd6b5" class="outline-5">
-<h5 id="org1cbd6b5"><span class="section-number-5">1.3.3.5</span> follow_mount</h5>
+<div id="outline-container-sec-1-3-3-5" class="outline-5">
+<h5 id="sec-1-3-3-5"><span class="section-number-5">1.3.3.5</span> follow_mount</h5>
 <div class="outline-text-5" id="text-1-3-3-5">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">follow_mount</span>:
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#37324;&#26159;&#19968;&#20010;&#24490;&#29615;, &#22240;&#20026;&#21487;&#33021;&#26377;&#22810;&#20010; fs &#34987;&#20808;&#21518; mount &#21040;&#21516;&#19968;&#20010;&#30446;&#24405;</span>
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36890;&#36807;&#36825;&#20010;&#24490;&#29615;, follow_mount &#20250;&#36820;&#22238;&#26368;&#21518;&#19968;&#27425; mount &#23545;&#24212;&#30340; mnt &#21644; dentry</span>
@@ -1138,10 +1198,11 @@ Device: 802h/2050d      Inode: 21725293    Links: 2
 </div>
 </div>
 
-<div id="outline-container-orge902104" class="outline-5">
-<h5 id="orge902104"><span class="section-number-5">1.3.3.6</span> do_follow_link</h5>
+<div id="outline-container-sec-1-3-3-6" class="outline-5">
+<h5 id="sec-1-3-3-6"><span class="section-number-5">1.3.3.6</span> do_follow_link</h5>
 <div class="outline-text-5" id="text-1-3-3-6">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">do_follow_link</span>:
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">total_link_count &#38480;&#21046;&#20102;&#19968;&#20010;&#23436;&#25972;&#30340; link_path_walk &#26368;&#22810;&#33021;&#22788;&#29702; 40 &#27425; symlink</span>
   <span style="font-weight: bold;">if</span> (current-&gt;total_link_count &gt;= 40):
@@ -1165,10 +1226,11 @@ Device: 802h/2050d      Inode: 21725293    Links: 2
 </div>
 </div>
 
-<div id="outline-container-org17801b6" class="outline-4">
-<h4 id="org17801b6"><span class="section-number-4">1.3.4</span> open</h4>
+<div id="outline-container-sec-1-3-4" class="outline-4">
+<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> open</h4>
 <div class="outline-text-4" id="text-1-3-4">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">sys_open</span>:
   fd = get_unused_fd();
   <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">file</span> *<span style="font-weight: bold; font-style: italic;">f</span> = filp_open(tmp, flags, mode);
@@ -1213,14 +1275,15 @@ Device: 802h/2050d      Inode: 21725293    Links: 2
 </div>
 </div>
 
-<div id="outline-container-orgd9654f4" class="outline-4">
-<h4 id="orgd9654f4"><span class="section-number-4">1.3.5</span> readdir</h4>
+<div id="outline-container-sec-1-3-5" class="outline-4">
+<h4 id="sec-1-3-5"><span class="section-number-4">1.3.5</span> readdir</h4>
 </div>
 
-<div id="outline-container-org727ea29" class="outline-4">
-<h4 id="org727ea29"><span class="section-number-4">1.3.6</span> write</h4>
+<div id="outline-container-sec-1-3-6" class="outline-4">
+<h4 id="sec-1-3-6"><span class="section-number-4">1.3.6</span> write</h4>
 <div class="outline-text-4" id="text-1-3-6">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">sys_write</span>:
   file = fget_light(fd, &amp;fput_needed);
     file = files-&gt;fd[fd];
@@ -1250,8 +1313,8 @@ f_op-&gt;write 一般情况下为 generic_file_write, 后者会考虑 pagecache,
 </div>
 </div>
 
-<div id="outline-container-orgfc6722d" class="outline-4">
-<h4 id="orgfc6722d"><span class="section-number-4">1.3.7</span> read</h4>
+<div id="outline-container-sec-1-3-7" class="outline-4">
+<h4 id="sec-1-3-7"><span class="section-number-4">1.3.7</span> read</h4>
 <div class="outline-text-4" id="text-1-3-7">
 <p>
 read 与 write 几乎完全一样, 只是把 f_op-&gt;write 换成 f_op-&gt;read
@@ -1259,10 +1322,11 @@ read 与 write 几乎完全一样, 只是把 f_op-&gt;write 换成 f_op-&gt;read
 </div>
 </div>
 
-<div id="outline-container-orga8a10f3" class="outline-4">
-<h4 id="orga8a10f3"><span class="section-number-4">1.3.8</span> permission</h4>
+<div id="outline-container-sec-1-3-8" class="outline-4">
+<h4 id="sec-1-3-8"><span class="section-number-4">1.3.8</span> permission</h4>
 <div class="outline-text-4" id="text-1-3-8">
 <div class="org-src-container">
+
 <pre class="src src-c">permission()
   <span style="font-weight: bold;">if</span> (inode-&gt;i_op &amp;&amp; inode-&gt;i_op-&gt;permission):
     inode-&gt;i_op-&gt;permission()
@@ -1273,6 +1337,7 @@ read 与 write 几乎完全一样, 只是把 f_op-&gt;write 换成 f_op-&gt;read
 </div>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">generic_permission</span>:
   retval = generic_permission(inode, submask, <span style="font-weight: bold; text-decoration: underline;">NULL</span>);
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">666 &#25110; 751 &#31561;</span>
@@ -1300,13 +1365,13 @@ read 与 write 几乎完全一样, 只是把 f_op-&gt;write 换成 f_op-&gt;read
 </div>
 </div>
 
-<div id="outline-container-org17dcd46" class="outline-4">
-<h4 id="org17dcd46"><span class="section-number-4">1.3.9</span> dentry cache</h4>
+<div id="outline-container-sec-1-3-9" class="outline-4">
+<h4 id="sec-1-3-9"><span class="section-number-4">1.3.9</span> dentry cache</h4>
 <div class="outline-text-4" id="text-1-3-9">
-</div><div id="outline-container-org4159094" class="outline-5">
-<h5 id="org4159094"><span class="section-number-5">1.3.9.1</span> dentry_operations</h5>
+</div><div id="outline-container-sec-1-3-9-1" class="outline-5">
+<h5 id="sec-1-3-9-1"><span class="section-number-5">1.3.9.1</span> dentry_operations</h5>
 <div class="outline-text-5" id="text-1-3-9-1">
-</div><ol class="org-ol"><li><a id="orga0bc80a"></a>d_revalidate<br  /><div class="outline-text-6" id="text-1-3-9-1-1">
+</div><ol class="org-ol"><li><a id="sec-1-3-9-1-1" name="sec-1-3-9-1-1"></a>d_revalidate<br  /><div class="outline-text-6" id="text-1-3-9-1-1">
 <p>
 若 dcache 中的某个 dentry 实现了 d_op-&gt;d_revalidate, 则每次要重用
 dcache 中的该 dentry 之前, 都需要调用 d_revalidate, 以确认该 dentry 是
@@ -1314,6 +1379,7 @@ valid (或 updated)
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">do_lookup</span>:
   <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">dentry</span> *<span style="font-weight: bold; font-style: italic;">dentry</span> = __d_lookup(nd-&gt;dentry, name);
   <span style="font-weight: bold;">if</span> (dentry-&gt;d_op &amp;&amp; dentry-&gt;d_op-&gt;d_revalidate):
@@ -1337,6 +1403,7 @@ dentry, 这些 dentry 需要通过 pid_revalidate 进行 revalidate
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">pid_revalidate</span>:
   <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode</span> *<span style="font-weight: bold; font-style: italic;">inode</span> = dentry-&gt;d_inode;
   <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span> *<span style="font-weight: bold; font-style: italic;">task</span> = proc_task(inode)
@@ -1346,12 +1413,13 @@ dentry, 这些 dentry 需要通过 pid_revalidate 进行 revalidate
     <span style="font-weight: bold;">return</span> 0
 </pre>
 </div>
-</div></li></ol>
+</div>
+</li></ol>
 </div>
 </div>
 
-<div id="outline-container-org0044357" class="outline-4">
-<h4 id="org0044357"><span class="section-number-4">1.3.10</span> page cache</h4>
+<div id="outline-container-sec-1-3-10" class="outline-4">
+<h4 id="sec-1-3-10"><span class="section-number-4">1.3.10</span> page cache</h4>
 <div class="outline-text-4" id="text-1-3-10">
 <p>
 如果一个文件系统想要使用 page cache, 则必须使用 generic_file_read 做为其 f_op-&gt;read.
@@ -1368,10 +1436,11 @@ scheduler 及 blk device driver
 </p>
 </div>
 
-<div id="outline-container-orge9d1299" class="outline-5">
-<h5 id="orge9d1299"><span class="section-number-5">1.3.10.1</span> generic_file_read 如何使用 page cache?</h5>
+<div id="outline-container-sec-1-3-10-1" class="outline-5">
+<h5 id="sec-1-3-10-1"><span class="section-number-5">1.3.10.1</span> generic_file_read 如何使用 page cache?</h5>
 <div class="outline-text-5" id="text-1-3-10-1">
 <div class="org-src-container">
+
 <pre class="src src-c">generic_file_read(<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">file</span> *<span style="font-weight: bold; font-style: italic;">filp</span>, <span style="font-weight: bold; text-decoration: underline;">char</span> <span style="font-weight: bold; font-style: italic;">__user</span> *buf, <span style="font-weight: bold; text-decoration: underline;">size_t</span> <span style="font-weight: bold; font-style: italic;">count</span>, <span style="font-weight: bold; text-decoration: underline;">loff_t</span> *<span style="font-weight: bold; text-decoration: underline;">ppos</span>):
   <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">iovec</span> <span style="font-weight: bold; font-style: italic;">local_iov</span> = { .iov_base = buf, .iov_len = count };
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">1 &#34920;&#31034;&#21482;&#26377;&#19968;&#20010; iovec</span>
@@ -1411,8 +1480,8 @@ scheduler 及 blk device driver
 </div>
 </div>
 
-<div id="outline-container-orged2e0d8" class="outline-5">
-<h5 id="orged2e0d8"><span class="section-number-5">1.3.10.2</span> radix tree</h5>
+<div id="outline-container-sec-1-3-10-2" class="outline-5">
+<h5 id="sec-1-3-10-2"><span class="section-number-5">1.3.10.2</span> radix tree</h5>
 <div class="outline-text-5" id="text-1-3-10-2">
 <p>
 page cache 使用 radix tree 来组织, 目的是根据 page index 可以很快的找到内存中对应的 page.
@@ -1434,16 +1503,17 @@ radix tree 的 leaf node 保存着 page 的指针 (intermediate node 不保存),
 </div>
 </div>
 
-<div id="outline-container-org924b155" class="outline-3">
-<h3 id="org924b155"><span class="section-number-3">1.4</span> File Systems</h3>
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> File Systems</h3>
 <div class="outline-text-3" id="text-1-4">
-</div><div id="outline-container-org0b16690" class="outline-4">
-<h4 id="org0b16690"><span class="section-number-4">1.4.1</span> procfs</h4>
+</div><div id="outline-container-sec-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> procfs</h4>
 <div class="outline-text-4" id="text-1-4-1">
-</div><div id="outline-container-org4ebf519" class="outline-5">
-<h5 id="org4ebf519"><span class="section-number-5">1.4.1.1</span> init</h5>
+</div><div id="outline-container-sec-1-4-1-1" class="outline-5">
+<h5 id="sec-1-4-1-1"><span class="section-number-5">1.4.1.1</span> init</h5>
 <div class="outline-text-5" id="text-1-4-1-1">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">proc_root_init</span>:
   register_filesystem(&amp;proc_fs_type);
   kern_mount(&amp;proc_fs_type);
@@ -1455,8 +1525,9 @@ radix tree 的 leaf node 保存着 page 的指针 (intermediate node 不保存),
 </div>
 </div>
 
-<ol class="org-ol"><li><a id="org95f1c23"></a>kern_mount<br  /><div class="outline-text-6" id="text-1-4-1-1-1">
+<ol class="org-ol"><li><a id="sec-1-4-1-1-1" name="sec-1-4-1-1-1"></a>kern_mount<br  /><div class="outline-text-6" id="text-1-4-1-1-1">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">proc_get_sb</span>:
   sb = type-&gt;get_sb(type, flags, name, data);
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sb &#30340; root inode &#26159;&#19968;&#20010;&#23545;&#24212;&#30340; proc_root &#36825;&#20010; proc_dir_entry &#30340; inode</span>
@@ -1470,10 +1541,12 @@ radix tree 的 leaf node 保存着 page 的指针 (intermediate node 不保存),
     inode-&gt;i_fop = de-&gt;proc_fops;
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org448339f"></a>proc_misc_init<br  /><div class="outline-text-6" id="text-1-4-1-1-2">
+<li><a id="sec-1-4-1-1-2" name="sec-1-4-1-1-2"></a>proc_misc_init<br  /><div class="outline-text-6" id="text-1-4-1-1-2">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">proc_misc_init</span>
   <span style="font-weight: bold;">create_proc_read_entry</span>(<span style="font-style: italic;">"loadavg"</span>, 0, <span style="font-weight: bold; text-decoration: underline;">NULL</span>, loadavg_read_proc, <span style="font-weight: bold; text-decoration: underline;">NULL</span>);
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
@@ -1486,12 +1559,13 @@ radix tree 的 leaf node 保存着 page 的指针 (intermediate node 不保存),
 </div>
 </div>
 
-<ol class="org-ol"><li><a id="orgd618ba5"></a>proc_dir_entry<br  /><div class="outline-text-7" id="text-1-4-1-1-2-1">
+<ol class="org-ol"><li><a id="sec-1-4-1-1-2-1" name="sec-1-4-1-1-2-1"></a>proc_dir_entry<br  /><div class="outline-text-7" id="text-1-4-1-1-2-1">
 <p>
 proc_dir_entry 相当于虚拟的 /proc 目录树中的结点
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">proc_dir_entry</span> {
     <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">low_ino</span>;
     <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">short</span> <span style="font-weight: bold; font-style: italic;">namelen</span>;
@@ -1509,28 +1583,29 @@ proc_dir_entry 相当于虚拟的 /proc 目录树中的结点
     <span style="font-weight: bold; text-decoration: underline;">void</span> *<span style="font-weight: bold; font-style: italic;">data</span>;
     <span style="font-weight: bold; text-decoration: underline;">read_proc_t</span> *<span style="font-weight: bold; font-style: italic;">read_proc</span>;
     <span style="font-weight: bold; text-decoration: underline;">write_proc_t</span> *<span style="font-weight: bold; font-style: italic;">write_proc</span>;
-    <span style="font-weight: bold; text-decoration: underline;">atomic_t</span> <span style="font-weight: bold; font-style: italic;">count</span>;             <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">use count </span><span style="font-weight: bold; font-style: italic;">*/</span>
-    <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">deleted</span>;                <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">delete flag </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold; text-decoration: underline;">atomic_t</span> <span style="font-weight: bold; font-style: italic;">count</span>;           <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">use count </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">deleted</span>;              <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">delete flag </span><span style="font-weight: bold; font-style: italic;">*/</span>
 };
 </pre>
 </div>
 </div>
 
-<ol class="org-ol"><li><a id="orgc24af93"></a>proc_root<br  /><div class="outline-text-8" id="text-1-4-1-1-2-1-1">
+<ol class="org-ol"><li><a id="sec-1-4-1-1-2-1-1" name="sec-1-4-1-1-2-1-1"></a>proc_root<br  /><div class="outline-text-8" id="text-1-4-1-1-2-1-1">
 <p>
 proc_root 这个特殊的 proc_dir_entry 对应于 "/proc":
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">proc_dir_entry</span> <span style="font-weight: bold; font-style: italic;">proc_root</span> = {
-    .low_ino    = PROC_ROOT_INO, 
-    .namelen    = 5, 
-    .name               = <span style="font-style: italic;">"/proc"</span>,
-    .mode               = S_IFDIR | S_IRUGO | S_IXUGO, 
-    .nlink              = 2, 
-    .proc_iops  = &amp;proc_root_inode_operations, 
-    .proc_fops  = &amp;proc_root_operations,
-    .parent             = &amp;proc_root,
+    .low_ino  = PROC_ROOT_INO, 
+    .namelen  = 5, 
+    .name             = <span style="font-style: italic;">"/proc"</span>,
+    .mode             = S_IFDIR | S_IRUGO | S_IXUGO, 
+    .nlink            = 2, 
+    .proc_iops        = &amp;proc_root_inode_operations, 
+    .proc_fops        = &amp;proc_root_operations,
+    .parent           = &amp;proc_root,
 };
 </pre>
 </div>
@@ -1538,15 +1613,18 @@ proc_root 这个特殊的 proc_dir_entry 对应于 "/proc":
 <p>
 上面的 do_kern_mount 可以看到, sb-&gt;mnt_root 这个 root inode 的主要信息都来自 proc_root
 </p>
-</div></li></ol></li>
+</div>
+</li></ol>
+</li>
 
-<li><a id="orgb32ce1f"></a>create_proc_entry<br  /><div class="outline-text-7" id="text-1-4-1-1-2-2">
+<li><a id="sec-1-4-1-1-2-2" name="sec-1-4-1-1-2-2"></a>create_proc_entry<br  /><div class="outline-text-7" id="text-1-4-1-1-2-2">
 <p>
 create_proc_entry, 可以简单理解为: 以 hard code 的形式在内存中建立
 /proc 目录树.
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">create_proc_entry</span>:
   ent = proc_create(&amp;parent,name,mode,nlink);
   <span style="font-weight: bold;">if</span> (S_ISDIR(mode)):
@@ -1579,13 +1657,14 @@ create_proc_read_entry 和 create_seq_entry 都是对 create_proc_entry 的简�
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="orgd132d77"></a>proc_symlink<br  /><div class="outline-text-8" id="text-1-4-1-1-2-2-1">
+<ol class="org-ol"><li><a id="sec-1-4-1-1-2-2-1" name="sec-1-4-1-1-2-2-1"></a>proc_symlink<br  /><div class="outline-text-8" id="text-1-4-1-1-2-2-1">
 <p>
 proc_symlink 在 create_proc_entry 基础上, 将 symlink 的信息写到了
 proc_dir_entry 的 data 部分
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">proc_dir_entry</span> *<span style="font-weight: bold;">proc_symlink</span>(<span style="font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">char</span> *<span style="font-weight: bold; font-style: italic;">name</span>, <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">proc_dir_entry</span> *<span style="font-weight: bold; font-style: italic;">parent</span>, <span style="font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">char</span> *<span style="font-weight: bold; font-style: italic;">dest</span>):
   <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">proc_dir_entry</span> *ent;
   ent = proc_create(&amp;parent,name,(S_IFLNK | S_IRUGO | S_IWUGO | S_IXUGO),1);
@@ -1596,75 +1675,90 @@ proc_dir_entry 的 data 部分
       dp-&gt;proc_iops = &amp;proc_link_inode_operations;
 </pre>
 </div>
-</div></li></ol></li>
+</div>
+</li></ol>
+</li>
 
-<li><a id="org5d656b2"></a>xlate_proc_name<br  /><div class="outline-text-7" id="text-1-4-1-1-2-3">
+<li><a id="sec-1-4-1-1-2-3" name="sec-1-4-1-1-2-3"></a>xlate_proc_name<br  /><div class="outline-text-7" id="text-1-4-1-1-2-3">
 <p>
 通过 xlate_proc_name("/xxx/yyy") 可以找到 "/proc/xxx/yyy" 对应的
 proc_dir_entry, 在 create_proc_entry 或后面的 proc_mkdir 时, 都会使用
 xlate_proc_name
 </p>
-</div></li></ol></li>
+</div>
+</li></ol>
+</li>
 
-<li><a id="org1b17ddf"></a>proc_mkdir<br  /><div class="outline-text-6" id="text-1-4-1-1-3">
+<li><a id="sec-1-4-1-1-3" name="sec-1-4-1-1-3"></a>proc_mkdir<br  /><div class="outline-text-6" id="text-1-4-1-1-3">
 <p>
 proc_mkdir 与 create_proc_entry 基本类似
 </p>
-</div></li>
+</div>
+</li>
 
-<li><a id="orga94761c"></a>总结<br  /><div class="outline-text-6" id="text-1-4-1-1-4">
+<li><a id="sec-1-4-1-1-4" name="sec-1-4-1-1-4"></a>总结<br  /><div class="outline-text-6" id="text-1-4-1-1-4">
 <p>
 proc_root_init 所做的:
 </p>
 
 <ol class="org-ol">
-<li>注册 proc 文件系统</li>
+<li>注册 proc 文件系统
+</li>
 
 <li>do_kern_mount, 主要是生成 vfsmount 和 mnt_root 相关的信息, 其中
 mnt_root 这个 inode 主要是根据 proc_root 中的信息生成的, 注意
-do_kern_mount 并没有完成真正的 mount 的动作 (并没有与 mountpoint 关联), 真正的 mount 需要由 init 主动通过 mount 系统调用来完成.</li>
+do_kern_mount 并没有完成真正的 mount 的动作 (并没有与 mountpoint 关联), 真正的 mount 需要由 init 主动通过 mount 系统调用来完成.
+</li>
 
 <li>通过 proc_create 之类的函数建立起一个由 proc_dir_entry 构成的虚拟的
-/proc 目录树, proc_dir_entry 的数据和 inode 需要填充的数据基本一致.</li>
+/proc 目录树, proc_dir_entry 的数据和 inode 需要填充的数据基本一致.
+</li>
 
 <li>另外, proc_root_init 时通过 proc_dir_entry 构造的目录树并不是 /proc
-的全部数据: 其它模块或 proc 自身可能会动态的生成数据</li>
+的全部数据: 其它模块或 proc 自身可能会动态的生成数据
+</li>
 </ol>
-</div></li></ol>
+</div>
+</li></ol>
 </div>
 
-<div id="outline-container-org87b546e" class="outline-5">
-<h5 id="org87b546e"><span class="section-number-5">1.4.1.2</span> xx_op</h5>
+<div id="outline-container-sec-1-4-1-2" class="outline-5">
+<h5 id="sec-1-4-1-2"><span class="section-number-5">1.4.1.2</span> xx_op</h5>
 <div class="outline-text-5" id="text-1-4-1-2">
-</div><ol class="org-ol"><li><a id="orgc97ddfe"></a>file_system_type<br  /><div class="outline-text-6" id="text-1-4-1-2-1">
+</div><ol class="org-ol"><li><a id="sec-1-4-1-2-1" name="sec-1-4-1-2-1"></a>file_system_type<br  /><div class="outline-text-6" id="text-1-4-1-2-1">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">file_system_type</span> <span style="font-weight: bold; font-style: italic;">proc_fs_type</span> = {
-    .name               = <span style="font-style: italic;">"proc"</span>,
-    .get_sb             = proc_get_sb,
-    .kill_sb    = kill_anon_super,
+    .name             = <span style="font-style: italic;">"proc"</span>,
+    .get_sb           = proc_get_sb,
+    .kill_sb  = kill_anon_super,
 };
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org4bd5c26"></a>file_system_type.get_sb<br  /><div class="outline-text-6" id="text-1-4-1-2-2">
+<li><a id="sec-1-4-1-2-2" name="sec-1-4-1-2-2"></a>file_system_type.get_sb<br  /><div class="outline-text-6" id="text-1-4-1-2-2">
 <p>
 proc_get_sb:
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c">super_block *proc_get_sb(<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">file_system_type</span> *<span style="font-weight: bold; font-style: italic;">fs_type</span>,...)
   <span style="font-weight: bold;">return</span> get_sb_single(fs_type, flags, data, proc_fill_super);
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org88d1565"></a>fill_super<br  /><div class="outline-text-6" id="text-1-4-1-2-3">
+<li><a id="sec-1-4-1-2-3" name="sec-1-4-1-2-3"></a>fill_super<br  /><div class="outline-text-6" id="text-1-4-1-2-3">
 <p>
 proc_fill_super:
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold;">proc_fill_super</span>(<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">super_block</span> *<span style="font-weight: bold; font-style: italic;">s</span>, <span style="font-weight: bold; text-decoration: underline;">void</span> *<span style="font-weight: bold; font-style: italic;">data</span>, <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">silent</span>)
   ...  
   s-&gt;s_magic = PROC_SUPER_MAGIC;
@@ -1673,99 +1767,116 @@ proc_fill_super:
   s-&gt;s_root = d_alloc_root(root_inode);
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org5fee65f"></a>super_operations<br  /><div class="outline-text-6" id="text-1-4-1-2-4">
+<li><a id="sec-1-4-1-2-4" name="sec-1-4-1-2-4"></a>super_operations<br  /><div class="outline-text-6" id="text-1-4-1-2-4">
 <p>
 proc_sops:
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">super_operations</span> <span style="font-weight: bold; font-style: italic;">proc_sops</span> = { 
-    .alloc_inode        = proc_alloc_inode,
-    .destroy_inode      = proc_destroy_inode,
-    .read_inode = proc_read_inode,
-    .drop_inode = generic_delete_inode,
-    .delete_inode       = proc_delete_inode,
-    .statfs             = simple_statfs,
-    .remount_fs = proc_remount,
+    .alloc_inode      = proc_alloc_inode,
+    .destroy_inode    = proc_destroy_inode,
+    .read_inode       = proc_read_inode,
+    .drop_inode       = generic_delete_inode,
+    .delete_inode     = proc_delete_inode,
+    .statfs           = simple_statfs,
+    .remount_fs       = proc_remount,
 };
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org59e18ee"></a>i_op for /proc root<br  /><div class="outline-text-6" id="text-1-4-1-2-5">
+<li><a id="sec-1-4-1-2-5" name="sec-1-4-1-2-5"></a>i_op for /proc root<br  /><div class="outline-text-6" id="text-1-4-1-2-5">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode_operations</span> <span style="font-weight: bold; font-style: italic;">proc_root_inode_operations</span> = {
-        .lookup         = proc_root_lookup,
+        .lookup               = proc_root_lookup,
 };
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="orgca7cde9"></a>i_fop for /proc root<br  /><div class="outline-text-6" id="text-1-4-1-2-6">
+<li><a id="sec-1-4-1-2-6" name="sec-1-4-1-2-6"></a>i_fop for /proc root<br  /><div class="outline-text-6" id="text-1-4-1-2-6">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">file_operations</span> <span style="font-weight: bold; font-style: italic;">proc_root_operations</span> = {
-.read            = generic_read_dir,
-    .readdir     = proc_root_readdir,
+.read          = generic_read_dir,
+    .readdir   = proc_root_readdir,
 };
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org012ebb2"></a>i_fop for generic proc dir<br  /><div class="outline-text-6" id="text-1-4-1-2-7">
+<li><a id="sec-1-4-1-2-7" name="sec-1-4-1-2-7"></a>i_fop for generic proc dir<br  /><div class="outline-text-6" id="text-1-4-1-2-7">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">file_operations</span> <span style="font-weight: bold; font-style: italic;">proc_dir_operations</span> = {
-    .read                       = generic_read_dir,
-    .readdir            = proc_readdir,
+    .read                     = generic_read_dir,
+    .readdir          = proc_readdir,
 };
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="orga7032fc"></a>i_op for generic proc dir<br  /><div class="outline-text-6" id="text-1-4-1-2-8">
+<li><a id="sec-1-4-1-2-8" name="sec-1-4-1-2-8"></a>i_op for generic proc dir<br  /><div class="outline-text-6" id="text-1-4-1-2-8">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode_operations</span> <span style="font-weight: bold; font-style: italic;">proc_dir_inode_operations</span> = {
-    .lookup             = proc_lookup,
-    .setattr    = proc_notify_change,
+    .lookup           = proc_lookup,
+    .setattr  = proc_notify_change,
 };
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org6c98af7"></a>i_fop for generic proc file<br  /><div class="outline-text-6" id="text-1-4-1-2-9">
+<li><a id="sec-1-4-1-2-9" name="sec-1-4-1-2-9"></a>i_fop for generic proc file<br  /><div class="outline-text-6" id="text-1-4-1-2-9">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">file_operations</span> <span style="font-weight: bold; font-style: italic;">proc_file_operations</span> = {
-    .llseek             = proc_file_lseek,
-    .read               = proc_file_read,
-    .write              = proc_file_write,
+    .llseek           = proc_file_lseek,
+    .read             = proc_file_read,
+    .write            = proc_file_write,
 };
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org8daa97b"></a>i_op for generic proc file<br  /><div class="outline-text-6" id="text-1-4-1-2-10">
+<li><a id="sec-1-4-1-2-10" name="sec-1-4-1-2-10"></a>i_op for generic proc file<br  /><div class="outline-text-6" id="text-1-4-1-2-10">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode_operations</span> <span style="font-weight: bold; font-style: italic;">proc_file_inode_operations</span> = {
-        .setattr        = proc_notify_change,
+        .setattr      = proc_notify_change,
 };
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org59316bd"></a>和 /proc/&lt;pid&gt; 相关的 i_op/i_fop<br  /><div class="outline-text-6" id="text-1-4-1-2-11">
+<li><a id="sec-1-4-1-2-11" name="sec-1-4-1-2-11"></a>和 /proc/&lt;pid&gt; 相关的 i_op/i_fop<br  /><div class="outline-text-6" id="text-1-4-1-2-11">
 <p>
 /proc/&lt;pid&gt; 下的许多 inode , 都有其独立的 i_op 和 i_fop
 </p>
-</div></li></ol>
+</div>
+</li></ol>
 </div>
 
 
-<div id="outline-container-org5fee65f" class="outline-5">
-<h5 id="org5fee65f"><span class="section-number-5">1.4.1.3</span> super_operations</h5>
+<div id="outline-container-sec-1-4-1-3" class="outline-5">
+<h5 id="sec-1-4-1-3"><span class="section-number-5">1.4.1.3</span> super_operations</h5>
 <div class="outline-text-5" id="text-1-4-1-3">
-</div><ol class="org-ol"><li><a id="orge60108f"></a>alloc_inode<br  /><div class="outline-text-6" id="text-1-4-1-3-1">
+</div><ol class="org-ol"><li><a id="sec-1-4-1-3-1" name="sec-1-4-1-3-1"></a>alloc_inode<br  /><div class="outline-text-6" id="text-1-4-1-3-1">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode</span> *<span style="font-weight: bold;">proc_alloc_inode</span>(<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">super_block</span> *<span style="font-weight: bold; font-style: italic;">sb</span>):
   <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">proc_inode</span> *ei;
   <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode</span> *<span style="font-weight: bold; font-style: italic;">inode</span>;
@@ -1779,32 +1890,35 @@ proc_sops:
   <span style="font-weight: bold;">return</span> inode;
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="orgfcf0700"></a>read_inode<br  /><div class="outline-text-6" id="text-1-4-1-3-2">
+<li><a id="sec-1-4-1-3-2" name="sec-1-4-1-3-2"></a>read_inode<br  /><div class="outline-text-6" id="text-1-4-1-3-2">
 <p>
 procfs 的 proc_read_inode 并没有做太多工作, 因为 inode 信息的填充主要在上层的 proc_get_inode 中完成. 
 </p>
-</div></li>
+</div>
+</li>
 
-<li><a id="org5f3ad87"></a>statfs<br  /></li></ol>
+<li><a id="sec-1-4-1-3-3" name="sec-1-4-1-3-3"></a>statfs<br  /></li></ol>
 </div>
 
-<div id="outline-container-orgc314675" class="outline-5">
-<h5 id="orgc314675"><span class="section-number-5">1.4.1.4</span> inode_operations</h5>
+<div id="outline-container-sec-1-4-1-4" class="outline-5">
+<h5 id="sec-1-4-1-4"><span class="section-number-5">1.4.1.4</span> inode_operations</h5>
 <div class="outline-text-5" id="text-1-4-1-4">
-</div><ol class="org-ol"><li><a id="org1e1a2ca"></a>lookup<br  /><div class="outline-text-6" id="text-1-4-1-4-1">
+</div><ol class="org-ol"><li><a id="sec-1-4-1-4-1" name="sec-1-4-1-4-1"></a>lookup<br  /><div class="outline-text-6" id="text-1-4-1-4-1">
 <p>
 对于 proc 来说, /proc 下许多目录都有其独立的 lookup 函数
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="orgca75bca"></a>proc_root_lookup<br  /><div class="outline-text-7" id="text-1-4-1-4-1-1">
+<ol class="org-ol"><li><a id="sec-1-4-1-4-1-1" name="sec-1-4-1-4-1-1"></a>proc_root_lookup<br  /><div class="outline-text-7" id="text-1-4-1-4-1-1">
 <p>
 /proc 根目录下本身的 lookup 函数
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c">proc_root_lookup
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#39318;&#20808;&#26597;&#25214;&#38750; &lt;pid&gt; &#20043;&#31867;&#30340; inode</span>
   <span style="font-weight: bold;">if</span> (!proc_lookup(dir, dentry, nd)):
@@ -1815,12 +1929,13 @@ procfs 的 proc_read_inode 并没有做太多工作, 因为 inode 信息的填�
 </div>
 </div>
 
-<ol class="org-ol"><li><a id="org078baa8"></a>proc_lookup<br  /><div class="outline-text-8" id="text-1-4-1-4-1-1-1">
+<ol class="org-ol"><li><a id="sec-1-4-1-4-1-1-1" name="sec-1-4-1-4-1-1-1"></a>proc_lookup<br  /><div class="outline-text-8" id="text-1-4-1-4-1-1-1">
 <p>
 /proc 一级目录下所有非 &lt;pid&gt; 的 inode 都是通过 proc_lookup 查找的. 具体的, 通过遍历之前通过 create_proc_entry 创建虚拟目录树来查找. 
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c">proc_lookup(<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode</span> * <span style="font-weight: bold; font-style: italic;">dir</span>, <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">dentry</span> *<span style="font-weight: bold; font-style: italic;">dentry</span>, <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">nameidata</span> *<span style="font-weight: bold; text-decoration: underline;">nd</span>):
   <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">error</span> = -ENOENT;
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">dir &#26159; mnt_root, dentry &#21253;&#25324;&#35201;&#26597;&#25214;&#30340;&#21517;&#23383;, nd &#29992;&#26469;&#20445;&#23384;&#26597;&#25214;&#32467;&#26524;</span>
@@ -1848,9 +1963,10 @@ procfs 的 proc_read_inode 并没有做太多工作, 因为 inode 信息的填�
 /proc@dell-work&gt; touch a
 touch: cannot touch 'a': No such file or directory
 </pre>
-</div></li>
+</div>
+</li>
 
-<li><a id="org7171848"></a>proc_pid_lookup<br  /><div class="outline-text-8" id="text-1-4-1-4-1-1-2">
+<li><a id="sec-1-4-1-4-1-1-2" name="sec-1-4-1-4-1-1-2"></a>proc_pid_lookup<br  /><div class="outline-text-8" id="text-1-4-1-4-1-1-2">
 <p>
 因为 /proc 下的 &lt;pid&gt; 之类的 inode 是动态变化的, 无法通过
 create_proc_entry 添加到虚拟的 /proc 目录树中, 所以需要通过
@@ -1858,6 +1974,7 @@ proc_pid_lookup 动态去查找
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c">proc_pid_lookup
   <span style="font-weight: bold;">if</span> (dentry-&gt;d_name.len == 4 &amp;&amp; !memcmp(dentry-&gt;d_name.name,<span style="font-style: italic;">"self"</span>,4)):
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">inode &#30340; ino &#20026; last_ino++ </span>
@@ -1880,9 +1997,11 @@ proc_pid_lookup 动态去查找
   d_add(dentry, inode);
 </pre>
 </div>
-</div></li></ol></li>
+</div>
+</li></ol>
+</li>
 
-<li><a id="org3ba2db0"></a>proc_tgid_base_lookup<br  /><div class="outline-text-7" id="text-1-4-1-4-1-2">
+<li><a id="sec-1-4-1-4-1-2" name="sec-1-4-1-4-1-2"></a>proc_tgid_base_lookup<br  /><div class="outline-text-7" id="text-1-4-1-4-1-2">
 <p>
 /proc/&lt;pid&gt; 目录的 lookup 函数
 </p>
@@ -1892,8 +2011,9 @@ proc_pid_lookup 动态去查找
 proc_tgid_base_inode_operations, 后者的定义为:
 </p>
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode_operations</span> <span style="font-weight: bold; font-style: italic;">proc_tgid_base_inode_operations</span> = {
-        .lookup         = proc_tgid_base_lookup,
+        .lookup               = proc_tgid_base_lookup,
 };
 </pre>
 </div>
@@ -1903,11 +2023,12 @@ proc_tgid_base_inode_operations, 后者的定义为:
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">pid_entry</span> <span style="font-weight: bold; font-style: italic;">tgid_base_stuff</span>[] = {
     E(PROC_TGID_TASK,      <span style="font-style: italic;">"task"</span>,    S_IFDIR|S_IRUGO|S_IXUGO),
     E(PROC_TGID_FD,        <span style="font-style: italic;">"fd"</span>,      S_IFDIR|S_IRUSR|S_IXUSR),
     E(PROC_TGID_ENVIRON,   <span style="font-style: italic;">"environ"</span>, S_IFREG|S_IRUSR),
-    E(PROC_TGID_AUXV,      <span style="font-style: italic;">"auxv"</span>,        S_IFREG|S_IRUSR),
+    E(PROC_TGID_AUXV,      <span style="font-style: italic;">"auxv"</span>,      S_IFREG|S_IRUSR),
     E(PROC_TGID_STATUS,    <span style="font-style: italic;">"status"</span>,  S_IFREG|S_IRUGO),
     E(PROC_TGID_CMDLINE,   <span style="font-style: italic;">"cmdline"</span>, S_IFREG|S_IRUGO),
     E(PROC_TGID_STAT,      <span style="font-style: italic;">"stat"</span>,    S_IFREG|S_IRUGO),
@@ -1918,6 +2039,7 @@ proc_tgid_base_inode_operations, 后者的定义为:
 </div>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">dentry</span> *<span style="font-weight: bold;">proc_tgid_base_lookup</span>(<span style="font-weight: bold; text-decoration: underline;">inode</span> *<span style="font-weight: bold; font-style: italic;">dir</span>, <span style="font-weight: bold; text-decoration: underline;">dentry</span> *<span style="font-weight: bold; font-style: italic;">dentry</span>, <span style="font-weight: bold; text-decoration: underline;">nameidata</span> *<span style="font-weight: bold; font-style: italic;">nd</span>):
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">dir &#20195;&#34920; /proc/&lt;pid&gt; &#36825;&#20010; inode, &#20854;&#23545;&#24212;&#30340; proc_inode &#21253;&#25324;&#23545;&#24212;&#30340; task</span>
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21487;&#20197;&#23545;&#24212;&#21040;&#19968;&#20010;&#36827;&#31243;</span>
@@ -1952,25 +2074,31 @@ proc_tgid_base_inode_operations, 后者的定义为:
     d_add(dentry, inode);
 </pre>
 </div>
-</div></li></ol></li>
+</div>
+</li></ol>
+</li>
 
-<li><a id="orga8a10f3"></a>permission<br  /><div class="outline-text-6" id="text-1-4-1-4-2">
+<li><a id="sec-1-4-1-4-2" name="sec-1-4-1-4-2"></a>permission<br  /><div class="outline-text-6" id="text-1-4-1-4-2">
 <p>
 procfs 实现了自己的 permission 实现: proc_permission
 </p>
-</div></li>
+</div>
+</li>
 
-<li><a id="org4702cb4"></a>readlink<br  /><div class="outline-text-6" id="text-1-4-1-4-3">
+<li><a id="sec-1-4-1-4-3" name="sec-1-4-1-4-3"></a>readlink<br  /><div class="outline-text-6" id="text-1-4-1-4-3">
 <p>
 /proc 中至少有三个地方用到了 symlink: 
 </p>
 
 <ol class="org-ol">
-<li>/proc/self</li>
+<li>/proc/self
+</li>
 
-<li>/proc/&lt;pid&gt;/fd/&lt;fd&gt;</li>
+<li>/proc/&lt;pid&gt;/fd/&lt;fd&gt;
+</li>
 
-<li>/proc/mounts</li>
+<li>/proc/mounts
+</li>
 </ol>
 
 <p>
@@ -1979,8 +2107,9 @@ procfs 实现了自己的 permission 实现: proc_permission
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="org6d059f3"></a>/proc/self<br  /><div class="outline-text-7" id="text-1-4-1-4-3-1">
+<ol class="org-ol"><li><a id="sec-1-4-1-4-3-1" name="sec-1-4-1-4-3-1"></a>/proc/self<br  /><div class="outline-text-7" id="text-1-4-1-4-3-1">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">dentry</span> * <span style="font-weight: bold;">proc_pid_lookup</span>:
   <span style="font-weight: bold;">if</span> (dentry-&gt;d_name.len == 4 &amp;&amp; !memcmp(dentry-&gt;d_name.name,<span style="font-style: italic;">"self"</span>,4)):
     inode = new_inode(dir-&gt;i_sb);
@@ -1991,16 +2120,19 @@ procfs 实现了自己的 permission 实现: proc_permission
 </div>
 
 <div class="org-src-container">
+
 <pre class="src src-c">proc_self_readlink(<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">dentry</span> *<span style="font-weight: bold; font-style: italic;">dentry</span>, <span style="font-weight: bold; text-decoration: underline;">char</span> <span style="font-weight: bold; font-style: italic;">__user</span> *buffer,<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; text-decoration: underline;">buflen</span>):
     <span style="font-weight: bold; text-decoration: underline;">char</span> <span style="font-weight: bold; font-style: italic;">tmp</span>[30];
     sprintf(tmp, <span style="font-style: italic;">"%d"</span>, current-&gt;tgid);
     <span style="font-weight: bold;">return</span> vfs_readlink(dentry,buffer,buflen,tmp);
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org63fa2b9"></a>/proc/&lt;pid&gt;/fd/&lt;fd&gt;<br  /><div class="outline-text-7" id="text-1-4-1-4-3-2">
+<li><a id="sec-1-4-1-4-3-2" name="sec-1-4-1-4-3-2"></a>/proc/&lt;pid&gt;/fd/&lt;fd&gt;<br  /><div class="outline-text-7" id="text-1-4-1-4-3-2">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">proc_lookupfd</span>:
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#35813; inode &#23545;&#24212; /proc/&lt;pid&gt;/fd/&lt;fd&gt;, &#20854;&#23545;&#24212;&#30340; fd &#34987;&#32534;&#30721;&#21040; proc_inode-&gt;type &#20013;</span>
   inode = proc_pid_make_inode(dir-&gt;i_sb, task, PROC_TID_FD_DIR+fd);
@@ -2012,6 +2144,7 @@ procfs 实现了自己的 permission 实现: proc_permission
 </div>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">proc_fd_link</span>:
   <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span> *<span style="font-weight: bold; font-style: italic;">task</span> = proc_task(inode);
   <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">fd</span> = proc_type(inode) - PROC_TID_FD_DIR;
@@ -2022,9 +2155,10 @@ procfs 实现了自己的 permission 实现: proc_permission
   *dentry = dget(file-&gt;f_dentry);
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org2ede37a"></a>/proc/mounts<br  /><div class="outline-text-7" id="text-1-4-1-4-3-3">
+<li><a id="sec-1-4-1-4-3-3" name="sec-1-4-1-4-3-3"></a>/proc/mounts<br  /><div class="outline-text-7" id="text-1-4-1-4-3-3">
 <p>
 proc_root_init 时, 通过 proc_symlink 建立了一个  proc_dir_entry , 这个
 entry 是 /proc/mounts 到 /proc/self/mounts 的 symlink, 具体参考前面
@@ -2032,6 +2166,7 @@ proc_symlink
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">proc_follow_link</span>:
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">symlink &#30340; target &#20445;&#23384;&#22312; proc_inode-&gt;data &#20013;</span>
   nd_set_link(nd, PDE(dentry-&gt;d_inode)-&gt;data);
@@ -2043,50 +2178,59 @@ proc_symlink
     <span style="font-weight: bold;">return</span> nd-&gt;saved_names[nd-&gt;depth];
 </pre>
 </div>
-</div></li></ol></li></ol>
+</div>
+</li></ol>
+</li></ol>
 </div>
 
-<div id="outline-container-orgcb7f084" class="outline-5">
-<h5 id="orgcb7f084"><span class="section-number-5">1.4.1.5</span> file_operations</h5>
+<div id="outline-container-sec-1-4-1-5" class="outline-5">
+<h5 id="sec-1-4-1-5"><span class="section-number-5">1.4.1.5</span> file_operations</h5>
 <div class="outline-text-5" id="text-1-4-1-5">
-</div><ol class="org-ol"><li><a id="orgd9654f4"></a>readdir<br  /><div class="outline-text-6" id="text-1-4-1-5-1">
+</div><ol class="org-ol"><li><a id="sec-1-4-1-5-1" name="sec-1-4-1-5-1"></a>readdir<br  /><div class="outline-text-6" id="text-1-4-1-5-1">
 <p>
 readdir 的过程和 lookup 的过程类似, 根据不同的 inode 调用不同的
 i_fop-&gt;readdir, 且 readdir 依据的数据的来源与 lookup 也是类似的:
 </p>
 
 <ol class="org-ol">
-<li>proc_root_readdir 依赖 pid 列表和 create_proc_entry 构造的目录树</li>
+<li>proc_root_readdir 依赖 pid 列表和 create_proc_entry 构造的目录树
+</li>
 
-<li>proc_tgid_base_readdir 依赖于 tgid_base_stuff 数组</li>
+<li>proc_tgid_base_readdir 依赖于 tgid_base_stuff 数组
+</li>
 
-<li>&#x2026;</li>
+<li>&#x2026;
+</li>
 </ol>
-</div></li></ol>
+</div>
+</li></ol>
 </div>
 
-<div id="outline-container-org81ad0fb" class="outline-5">
-<h5 id="org81ad0fb"><span class="section-number-5">1.4.1.6</span> 总结</h5>
+<div id="outline-container-sec-1-4-1-6" class="outline-5">
+<h5 id="sec-1-4-1-6"><span class="section-number-5">1.4.1.6</span> 总结</h5>
 <div class="outline-text-5" id="text-1-4-1-6">
 <ol class="org-ol">
 <li>vfs 由一系列的回调函数构成, 由最初的 file_system_type 到
-super_operations 再到 inode_operations 和 file_operations</li>
+super_operations 再到 inode_operations 和 file_operations
+</li>
 
-<li>vfs 中最重要的一个回调可能要算 lookup 了, 因为最重要的 inode 结构体是由它生成的.</li>
+<li>vfs 中最重要的一个回调可能要算 lookup 了, 因为最重要的 inode 结构体是由它生成的.
+</li>
 
 <li>procfs 实现上使用多个 iop 和 fop 来处理不同的 inode, 这样扩展性好但比较繁琐, 另一种实现方案可能是提供统一的 iop 和 fop, 但这个 iop/fop
-内部可能需要大量的 switch-case 来区别不同的 inode</li>
+内部可能需要大量的 switch-case 来区别不同的 inode
+</li>
 </ol>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgbc4bd34" class="outline-4">
-<h4 id="orgbc4bd34"><span class="section-number-4">1.4.2</span> debugfs</h4>
+<div id="outline-container-sec-1-4-2" class="outline-4">
+<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> debugfs</h4>
 </div>
 
-<div id="outline-container-org638a314" class="outline-4">
-<h4 id="org638a314"><span class="section-number-4">1.4.3</span> ramfs</h4>
+<div id="outline-container-sec-1-4-3" class="outline-4">
+<h4 id="sec-1-4-3"><span class="section-number-4">1.4.3</span> ramfs</h4>
 <div class="outline-text-4" id="text-1-4-3">
 <p>
 ramfs 是基于内存的文件系统, 因为 kernel 本身有 dcache 和 page cache,
@@ -2095,8 +2239,8 @@ dcache 和 pagecache.
 </p>
 </div>
 
-<div id="outline-container-org1e1a2ca" class="outline-5">
-<h5 id="org1e1a2ca"><span class="section-number-5">1.4.3.1</span> lookup</h5>
+<div id="outline-container-sec-1-4-3-1" class="outline-5">
+<h5 id="sec-1-4-3-1"><span class="section-number-5">1.4.3.1</span> lookup</h5>
 <div class="outline-text-5" id="text-1-4-3-1">
 <p>
 ramfs 的 lookup 被定义为 simple_lookup, 而 simple_lookup 只是简单的返回 NULL, 即 negative dentry &#x2026; 嗯?
@@ -2107,6 +2251,7 @@ ramfs 的 lookup 被定义为 simple_lookup, 而 simple_lookup 只是简单的�
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">do_lookup</span>:
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26597;&#25214; dcache, &#23545;&#20110; ramfs &#26469;&#35828;, &#22914;&#26524; __d_lookup &#26597;&#19981;&#21040;&#32467;&#26524;, &#35828;&#26126;&#20043;</span>
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21069;&#27809;&#26377; add &#36807;&#36825;&#20010; dentry (&#36890;&#36807; mkdir &#25110; create, symlink &#31561;), &#27492;&#26102;</span>
@@ -2122,8 +2267,8 @@ ramfs 的 lookup 被定义为 simple_lookup, 而 simple_lookup 只是简单的�
 </div>
 </div>
 
-<div id="outline-container-org8a9ce67" class="outline-5">
-<h5 id="org8a9ce67"><span class="section-number-5">1.4.3.2</span> create</h5>
+<div id="outline-container-sec-1-4-3-2" class="outline-5">
+<h5 id="sec-1-4-3-2"><span class="section-number-5">1.4.3.2</span> create</h5>
 <div class="outline-text-5" id="text-1-4-3-2">
 <p>
 ramfs_mknod, 基本就是直接 make inode
@@ -2131,8 +2276,8 @@ ramfs_mknod, 基本就是直接 make inode
 </div>
 </div>
 
-<div id="outline-container-orgd9654f4" class="outline-5">
-<h5 id="orgd9654f4"><span class="section-number-5">1.4.3.3</span> readdir</h5>
+<div id="outline-container-sec-1-4-3-3" class="outline-5">
+<h5 id="sec-1-4-3-3"><span class="section-number-5">1.4.3.3</span> readdir</h5>
 <div class="outline-text-5" id="text-1-4-3-3">
 <p>
 dcache_readdir, 基本就是直接遍历 dcache
@@ -2141,34 +2286,38 @@ dcache_readdir, 基本就是直接遍历 dcache
 </div>
 </div>
 
-<div id="outline-container-org6ae3e36" class="outline-4">
-<h4 id="org6ae3e36"><span class="section-number-4">1.4.4</span> ext2</h4>
+<div id="outline-container-sec-1-4-4" class="outline-4">
+<h4 id="sec-1-4-4"><span class="section-number-4">1.4.4</span> ext2</h4>
 <div class="outline-text-4" id="text-1-4-4">
 <p>
-refers to <a href="ext2.rel.html#org96fcfcd">Ext2</a>
+refers to <a href="ext2.rel.html">Ext2</a>
 </p>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org3fb5b88" class="outline-3">
-<h3 id="org3fb5b88"><span class="section-number-3">1.5</span> Appendix</h3>
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> Appendix</h3>
 <div class="outline-text-3" id="text-1-5">
-</div><div id="outline-container-org03f8b3d" class="outline-4">
-<h4 id="org03f8b3d"><span class="section-number-4">1.5.1</span> special inode</h4>
+</div><div id="outline-container-sec-1-5-1" class="outline-4">
+<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> special inode</h4>
 <div class="outline-text-4" id="text-1-5-1">
 <p>
 除了普通文件和目录, 还存在一些特殊的文件:
 </p>
 
 <ol class="org-ol">
-<li>char device</li>
+<li>char device
+</li>
 
-<li>blk device</li>
+<li>blk device
+</li>
 
-<li>pipe</li>
+<li>pipe
+</li>
 
-<li>socket</li>
+<li>socket
+</li>
 </ol>
 
 <p>
@@ -2176,8 +2325,9 @@ inode-&gt;i_mode 是一个 short int, 它的低位保存权限 (rwx), 高位保�
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">S_IFSOCK</span> 0140000
-<span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">S_IFLNK</span>  0120000
+<span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">S_IFLNK</span>        0120000
 <span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">S_IFREG</span>  0100000
 <span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">S_IFBLK</span>  0060000
 <span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">S_IFDIR</span>  0040000
@@ -2190,10 +2340,11 @@ inode-&gt;i_mode 是一个 short int, 它的低位保存权限 (rwx), 高位保�
 </div>
 </div>
 
-<div id="outline-container-org5bb3e92" class="outline-5">
-<h5 id="org5bb3e92"><span class="section-number-5">1.5.1.1</span> char device</h5>
+<div id="outline-container-sec-1-5-1-1" class="outline-5">
+<h5 id="sec-1-5-1-1"><span class="section-number-5">1.5.1.1</span> char device</h5>
 <div class="outline-text-5" id="text-1-5-1-1">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_mknod</span>():
   inode = ext2_new_inode()
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">rdev &#20445;&#23384;&#30528; mknod &#20256;&#20837;&#30340;&#35774;&#22791;&#21495;</span>
@@ -2208,7 +2359,7 @@ inode-&gt;i_mode 是一个 short int, 它的低位保存权限 (rwx), 高位保�
 
 ext2_read_inode (<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode</span> * <span style="font-weight: bold; font-style: italic;">inode</span>):
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
-  <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">ext2_inode</span> * <span style="font-weight: bold; font-style: italic;">raw_inode</span> = ext2_get_inode(inode-&gt;i_sb, ino, &amp;bh);
+  <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">ext2_inode</span> * raw_inode = ext2_get_inode(inode-&gt;i_sb, ino, &amp;bh);
   inode-&gt;i_mode = le16_to_cpu(raw_inode-&gt;i_mode);
   <span style="font-weight: bold;">if</span> (S_ISREG(inode-&gt;i_mode)):
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
@@ -2241,15 +2392,17 @@ ext2_read_inode (<span style="font-weight: bold;">struct</span> <span style="fon
 </p>
 
 <ol class="org-ol">
-<li>文件系统需要能区分出这种类型的文件 (能给 inode-&gt;i_mode 相应的值)</li>
+<li>文件系统需要能区分出这种类型的文件 (能给 inode-&gt;i_mode 相应的值)
+</li>
 
-<li>需要能保存设备号 (能给 inode-&gt;i_rdev 相应的值)</li>
+<li>需要能保存设备号 (能给 inode-&gt;i_rdev 相应的值)
+</li>
 </ol>
 </div>
 </div>
 
-<div id="outline-container-org2aff142" class="outline-5">
-<h5 id="org2aff142"><span class="section-number-5">1.5.1.2</span> blk device</h5>
+<div id="outline-container-sec-1-5-1-2" class="outline-5">
+<h5 id="sec-1-5-1-2"><span class="section-number-5">1.5.1.2</span> blk device</h5>
 <div class="outline-text-5" id="text-1-5-1-2">
 <p>
 TODO: refers to `block device driver`
@@ -2258,20 +2411,21 @@ TODO: refers to `block device driver`
 </div>
 </div>
 
-<div id="outline-container-orge06dfe9" class="outline-4">
-<h4 id="orge06dfe9"><span class="section-number-4">1.5.2</span> inode-&gt;i_size</h4>
+<div id="outline-container-sec-1-5-2" class="outline-4">
+<h4 id="sec-1-5-2"><span class="section-number-4">1.5.2</span> inode-&gt;i_size</h4>
 <div class="outline-text-4" id="text-1-5-2">
-</div><div id="outline-container-org6ae3e36" class="outline-5">
-<h5 id="org6ae3e36"><span class="section-number-5">1.5.2.1</span> ext2</h5>
+</div><div id="outline-container-sec-1-5-2-1" class="outline-5">
+<h5 id="sec-1-5-2-1"><span class="section-number-5">1.5.2.1</span> ext2</h5>
 <div class="outline-text-5" id="text-1-5-2-1">
-</div><ol class="org-ol"><li><a id="org7887ac3"></a>dir<br  /><div class="outline-text-6" id="text-1-5-2-1-1">
+</div><ol class="org-ol"><li><a id="sec-1-5-2-1-1" name="sec-1-5-2-1-1"></a>dir<br  /><div class="outline-text-6" id="text-1-5-2-1-1">
 <p>
 ext2 目录的大小是随着目录中 entry 的多少变化的.
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="orgf5de47a"></a>新建空目录<br  /><div class="outline-text-7" id="text-1-5-2-1-1-1">
+<ol class="org-ol"><li><a id="sec-1-5-2-1-1-1" name="sec-1-5-2-1-1-1"></a>新建空目录<br  /><div class="outline-text-7" id="text-1-5-2-1-1-1">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_mkdir</span>:
   inode = ext2_new_inode (dir, S_IFDIR | mode);
   ext2_make_empty(inode, dir);
@@ -2292,10 +2446,12 @@ ext2 目录的大小是随着目录中 entry 的多少变化的.
   ext2_add_link(dentry, inode);
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org17d624e"></a>目录中添加文件或子目录导致大小变化<br  /><div class="outline-text-7" id="text-1-5-2-1-1-2">
+<li><a id="sec-1-5-2-1-1-2" name="sec-1-5-2-1-1-2"></a>目录中添加文件或子目录导致大小变化<br  /><div class="outline-text-7" id="text-1-5-2-1-1-2">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_create</span>:
   ext2_add_nondir(dentry, inode);
     ext2_add_link(dentry, inode);
@@ -2303,6 +2459,7 @@ ext2 目录的大小是随着目录中 entry 的多少变化的.
 </div>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_add_link</span>:
   from = (<span style="font-weight: bold; text-decoration: underline;">char</span>*)de - (<span style="font-weight: bold; text-decoration: underline;">char</span>*)page_address(page);
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">rec_len &#21644; entry &#30340;&#21517;&#23383;&#38271;&#24230;&#26377;&#20851;</span>
@@ -2310,19 +2467,22 @@ ext2 目录的大小是随着目录中 entry 的多少变化的.
   ext2_commit_chunk(page, from, to);
 </pre>
 </div>
-</div></li></ol></li>
+</div>
+</li></ol>
+</li>
 
-<li><a id="orgc2c77dc"></a>symlink<br  /><div class="outline-text-6" id="text-1-5-2-1-2">
+<li><a id="sec-1-5-2-1-2" name="sec-1-5-2-1-2"></a>symlink<br  /><div class="outline-text-6" id="text-1-5-2-1-2">
 <p>
 symlink 通过 ext2_symlink 生成
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_symlink</span>:
   l = strlen(symname)+1;
   <span style="font-weight: bold;">if</span> (l &gt; <span style="font-weight: bold;">sizeof</span> (EXT2_I(inode)-&gt;i_data)):
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">ext2_inode_info</span> {
-      <span style="font-weight: bold; text-decoration: underline;">__le32</span>    <span style="font-weight: bold; font-style: italic;">i_data</span>[15];
+      <span style="font-weight: bold; text-decoration: underline;">__le32</span>  <span style="font-weight: bold; font-style: italic;">i_data</span>[15];
       <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
     }
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; symname &#38271;&#24230;&#22823;&#20110; 60 (15*4), &#21017;&#20351;&#29992; slow symlink</span>
@@ -2369,6 +2529,7 @@ Device: 802h/2050d      Inode: 21500456    Links: 1
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_read_inode</span>:
   <span style="font-weight: bold;">if</span> (S_ISLNK(inode-&gt;i_mode)):
     <span style="font-weight: bold;">if</span> (ext2_inode_is_fast_symlink(inode)):
@@ -2381,28 +2542,30 @@ Device: 802h/2050d      Inode: 21500456    Links: 1
   <span style="font-weight: bold;">return</span> (S_ISLNK(inode-&gt;i_mode) &amp;&amp; inode-&gt;i_blocks - ea_blocks == 0;)
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org05717fe"></a>regular file<br  /></li>
+<li><a id="sec-1-5-2-1-3" name="sec-1-5-2-1-3"></a>regular file<br  /></li>
 
-<li><a id="orgd96b204"></a>char/blk device<br  /><div class="outline-text-6" id="text-1-5-2-1-4">
+<li><a id="sec-1-5-2-1-4" name="sec-1-5-2-1-4"></a>char/blk device<br  /><div class="outline-text-6" id="text-1-5-2-1-4">
 <p>
 mknod 时 i_size 没有赋值, 所以大小为 0
 </p>
-</div></li>
+</div>
+</li>
 
-<li><a id="orgad59ae4"></a>fifo<br  /></li>
+<li><a id="sec-1-5-2-1-5" name="sec-1-5-2-1-5"></a>fifo<br  /></li>
 
-<li><a id="orgceb090c"></a>socket<br  /></li></ol>
+<li><a id="sec-1-5-2-1-6" name="sec-1-5-2-1-6"></a>socket<br  /></li></ol>
 </div>
 
-<div id="outline-container-orgd6e9c9a" class="outline-5">
-<h5 id="orgd6e9c9a"><span class="section-number-5">1.5.2.2</span> proc</h5>
+<div id="outline-container-sec-1-5-2-2" class="outline-5">
+<h5 id="sec-1-5-2-2"><span class="section-number-5">1.5.2.2</span> proc</h5>
 </div>
 </div>
 
-<div id="outline-container-org31c198c" class="outline-4">
-<h4 id="org31c198c"><span class="section-number-4">1.5.3</span> .(single dot) 与 ..(double dots)</h4>
+<div id="outline-container-sec-1-5-3" class="outline-4">
+<h4 id="sec-1-5-3"><span class="section-number-4">1.5.3</span> .(single dot) 与 ..(double dots)</h4>
 <div class="outline-text-4" id="text-1-5-3">
 <p>
 对于 ext2 来说, single dot 与 double dots 是真实存在于磁盘上的, 而并非程序模拟出来的
@@ -2410,6 +2573,7 @@ place holder
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_mkdir</span>:
   inode = ext2_new_inode (dir, S_IFDIR | mode);
   ext2_make_empty(inode, parent);
@@ -2435,8 +2599,8 @@ inode 在 mkdir 时即被指定.
 </p>
 </div>
 
-<div id="outline-container-org58a51d7" class="outline-5">
-<h5 id="org58a51d7"><span class="section-number-5">1.5.3.1</span> 测试</h5>
+<div id="outline-container-sec-1-5-3-1" class="outline-5">
+<h5 id="sec-1-5-3-1"><span class="section-number-5">1.5.3.1</span> 测试</h5>
 <div class="outline-text-5" id="text-1-5-3-1">
 <p>
 根据前面关于 path_lookup 的描述, single dot 与 double dots 在
@@ -2451,6 +2615,7 @@ inode 可能是和 mnt_parent 对应的 ino, 两者会不同?
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">#include</span> <span style="font-style: italic;">&lt;sys/types.h&gt;</span>
 <span style="font-weight: bold;">#include</span> <span style="font-style: italic;">&lt;dirent.h&gt;</span>
 
@@ -2509,14 +2674,15 @@ Device: 802h/2050d      Inode: 21725291    Links: 3
 </div>
 </div>
 
-<div id="outline-container-orgffc8639" class="outline-4">
-<h4 id="orgffc8639"><span class="section-number-4">1.5.4</span> atime / mtime</h4>
+<div id="outline-container-sec-1-5-4" class="outline-4">
+<h4 id="sec-1-5-4"><span class="section-number-4">1.5.4</span> atime / mtime</h4>
 <div class="outline-text-4" id="text-1-5-4">
 <p>
 读写文件时 atime/mtime 会相应变化, vfs 在 generic_file_read / write 处做了实现, 如果某个 fs 的文件读写不是通过 generic_file_read / write, 需要自己处理 atime/mtime
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">do_generic_mapping_read</span>:
   file_accessed(filp);
     touch_atime(file-&gt;f_vfsmnt, file-&gt;f_dentry)
@@ -2526,6 +2692,7 @@ Device: 802h/2050d      Inode: 21725291    Links: 3
 </div>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">generic_file_write</span>:
   __generic_file_write_nolock
     __generic_file_aio_write_nolock
@@ -2536,8 +2703,8 @@ Device: 802h/2050d      Inode: 21725291    Links: 3
 </div>
 </div>
 
-<div id="outline-container-orgfa1bdf6" class="outline-4">
-<h4 id="orgfa1bdf6"><span class="section-number-4">1.5.5</span> ramfs, rootfs, initramfs</h4>
+<div id="outline-container-sec-1-5-5" class="outline-4">
+<h4 id="sec-1-5-5"><span class="section-number-4">1.5.5</span> ramfs, rootfs, initramfs</h4>
 <div class="outline-text-4" id="text-1-5-5">
 <p>
 <a href="https://www.kernel.org/doc/Documentation/filesystems/ramfs-rootfs-initramfs.txt">https://www.kernel.org/doc/Documentation/filesystems/ramfs-rootfs-initramfs.txt</a>
@@ -2545,14 +2712,15 @@ Device: 802h/2050d      Inode: 21725291    Links: 3
 </div>
 </div>
 
-<div id="outline-container-org5a6db1f" class="outline-4">
-<h4 id="org5a6db1f"><span class="section-number-4">1.5.6</span> getcwd</h4>
+<div id="outline-container-sec-1-5-6" class="outline-4">
+<h4 id="sec-1-5-6"><span class="section-number-4">1.5.6</span> getcwd</h4>
 <div class="outline-text-4" id="text-1-5-6">
 <p>
 getcwd 显然依赖于 fs_struct-&gt;pwdmnt, 但 pwdmnt 做为 vfsmount 只包含一个 dentry 信息, 并不包含完整路径, getcwd 如果获得完整路径的?
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">__d_path</span>:
   <span style="font-weight: bold;">for</span> (;;) {
       <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">dentry</span> * <span style="font-weight: bold; font-style: italic;">parent</span>;
@@ -2585,11 +2753,17 @@ drop cache 时需要保证 dentry A 的 parent 不能先于 dentry A 被 drop?
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-04-26 Tue&gt;</span></span></p>
-<p class="author">Author: Wei Sun (孙伟)</p>
-<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-09-10 Sat 21:21</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+
+<div id="disqus_thread"></div>
+<script>
+
+(function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = '//sunwayforever-github-io.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+})();
+</script>
 </div>
 </body>
 </html>

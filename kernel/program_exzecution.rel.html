@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Linux Kernel: Program Exzecution</title>
-<!-- 2016-09-16 Fri 12:57 -->
+<!-- 2016-09-19 Mon 18:01 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -96,7 +96,7 @@ for the JavaScript code in this tag.
 <div class="org-src-container">
 
 <pre class="src src-c">do_execve (filename, argv, envp, regs):
-  <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">linux_binprm</span> *<span style="font-weight: bold; font-style: italic;">bprm</span> = kmalloc(<span style="font-weight: bold;">sizeof</span>(*bprm), GFP_KERNEL);
+  <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">linux_binprm</span> *bprm = kmalloc(<span style="font-weight: bold;">sizeof</span>(*bprm), GFP_KERNEL);
   memset(bprm, 0, <span style="font-weight: bold;">sizeof</span>(*bprm));
   file = open_exec(filename);
     path_lookup(name, LOOKUP_FOLLOW|LOOKUP_OPEN, &amp;nd);
@@ -806,12 +806,17 @@ load_misc_binary 实现用户自定义的加载, 它的过程和 load_script 非
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-08-02 Tue&gt;</span></span></p>
-<p class="author">Author: Wei Sun (孙伟)</p>
-<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-09-16 Fri 12:57</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+
+<div id="disqus_thread"></div>
+<script>
+
+(function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = '//sunwayforever-github-io.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+})();
+</script>
 </div>
 </body>
 </html>

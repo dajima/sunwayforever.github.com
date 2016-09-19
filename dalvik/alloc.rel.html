@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Dalvik: 对象分配与垃圾回收</title>
-<!-- 2016-09-16 Fri 15:53 -->
+<!-- 2016-09-19 Mon 18:01 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -136,7 +136,7 @@ for the JavaScript code in this tag.
 <div class="outline-text-3" id="text-1-2">
 <div class="org-src-container">
 
-<pre class="src src-c">Object* <span style="font-weight: bold;">dvmAllocObject</span>(ClassObject* clazz, <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">flags</span>)
+<pre class="src src-c">Object* dvmAllocObject(ClassObject* clazz, <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">flags</span>)
   newObj = (<span style="font-weight: bold; text-decoration: underline;">Object</span>*)dvmMalloc(clazz-&gt;objectSize, flags);
     ptr = tryMalloc(size);
       ptr = dvmHeapSourceAlloc(size);
@@ -1093,7 +1093,7 @@ getForward, isForward, setForward 这三个函数是用来实现对象移动后�
 <div class="outline-text-5" id="text-1-7-2-2">
 <div class="org-src-container">
 
-<pre class="src src-c">Object *<span style="font-weight: bold;">transportObject</span>(<span style="font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">Object</span> *<span style="font-weight: bold; font-style: italic;">fromObj</span>)
+<pre class="src src-c">Object *transportObject(<span style="font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">Object</span> *<span style="font-weight: bold; font-style: italic;">fromObj</span>)
   <span style="font-weight: bold;">if</span> (LW_HASH_STATE(fromObj-&gt;lock) != LW_HASH_STATE_UNHASHED):
     <span style="font-weight: bold; font-style: italic;">/*</span>
 <span style="font-weight: bold; font-style: italic;">    * The object has been hashed or hashed and moved.  We must</span>
@@ -1163,11 +1163,17 @@ footprint 仍会保留为原先那个较大的值 (代码中没有看到 footpri
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="author">Author: Wei Sun (孙伟)</p>
-<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-09-16 Fri 15:53</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+
+<div id="disqus_thread"></div>
+<script>
+
+(function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = '//sunwayforever-github-io.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+})();
+</script>
 </div>
 </body>
 </html>

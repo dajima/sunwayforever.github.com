@@ -3,12 +3,11 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-09-10 Sat 21:22 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Linux Kernel: Process</title>
-<meta name="generator" content="Org-mode" />
-<meta name="author" content="Wei Sun (孙伟)" />
+<!-- 2016-09-19 Mon 18:01 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="Wei Sun (孙伟)" />
 <link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
 <script type="text/javascript">
 /*
@@ -64,38 +63,38 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orga34c56a">1. Linux Kernel: Process</a>
+<li><a href="#sec-1">1. Linux Kernel: Process</a>
 <ul>
-<li><a href="#orgc167b4f">1.1. 进程描述符</a>
+<li><a href="#sec-1-1">1.1. 进程描述符</a>
 <ul>
-<li><a href="#orgfc1cee6">1.1.1. task_struct</a></li>
-<li><a href="#orgaec9910">1.1.2. 进程状态</a></li>
-<li><a href="#org6a6519a">1.1.3. 识别一个进程</a></li>
-<li><a href="#org7a3338a">1.1.4. 进程之间的关系</a></li>
-<li><a href="#orgfec3899">1.1.5. Pid Hashtable</a></li>
+<li><a href="#sec-1-1-1">1.1.1. task_struct</a></li>
+<li><a href="#sec-1-1-2">1.1.2. 进程状态</a></li>
+<li><a href="#sec-1-1-3">1.1.3. 识别一个进程</a></li>
+<li><a href="#sec-1-1-4">1.1.4. 进程之间的关系</a></li>
+<li><a href="#sec-1-1-5">1.1.5. Pid Hashtable</a></li>
 </ul>
 </li>
-<li><a href="#org9317a99">1.2. 上下文切换</a>
+<li><a href="#sec-1-2">1.2. 上下文切换</a>
 <ul>
-<li><a href="#org8676b86">1.2.1. switch_mm 与 Kernel Thread</a></li>
-<li><a href="#org3b1a73a">1.2.2. switch_to</a></li>
+<li><a href="#sec-1-2-1">1.2.1. switch_mm 与 Kernel Thread</a></li>
+<li><a href="#sec-1-2-2">1.2.2. switch_to</a></li>
 </ul>
 </li>
-<li><a href="#org3ff24a5">1.3. 创建进程</a>
+<li><a href="#sec-1-3">1.3. 创建进程</a>
 <ul>
-<li><a href="#org8b08f0f">1.3.1. fork 系统调用</a></li>
-<li><a href="#orgc1db15e">1.3.2. 关于系统调用 (syscall)</a></li>
-<li><a href="#org4e5b78c">1.3.3. Kernel Thread</a></li>
+<li><a href="#sec-1-3-1">1.3.1. fork 系统调用</a></li>
+<li><a href="#sec-1-3-2">1.3.2. 关于系统调用 (syscall)</a></li>
+<li><a href="#sec-1-3-3">1.3.3. Kernel Thread</a></li>
 </ul>
 </li>
-<li><a href="#orgc39dafd">1.4. 销毁进程</a>
+<li><a href="#sec-1-4">1.4. 销毁进程</a>
 <ul>
-<li><a href="#org1dc32b9">1.4.1. main 返回</a></li>
+<li><a href="#sec-1-4-1">1.4.1. main 返回</a></li>
 </ul>
 </li>
-<li><a href="#org05a6ae1">1.5. Appendix</a>
+<li><a href="#sec-1-5">1.5. Appendix</a>
 <ul>
-<li><a href="#orgd4db7bb">1.5.1. 0 号进程与 1 号进程</a></li>
+<li><a href="#sec-1-5-1">1.5.1. 0 号进程与 1 号进程</a></li>
 </ul>
 </li>
 </ul>
@@ -103,25 +102,26 @@ for the JavaScript code in this tag.
 </ul>
 </div>
 </div>
-<div id="outline-container-orga34c56a" class="outline-2">
-<h2 id="orga34c56a"><span class="section-number-2">1</span> Linux Kernel: Process</h2>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Linux Kernel: Process</h2>
 <div class="outline-text-2" id="text-1">
-</div><div id="outline-container-orgc167b4f" class="outline-3">
-<h3 id="orgc167b4f"><span class="section-number-3">1.1</span> 进程描述符</h3>
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> 进程描述符</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 进程描述符, 即 process descriptor, 是 kernel 用来表示进程的数据结构
 </p>
 </div>
 
-<div id="outline-container-orgfc1cee6" class="outline-4">
-<h4 id="orgfc1cee6"><span class="section-number-4">1.1.1</span> task_struct</h4>
+<div id="outline-container-sec-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> task_struct</h4>
 <div class="outline-text-4" id="text-1-1-1">
 <p>
 Process Descriptor 即 task_struct 结构体, 它的主要成员有:
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span> {
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36827;&#31243;&#29366;&#24577;</span>
     <span style="font-weight: bold;">volatile</span> <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">state</span>;
@@ -165,7 +165,7 @@ Process Descriptor 即 task_struct 结构体, 它的主要成员有:
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">list_head</span> <span style="font-weight: bold; font-style: italic;">children</span>;
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">list_head</span> <span style="font-weight: bold; font-style: italic;">sibling</span>;
 
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span> *<span style="font-weight: bold; font-style: italic;">group_leader</span>;   <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">threadgroup leader </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span> *<span style="font-weight: bold; font-style: italic;">group_leader</span>; <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">threadgroup leader </span><span style="font-weight: bold; font-style: italic;">*/</span>
 
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">process &#30340;&#31532;&#22235;&#31181;&#32452;&#32455;&#26041;&#24335;: &#25152;&#26377;&#36827;&#31243;&#26681;&#25454;&#20854; pid, tgid, pgid, sid &#32452;&#32455;</span>
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22312;&#22235;&#26465;&#19981;&#21516;&#30340; hash table &#20445;&#23384;&#22312; pids &#25968;&#32452;&#20013;</span>
@@ -199,17 +199,15 @@ Process Descriptor 即 task_struct 结构体, 它的主要成员有:
 </div>
 </div>
 
-<div id="outline-container-orgaec9910" class="outline-4">
-<h4 id="orgaec9910"><span class="section-number-4">1.1.2</span> 进程状态</h4>
+<div id="outline-container-sec-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> 进程状态</h4>
 <div class="outline-text-4" id="text-1-1-2">
 <p>
 task_struct.state 表示进程的状态:
 </p>
 
 <ol class="org-ol">
-<li><p>
-TASK_RUNNING
-</p>
+<li>TASK_RUNNING
 
 <p>
 进程处于 running 状态, 只是表示 schedule 时该进程可以被选择, 而并不是表示该进程一直在 "执行" 的状态.
@@ -217,73 +215,80 @@ TASK_RUNNING
 
 <p>
 TASK_RUNNING 状态的进程一定处于 p-&gt;array[p-&gt;prio] 链表中
-</p></li>
-
-<li><p>
-TASK_INTERRUPTIBLE
 </p>
+</li>
+
+<li>TASK_INTERRUPTIBLE
 
 <p>
-TASK_INTERRUPTIBLE 的进程处于 sleeping 状态, 但可以被信号唤醒 (信号唤醒进程的过程参考 signal 相关的部分 <a href="signal.rel.html#orgdbbe7ad">specific_send_sig_info</a>) 而变成
+TASK_INTERRUPTIBLE 的进程处于 sleeping 状态, 但可以被信号唤醒 (信号唤醒进程的过程参考 signal 相关的部分 <a href="signal.rel.html">specific_send_sig_info</a>) 而变成
 TASK_RUNNING 状态.
 </p>
 
 <p>
 典型的例子比如 nanosleep 和 read(pipe) 这种阻塞
-</p></li>
-
-<li><p>
-TASK_UNINTERRUPTIBLE
 </p>
+</li>
+
+<li>TASK_UNINTERRUPTIBLE
 
 <p>
 TASK_UNINTERRUPTIBLE 的进程处于 sleeping 状态, 但无法被信号唤醒, 典型的例子比如做 IO 时的 lock_page
-</p></li>
-
-<li>TASK_STOPPED</li>
-
-<li>TASK_TRACED</li>
-
-<li><p>
-EXIT_ZOMBIE
 </p>
+</li>
+
+<li>TASK_STOPPED
+</li>
+
+<li>TASK_TRACED
+</li>
+
+<li>EXIT_ZOMBIE
 
 <p>
 由于 wait4, waitpid 这类系统调用在存在, 进程终止时无法直接变为
 EXIT_DEAD 状态, 因为它还需要维护一些信息等待父进程调用 wait4 时返回给父进程
-</p></li>
+</p>
+</li>
 
-<li>EXIT_DEAD</li>
+<li>EXIT_DEAD
+</li>
 </ol>
 </div>
 </div>
 
-<div id="outline-container-org6a6519a" class="outline-4">
-<h4 id="org6a6519a"><span class="section-number-4">1.1.3</span> 识别一个进程</h4>
+<div id="outline-container-sec-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> 识别一个进程</h4>
 <div class="outline-text-4" id="text-1-1-3">
 <p>
 识别一个进程 (identifing a process), 主要是指下面这些需求:
 </p>
 
 <ol class="org-ol">
-<li>如何知道当前正在执行的是哪个进程</li>
+<li>如何知道当前正在执行的是哪个进程
+</li>
 
 <li>如何遍历进程:
 
 <ol class="org-ol">
-<li>遍历所有进程</li>
+<li>遍历所有进程
+</li>
 
-<li>根据 pid, tgid</li>
+<li>根据 pid, tgid
+</li>
 
-<li>根据进程的关系</li>
+<li>根据进程的关系
+</li>
 
-<li>根据进程的状态</li>
-</ol></li>
+<li>根据进程的状态
+</li>
+</ol>
+</li>
 </ol>
 </div>
 
-<div id="outline-container-orgf0f246c" class="outline-5">
-<h5 id="orgf0f246c"><span class="section-number-5">1.1.3.1</span> 当前进程</h5>
+<div id="outline-container-sec-1-1-3-1" class="outline-5">
+<h5 id="sec-1-1-3-1"><span class="section-number-5">1.1.3.1</span> 当前进程</h5>
 <div class="outline-text-5" id="text-1-1-3-1">
 <p>
 首先, task_struct, thread_info 及 kernel stack 有密切的关系:
@@ -300,31 +305,31 @@ EXIT_DEAD 状态, 因为它还需要维护一些信息等待父进程调用 wait
 </p>
 
 <ol class="org-ol">
-<li><p>
-task_struct
-</p>
+<li>task_struct
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span> {
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">thread_info</span> *<span style="font-weight: bold; font-style: italic;">thread_info</span>;
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
 }
 </pre>
-</div></li>
+</div>
+</li>
 
-<li><p>
-thread_info
-</p>
+<li>thread_info
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">thread_info</span> {
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span>  *<span style="font-weight: bold; font-style: italic;">task</span>;
+    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span>     *<span style="font-weight: bold; font-style: italic;">task</span>;
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
-    <span style="font-weight: bold; text-decoration: underline;">__u8</span>                        <span style="font-weight: bold; font-style: italic;">supervisor_stack</span>[0];
+    <span style="font-weight: bold; text-decoration: underline;">__u8</span>                   <span style="font-weight: bold; font-style: italic;">supervisor_stack</span>[0];
 };
 </pre>
-</div></li>
+</div>
+</li>
 </ol>
 
 <p>
@@ -339,8 +344,9 @@ esp (kernel_stack) 的值得于 thread_info 的地址, 进而得到 task_struct,
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="orgd7c3410"></a>current 宏<br  /><div class="outline-text-6" id="text-1-1-3-1-1">
+<ol class="org-ol"><li><a id="sec-1-1-3-1-1" name="sec-1-1-3-1-1"></a>current 宏<br  /><div class="outline-text-6" id="text-1-1-3-1-1">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">current</span>:
   current_thread_info()-&gt;task;
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">thread_info</span> *<span style="font-weight: bold; font-style: italic;">ti</span>;
@@ -350,24 +356,29 @@ esp (kernel_stack) 的值得于 thread_info 的地址, 进而得到 task_struct,
     <span style="font-weight: bold;">return</span> ti;
 </pre>
 </div>
-</div></li></ol>
+</div>
+</li></ol>
 </div>
 
-<div id="outline-container-org43afeb9" class="outline-5">
-<h5 id="org43afeb9"><span class="section-number-5">1.1.3.2</span> 双向链表</h5>
+<div id="outline-container-sec-1-1-3-2" class="outline-5">
+<h5 id="sec-1-1-3-2"><span class="section-number-5">1.1.3.2</span> 双向链表</h5>
 <div class="outline-text-5" id="text-1-1-3-2">
 <p>
 task_struct 是用许多双向链表组织起来的, 比如:
 </p>
 
 <ol class="org-ol">
-<li>所有进程</li>
+<li>所有进程
+</li>
 
-<li>同 tgid 的所有进程</li>
+<li>同 tgid 的所有进程
+</li>
 
-<li>同优先级的处于 TASK_RUNNING 状态的进程</li>
+<li>同优先级的处于 TASK_RUNNING 状态的进程
+</li>
 
-<li>一个进程的所有子进程</li>
+<li>一个进程的所有子进程
+</li>
 </ol>
 
 <p>
@@ -381,25 +392,28 @@ linux 使用 list_head 数据结构来实现一个通用的链表, 并提供了�
 </div>
 </div>
 
-<ol class="org-ol"><li><a id="org86ee08b"></a>list_head<br  /><div class="outline-text-6" id="text-1-1-3-2-1">
+<ol class="org-ol"><li><a id="sec-1-1-3-2-1" name="sec-1-1-3-2-1"></a>list_head<br  /><div class="outline-text-6" id="text-1-1-3-2-1">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">list_head</span> {
     <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">list_head</span> *<span style="font-weight: bold; font-style: italic;">next</span>, *<span style="font-weight: bold; font-style: italic;">prev</span>;
 };
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="orgad9a30f"></a>list_entry (container_of)<br  /><div class="outline-text-6" id="text-1-1-3-2-2">
+<li><a id="sec-1-1-3-2-2" name="sec-1-1-3-2-2"></a>list_entry (container_of)<br  /><div class="outline-text-6" id="text-1-1-3-2-2">
 <p>
 list_entry 的作用是给定一个 list_head, 得到外层的数据结构的地址(对应于上图中的 data structure {1,2,3})
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">ptr &#26159; list_head, type &#20026; data struct &#30340;&#31867;&#22411;, member &#20026; data</span>
 <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">structure &#20013; list_head &#23545;&#24212;&#30340;&#23383;&#27573;&#21517;</span>
 <span style="font-weight: bold;">#define</span> <span style="font-weight: bold;">container_of</span>(<span style="font-weight: bold; font-style: italic;">ptr</span>, <span style="font-weight: bold; font-style: italic;">type</span>, <span style="font-weight: bold; font-style: italic;">member</span>) ({                              \
-            <span style="font-weight: bold;">const</span> typeof( ((<span style="font-weight: bold; text-decoration: underline;">type</span> *)0)-&gt;member ) *__mptr = (ptr);         \
+            <span style="font-weight: bold;">const</span> <span style="font-weight: bold;">typeof</span>( ((<span style="font-weight: bold; text-decoration: underline;">type</span> *)0)-&gt;member ) *<span style="font-weight: bold; font-style: italic;">__mptr</span> = (ptr);         \
             (<span style="font-weight: bold; text-decoration: underline;">type</span> *)( (<span style="font-weight: bold; text-decoration: underline;">char</span> *)__mptr - offsetof(type,member) );})
 </pre>
 </div>
@@ -409,14 +423,16 @@ list_entry 的作用是给定一个 list_head, 得到外层的数据结构的地
 task_struct-&gt;tasks 这个 list_head 的指针为 p, 则 list_entry(p,
 struct task_struct, tasks) 宏可以得到对应的外层的 task_struct
 </p>
-</div></li>
+</div>
+</li>
 
-<li><a id="orgc3690c1"></a>list_for_each<br  /><div class="outline-text-6" id="text-1-1-3-2-3">
+<li><a id="sec-1-1-3-2-3" name="sec-1-1-3-2-3"></a>list_for_each<br  /><div class="outline-text-6" id="text-1-1-3-2-3">
 <p>
 list_for_each 是通用的遍历链表的代码
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">pos &#26159;&#19968;&#20010;&#20020;&#26102;&#21464;&#37327;, &#34920;&#31034;&#36941;&#21382;&#36807;&#31243;&#20013;&#30340;"&#24403;&#21069;" list_head,</span>
 <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">head &#26159;&#20195;&#34920;&#38142;&#34920;&#22836;&#30340; list_head</span>
 <span style="font-weight: bold;">#define</span> <span style="font-weight: bold;">list_for_each</span>(<span style="font-weight: bold; font-style: italic;">pos</span>, <span style="font-weight: bold; font-style: italic;">head</span>)                                \
@@ -431,35 +447,41 @@ list_for_each 是通用的遍历链表的代码
 <p>
 list_for_each 每次迭代拿到一个 list_head 后, 通过 list_entry 宏可以拿到对应的数据结构
 </p>
-</div></li>
+</div>
+</li>
 
-<li><a id="org467e9e8"></a>再看 list_head<br  /><div class="outline-text-6" id="text-1-1-3-2-4">
+<li><a id="sec-1-1-3-2-4" name="sec-1-1-3-2-4"></a>再看 list_head<br  /><div class="outline-text-6" id="text-1-1-3-2-4">
 <p>
 list_head 实际有几种不同的用法:
 </p>
 
 <ol class="org-ol">
 <li>list_head 可以用来表示它是链表的头, 这个 list_head 本身不代表链表的任何元素, 所以通过 list_entry 也是没有意义的. 链表的第一个元素是
-list_entry(list_head-next). 这种 list_head 的目的就是标识一个链表</li>
+list_entry(list_head-next). 这种 list_head 的目的就是标识一个链表
+</li>
 
 <li>list_head 是链表头, 但它也是代表链表的一个元素, 这种链表头的用法并不常见, 因为它无法使用 list_for_each 宏 (因为 list_for_each 会把
 head 作为 case 1 中的链表头来处理). 比如 for_each_process 时使用的
-init_task-&gt;tasks 就是这种链表头</li>
+init_task-&gt;tasks 就是这种链表头
+</li>
 
 <li>list_head 不是链表头, 而是链表中某个节点 (list entry), 这种
-list_head 通过 list_entry 可以找到对应的外层数据结构</li>
+list_head 通过 list_entry 可以找到对应的外层数据结构
+</li>
 </ol>
 
 <p>
 所以 list_head 实现的链表并不是一般意义上的"循环双向链表", 因为这个链表中的链表头是一个很特殊的节点: 它并不对应一个"有效"的元素, 而且链表的遍历必须从这个链表头开始: 因为如果从链表中任意一个节点遍历的话, 你无法区分遍历到的 list_head 是否是一个有效的 list entry
 </p>
-</div></li></ol>
+</div>
+</li></ol>
 </div>
 
-<div id="outline-container-org8547753" class="outline-5">
-<h5 id="org8547753"><span class="section-number-5">1.1.3.3</span> 遍历所有进程</h5>
+<div id="outline-container-sec-1-1-3-3" class="outline-5">
+<h5 id="sec-1-1-3-3"><span class="section-number-5">1.1.3.3</span> 遍历所有进程</h5>
 <div class="outline-text-5" id="text-1-1-3-3">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">#define</span> <span style="font-weight: bold;">for_each_process</span>(<span style="font-weight: bold; font-style: italic;">p</span>) \
       <span style="font-weight: bold;">for</span> (p=&amp;init_task;
            (p=list_entry((p)-&gt;tasks.next, <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span>, tasks)) != &amp;init_task; )
@@ -468,8 +490,8 @@ list_head 通过 list_entry 可以找到对应的外层数据结构</li>
 </div>
 </div>
 
-<div id="outline-container-org47ec7eb" class="outline-5">
-<h5 id="org47ec7eb"><span class="section-number-5">1.1.3.4</span> 遍历所有 TASK_RUNNING 进程</h5>
+<div id="outline-container-sec-1-1-3-4" class="outline-5">
+<h5 id="sec-1-1-3-4"><span class="section-number-5">1.1.3.4</span> 遍历所有 TASK_RUNNING 进程</h5>
 <div class="outline-text-5" id="text-1-1-3-4">
 <p>
 遍历 TASK_RUNNING 进程是进程调度的工作之一, 为了快速找到对应某一优先级的 TASK_RUNNING 进程, linux 将所有 TASK_RUNNING 进程分为 140 个链表来管理, 每个链表对应一个优先级.
@@ -482,13 +504,13 @@ task_struct-&gt;run_list 是对应的 list entry
 
 <p>
 关于 prio_array_t, run_list 以及 runqueue-&gt;{active, expired}, 参考
-<a href="process_scheduling.rel.html#orgd0db37d">Process Scheduling: Data Structures</a>
+<a href="process_scheduling.rel.html">Process Scheduling: Data Structures</a>
 </p>
 </div>
 </div>
 
-<div id="outline-container-orga330a00" class="outline-5">
-<h5 id="orga330a00"><span class="section-number-5">1.1.3.5</span> 遍历所有子进程</h5>
+<div id="outline-container-sec-1-1-3-5" class="outline-5">
+<h5 id="sec-1-1-3-5"><span class="section-number-5">1.1.3.5</span> 遍历所有子进程</h5>
 <div class="outline-text-5" id="text-1-1-3-5">
 <p>
 task_struct 中的 children, sibling 两个 list_head 来实现遍历所有子进程.
@@ -500,6 +522,7 @@ sibling 是 list entry
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33719;&#21462; task &#30340;&#25152;&#26377;&#23376;&#36827;&#31243;&#30340;&#20195;&#30721;</span>
 <span style="font-weight: bold;">list_for_each</span>(_p,&amp;tsk-&gt;children) {
     p = list_entry(_p,<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span>,sibling);
@@ -523,19 +546,22 @@ list_for_each 的结束条件是 p != (head), 所以链表的最后一个元素�
 </div>
 </div>
 
-<div id="outline-container-org7a3338a" class="outline-4">
-<h4 id="org7a3338a"><span class="section-number-4">1.1.4</span> 进程之间的关系</h4>
+<div id="outline-container-sec-1-1-4" class="outline-4">
+<h4 id="sec-1-1-4"><span class="section-number-4">1.1.4</span> 进程之间的关系</h4>
 <div class="outline-text-4" id="text-1-1-4">
 <p>
 进程之间的关系有:
 </p>
 
 <ul class="org-ul">
-<li>process group</li>
+<li>process group
+</li>
 
-<li>thread group</li>
+<li>thread group
+</li>
 
-<li>session</li>
+<li>session
+</li>
 </ul>
 
 <p>
@@ -543,39 +569,36 @@ task_struct 维护着各种 id 来表示这些关系
 </p>
 
 <ol class="org-ol">
-<li><p>
-pid
-</p>
+<li>pid
 
 <p>
 pid 唯一标识一个进程或线程. 这个值也是 gettid 系统调用返回的值
-</p></li>
-
-<li><p>
-tgid
 </p>
+</li>
+
+<li>tgid
 
 <p>
 线程组 id, 同一个进程 p 的所有线程的 tgid 均为 p-&gt;pid, p 称为
 thread group leader. 这个值是 getpid 系统调用返回的值
-</p></li>
-
-<li><p>
-pgid
 </p>
+</li>
+
+<li>pgid
 
 <p>
 进程组 id, 若 a fork b, 则 b-&gt;pgid = a-&gt;pgid, 进程组通常和任务管理有关, 例如 kill 可以给一个进程组发信号导致整个进程组的所有进程都收到信号. 通过 setpgid 系统调用, 可以给进程设置一个新的进程组, 从而断开与之前的进程组的关系
-</p></li>
+</p>
+</li>
 
-<li>sid</li>
+<li>sid
+</li>
 </ol>
 </div>
 </div>
 
-
-<div id="outline-container-orgfec3899" class="outline-4">
-<h4 id="orgfec3899"><span class="section-number-4">1.1.5</span> Pid Hashtable</h4>
+<div id="outline-container-sec-1-1-5" class="outline-4">
+<h4 id="sec-1-1-5"><span class="section-number-4">1.1.5</span> Pid Hashtable</h4>
 <div class="outline-text-4" id="text-1-1-5">
 <p>
 task_struct-&gt;pids 用来维护四个 hash table, 分别对应 pid, tgid, pgid,
@@ -593,40 +616,41 @@ sid, 以便能根据某种 id 快速找到对应的 task
 </p>
 
 <ol class="org-ol">
-<li>find_task_by_pid_type</li>
+<li>find_task_by_pid_type
+</li>
 
-<li>do_each_task_pid</li>
+<li>do_each_task_pid
+</li>
 </ol>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org9317a99" class="outline-3">
-<h3 id="org9317a99"><span class="section-number-3">1.2</span> 上下文切换</h3>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 上下文切换</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 进程上下文切换 (context switch) 是进程调度的一部分, 上下文切换的主要动作有两个:
 </p>
 
 <ol class="org-ol">
-<li><p>
-切换页表
-</p>
+<li>切换页表
 
 <p>
 switch_mm
-</p></li>
-
-<li><p>
-切换 kernel stack
 </p>
+</li>
+
+<li>切换 kernel stack
 
 <p>
 switch_to
-</p></li>
+</p>
+</li>
 </ol>
 
 <div class="org-src-container">
+
 <pre class="src src-c">context_switch(prev, <span style="font-weight: bold; text-decoration: underline;">next</span>):
   <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">mm_struct</span> *<span style="font-weight: bold; font-style: italic;">mm</span> = next-&gt;mm;
   <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">mm_struct</span> *<span style="font-weight: bold; font-style: italic;">oldmm</span> = prev-&gt;active_mm;
@@ -643,8 +667,8 @@ switch_to
 </div>
 </div>
 
-<div id="outline-container-org8676b86" class="outline-4">
-<h4 id="org8676b86"><span class="section-number-4">1.2.1</span> switch_mm 与 Kernel Thread</h4>
+<div id="outline-container-sec-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> switch_mm 与 Kernel Thread</h4>
 <div class="outline-text-4" id="text-1-2-1">
 <p>
 Context switch 时, switch_mm 的主要作用是切换 pgd, 但考虑到 kernel
@@ -652,28 +676,29 @@ thread 的特殊情形: kernel thread 只需要使用 pgd 中的高 1G 的部分
 </p>
 
 <p>
-所以 switch_to kernel thread 时, 不需要 switch_mm. 参考 <a href="#org4e5b78c">Kernel Thread</a>
+所以 switch_to kernel thread 时, 不需要 switch_mm. 参考 <a href="#sec-1-3-3">Kernel Thread</a>
 </p>
 </div>
 </div>
 
-<div id="outline-container-org3b1a73a" class="outline-4">
-<h4 id="org3b1a73a"><span class="section-number-4">1.2.2</span> switch_to</h4>
+<div id="outline-container-sec-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> switch_to</h4>
 <div class="outline-text-4" id="text-1-2-2">
 <p>
 switch_to 是实现 kernel stack 切换的主要代码.
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">#define</span> <span style="font-weight: bold;">switch_to</span>(<span style="font-weight: bold; font-style: italic;">prev</span>,<span style="font-weight: bold; font-style: italic;">next</span>,<span style="font-weight: bold; font-style: italic;">last</span>)                                       \
     <span style="font-weight: bold;">do</span> {                                                                \
-        <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">esi</span>,<span style="font-weight: bold; font-style: italic;">edi</span>;                                          \
+        <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">esi</span>,<span style="font-weight: bold; font-style: italic;">edi</span>;                                                \
         <span style="font-weight: bold;">asm</span> (                                                           \
             <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#20445;&#23384; eflags &#21040; prev kernel stack</span><span style="font-weight: bold; font-style: italic;">*/</span>                       \
             <span style="font-style: italic;">"pushfl\n\t"</span>                                                \
             <span style="font-style: italic;">"pushl %%ebp\n\t"</span>                                           \
             <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#20445;&#23384; esp &#21040; prev-&gt;thread.esp</span><span style="font-weight: bold; font-style: italic;">*/</span>                           \
-            <span style="font-style: italic;">"movl %%esp,%0\n\t"</span> <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">save ESP </span><span style="font-weight: bold; font-style: italic;">*/</span>                          \
+            <span style="font-style: italic;">"movl %%esp,%0\n\t"</span>       <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">save ESP </span><span style="font-weight: bold; font-style: italic;">*/</span>                          \
             <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#20174; next-&gt;thread.esp &#24674;&#22797; esp</span><span style="font-weight: bold; font-style: italic;">*/</span>                           \
             <span style="font-style: italic;">"movl %5,%%esp\n\t"</span>                                         \
             <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#23558; label 1 &#35774;&#32622;&#20026; prev-&gt;thread.eip</span><span style="font-weight: bold; font-style: italic;">*/</span>                     \
@@ -712,8 +737,8 @@ switch_to (或者更外层的 schedule) 调用之前, p 的 user mode 的这些�
 </div>
 </div>
 
-<div id="outline-container-org3ff24a5" class="outline-3">
-<h3 id="org3ff24a5"><span class="section-number-3">1.3</span> 创建进程</h3>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 创建进程</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 存在三个相关的库函数以及三个相关的系统调用: fork, vfork, clone, 但通常情况下, 三个库函数最终都会调到同一个系统调用 sys_clone. sys_fork 及
@@ -721,30 +746,39 @@ sys_vfork 也是存在的, 但一般并不会使用.
 </p>
 </div>
 
-<div id="outline-container-org8b08f0f" class="outline-4">
-<h4 id="org8b08f0f"><span class="section-number-4">1.3.1</span> fork 系统调用</h4>
+<div id="outline-container-sec-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> fork 系统调用</h4>
 <div class="outline-text-4" id="text-1-3-1">
-</div><div id="outline-container-orgc85faf1" class="outline-5">
-<h5 id="orgc85faf1"><span class="section-number-5">1.3.1.1</span> FORK_FLAGS</h5>
+</div><div id="outline-container-sec-1-3-1-1" class="outline-5">
+<h5 id="sec-1-3-1-1"><span class="section-number-5">1.3.1.1</span> FORK_FLAGS</h5>
 <div class="outline-text-5" id="text-1-3-1-1">
 <ol class="org-ol">
-<li>CLONE_VM</li>
+<li>CLONE_VM
+</li>
 
-<li>CLONE_FS</li>
+<li>CLONE_FS
+</li>
 
-<li>CLONE_FILES</li>
+<li>CLONE_FILES
+</li>
 
-<li>CLONE_VFORK</li>
+<li>CLONE_VFORK
+</li>
 
-<li>CLONE_NEWNS</li>
+<li>CLONE_NEWNS
+</li>
 
-<li>CLONE_SIGHAND</li>
+<li>CLONE_SIGHAND
+</li>
 
-<li>CLONE_STOPPED</li>
+<li>CLONE_STOPPED
+</li>
 
-<li>CLONE_THREAD</li>
+<li>CLONE_THREAD
+</li>
 
-<li>CLONE_PARENT</li>
+<li>CLONE_PARENT
+</li>
 </ol>
 
 <p>
@@ -754,10 +788,11 @@ sys_vfork 也是存在的, 但一般并不会使用.
 </div>
 </div>
 
-<div id="outline-container-orgc4496df" class="outline-5">
-<h5 id="orgc4496df"><span class="section-number-5">1.3.1.2</span> user mode</h5>
+<div id="outline-container-sec-1-3-1-2" class="outline-5">
+<h5 id="sec-1-3-1-2"><span class="section-number-5">1.3.1.2</span> user mode</h5>
 <div class="outline-text-5" id="text-1-3-1-2">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold;">fork</span>() {
     <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">result</span> = syscall(
         __NR_clone,
@@ -771,6 +806,7 @@ sys_vfork 也是存在的, 但一般并不会使用.
 </div>
 
 <div class="org-src-container">
+
 <pre class="src src-c">ENTRY(syscall)
     <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Push the callee save registers. </span><span style="font-weight: bold; font-style: italic;">*/</span>
     push    %ebx
@@ -807,21 +843,25 @@ END(syscall)
 </div>
 </div>
 
-<div id="outline-container-orgac6d537" class="outline-5">
-<h5 id="orgac6d537"><span class="section-number-5">1.3.1.3</span> kernel mode</h5>
+<div id="outline-container-sec-1-3-1-3" class="outline-5">
+<h5 id="sec-1-3-1-3"><span class="section-number-5">1.3.1.3</span> kernel mode</h5>
 <div class="outline-text-5" id="text-1-3-1-3">
 <p>
 进入 kernel mode 前, 硬件会保证:
 </p>
 
 <ol class="org-ol">
-<li>esp 被切换为 kernel stack (通过 tss-&gt;esp0)</li>
+<li>esp 被切换为 kernel stack (通过 tss-&gt;esp0)
+</li>
 
-<li>user mode 的 esp, eip, eflags 等被 push 到 kernel stack</li>
+<li>user mode 的 esp, eip, eflags 等被 push 到 kernel stack
+</li>
 
-<li>检查 int 0x80 对应的 gate descriptor 的 DPL 与 xcs 的 CPL 一致</li>
+<li>检查 int 0x80 对应的 gate descriptor 的 DPL 与 xcs 的 CPL 一致
+</li>
 
-<li>xcs 切换到 __KERNEL_CS (通过 date descriptor 的 segment selector) 以进入 kernel mode</li>
+<li>xcs 切换到 __KERNEL_CS (通过 date descriptor 的 segment selector) 以进入 kernel mode
+</li>
 </ol>
 
 <p>
@@ -829,8 +869,9 @@ END(syscall)
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="org9ea9e72"></a>system_call<br  /><div class="outline-text-6" id="text-1-3-1-3-1">
+<ol class="org-ol"><li><a id="sec-1-3-1-3-1" name="sec-1-3-1-3-1"></a>system_call<br  /><div class="outline-text-6" id="text-1-3-1-3-1">
 <div class="org-src-container">
+
 <pre class="src src-c">ENTRY(system_call)
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#37324;&#30340; pushl %eax &#23454;&#38469;&#19978;&#20462;&#25913;&#30340;&#26159; pt_regs-&gt;orig_eax, &#21518;&#32493;&#20250;&#26681;&#25454;</span>
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">orig_eax &#20540;&#21028;&#26029;&#24403;&#21069;&#26159;&#21542;&#26159;&#22312;&#25191;&#34892;&#19968;&#20010; syscall (&#20363;&#22914; handle_signal).</span>
@@ -857,7 +898,7 @@ END(syscall)
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#35843;&#29992; RESTORE_ALL &#36820;&#22238;&#21069;&#21457;&#29616;&#26377;&#20854;&#23427;&#24037;&#20316;&#35201;&#20570;:  pending signal,</span>
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">need_resched &#31561;, &#21017;&#36339;&#36716;&#21040; syscall_exit_work</span>
     <span style="font-weight: bold; text-decoration: underline;">movl</span> <span style="font-weight: bold;">TI_flags</span>(%ebp), %ecx
-    testw $_TIF_ALLWORK_MASK, %cx       # current-&gt;work
+    testw $_TIF_ALLWORK_MASK, %cx     # current-&gt;work
     jne syscall_exit_work
 
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#27809;&#26377;&#20854;&#23427;&#24037;&#20316;, &#30452;&#25509;&#35843;&#29992; RESTORE_ALL, &#36890;&#36807; iret &#36820;&#22238;</span>
@@ -882,10 +923,12 @@ work_pending:
     jmp restore_all
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="orgb4f2a36"></a>SAVE_ALL<br  /><div class="outline-text-6" id="text-1-3-1-3-2">
+<li><a id="sec-1-3-1-3-2" name="sec-1-3-1-3-2"></a>SAVE_ALL<br  /><div class="outline-text-6" id="text-1-3-1-3-2">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">SAVE_ALL</span>                                \
     cld;                                        \
     pushl %es;                                  \
@@ -908,33 +951,37 @@ work_pending:
 ebx, &#x2026; 中, 则 sys_clone 是一个标准的 c 函数, 会从 kernel stack 中取参数, 所以在 sys_clone 之前, system_call 需要通过 SAVE_ALL 将 ebx,
 ecx, &#x2026; 复制到 kernel stack 上
 </p>
-</div></li>
+</div>
+</li>
 
-<li><a id="org69e41ac"></a>RESTORE_ALL<br  /><div class="outline-text-6" id="text-1-3-1-3-3">
+<li><a id="sec-1-3-1-3-3" name="sec-1-3-1-3-3"></a>RESTORE_ALL<br  /><div class="outline-text-6" id="text-1-3-1-3-3">
 <p>
 RESTORE_ALL 与 SAVE_ALL 相反, 在 syscall 返回到 user mode 之前从 kernel
 stack 恢复 ebx 等寄存器
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c">popl %ebx;      \
-popl %ecx;      \
-popl %edx;      \
-popl %esi;      \
-popl %edi;      \
-popl %ebp;      \
+
+<pre class="src src-c">popl %ebx;    \
+popl %ecx;    \
+popl %edx;    \
+popl %esi;    \
+popl %edi;    \
+popl %ebp;    \
 popl %eax;  \
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org55c45df"></a>sys_clone<br  /><div class="outline-text-6" id="text-1-3-1-3-4">
+<li><a id="sec-1-3-1-3-4" name="sec-1-3-1-3-4"></a>sys_clone<br  /><div class="outline-text-6" id="text-1-3-1-3-4">
 <p>
 与一般 syscall 不同的是, sys_clone 的参数为 pt_regs 结构体, 实际上这个结构体与 kernel stack 是对应的, pt_regs.ebx 即对应于 SAVE_ALL 时 pushl
 的 ebx
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">pt_regs</span> {
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#20960;&#20010;&#23492;&#23384;&#22120;&#19982; SAVE_ALL &#26159;&#23545;&#24212;&#30340;</span>
     <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">ebx</span>;
@@ -964,6 +1011,7 @@ popl %eax;  \
 </div>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold;">sys_clone</span>(<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">pt_regs</span> <span style="font-weight: bold; font-style: italic;">regs</span>):
     <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span> clone_flags;
     <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">newsp</span>;
@@ -986,10 +1034,12 @@ popl %eax;  \
     <span style="font-weight: bold;">return</span> do_fork(clone_flags, newsp, &amp;regs, 0, parent_tidptr, child_tidptr);
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org659a5bf"></a>do_fork<br  /><div class="outline-text-6" id="text-1-3-1-3-5">
+<li><a id="sec-1-3-1-3-5" name="sec-1-3-1-3-5"></a>do_fork<br  /><div class="outline-text-6" id="text-1-3-1-3-5">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">do_fork</span>:
   <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">pid</span> = alloc_pidmap();
   p = copy_process(clone_flags, stack_start, regs, stack_size,
@@ -1023,87 +1073,107 @@ popl %eax;  \
   <span style="font-weight: bold;">return</span> pid;
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="orgd8fddd0"></a>ret_from_fork<br  /><div class="outline-text-6" id="text-1-3-1-3-6">
+<li><a id="sec-1-3-1-3-6" name="sec-1-3-1-3-6"></a>ret_from_fork<br  /><div class="outline-text-6" id="text-1-3-1-3-6">
 <p>
 ret_from_fork 会调用 RESTORE_ALL 然后 iret 返回到 user mode
 </p>
-</div></li></ol>
+</div>
+</li></ol>
 </div>
 </div>
 
-<div id="outline-container-orgc1db15e" class="outline-4">
-<h4 id="orgc1db15e"><span class="section-number-4">1.3.2</span> 关于系统调用 (syscall)</h4>
+<div id="outline-container-sec-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> 关于系统调用 (syscall)</h4>
 <div class="outline-text-4" id="text-1-3-2">
 <p>
 系统调用的过程在前面介绍 fork 的时候已经比较详细, 下面再总结一下:
 </p>
 </div>
 
-<div id="outline-container-org37c7da4" class="outline-5">
-<h5 id="org37c7da4"><span class="section-number-5">1.3.2.1</span> syscall 的过程</h5>
+<div id="outline-container-sec-1-3-2-1" class="outline-5">
+<h5 id="sec-1-3-2-1"><span class="section-number-5">1.3.2.1</span> syscall 的过程</h5>
 <div class="outline-text-5" id="text-1-3-2-1">
 <ol class="org-ol">
 <li>system call 首先是一个 interrupt, 所以硬件会先走正常 interrupt 的流程
 
 <ol class="org-ol">
 <li>从 idt 中找到 gate descriptor, 判断 xcs 的 CPL 与对应的 system
-gate 的 DPL 是否一致, 对 system call 来说, CPL 为 3, gate DPL 也为 3, 所以是一致的</li>
+gate 的 DPL 是否一致, 对 system call 来说, CPL 为 3, gate DPL 也为 3, 所以是一致的
+</li>
 
 <li>比较 xcs 的 CPL 与 system gate 中指定的 segment descriptor 的
 DPL 是否一致, 对于 system call 来说, xcs 对应的是 __USER_CS, 而
 segment descriptor 对应的是 __KERNEL_CS, 所以是不一致的, 这时会发生 stack 的切换
 
 <ul class="org-ul">
-<li>先从 tss-&gt;esp0 获得 kernel stack 的 esp, 切换到 kernel stack</li>
+<li>先从 tss-&gt;esp0 获得 kernel stack 的 esp, 切换到 kernel stack
+</li>
 
-<li>保存 ss, esp 到 kernel stack</li>
-</ul></li>
+<li>保存 ss, esp 到 kernel stack
+</li>
+</ul>
+</li>
 
 <li>如果 interrupt 的原因是 fault (例如 page fault), 这时会将 eip 修改为导致 fault 的指令的地址, 因为导致 fault 的代码需要在 interrupt
-结束后重新开始, 对于 system call 来说, 并不需要这一步</li>
+结束后重新开始, 对于 system call 来说, 并不需要这一步
+</li>
 
 <li>保存 user mode 的 eip, xcs, eflags  到 kernel stack, 其中, 针对
-interrupt 的类型: trap, fault, abort, 保存的 eip 会有差别</li>
+interrupt 的类型: trap, fault, abort, 保存的 eip 会有差别
+</li>
 
 <li>从 gate descriptor 中加载 kernel mode xcs (实际上就是__KERNEL_CS),
-以及对应 handler 的 eip (system_call), 从而切换到 kernel mode 并执行 system_call</li>
-</ol></li>
+以及对应 handler 的 eip (system_call), 从而切换到 kernel mode 并执行 system_call
+</li>
+</ol>
+</li>
 
-<li>system_call 会通过 SAVE_ALL 将 eax, ebx, ecx, edx, esi, edi, ebp 六个寄存器 push 到 kernel stack 上</li>
+<li>system_call 会通过 SAVE_ALL 将 eax, ebx, ecx, edx, esi, edi, ebp 六个寄存器 push 到 kernel stack 上
+</li>
 
-<li>根据 eax 的值 call 相应的 sys_xxx</li>
+<li>根据 eax 的值 call 相应的 sys_xxx
+</li>
 
-<li>sys_xxx 会从 kernel stack 上取参数并执行</li>
+<li>sys_xxx 会从 kernel stack 上取参数并执行
+</li>
 
-<li>sys_xxx 返回后 system_call 负责将用 eax 的值覆盖 kernel stack 上对应 eax 的位置</li>
+<li>sys_xxx 返回后 system_call 负责将用 eax 的值覆盖 kernel stack 上对应 eax 的位置
+</li>
 
-<li>RESTORE_ALL 会用 kernel stack 来恢复前面的六个寄存器</li>
+<li>RESTORE_ALL 会用 kernel stack 来恢复前面的六个寄存器
+</li>
 
 <li>执行 iret 指令
 
 <ol class="org-ol">
-<li>恢复 eip, xcs, eip  寄存器, 由于 xcs 被恢复为 user mode 的 xcs, 所以返回到 user mode</li>
+<li>恢复 eip, xcs, eip  寄存器, 由于 xcs 被恢复为 user mode 的 xcs, 所以返回到 user mode
+</li>
 
 <li>检查 CPL 与 system gate 中的 segment descriptor 的 DPL 是否一致,
-对 system call 来说, 必然是不一致的, 这里需要从 kernel stack 中恢复 ss 和 esp</li>
-</ol></li>
+对 system call 来说, 必然是不一致的, 这里需要从 kernel stack 中恢复 ss 和 esp
+</li>
+</ol>
+</li>
 </ol>
 </div>
 </div>
 
-<div id="outline-container-org1d5cfca" class="outline-5">
-<h5 id="org1d5cfca"><span class="section-number-5">1.3.2.2</span> 64bit 上的 syscall</h5>
+<div id="outline-container-sec-1-3-2-2" class="outline-5">
+<h5 id="sec-1-3-2-2"><span class="section-number-5">1.3.2.2</span> 64bit 上的 syscall</h5>
 <div class="outline-text-5" id="text-1-3-2-2">
 <p>
 需要注意的是 64 位系统上 syscall 的定义与 32 位是不一样的, 例如
 </p>
 
 <ol class="org-ol">
-<li>__NR_read 在 32 位上是 3, 在 64 位上是 0</li>
+<li>__NR_read 在 32 位上是 3, 在 64 位上是 0
+</li>
 
-<li>有些系统调用只存在于 64 位上, 例如 sys_pread64</li>
+<li>有些系统调用只存在于 64 位上, 例如 sys_pread64
+</li>
 </ol>
 
 <p>
@@ -1115,15 +1185,18 @@ interrupt 的类型: trap, fault, abort, 保存的 eip 会有差别</li>
 </p>
 
 <ol class="org-ol">
-<li><a href="http://docs.cs.up.ac.za/programming/asm/derick_tut/syscalls.html">http://docs.cs.up.ac.za/programming/asm/derick_tut/syscalls.html</a></li>
+<li><a href="http://docs.cs.up.ac.za/programming/asm/derick_tut/syscalls.html">http://docs.cs.up.ac.za/programming/asm/derick_tut/syscalls.html</a>
+</li>
 
-<li><a href="http://blog.rchapman.org/post/36801038863/linux-system-call-table-for-x86-64">http://blog.rchapman.org/post/36801038863/linux-system-call-table-for-x86-64</a></li>
+<li><a href="http://blog.rchapman.org/post/36801038863/linux-system-call-table-for-x86-64">http://blog.rchapman.org/post/36801038863/linux-system-call-table-for-x86-64</a>
+</li>
 
-<li><a href="https://github.com/torvalds/linux/blob/master/arch/x86/entry/syscalls/syscall_64.tbl">https://github.com/torvalds/linux/blob/master/arch/x86/entry/syscalls/syscall_64.tbl</a></li>
+<li><a href="https://github.com/torvalds/linux/blob/master/arch/x86/entry/syscalls/syscall_64.tbl">https://github.com/torvalds/linux/blob/master/arch/x86/entry/syscalls/syscall_64.tbl</a>
+</li>
 </ol>
 </div>
 
-<ol class="org-ol"><li><a id="orge2eeb85"></a>x86_64 如何同时兼容 32 位和 64 的 syscall<br  /><div class="outline-text-6" id="text-1-3-2-2-1">
+<ol class="org-ol"><li><a id="sec-1-3-2-2-1" name="sec-1-3-2-2-1"></a>x86_64 如何同时兼容 32 位和 64 的 syscall<br  /><div class="outline-text-6" id="text-1-3-2-2-1">
 <p>
 由于 x86_64 指令是兼容 x86 指令的, 所以 32 位的程序的用户态部分可以直接在 64 位上执行, 但 32 位程序在调用 syscall 时会有问题, 因为 32 位和
 64 位对 syscall 的定义是不同的, 因此需要针对 32 位程序额外提供一张
@@ -1143,8 +1216,9 @@ ia32_sys_call_table, 因为 64 位的程序是不会通过 int 0x80 发起 sysca
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="org685b5a6"></a>sys_call_table 的初始化<br  /><div class="outline-text-7" id="text-1-3-2-2-1-1">
+<ol class="org-ol"><li><a id="sec-1-3-2-2-1-1" name="sec-1-3-2-2-1-1"></a>sys_call_table 的初始化<br  /><div class="outline-text-7" id="text-1-3-2-2-1-1">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">syscall_init</span>:
   wrmsrl(MSR_LSTAR, system_call);
 
@@ -1161,10 +1235,12 @@ sys_call_table[__NR_syscall_max+1] = {
 };
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org37dfacc"></a>ia32_sys_call_table 的初始化<br  /><div class="outline-text-7" id="text-1-3-2-2-1-2">
+<li><a id="sec-1-3-2-2-1-2" name="sec-1-3-2-2-1-2"></a>ia32_sys_call_table 的初始化<br  /><div class="outline-text-7" id="text-1-3-2-2-1-2">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">trap_init</span>:
   set_system_gate(IA32_SYSCALL_VECTOR, ia32_syscall);
 
@@ -1178,9 +1254,11 @@ ia32_sys_call_table:
   .quad sys_read
 </pre>
 </div>
-</div></li></ol></li>
+</div>
+</li></ol>
+</li>
 
-<li><a id="org03b064d"></a>x86_64 上的 x32 ABI 与 syscall<br  /><div class="outline-text-6" id="text-1-3-2-2-2">
+<li><a id="sec-1-3-2-2-2" name="sec-1-3-2-2-2"></a>x86_64 上的 x32 ABI 与 syscall<br  /><div class="outline-text-6" id="text-1-3-2-2-2">
 <p>
 Kernel 支持一种称为 x32 的 ABI, 这种 ABI 可以利用 64 位的优点(更多的寄存器, 使用寄存器传递参数, 更快的系统调用&#x2026;), 但使用 32 位的指针和
 long 类型, 避免 64 位指针的开销. <a href="https://zh.wikipedia.org/wiki/X32_ABI">https://zh.wikipedia.org/wiki/X32_ABI</a>
@@ -1198,11 +1276,10 @@ syscall number 上做标记:
 </p>
 
 <ol class="org-ol">
-<li><p>
-libc 使用 <span class="underline"><span class="underline">ILP32</span></span> 时发起 syscall
-</p>
+<li>libc 使用 <span class="underline"><span class="underline">ILP32</span></span> 时发起 syscall
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">#ifdefined</span>(__ILP32__)
 <span style="font-weight: bold;">  #include</span> <span style="font-style: italic;">&lt;asm/unistd_x32.h&gt;</span>
 <span style="font-weight: bold;">#else</span>
@@ -1214,29 +1291,29 @@ unistd_x32.<span style="font-weight: bold; text-decoration: underline;">h</span>
 <span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">__NR_read</span> (__X32_SYSCALL_BIT + 0)
 <span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">__NR_write</span> (__X32_SYSCALL_BIT + 1)
 </pre>
-</div></li>
+</div>
+</li>
 
-<li><p>
-64 位 kernel 响应 syscall
-</p>
+<li>64 位 kernel 响应 syscall
 
 <p>
 由于 X32 ABI 下 syscall number 有额外的置位, 所以 syscall 时需要将它们 mask 掉
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">system_call</span>:
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">__SYSCALL_MASK &#20026; (~(__X32_SYSCALL_BIT))  </span>
   andl $__SYSCALL_MASK,%eax
   call *sys_call_table(,%rax,8)
 </pre>
-</div></li>
+</div>
+</li>
 
-<li><p>
-kernel 使用 rax 的 __X32_SYSCALL_BIT 判断是否是 X32 ABI
-</p>
+<li>kernel 使用 rax 的 __X32_SYSCALL_BIT 判断是否是 X32 ABI
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">is_compat_task</span>:
   <span style="font-weight: bold;">return</span> is_ia32_task() || is_x32_task();
 
@@ -1246,21 +1323,24 @@ kernel 使用 rax 的 __X32_SYSCALL_BIT 判断是否是 X32 ABI
   <span style="font-weight: bold;">else</span>:
     <span style="font-weight: bold;">return</span> <span style="font-weight: bold; text-decoration: underline;">false</span>;
 </pre>
-</div></li>
+</div>
+</li>
 </ol>
-</div></li></ol>
+</div>
+</li></ol>
 </div>
 
-<div id="outline-container-org4c908ef" class="outline-5">
-<h5 id="org4c908ef"><span class="section-number-5">1.3.2.3</span> sysenter, syscall, vsyscall</h5>
+<div id="outline-container-sec-1-3-2-3" class="outline-5">
+<h5 id="sec-1-3-2-3"><span class="section-number-5">1.3.2.3</span> sysenter, syscall, vsyscall</h5>
 <div class="outline-text-5" id="text-1-3-2-3">
 <p>
 vsyscall page 和一块特殊的 page: 这个 page 是由 kernel 分配的, 并映射到所有进程的同一块虚拟地址空间.
 </p>
 </div>
 
-<ol class="org-ol"><li><a id="orgc92ec70"></a>x86_32 下 vsyscall page 的初始化<br  /><div class="outline-text-6" id="text-1-3-2-3-1">
+<ol class="org-ol"><li><a id="sec-1-3-2-3-1" name="sec-1-3-2-3-1"></a>x86_32 下 vsyscall page 的初始化<br  /><div class="outline-text-6" id="text-1-3-2-3-1">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">sysenter_setup</span>:
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20998;&#37197;&#19968;&#20010; page  </span>
   <span style="font-weight: bold; text-decoration: underline;">void</span> *<span style="font-weight: bold; font-style: italic;">page</span> = (<span style="font-weight: bold; text-decoration: underline;">void</span> *)get_zeroed_page(GFP_ATOMIC);
@@ -1271,7 +1351,7 @@ vsyscall page 和一块特殊的 page: 这个 page 是由 kernel 分配的, 并�
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">FIX_VSYSCALL &#36825;&#20010; fixmap &#23545;&#24212;&#30340;&#29289;&#29702;&#22320;&#22336;&#21363;&#26159; 0xffffe000</span>
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">(VSYSCALL_BASE):</span>
   <span style="font-weight: bold; font-style: italic;">// </span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">#define VSYSCALL_BASE      (__fix_to_virt(FIX_VSYSCALL))  </span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">#define VSYSCALL_BASE    (__fix_to_virt(FIX_VSYSCALL))  </span>
   __set_fixmap(FIX_VSYSCALL, __pa(page), PAGE_READONLY_EXEC);
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22914;&#26524; CPU &#19981;&#25903;&#25345; sysenter/sysexit, &#21017;&#23558; vsyscall_int80_start &#22788;&#30340;&#20195;&#30721;</span>
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22797;&#21046;&#21040;&#36825;&#20010; page, &#21542;&#21017;&#23558; vsyscall_sysenter_start &#22788;&#30340;&#20195;&#30721;&#22797;&#29616;&#36807;&#26469;  </span>
@@ -1287,9 +1367,10 @@ vsyscall page 和一块特殊的 page: 这个 page 是由 kernel 分配的, 并�
     wrmsr(MSR_IA32_SYSENTER_EIP, (<span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>) sysenter_entry, 0);
 </pre>
 </div>
-</div></li>
+</div>
+</li>
 
-<li><a id="org16ddd29"></a>vsyscall page 的内容<br  /><div class="outline-text-6" id="text-1-3-2-3-2">
+<li><a id="sec-1-3-2-3-2" name="sec-1-3-2-3-2"></a>vsyscall page 的内容<br  /><div class="outline-text-6" id="text-1-3-2-3-2">
 <p>
 vsyscall page 被映射到的 fixmap (FIX_VSYSCALL) 的虚拟地址固定为
 0xffffe000 (VSYSCALL_BASE), 通过 maps 可以看到:
@@ -1325,6 +1406,7 @@ memory 命令):
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">#include</span> <span style="font-style: italic;">&lt;unistd.h&gt;</span>
 <span style="font-weight: bold;">#include</span> <span style="font-style: italic;">&lt;string.h&gt;</span>
 
@@ -1389,20 +1471,24 @@ ffffe447:	90                   	nop
 </p>
 
 <ol class="org-ol">
-<li>__kernel_vsyscall</li>
+<li>__kernel_vsyscall
+</li>
 
-<li>__kernel_sigreturn</li>
+<li>__kernel_sigreturn
+</li>
 
-<li>__kernel_rt_sigreturn</li>
+<li>__kernel_rt_sigreturn
+</li>
 </ol>
 
 <p>
-其中后两个与信号的处理有关 (参考<a href="signal.rel.html#org8231e30">_kernel_sigreturn</a>), 第一个
+其中后两个与信号的处理有关 (参考<a href="signal.rel.html">_kernel_sigreturn</a>), 第一个
 __kernel_vsyscall 和 syscall 有关
 </p>
-</div></li>
+</div>
+</li>
 
-<li><a id="orgdc2538d"></a>__kernel_vsyscall<br  /><div class="outline-text-6" id="text-1-3-2-3-3">
+<li><a id="sec-1-3-2-3-3" name="sec-1-3-2-3-3"></a>__kernel_vsyscall<br  /><div class="outline-text-6" id="text-1-3-2-3-3">
 <p>
 vsyscall 的想法是这样的: x86 上最初通过 int 0x80 指令发起 syscall, 但这种做法需要 CPU 做无谓的 ring 检查和切换, 所以后来 CPU 提供了一个
 sysenter 指令来代替 int 0x80. 那么 libc 怎么知道当前 CPU 是否支持
@@ -1418,9 +1504,10 @@ vsyscall page, 确切的说, 就是 0xffffe400 这个地址. sysenter_setup 时�
 需要注意的是 x86_64 下 vsyscall page 中并不存在 __kernel_vsyscall,因为
 x86_64 提供了一个 `syscall` 指令, 不再需要 int 0x80 或 sysenter
 </p>
-</div></li>
+</div>
+</li>
 
-<li><a id="org7cf1bc8"></a>更底什么是 vsyscall<br  /><div class="outline-text-6" id="text-1-3-2-3-4">
+<li><a id="sec-1-3-2-3-4" name="sec-1-3-2-3-4"></a>更底什么是 vsyscall<br  /><div class="outline-text-6" id="text-1-3-2-3-4">
 <p>
 __kernel_vsyscall 并不是 vsyscall. 无论使用 __kernel_vsyscall 还是使用
 x86_64 上更快的 `syscall` 指令, 在进行 syscall 都无法避免 user mode 与
@@ -1436,12 +1523,15 @@ vsyscall (virtual syscall) 就是这么一种机制. 以 gettimeofday 为例, �
 </p>
 
 <ol class="org-ol">
-<li>kernel 每次 update tick 时, 会向 vsyscall page 的特定区域写入当前的时间</li>
+<li>kernel 每次 update tick 时, 会向 vsyscall page 的特定区域写入当前的时间
+</li>
 
 <li>当上层发起 gettimeofday syscall 时, libc 会像调用 __kernel_vsyscall
-一样调用 vgettimeofday</li>
+   一样调用 vgettimeofday
+</li>
 
-<li>vgettimeofday 与 __kernel_vsyscall 一样存在于 vsyscall page 中, 这个函数只是简单的读一下 vsyscall page 中的那个时间</li>
+<li>vgettimeofday 与 __kernel_vsyscall 一样存在于 vsyscall page 中, 这个函数只是简单的读一下 vsyscall page 中的那个时间
+</li>
 </ol>
 
 <p>
@@ -1452,38 +1542,44 @@ syspage 时并没有找到 vgettimeofday.
 <p>
 x86_64 上关于 vsyscall 的代码主要在 arch/x86_64/kernel/vsyscall.c 中
 </p>
-</div></li>
+</div>
+</li>
 
-<li><a id="orgd6bf499"></a>libc 如何知道 __kernel_vsyscall, vgettimeofday 这些函数在 vsyscall page 中的地址?<br  /><ol class="org-ol"><li><a id="orgdc2538d"></a>__kernel_vsyscall<br  /><div class="outline-text-7" id="text-1-3-2-3-5-1">
+<li><a id="sec-1-3-2-3-5" name="sec-1-3-2-3-5"></a>libc 如何知道 __kernel_vsyscall, vgettimeofday 这些函数在 vsyscall page 中的地址?<br  /><ol class="org-ol"><li><a id="sec-1-3-2-3-5-1" name="sec-1-3-2-3-5-1"></a>__kernel_vsyscall<br  /><div class="outline-text-7" id="text-1-3-2-3-5-1">
 <ol class="org-ol">
-<li><p>
-kernel 将 __kernel_vsyscall 的地址放在 elf 的 aux vector 中
-</p>
+<li>kernel 将 __kernel_vsyscall 的地址放在 elf 的 aux vector 中
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">do_execve</span>:
   <span style="font-weight: bold; text-decoration: underline;">create_elf_tables</span>:
     <span style="font-weight: bold; text-decoration: underline;">ARCH_DLINFO</span>
       <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">VSYSCALL_ENTRY &#21363;&#20026; __kernel_vsyscall &#30340;&#22320;&#22336;: 0xffffe400</span>
-      <span style="font-weight: bold;">NEW_AUX_ENT</span>(AT_SYSINFO,   VSYSCALL_ENTRY);
+      <span style="font-weight: bold;">NEW_AUX_ENT</span>(AT_SYSINFO,      VSYSCALL_ENTRY);
 </pre>
-</div></li>
+</div>
+</li>
 
-<li>libc 从 aux vector 中取出 __kernel_vsyscall 的地址</li>
+<li>libc 从 aux vector 中取出 __kernel_vsyscall 的地址 
+</li>
 </ol>
-</div></li>
+</div>
+</li>
 
-<li><a id="org2fb1754"></a>vgettimeofday<br  /><div class="outline-text-7" id="text-1-3-2-3-5-2">
+<li><a id="sec-1-3-2-3-5-2" name="sec-1-3-2-3-5-2"></a>vgettimeofday<br  /><div class="outline-text-7" id="text-1-3-2-3-5-2">
 <p>
 vsyscall 实际上只支持三个 syscall:
 </p>
 
 <ol class="org-ol">
-<li>gettimeofday</li>
+<li>gettimeofday
+</li>
 
-<li>getcpu</li>
+<li>getcpu
+</li>
 
-<li>time</li>
+<li>time
+</li>
 </ol>
 
 <p>
@@ -1496,16 +1592,19 @@ glibc 中关于 __gettimeofday 的代码:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-c"><span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">VSYSCALL_ADDR_vgettimeofday</span>     0xffffffffff600000
+
+<pre class="src src-c"><span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">VSYSCALL_ADDR_vgettimeofday</span>   0xffffffffff600000
 ENTRY (__gettimeofday):
-  movq  $VSYSCALL_ADDR_vgettimeofday, %rax
-  callq *%rax
+  movq        $VSYSCALL_ADDR_vgettimeofday, %rax
+  callq       *%rax
   ...
 </pre>
 </div>
-</div></li></ol></li>
+</div>
+</li></ol>
+</li>
 
-<li><a id="org78bded7"></a>VDSO<br  /><div class="outline-text-6" id="text-1-3-2-3-6">
+<li><a id="sec-1-3-2-3-6" name="sec-1-3-2-3-6"></a>VDSO<br  /><div class="outline-text-6" id="text-1-3-2-3-6">
 <p>
 vsyscall page 被映射到固定的地址 (例如 x86_32 上的 0xffffe000, x86_64
 上的 0xffffffffff600000), 所以存在安全问题. 因此 kernel 又采用了一种称为
@@ -1525,9 +1624,10 @@ vgettimeofday 会更安全. 但 vsyscall page 中的 __kernel_sigreturn 函数�
 7ffd1668f000-7ffd16691000 r-xp 00000000 00:00 0                          [vdso]
 ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
 </pre>
-</div></li>
+</div>
+</li>
 
-<li><a id="orgb83f8e2"></a>See also<br  /><div class="outline-text-6" id="text-1-3-2-3-7">
+<li><a id="sec-1-3-2-3-7" name="sec-1-3-2-3-7"></a>See also<br  /><div class="outline-text-6" id="text-1-3-2-3-7">
 <p>
 <a href="http://www.ibm.com/developerworks/cn/linux/kernel/l-k26ncpu/index.html">Linux 2.6 对新型 CPU 快速系统调用的支持</a>
 </p>
@@ -1539,15 +1639,16 @@ ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsysca
 <p>
 <a href="http://www.lenky.info/archives/2013/02/2199">http://www.lenky.info/archives/2013/02/2199</a>
 </p>
-</div></li></ol>
+</div>
+</li></ol>
 </div>
 </div>
 
-<div id="outline-container-org4e5b78c" class="outline-4">
-<h4 id="org4e5b78c"><span class="section-number-4">1.3.3</span> Kernel Thread</h4>
+<div id="outline-container-sec-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> Kernel Thread</h4>
 <div class="outline-text-4" id="text-1-3-3">
-</div><div id="outline-container-org8073f87" class="outline-5">
-<h5 id="org8073f87"><span class="section-number-5">1.3.3.1</span> Overview</h5>
+</div><div id="outline-container-sec-1-3-3-1" class="outline-5">
+<h5 id="sec-1-3-3-1"><span class="section-number-5">1.3.3.1</span> Overview</h5>
 <div class="outline-text-5" id="text-1-3-3-1">
 <p>
 Kernel thread 与普通 task 一样, 也是通过 fork 创建的, 有相应的
@@ -1556,27 +1657,31 @@ task_struct 结构, 与普通 task 一样进行调度&#x2026;等, 但也有它�
 
 <ol class="org-ol">
 <li>kernel thread 只会在 kernel mode 执行, 它永远不会 "返回" 到 user
-mode</li>
+mode
+</li>
 
-<li>它只会访问高 1G 的内存, 即它只会使用页表中对应高 1G 的部分</li>
+<li>它只会访问高 1G 的内存, 即它只会使用页表中对应高 1G 的部分
+</li>
 
 <li>kernel thread 没有任何 vma, 所以 task_struct-&gt;mm 为 NULL, 但 kernel
 thread 还是需要使用页表的 (mm-&gt;pgd), 所以它虽然没有 mm, 但会通过
 task_struct-&gt;active_mm "借用" switch_to 的前一个进程的页表, 以避免
-TLB flush</li>
+TLB flush
+</li>
 </ol>
 </div>
 </div>
 
-<div id="outline-container-org64dec0f" class="outline-5">
-<h5 id="org64dec0f"><span class="section-number-5">1.3.3.2</span> 创建 kernel thread</h5>
+<div id="outline-container-sec-1-3-3-2" class="outline-5">
+<h5 id="sec-1-3-3-2"><span class="section-number-5">1.3.3.2</span> 创建 kernel thread</h5>
 <div class="outline-text-5" id="text-1-3-3-2">
-</div><ol class="org-ol"><li><a id="org9a8c428"></a>kernel_thread<br  /><div class="outline-text-6" id="text-1-3-3-2-1">
+</div><ol class="org-ol"><li><a id="sec-1-3-3-2-1" name="sec-1-3-3-2-1"></a>kernel_thread<br  /><div class="outline-text-6" id="text-1-3-3-2-1">
 <p>
 kernel thread 与普通进程一样, 也是通过 do_fork 创建的, 但有些差别
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">kernel_thread</span>:
   <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">pt_regs</span> <span style="font-weight: bold; font-style: italic;">regs</span>;
   memset(&amp;regs, 0, <span style="font-weight: bold;">sizeof</span>(regs));
@@ -1607,8 +1712,9 @@ kernel thread 与普通进程一样, 也是通过 do_fork 创建的, 但有些�
 </div>
 </div>
 
-<ol class="org-ol"><li><a id="org676b402"></a>kernel_thread_helper<br  /><div class="outline-text-7" id="text-1-3-3-2-1-1">
+<ol class="org-ol"><li><a id="sec-1-3-3-2-1-1" name="sec-1-3-3-2-1-1"></a>kernel_thread_helper<br  /><div class="outline-text-7" id="text-1-3-3-2-1-1">
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold;">__asm__</span>(
     <span style="font-style: italic;">".section .text\n"</span>
     <span style="font-style: italic;">"kernel_thread_helper:\n\t"</span>
@@ -1621,9 +1727,11 @@ kernel thread 与普通进程一样, 也是通过 do_fork 创建的, 但有些�
     );
 </pre>
 </div>
-</div></li></ol></li>
+</div>
+</li></ol>
+</li>
 
-<li><a id="org627fb97"></a>kthread_create<br  /><div class="outline-text-6" id="text-1-3-3-2-2">
+<li><a id="sec-1-3-3-2-2" name="sec-1-3-3-2-2"></a>kthread_create<br  /><div class="outline-text-6" id="text-1-3-3-2-2">
 <p>
 kernel thread 是通过 fork 创建的, 那么 fork from "who" 是一个问题.
 </p>
@@ -1648,13 +1756,14 @@ schedule policy, uid 等, 这些也不是 kernel 期望的
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">lo_ioctl</span>:
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">ioctl &#26469;&#33258; syscall, &#25152;&#20197;&#36825;&#37324;&#35843;&#29992; kernel_thread &#30340;&#35805;&#20250;&#23548;&#33268;&#21019;&#24314;&#30340;</span>
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">kernel thread &#19982;&#21457;&#36215; ioctl &#30340;&#26222;&#36890;&#36827;&#31243;&#20849;&#20139;&#36164;&#28304;</span>
   <span style="font-weight: bold; text-decoration: underline;">loop_set_fd</span>
     <span style="font-weight: bold;">kernel_thread</span>(loop_thread, lo, CLONE_KERNEL);
 
-loop_thread:
+<span style="font-weight: bold; text-decoration: underline;">loop_thread</span>:
   daemonize(<span style="font-style: italic;">"loop%d"</span>, lo-&gt;lo_number);
     exit_mm(current);
     <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">Block and flush all signals    </span>
@@ -1686,45 +1795,45 @@ thread 呢?
 kthread_create 就是做的这件事: 通过 kthread_create 可以给 keventd 发送一个消息 (workqueue), keventd 负责调用 kernel_thread 来创建 kernel
 thread.
 </p>
-</div></li></ol>
+</div>
+</li></ol>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgc39dafd" class="outline-3">
-<h3 id="orgc39dafd"><span class="section-number-3">1.4</span> 销毁进程</h3>
+<div id="outline-container-sec-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> 销毁进程</h3>
 <div class="outline-text-3" id="text-1-4">
 <p>
 进程销毁有两个相关系统调用:
 </p>
 
 <ol class="org-ol">
-<li><p>
-exit_group
-</p>
+<li>exit_group
 
 <p>
 整个线程组的所有线程都会退出, libc 中的 exit 函数会调用 exit_group
-</p></li>
-
-<li><p>
-_exit
 </p>
+</li>
+
+<li>_exit
 
 <p>
 只会导致当前线程退出, libc 中的 pthread_exit 会调用 _exit
-</p></li>
+</p>
+</li>
 </ol>
 </div>
 
-<div id="outline-container-org1dc32b9" class="outline-4">
-<h4 id="org1dc32b9"><span class="section-number-4">1.4.1</span> main 返回</h4>
+<div id="outline-container-sec-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> main 返回</h4>
 <div class="outline-text-4" id="text-1-4-1">
 <p>
 c 程序中 main 函数的调用路径为:
 </p>
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">__start</span>:
   <span style="font-weight: bold; text-decoration: underline;">__libc_start_main</span>
     <span style="font-weight: bold;">exit</span>(<span style="font-weight: bold; text-decoration: underline;">main</span>())
@@ -1738,11 +1847,11 @@ c 程序中 main 函数的调用路径为:
 </div>
 </div>
 
-<div id="outline-container-org05a6ae1" class="outline-3">
-<h3 id="org05a6ae1"><span class="section-number-3">1.5</span> Appendix</h3>
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> Appendix</h3>
 <div class="outline-text-3" id="text-1-5">
-</div><div id="outline-container-orgd4db7bb" class="outline-4">
-<h4 id="orgd4db7bb"><span class="section-number-4">1.5.1</span> 0 号进程与 1 号进程</h4>
+</div><div id="outline-container-sec-1-5-1" class="outline-4">
+<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> 0 号进程与 1 号进程</h4>
 <div class="outline-text-4" id="text-1-5-1">
 <p>
 0 号进程, 即 swapper, idle 或 init_task. kernel 启动时是以 0 号进程(后面统称 swapper) 的身份在运行的
@@ -1750,31 +1859,32 @@ c 程序中 main 函数的调用路径为:
 
 <ol class="org-ol">
 <li>首先, swapper 对应的 task_struct 为 init_task, 是静态初始化的, 其中最重要的数据结构是 init_task-&gt;thread_info, 也是静态初始化的, 为
-init_thread_info.</li>
+init_thread_info.
+</li>
 
-<li><p>
-head.S 定义了一个 entry 为 stack_start
-</p>
+<li>head.S 定义了一个 entry 为 stack_start
 
 <div class="org-src-container">
+
 <pre class="src src-c">ENTRY(stack_start)
 .<span style="font-weight: bold; text-decoration: underline;">long</span> init_thread_union+THREAD_SIZE
 .<span style="font-weight: bold; text-decoration: underline;">long</span> __BOOT_DS
-ready:  .byte 0
+ready:     .byte 0
 </pre>
 </div>
 
 <p>
 其中的 init_thread_union 与 init_thread_info 地址相同
-</p></li>
-
-<li>startup_32 时会将 stack_start 设置为初始的 esp, 从此以后 kernel 相当于以 swapper 进程的身份在运行了</li>
-
-<li><p>
-kernel 启动的最后阶段, 调用了 rest_init 来启动 1 号进程 (init), 同时自身通过运行 cpu_idle 变成名副其实的 idle 进程
 </p>
+</li>
+
+<li>startup_32 时会将 stack_start 设置为初始的 esp, 从此以后 kernel 相当于以 swapper 进程的身份在运行了
+</li>
+
+<li>kernel 启动的最后阶段, 调用了 rest_init 来启动 1 号进程 (init), 同时自身通过运行 cpu_idle 变成名副其实的 idle 进程
 
 <div class="org-src-container">
+
 <pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">rest_init</span>:
   kernel_thread(init, <span style="font-weight: bold; text-decoration: underline;">NULL</span>, CLONE_FS | CLONE_SIGHAND);
   cpu_idle();
@@ -1784,9 +1894,11 @@ kernel 启动的最后阶段, 调用了 rest_init 来启动 1 号进程 (init), 
         cpu_relax()  
       schedule()
 </pre>
-</div></li>
+</div>
+</li>
 
-<li>swapper 也是一个进程, 所以它也会参与到进程调试中, 只不过它是进程调试最后的选择</li>
+<li>swapper 也是一个进程, 所以它也会参与到进程调试中, 只不过它是进程调试最后的选择
+</li>
 </ol>
 </div>
 </div>
@@ -1794,11 +1906,17 @@ kernel 启动的最后阶段, 调用了 rest_init 来启动 1 号进程 (init), 
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-07-08 Fri&gt;</span></span></p>
-<p class="author">Author: Wei Sun (孙伟)</p>
-<p class="email">Email: <a href="mailto:wei.sun@spreadtrum.com">wei.sun@spreadtrum.com</a></p>
-<p class="date">Created: 2016-09-10 Sat 21:22</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+
+<div id="disqus_thread"></div>
+<script>
+
+(function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = '//sunwayforever-github-io.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+})();
+</script>
 </div>
 </body>
 </html>
