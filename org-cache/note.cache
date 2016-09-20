@@ -57,7 +57,7 @@
 (puthash "X06c8219c065bd6d66a846d591ce2a3315024d910" 1474009937 org-publish-cache)
 (puthash "X972a4e4fc2071230fb250a61c8a8295cff9172af" 1474001960 org-publish-cache)
 (puthash "X6f9b79d5c39b2e39f942dc0f3114f673884bc5cf" 1474001950 org-publish-cache)
-(puthash "X59f41b263e4b842848f0953b7a3c48b4869b0bbf" 1474361924 org-publish-cache)
+(puthash "X59f41b263e4b842848f0953b7a3c48b4869b0bbf" 1474362131 org-publish-cache)
 (puthash "X830cd6d93005b14c12704602a67ec66dc364e4f5" 1474360706 org-publish-cache)
 (puthash "/home/sunway/note/index.org" '(:numbering nil :index nil) org-publish-cache)
 (puthash "Xbca19483a2b440622a5979df87da2cab01ce9e9e" 1474361049 org-publish-cache)
