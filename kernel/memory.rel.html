@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Linux Kernel: Memory</title>
-<!-- 2016-09-19 Mon 18:16 -->
+<!-- 2016-09-20 Tue 16:33 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -1903,7 +1903,7 @@ object 数为 (4096-20)/300 = 13, 则不考虑 colouring 的情况下, slab 的�
 </ol>
 
 <p>
-可见 slab<sup><a id="fnr.6" name="fnr.6" class="footref" href="#fn.6">6</a></sup> 到 slab<sup><a id="fnr.7" name="fnr.7" class="footref" href="#fn.7">7</a></sup> 的 offset 依次相差一个 cache line 的大小. 相对而言这些 slab 中的对象被 cache 到同一条 cache line 的可能性会小一些.
+可见 slab(0) 到 slab(4) 的 offset 依次相差一个 cache line 的大小. 相对而言这些 slab 中的对象被 cache 到同一条 cache line 的可能性会小一些.
 </p>
 </div>
 </div>
@@ -3006,7 +3006,7 @@ libc 有两个和 brk 相关的函数:
   <span style="font-weight: bold;">if</span> (rlim &lt; RLIM_INFINITY &amp;&amp; brk - mm-&gt;start_data &gt; rlim):
     <span style="font-weight: bold;">goto</span> <span style="font-weight: bold; text-decoration: underline;">out</span>;
 
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509;&#26080;&#27861;&#22312;&#24403;&#21069; brk &#22522;&#30784;&#19978;&#21521;&#21518;&#36890;&#36807; mmap &#25193;&#23637;&#21040;&#26032;&#30340; brk &#26102;&#21457;&#29616;&#24050;&#32463;&#23384;&#22312;&#21478;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509;&#22312;&#24403;&#21069; brk &#22522;&#30784;&#19978;&#23581;&#35797;&#21521;&#21518;&#36890;&#36807; mmap &#25193;&#23637;&#21040;&#26032;&#30340; brk &#26102;&#21457;&#29616;&#24050;&#32463;&#23384;&#22312;&#21478;</span>
   <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19968;&#20010; mmap &#23548;&#33268;&#26080;&#27861;&#25193;&#23637;, &#21017;&#30452;&#25509;&#25253;&#38169;  </span>
   <span style="font-weight: bold;">if</span> (find_vma_intersection(mm, oldbrk, newbrk+PAGE_SIZE)):
     <span style="font-weight: bold;">goto</span> <span style="font-weight: bold; text-decoration: underline;">out</span>;
@@ -4247,10 +4247,6 @@ select_bad_process 选择一个 victim, 选择的标准是:
 <div class="footdef"><sup><a id="fn.5" name="fn.5" class="footnum" href="#fnr.5">5</a></sup> <p class="footpara">
 swapper (或 idle 进程, init_task, 0 号进程) 是一个例外: 它会使用 swapper_pg_dir 做为 page table
 </p></div>
-
-<div class="footdef"><sup><a id="fn.6" name="fn.6" class="footnum" href="#fnr.6">6</a></sup> <p>DEFINITION NOT FOUND.</p></div>
-
-<div class="footdef"><sup><a id="fn.7" name="fn.7" class="footnum" href="#fnr.7">7</a></sup> <p>DEFINITION NOT FOUND.</p></div>
 
 
 </div>
