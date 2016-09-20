@@ -4,90 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Algorithm: Quick Min Select</title>
-<!-- 2016-09-20 二 16:45 -->
+<!-- 2016-09-20 Tue 17:00 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
-  .title  { text-align: center; }
-  .todo   { font-family: monospace; color: red; }
-  .done   { color: green; }
-  .tag    { background-color: #eee; font-family: monospace;
-            padding: 2px; font-size: 80%; font-weight: normal; }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .center { margin-left: auto; margin-right: auto; text-align: center; }
-  .underline { text-decoration: underline; }
-  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
-  p.verse { margin-left: 3%; }
-  pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
-    padding: 8pt;
-    font-family: monospace;
-    overflow: auto;
-    margin: 1.2em;
-  }
-  pre.src {
-    position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
-  }
-  pre.src:before {
-    display: none;
-    position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
-    padding: 3px;
-    border: 1px solid black;
-  }
-  pre.src:hover:before { display: inline;}
-  pre.src-sh:before    { content: 'sh'; }
-  pre.src-bash:before  { content: 'sh'; }
-  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-R:before     { content: 'R'; }
-  pre.src-perl:before  { content: 'Perl'; }
-  pre.src-java:before  { content: 'Java'; }
-  pre.src-sql:before   { content: 'SQL'; }
-
-  table { border-collapse:collapse; }
-  caption.t-above { caption-side: top; }
-  caption.t-bottom { caption-side: bottom; }
-  td, th { vertical-align:top;  }
-  th.right  { text-align: center;  }
-  th.left   { text-align: center;   }
-  th.center { text-align: center; }
-  td.right  { text-align: right;  }
-  td.left   { text-align: left;   }
-  td.center { text-align: center; }
-  dt { font-weight: bold; }
-  .footpara:nth-child(2) { display: inline; }
-  .footpara { display: block; }
-  .footdef  { margin-bottom: 1em; }
-  .figure { padding: 1em; }
-  .figure p { text-align: center; }
-  .inlinetask {
-    padding: 10px;
-    border: 2px solid gray;
-    margin: 10px;
-    background: #ffffcc;
-  }
-  #org-div-home-and-up
-   { text-align: right; font-size: 70%; white-space: nowrap; }
-  textarea { overflow-x: auto; }
-  .linenr { font-size: smaller }
-  .code-highlighted { background-color: #ffff00; }
-  .org-info-js_info-navigation { border-style: none; }
-  #org-info-js_console-label
-    { font-size: 10px; font-weight: bold; white-space: nowrap; }
-  .org-info-js_search-highlight
-    { background-color: #ffff00; color: #000000; font-weight: bold; }
-  /*]]>*/-->
-</style>
+<link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -151,44 +72,44 @@ for the JavaScript code in this tag.
 <div class="outline-text-2" id="text-1">
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #6272a4;">#</span><span style="color: #6272a4;">!/usr/bin/env python3</span>
-<span style="color: #6272a4;"># </span><span style="color: #6272a4;">-*- coding: utf-8 -*-</span>
+<pre class="src src-python"><span style="font-weight: bold; font-style: italic;">#</span><span style="font-weight: bold; font-style: italic;">!/usr/bin/env python3</span>
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">-*- coding: utf-8 -*-</span>
 
 
-<span style="color: #ff79c6; font-weight: bold;">class</span> <span style="color: #f8f8f2;">Solution</span>(<span style="color: #8be9fd;">object</span>):
+<span style="font-weight: bold;">class</span> <span style="font-weight: bold; text-decoration: underline;">Solution</span>(<span style="font-weight: bold;">object</span>):
 
-    <span style="color: #ff79c6; font-weight: bold;">def</span> <span style="color: #50fa7b; font-weight: bold;">quickMinSelect</span>(<span style="color: #ff79c6; font-weight: bold;">self</span>, A, f, t, n):
-        <span style="color: #6272a4;">"""</span>
-<span style="color: #6272a4;">        1 2 3 4 5 6</span>
-<span style="color: #6272a4;">        0   2     5</span>
-<span style="color: #6272a4;">        f   s     t</span>
-<span style="color: #6272a4;">        """</span>
-        <span style="color: #ff79c6; font-weight: bold;">if</span> (n &lt;= 0 <span style="color: #ff79c6; font-weight: bold;">or</span> f &gt;= t):
-            <span style="color: #ff79c6; font-weight: bold;">return</span>
-        <span style="color: #ff79c6; font-weight: bold;">if</span> (n &gt; t - f + 1):
-            <span style="color: #f8f8f2;">n</span> = t - f + 1
-        <span style="color: #f8f8f2;">s</span> = <span style="color: #ff79c6; font-weight: bold;">self</span>.partition(A, f, t)
-        <span style="color: #ff79c6; font-weight: bold;">self</span>.quickMinSelect(A, f, s - 1, n)
-        <span style="color: #ff79c6; font-weight: bold;">self</span>.quickMinSelect(A, s + 1, t, n - s + f - 1)
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">quickMinSelect</span>(<span style="font-weight: bold;">self</span>, A, f, t, n):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        1 2 3 4 5 6</span>
+<span style="font-style: italic;">        0   2     5</span>
+<span style="font-style: italic;">        f   s     t</span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold;">if</span> (n &lt;= 0 <span style="font-weight: bold;">or</span> f &gt;= t):
+            <span style="font-weight: bold;">return</span>
+        <span style="font-weight: bold;">if</span> (n &gt; t - f + 1):
+            <span style="font-weight: bold; font-style: italic;">n</span> = t - f + 1
+        <span style="font-weight: bold; font-style: italic;">s</span> = <span style="font-weight: bold;">self</span>.partition(A, f, t)
+        <span style="font-weight: bold;">self</span>.quickMinSelect(A, f, s - 1, n)
+        <span style="font-weight: bold;">self</span>.quickMinSelect(A, s + 1, t, n - s + f - 1)
 
-    <span style="color: #ff79c6; font-weight: bold;">def</span> <span style="color: #50fa7b; font-weight: bold;">partition</span>(<span style="color: #ff79c6; font-weight: bold;">self</span>, A, f, t):
-        <span style="color: #6272a4;">"""</span>
-<span style="color: #6272a4;">        1 2 3 4 5</span>
-<span style="color: #6272a4;">        s f     t</span>
-<span style="color: #6272a4;">        """</span>
-        <span style="color: #f8f8f2;">s</span> = f
-        <span style="color: #f8f8f2;">f</span> += 1
-        <span style="color: #ff79c6; font-weight: bold;">for</span> i <span style="color: #ff79c6; font-weight: bold;">in</span> <span style="color: #8be9fd;">range</span>(f, t + 1):
-            <span style="color: #ff79c6; font-weight: bold;">if</span> (A[f] &lt; A[s]):
-                A[f], <span style="color: #f8f8f2;">A</span>[s + 1] = A[s + 1], A[f]
-                A[s], <span style="color: #f8f8f2;">A</span>[s + 1] = A[s + 1], A[s]
-                <span style="color: #f8f8f2;">s</span> += 1
-            <span style="color: #f8f8f2;">f</span> += 1
-        <span style="color: #ff79c6; font-weight: bold;">return</span> s
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">partition</span>(<span style="font-weight: bold;">self</span>, A, f, t):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        1 2 3 4 5</span>
+<span style="font-style: italic;">        s f     t</span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold; font-style: italic;">s</span> = f
+        <span style="font-weight: bold; font-style: italic;">f</span> += 1
+        <span style="font-weight: bold;">for</span> i <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(f, t + 1):
+            <span style="font-weight: bold;">if</span> (A[f] &lt; A[s]):
+                A[f], <span style="font-weight: bold; font-style: italic;">A</span>[s + 1] = A[s + 1], A[f]
+                A[s], <span style="font-weight: bold; font-style: italic;">A</span>[s + 1] = A[s + 1], A[s]
+                <span style="font-weight: bold; font-style: italic;">s</span> += 1
+            <span style="font-weight: bold; font-style: italic;">f</span> += 1
+        <span style="font-weight: bold;">return</span> s
 
-<span style="color: #f8f8f2;">A</span> = [2, 6, 1, 2, 6, 4, 5, 6, 10, -1, 100, -1, 9, 8]
-Solution().quickMinSelect(A, 0, <span style="color: #8be9fd;">len</span>(A) - 1, 5)
-<span style="color: #ff79c6; font-weight: bold;">print</span>(A)
+<span style="font-weight: bold; font-style: italic;">A</span> = [2, 6, 1, 2, 6, 4, 5, 6, 10, -1, 100, -1, 9, 8]
+Solution().quickMinSelect(A, 0, <span style="font-weight: bold;">len</span>(A) - 1, 5)
+<span style="font-weight: bold;">print</span>(A)
 </pre>
 </div>
 </div>

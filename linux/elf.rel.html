@@ -4,90 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Linux: ELF</title>
-<!-- 2016-09-20 二 16:44 -->
+<!-- 2016-09-20 Tue 17:00 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
-  .title  { text-align: center; }
-  .todo   { font-family: monospace; color: red; }
-  .done   { color: green; }
-  .tag    { background-color: #eee; font-family: monospace;
-            padding: 2px; font-size: 80%; font-weight: normal; }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .center { margin-left: auto; margin-right: auto; text-align: center; }
-  .underline { text-decoration: underline; }
-  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
-  p.verse { margin-left: 3%; }
-  pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
-    padding: 8pt;
-    font-family: monospace;
-    overflow: auto;
-    margin: 1.2em;
-  }
-  pre.src {
-    position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
-  }
-  pre.src:before {
-    display: none;
-    position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
-    padding: 3px;
-    border: 1px solid black;
-  }
-  pre.src:hover:before { display: inline;}
-  pre.src-sh:before    { content: 'sh'; }
-  pre.src-bash:before  { content: 'sh'; }
-  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-R:before     { content: 'R'; }
-  pre.src-perl:before  { content: 'Perl'; }
-  pre.src-java:before  { content: 'Java'; }
-  pre.src-sql:before   { content: 'SQL'; }
-
-  table { border-collapse:collapse; }
-  caption.t-above { caption-side: top; }
-  caption.t-bottom { caption-side: bottom; }
-  td, th { vertical-align:top;  }
-  th.right  { text-align: center;  }
-  th.left   { text-align: center;   }
-  th.center { text-align: center; }
-  td.right  { text-align: right;  }
-  td.left   { text-align: left;   }
-  td.center { text-align: center; }
-  dt { font-weight: bold; }
-  .footpara:nth-child(2) { display: inline; }
-  .footpara { display: block; }
-  .footdef  { margin-bottom: 1em; }
-  .figure { padding: 1em; }
-  .figure p { text-align: center; }
-  .inlinetask {
-    padding: 10px;
-    border: 2px solid gray;
-    margin: 10px;
-    background: #ffffcc;
-  }
-  #org-div-home-and-up
-   { text-align: right; font-size: 70%; white-space: nowrap; }
-  textarea { overflow-x: auto; }
-  .linenr { font-size: smaller }
-  .code-highlighted { background-color: #ffff00; }
-  .org-info-js_info-navigation { border-style: none; }
-  #org-info-js_console-label
-    { font-size: 10px; font-weight: bold; white-space: nowrap; }
-  .org-info-js_search-highlight
-    { background-color: #ffff00; color: #000000; font-weight: bold; }
-  /*]]>*/-->
-</style>
+<link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -435,29 +356,29 @@ PT_DYNAMIC 指向 dynamic section, loader 会需要 dynamic section 中的数据
 <div class="outline-text-3" id="text-1-4">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #6272a4;">/* </span><span style="color: #6272a4;">gcc -shared -fPIC -o libfoo.so foo.c </span><span style="color: #6272a4;">*/</span>
-<span style="color: #6272a4;">/* </span><span style="color: #6272a4;">gcc -shared -fPIC -o libbar.so bar.c </span><span style="color: #6272a4;">*/</span>
-<span style="color: #6272a4;">/* </span><span style="color: #6272a4;">gcc main.c -L. -lfoo -lbar </span><span style="color: #6272a4;">*/</span>
+<pre class="src src-c"><span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">gcc -shared -fPIC -o libfoo.so foo.c </span><span style="font-weight: bold; font-style: italic;">*/</span>
+<span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">gcc -shared -fPIC -o libbar.so bar.c </span><span style="font-weight: bold; font-style: italic;">*/</span>
+<span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">gcc main.c -L. -lfoo -lbar </span><span style="font-weight: bold; font-style: italic;">*/</span>
 
-<span style="color: #6272a4;">/* </span><span style="color: #6272a4;">main.c </span><span style="color: #6272a4;">*/</span>
-<span style="color: #ff79c6; font-weight: bold;">extern</span> <span style="color: #f8f8f2;">void</span> <span style="color: #50fa7b; font-weight: bold;">foo</span>();
-<span style="color: #ff79c6; font-weight: bold;">extern</span> <span style="color: #f8f8f2;">void</span> <span style="color: #50fa7b; font-weight: bold;">bar</span>();
+<span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">main.c </span><span style="font-weight: bold; font-style: italic;">*/</span>
+<span style="font-weight: bold;">extern</span> <span style="font-weight: bold; text-decoration: underline;">void</span> <span style="font-weight: bold;">foo</span>();
+<span style="font-weight: bold;">extern</span> <span style="font-weight: bold; text-decoration: underline;">void</span> <span style="font-weight: bold;">bar</span>();
 
-<span style="color: #f8f8f2;">int</span> <span style="color: #50fa7b; font-weight: bold;">main</span>(<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">argc</span>, <span style="color: #f8f8f2;">char</span> *<span style="color: #f8f8f2;">argv</span>[])
+<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold;">main</span>(<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">argc</span>, <span style="font-weight: bold; text-decoration: underline;">char</span> *<span style="font-weight: bold; font-style: italic;">argv</span>[])
 {
     foo();
     bar();
-    <span style="color: #ff79c6; font-weight: bold;">return</span> 0;
+    <span style="font-weight: bold;">return</span> 0;
 }
 
-<span style="color: #6272a4;">/* </span><span style="color: #6272a4;">foo.c </span><span style="color: #6272a4;">*/</span>
-<span style="color: #f8f8f2;">int</span> <span style="color: #50fa7b; font-weight: bold;">foo</span>() {
-    printf(<span style="color: #f1fa8c;">"foo\n"</span>);
+<span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">foo.c </span><span style="font-weight: bold; font-style: italic;">*/</span>
+<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold;">foo</span>() {
+    printf(<span style="font-style: italic;">"foo\n"</span>);
 }
 
-<span style="color: #6272a4;">/* </span><span style="color: #6272a4;">bar.c </span><span style="color: #6272a4;">*/</span>
-<span style="color: #f8f8f2;">int</span> <span style="color: #50fa7b; font-weight: bold;">bar</span>() {
-    printf(<span style="color: #f1fa8c;">"bar\n"</span>);
+<span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">bar.c </span><span style="font-weight: bold; font-style: italic;">*/</span>
+<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold;">bar</span>() {
+    printf(<span style="font-style: italic;">"bar\n"</span>);
 }
 </pre>
 </div>
@@ -673,30 +594,30 @@ __ld_runtime_resolve  通过 .rela.plt 获得要加载的符号的名字和要�
 <div class="outline-text-3" id="text-1-5">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #6272a4;">/* </span><span style="color: #6272a4;">main.c </span><span style="color: #6272a4;">*/</span>
-<span style="color: #ff79c6; font-weight: bold;">extern</span> <span style="color: #f8f8f2;">void</span> <span style="color: #50fa7b; font-weight: bold;">foo</span>();
-<span style="color: #ff79c6; font-weight: bold;">extern</span> <span style="color: #f8f8f2;">void</span> <span style="color: #50fa7b; font-weight: bold;">bar</span>();
+<pre class="src src-c"><span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">main.c </span><span style="font-weight: bold; font-style: italic;">*/</span>
+<span style="font-weight: bold;">extern</span> <span style="font-weight: bold; text-decoration: underline;">void</span> <span style="font-weight: bold;">foo</span>();
+<span style="font-weight: bold;">extern</span> <span style="font-weight: bold; text-decoration: underline;">void</span> <span style="font-weight: bold;">bar</span>();
 
-<span style="color: #f8f8f2;">int</span> <span style="color: #50fa7b; font-weight: bold;">main</span>(<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">argc</span>, <span style="color: #f8f8f2;">char</span> *<span style="color: #f8f8f2;">argv</span>[])
+<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold;">main</span>(<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">argc</span>, <span style="font-weight: bold; text-decoration: underline;">char</span> *<span style="font-weight: bold; font-style: italic;">argv</span>[])
 {
     foo();
     bar();
 
-    <span style="color: #ff79c6; font-weight: bold;">return</span> 0;
+    <span style="font-weight: bold;">return</span> 0;
 }
 
-<span style="color: #6272a4;">/* </span><span style="color: #6272a4;">foo.c </span><span style="color: #6272a4;">*/</span>
-<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">x</span> = 0xab;
+<span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">foo.c </span><span style="font-weight: bold; font-style: italic;">*/</span>
+<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">x</span> = 0xab;
 
-<span style="color: #f8f8f2;">int</span> <span style="color: #50fa7b; font-weight: bold;">foo</span>() {
-    printf(<span style="color: #f1fa8c;">"foo\n"</span>);
+<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold;">foo</span>() {
+    printf(<span style="font-style: italic;">"foo\n"</span>);
     x = 0xcd;
 }
 
-<span style="color: #6272a4;">/* </span><span style="color: #6272a4;">bar.c </span><span style="color: #6272a4;">*/</span>
-<span style="color: #ff79c6; font-weight: bold;">extern</span> <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">x</span>;
-<span style="color: #f8f8f2;">int</span> <span style="color: #50fa7b; font-weight: bold;">bar</span>() {
-    printf(<span style="color: #f1fa8c;">"bar\n"</span>);
+<span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">bar.c </span><span style="font-weight: bold; font-style: italic;">*/</span>
+<span style="font-weight: bold;">extern</span> <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">x</span>;
+<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold;">bar</span>() {
+    printf(<span style="font-style: italic;">"bar\n"</span>);
     x = 0x12;
 }
 </pre>
@@ -790,15 +711,15 @@ End of assembler dump.
 
 <div class="org-src-container">
 
-<pre class="src src-asm"><span style="color: #50fa7b; font-weight: bold;">00000000000005dc</span> &lt;foo&gt;:
- <span style="color: #ff79c6; font-weight: bold;">5dc</span>:   55                      push   <span style="color: #f8f8f2;">%rbp</span>
- <span style="color: #ff79c6; font-weight: bold;">5dd</span>:   48 89 e5                mov    <span style="color: #f8f8f2;">%rsp</span>,<span style="color: #f8f8f2;">%rbp</span>
- <span style="color: #ff79c6; font-weight: bold;">5e0</span>:   48 8d 3d 5f 00 00 00    lea    0x5f(<span style="color: #f8f8f2;">%rip</span>),<span style="color: #f8f8f2;">%rdi</span>        # 646 &lt;_fini+0xe&gt;
- <span style="color: #ff79c6; font-weight: bold;">5e7</span>:   e8 04 ff ff ff          callq  4f0 <a href="mailto:puts%40plt">&lt;puts@plt&gt;</a>
- <span style="color: #ff79c6; font-weight: bold;">5ec</span>:   48 8b 05 d5 09 20 00    mov    0x2009d5(<span style="color: #f8f8f2;">%rip</span>),<span style="color: #f8f8f2;">%rax</span>        # 200fc8 &lt;_DYNAMIC+0x180&gt;
- <span style="color: #ff79c6; font-weight: bold;">5f3</span>:   c7 00 cd 00 00 00       movl   $0xcd,(<span style="color: #f8f8f2;">%rax</span>)
- <span style="color: #ff79c6; font-weight: bold;">5f9</span>:   5d                      pop    <span style="color: #f8f8f2;">%rbp</span>
- <span style="color: #ff79c6; font-weight: bold;">5fa</span>:   c3                      retq
+<pre class="src src-asm"><span style="font-weight: bold;">00000000000005dc</span> &lt;foo&gt;:
+ <span style="font-weight: bold;">5dc</span>:   55                      push   <span style="font-weight: bold; font-style: italic;">%rbp</span>
+ <span style="font-weight: bold;">5dd</span>:   48 89 e5                mov    <span style="font-weight: bold; font-style: italic;">%rsp</span>,<span style="font-weight: bold; font-style: italic;">%rbp</span>
+ <span style="font-weight: bold;">5e0</span>:   48 8d 3d 5f 00 00 00    lea    0x5f(<span style="font-weight: bold; font-style: italic;">%rip</span>),<span style="font-weight: bold; font-style: italic;">%rdi</span>        # 646 &lt;_fini+0xe&gt;
+ <span style="font-weight: bold;">5e7</span>:   e8 04 ff ff ff          callq  4f0 <a href="mailto:puts%40plt">&lt;puts@plt&gt;</a>
+ <span style="font-weight: bold;">5ec</span>:   48 8b 05 d5 09 20 00    mov    0x2009d5(<span style="font-weight: bold; font-style: italic;">%rip</span>),<span style="font-weight: bold; font-style: italic;">%rax</span>        # 200fc8 &lt;_DYNAMIC+0x180&gt;
+ <span style="font-weight: bold;">5f3</span>:   c7 00 cd 00 00 00       movl   $0xcd,(<span style="font-weight: bold; font-style: italic;">%rax</span>)
+ <span style="font-weight: bold;">5f9</span>:   5d                      pop    <span style="font-weight: bold; font-style: italic;">%rbp</span>
+ <span style="font-weight: bold;">5fa</span>:   c3                      retq
 </pre>
 </div>
 

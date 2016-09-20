@@ -4,90 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Algorithm: Heap Sort</title>
-<!-- 2016-09-20 二 16:45 -->
+<!-- 2016-09-20 Tue 17:00 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
-  .title  { text-align: center; }
-  .todo   { font-family: monospace; color: red; }
-  .done   { color: green; }
-  .tag    { background-color: #eee; font-family: monospace;
-            padding: 2px; font-size: 80%; font-weight: normal; }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .center { margin-left: auto; margin-right: auto; text-align: center; }
-  .underline { text-decoration: underline; }
-  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
-  p.verse { margin-left: 3%; }
-  pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
-    padding: 8pt;
-    font-family: monospace;
-    overflow: auto;
-    margin: 1.2em;
-  }
-  pre.src {
-    position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
-  }
-  pre.src:before {
-    display: none;
-    position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
-    padding: 3px;
-    border: 1px solid black;
-  }
-  pre.src:hover:before { display: inline;}
-  pre.src-sh:before    { content: 'sh'; }
-  pre.src-bash:before  { content: 'sh'; }
-  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-R:before     { content: 'R'; }
-  pre.src-perl:before  { content: 'Perl'; }
-  pre.src-java:before  { content: 'Java'; }
-  pre.src-sql:before   { content: 'SQL'; }
-
-  table { border-collapse:collapse; }
-  caption.t-above { caption-side: top; }
-  caption.t-bottom { caption-side: bottom; }
-  td, th { vertical-align:top;  }
-  th.right  { text-align: center;  }
-  th.left   { text-align: center;   }
-  th.center { text-align: center; }
-  td.right  { text-align: right;  }
-  td.left   { text-align: left;   }
-  td.center { text-align: center; }
-  dt { font-weight: bold; }
-  .footpara:nth-child(2) { display: inline; }
-  .footpara { display: block; }
-  .footdef  { margin-bottom: 1em; }
-  .figure { padding: 1em; }
-  .figure p { text-align: center; }
-  .inlinetask {
-    padding: 10px;
-    border: 2px solid gray;
-    margin: 10px;
-    background: #ffffcc;
-  }
-  #org-div-home-and-up
-   { text-align: right; font-size: 70%; white-space: nowrap; }
-  textarea { overflow-x: auto; }
-  .linenr { font-size: smaller }
-  .code-highlighted { background-color: #ffff00; }
-  .org-info-js_info-navigation { border-style: none; }
-  #org-info-js_console-label
-    { font-size: 10px; font-weight: bold; white-space: nowrap; }
-  .org-info-js_search-highlight
-    { background-color: #ffff00; color: #000000; font-weight: bold; }
-  /*]]>*/-->
-</style>
+<link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -151,140 +72,140 @@ for the JavaScript code in this tag.
 <div class="outline-text-2" id="text-1">
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="color: #6272a4;"># </span><span style="color: #6272a4;">-*- coding: utf-8 -*-</span>
-<span style="color: #ff79c6; font-weight: bold;">import</span> math
+<pre class="src src-python"><span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">-*- coding: utf-8 -*-</span>
+<span style="font-weight: bold;">import</span> math
 
 
-<span style="color: #ff79c6; font-weight: bold;">class</span> <span style="color: #f8f8f2;">Solution</span>(<span style="color: #8be9fd;">object</span>):
+<span style="font-weight: bold;">class</span> <span style="font-weight: bold; text-decoration: underline;">Solution</span>(<span style="font-weight: bold;">object</span>):
 
-    <span style="color: #ff79c6; font-weight: bold;">def</span> <span style="color: #50fa7b; font-weight: bold;">PARENT</span>(<span style="color: #ff79c6; font-weight: bold;">self</span>, i):
-        <span style="color: #ff79c6; font-weight: bold;">return</span> <span style="color: #8be9fd;">int</span>((i - 1) / 2)
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">PARENT</span>(<span style="font-weight: bold;">self</span>, i):
+        <span style="font-weight: bold;">return</span> <span style="font-weight: bold;">int</span>((i - 1) / 2)
 
-    <span style="color: #ff79c6; font-weight: bold;">def</span> <span style="color: #50fa7b; font-weight: bold;">LEFT</span>(<span style="color: #ff79c6; font-weight: bold;">self</span>, i):
-        <span style="color: #ff79c6; font-weight: bold;">return</span> i * 2 + 1
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">LEFT</span>(<span style="font-weight: bold;">self</span>, i):
+        <span style="font-weight: bold;">return</span> i * 2 + 1
 
-    <span style="color: #ff79c6; font-weight: bold;">def</span> <span style="color: #50fa7b; font-weight: bold;">RIGHT</span>(<span style="color: #ff79c6; font-weight: bold;">self</span>, i):
-        <span style="color: #ff79c6; font-weight: bold;">return</span> i * 2 + 2
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">RIGHT</span>(<span style="font-weight: bold;">self</span>, i):
+        <span style="font-weight: bold;">return</span> i * 2 + 2
 
-    <span style="color: #ff79c6; font-weight: bold;">def</span> <span style="color: #50fa7b; font-weight: bold;">maxHeapify</span>(<span style="color: #ff79c6; font-weight: bold;">self</span>, A, i, size):
-        <span style="color: #6272a4;">"""</span>
-<span style="color: #6272a4;">        """</span>
-        <span style="color: #f8f8f2;">left</span> = <span style="color: #ff79c6; font-weight: bold;">self</span>.LEFT(i)
-        <span style="color: #f8f8f2;">right</span> = <span style="color: #ff79c6; font-weight: bold;">self</span>.RIGHT(i)
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">maxHeapify</span>(<span style="font-weight: bold;">self</span>, A, i, size):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold; font-style: italic;">left</span> = <span style="font-weight: bold;">self</span>.LEFT(i)
+        <span style="font-weight: bold; font-style: italic;">right</span> = <span style="font-weight: bold;">self</span>.RIGHT(i)
 
-        <span style="color: #ff79c6; font-weight: bold;">if</span> (left &gt;= size):
-            <span style="color: #f8f8f2;">leftValue</span> = -math.inf
-        <span style="color: #ff79c6; font-weight: bold;">else</span>:
-            <span style="color: #f8f8f2;">leftValue</span> = A[left]
+        <span style="font-weight: bold;">if</span> (left &gt;= size):
+            <span style="font-weight: bold; font-style: italic;">leftValue</span> = -math.inf
+        <span style="font-weight: bold;">else</span>:
+            <span style="font-weight: bold; font-style: italic;">leftValue</span> = A[left]
 
-        <span style="color: #ff79c6; font-weight: bold;">if</span> (right &gt;= size):
-            <span style="color: #f8f8f2;">rightValue</span> = -math.inf
-        <span style="color: #ff79c6; font-weight: bold;">else</span>:
-            <span style="color: #f8f8f2;">rightValue</span> = A[right]
+        <span style="font-weight: bold;">if</span> (right &gt;= size):
+            <span style="font-weight: bold; font-style: italic;">rightValue</span> = -math.inf
+        <span style="font-weight: bold;">else</span>:
+            <span style="font-weight: bold; font-style: italic;">rightValue</span> = A[right]
 
-        <span style="color: #ff79c6; font-weight: bold;">if</span> (A[i] &gt;= <span style="color: #8be9fd;">max</span>(leftValue, rightValue)):
-            <span style="color: #ff79c6; font-weight: bold;">return</span>
+        <span style="font-weight: bold;">if</span> (A[i] &gt;= <span style="font-weight: bold;">max</span>(leftValue, rightValue)):
+            <span style="font-weight: bold;">return</span>
 
-        <span style="color: #ff79c6; font-weight: bold;">if</span> (leftValue &gt;= rightValue):
-            A[i], <span style="color: #f8f8f2;">A</span>[left] = A[left], A[i]
-            <span style="color: #ff79c6; font-weight: bold;">self</span>.maxHeapify(A, left, size)
-        <span style="color: #ff79c6; font-weight: bold;">else</span>:
-            A[i], <span style="color: #f8f8f2;">A</span>[right] = A[right], A[i]
-            <span style="color: #ff79c6; font-weight: bold;">self</span>.maxHeapify(A, right, size)
+        <span style="font-weight: bold;">if</span> (leftValue &gt;= rightValue):
+            A[i], <span style="font-weight: bold; font-style: italic;">A</span>[left] = A[left], A[i]
+            <span style="font-weight: bold;">self</span>.maxHeapify(A, left, size)
+        <span style="font-weight: bold;">else</span>:
+            A[i], <span style="font-weight: bold; font-style: italic;">A</span>[right] = A[right], A[i]
+            <span style="font-weight: bold;">self</span>.maxHeapify(A, right, size)
 
-    <span style="color: #ff79c6; font-weight: bold;">def</span> <span style="color: #50fa7b; font-weight: bold;">buildMaxHeap</span>(<span style="color: #ff79c6; font-weight: bold;">self</span>, A):
-        <span style="color: #6272a4;">"""</span>
-<span style="color: #6272a4;">        """</span>
-        <span style="color: #f8f8f2;">start</span> = <span style="color: #ff79c6; font-weight: bold;">self</span>.PARENT(<span style="color: #8be9fd;">len</span>(A) - 1)
-        <span style="color: #6272a4;">"""</span>
-<span style="color: #6272a4;">        &#24490;&#29615;&#19981;&#21464;&#37327;:</span>
-<span style="color: #6272a4;">        LEFT[i] &#21644; RIGHT[i] &#26159;&#26368;&#22823;&#22534;</span>
-<span style="color: #6272a4;">        """</span>
-        <span style="color: #ff79c6; font-weight: bold;">for</span> i <span style="color: #ff79c6; font-weight: bold;">in</span> <span style="color: #8be9fd;">range</span>(start, -1, -1):
-            <span style="color: #ff79c6; font-weight: bold;">self</span>.maxHeapify(A, i, <span style="color: #8be9fd;">len</span>(A))
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">buildMaxHeap</span>(<span style="font-weight: bold;">self</span>, A):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold; font-style: italic;">start</span> = <span style="font-weight: bold;">self</span>.PARENT(<span style="font-weight: bold;">len</span>(A) - 1)
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        &#24490;&#29615;&#19981;&#21464;&#37327;:</span>
+<span style="font-style: italic;">        LEFT[i] &#21644; RIGHT[i] &#26159;&#26368;&#22823;&#22534;</span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold;">for</span> i <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(start, -1, -1):
+            <span style="font-weight: bold;">self</span>.maxHeapify(A, i, <span style="font-weight: bold;">len</span>(A))
 
-    <span style="color: #ff79c6; font-weight: bold;">def</span> <span style="color: #50fa7b; font-weight: bold;">heapSort</span>(<span style="color: #ff79c6; font-weight: bold;">self</span>, A):
-        <span style="color: #6272a4;">"""</span>
-<span style="color: #6272a4;">        """</span>
-        <span style="color: #ff79c6; font-weight: bold;">self</span>.buildMaxHeap(A)
-        <span style="color: #f8f8f2;">size</span> = <span style="color: #8be9fd;">len</span>(A)
-        <span style="color: #ff79c6; font-weight: bold;">while</span> (size &gt; 1):
-            A[0], <span style="color: #f8f8f2;">A</span>[size - 1] = A[size - 1], A[0]
-            <span style="color: #f8f8f2;">size</span> -= 1
-            <span style="color: #ff79c6; font-weight: bold;">self</span>.maxHeapify(A, 0, size)
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">heapSort</span>(<span style="font-weight: bold;">self</span>, A):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold;">self</span>.buildMaxHeap(A)
+        <span style="font-weight: bold; font-style: italic;">size</span> = <span style="font-weight: bold;">len</span>(A)
+        <span style="font-weight: bold;">while</span> (size &gt; 1):
+            A[0], <span style="font-weight: bold; font-style: italic;">A</span>[size - 1] = A[size - 1], A[0]
+            <span style="font-weight: bold; font-style: italic;">size</span> -= 1
+            <span style="font-weight: bold;">self</span>.maxHeapify(A, 0, size)
 
-    <span style="color: #ff79c6; font-weight: bold;">def</span> <span style="color: #50fa7b; font-weight: bold;">__climbUp</span>(<span style="color: #ff79c6; font-weight: bold;">self</span>, A, i):
-        <span style="color: #6272a4;">"""</span>
-<span style="color: #6272a4;">        """</span>
-        <span style="color: #ff79c6; font-weight: bold;">while</span> (i != 0):
-            <span style="color: #f8f8f2;">j</span> = <span style="color: #ff79c6; font-weight: bold;">self</span>.PARENT(i)
-            <span style="color: #ff79c6; font-weight: bold;">if</span> (A[i] &lt;= A[j]):
-                <span style="color: #ff79c6; font-weight: bold;">break</span>
-            A[i], <span style="color: #f8f8f2;">A</span>[j] = A[j], A[i]
-            <span style="color: #f8f8f2;">i</span> = j
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">__climbUp</span>(<span style="font-weight: bold;">self</span>, A, i):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold;">while</span> (i != 0):
+            <span style="font-weight: bold; font-style: italic;">j</span> = <span style="font-weight: bold;">self</span>.PARENT(i)
+            <span style="font-weight: bold;">if</span> (A[i] &lt;= A[j]):
+                <span style="font-weight: bold;">break</span>
+            A[i], <span style="font-weight: bold; font-style: italic;">A</span>[j] = A[j], A[i]
+            <span style="font-weight: bold; font-style: italic;">i</span> = j
 
-    <span style="color: #ff79c6; font-weight: bold;">def</span> <span style="color: #50fa7b; font-weight: bold;">assertHeapify</span>(<span style="color: #ff79c6; font-weight: bold;">self</span>, A):
-        <span style="color: #6272a4;">"""</span>
-<span style="color: #6272a4;">        """</span>
-        <span style="color: #f8f8f2;">size</span> = <span style="color: #ff79c6; font-weight: bold;">self</span>.PARENT(<span style="color: #8be9fd;">len</span>(A) - 1) + 1
-        <span style="color: #ff79c6; font-weight: bold;">for</span> i <span style="color: #ff79c6; font-weight: bold;">in</span> <span style="color: #8be9fd;">range</span>(0, size):
-            <span style="color: #f8f8f2;">left</span> = <span style="color: #ff79c6; font-weight: bold;">self</span>.LEFT(i)
-            <span style="color: #f8f8f2;">right</span> = <span style="color: #ff79c6; font-weight: bold;">self</span>.RIGHT(i)
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">assertHeapify</span>(<span style="font-weight: bold;">self</span>, A):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold; font-style: italic;">size</span> = <span style="font-weight: bold;">self</span>.PARENT(<span style="font-weight: bold;">len</span>(A) - 1) + 1
+        <span style="font-weight: bold;">for</span> i <span style="font-weight: bold;">in</span> <span style="font-weight: bold;">range</span>(0, size):
+            <span style="font-weight: bold; font-style: italic;">left</span> = <span style="font-weight: bold;">self</span>.LEFT(i)
+            <span style="font-weight: bold; font-style: italic;">right</span> = <span style="font-weight: bold;">self</span>.RIGHT(i)
 
-            <span style="color: #ff79c6; font-weight: bold;">if</span> (left &gt;= size):
-                <span style="color: #f8f8f2;">leftValue</span> = -math.inf
-            <span style="color: #ff79c6; font-weight: bold;">else</span>:
-                <span style="color: #f8f8f2;">leftValue</span> = A[left]
+            <span style="font-weight: bold;">if</span> (left &gt;= size):
+                <span style="font-weight: bold; font-style: italic;">leftValue</span> = -math.inf
+            <span style="font-weight: bold;">else</span>:
+                <span style="font-weight: bold; font-style: italic;">leftValue</span> = A[left]
 
-            <span style="color: #ff79c6; font-weight: bold;">if</span> (right &gt;= size):
-                <span style="color: #f8f8f2;">rightValue</span> = -math.inf
-            <span style="color: #ff79c6; font-weight: bold;">else</span>:
-                <span style="color: #f8f8f2;">rightValue</span> = A[right]
+            <span style="font-weight: bold;">if</span> (right &gt;= size):
+                <span style="font-weight: bold; font-style: italic;">rightValue</span> = -math.inf
+            <span style="font-weight: bold;">else</span>:
+                <span style="font-weight: bold; font-style: italic;">rightValue</span> = A[right]
 
-            <span style="color: #ff79c6; font-weight: bold;">assert</span>(A[i] &gt;= leftValue <span style="color: #ff79c6; font-weight: bold;">and</span> A[i] &gt;= rightValue)
+            <span style="font-weight: bold;">assert</span>(A[i] &gt;= leftValue <span style="font-weight: bold;">and</span> A[i] &gt;= rightValue)
 
-    <span style="color: #ff79c6; font-weight: bold;">def</span> <span style="color: #50fa7b; font-weight: bold;">heapInsert</span>(<span style="color: #ff79c6; font-weight: bold;">self</span>, A, n):
-        <span style="color: #6272a4;">"""</span>
-<span style="color: #6272a4;">        """</span>
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">heapInsert</span>(<span style="font-weight: bold;">self</span>, A, n):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        """</span>
         A.append(n)
 
-        <span style="color: #f8f8f2;">i</span> = <span style="color: #8be9fd;">len</span>(A) - 1
-        <span style="color: #ff79c6; font-weight: bold;">self</span>.__climbUp(A, i)
+        <span style="font-weight: bold; font-style: italic;">i</span> = <span style="font-weight: bold;">len</span>(A) - 1
+        <span style="font-weight: bold;">self</span>.__climbUp(A, i)
 
-    <span style="color: #ff79c6; font-weight: bold;">def</span> <span style="color: #50fa7b; font-weight: bold;">heapRemove</span>(<span style="color: #ff79c6; font-weight: bold;">self</span>, A, i):
-        <span style="color: #6272a4;">"""</span>
-<span style="color: #6272a4;">        """</span>
-        <span style="color: #f8f8f2;">A</span>[i] = A[-1]
-        <span style="color: #ff79c6; font-weight: bold;">del</span>(A[-1])
-        <span style="color: #ff79c6; font-weight: bold;">if</span> (i == <span style="color: #8be9fd;">len</span>(A)):
-            <span style="color: #ff79c6; font-weight: bold;">return</span>
-        <span style="color: #ff79c6; font-weight: bold;">self</span>.maxHeapify(A, i, <span style="color: #8be9fd;">len</span>(A))
-        <span style="color: #ff79c6; font-weight: bold;">self</span>.__climbUp(A, i)
+    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">heapRemove</span>(<span style="font-weight: bold;">self</span>, A, i):
+        <span style="font-style: italic;">"""</span>
+<span style="font-style: italic;">        """</span>
+        <span style="font-weight: bold; font-style: italic;">A</span>[i] = A[-1]
+        <span style="font-weight: bold;">del</span>(A[-1])
+        <span style="font-weight: bold;">if</span> (i == <span style="font-weight: bold;">len</span>(A)):
+            <span style="font-weight: bold;">return</span>
+        <span style="font-weight: bold;">self</span>.maxHeapify(A, i, <span style="font-weight: bold;">len</span>(A))
+        <span style="font-weight: bold;">self</span>.__climbUp(A, i)
 
-<span style="color: #6272a4;"># </span><span style="color: #6272a4;">A = [1, 2, 3, 1, 0, 2, 1]</span>
-<span style="color: #6272a4;"># </span><span style="color: #6272a4;">A = [3,2,1]</span>
-<span style="color: #6272a4;"># </span><span style="color: #6272a4;">Solution().maxHeapify(A, 0, len(A))</span>
-<span style="color: #6272a4;"># </span><span style="color: #6272a4;">print(A)</span>
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">A = [1, 2, 3, 1, 0, 2, 1]</span>
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">A = [3,2,1]</span>
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">Solution().maxHeapify(A, 0, len(A))</span>
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">print(A)</span>
 
-<span style="color: #6272a4;"># </span><span style="color: #6272a4;">A = [1, 2, 3, 4, 5, 6, 9, 7, -1]</span>
-<span style="color: #6272a4;"># </span><span style="color: #6272a4;">Solution().buildMaxHeap(A)</span>
-<span style="color: #6272a4;"># </span><span style="color: #6272a4;">print(A)</span>
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">A = [1, 2, 3, 4, 5, 6, 9, 7, -1]</span>
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">Solution().buildMaxHeap(A)</span>
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">print(A)</span>
 
-<span style="color: #6272a4;"># </span><span style="color: #6272a4;">A = [1, 2, 3, 4, 5, 6, 9, 7, -1]</span>
-<span style="color: #6272a4;"># </span><span style="color: #6272a4;">Solution().heapSort(A)</span>
-<span style="color: #6272a4;"># </span><span style="color: #6272a4;">print(A)</span>
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">A = [1, 2, 3, 4, 5, 6, 9, 7, -1]</span>
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">Solution().heapSort(A)</span>
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">print(A)</span>
 
-<span style="color: #f8f8f2;">A</span> = [1, 2, 3, 4, 5, 6, 9, 7, -1]
+<span style="font-weight: bold; font-style: italic;">A</span> = [1, 2, 3, 4, 5, 6, 9, 7, -1]
 Solution().buildMaxHeap(A)
-<span style="color: #ff79c6; font-weight: bold;">print</span>(A)
+<span style="font-weight: bold;">print</span>(A)
 Solution().assertHeapify(A)
 
 Solution().heapInsert(A, 0)
-<span style="color: #ff79c6; font-weight: bold;">print</span>(A)
+<span style="font-weight: bold;">print</span>(A)
 Solution().assertHeapify(A)
 
 Solution().heapRemove(A, 2)
-<span style="color: #ff79c6; font-weight: bold;">print</span>(A)
+<span style="font-weight: bold;">print</span>(A)
 Solution().assertHeapify(A)
 </pre>
 </div>

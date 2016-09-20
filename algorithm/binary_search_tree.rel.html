@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Algorithm: Binary Search Tree</title>
-<!-- 2016-09-20 Tue 16:54 -->
+<!-- 2016-09-20 Tue 17:00 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
@@ -146,15 +146,11 @@ for the JavaScript code in this tag.
         <span style="font-weight: bold;">return</span> <span style="font-weight: bold;">self</span>.__searchInternal(<span style="font-weight: bold;">self</span>.root, i)
 
 <span style="font-weight: bold;">if</span> <span style="font-weight: bold;">__name__</span> == <span style="font-style: italic;">'__main__'</span>:
-    <span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">tree = BinarySearchTree((9, 3, 1, 2, 3, 4, 3, 5, 0))</span>
-    <span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">tree.insert(Tree.Node(10))</span>
-    <span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">tree.inOrderTreeWalk()</span>
-    <span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">n = tree.search(1)</span>
-    <span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">print(n)</span>
-    <span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">tree.delete(1)</span>
-    <span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">tree.inOrderTreeWalk()</span>
-    <span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">n = tree.search(1)</span>
-    <span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">print(n)</span>
+    <span style="font-weight: bold; font-style: italic;">tree</span> = BinarySearchTree((9, 3, 1, 2, 3, 4, 3, 5, 0))
+    tree.insert(Tree.Node(10))
+    tree.inOrderTreeWalk()
+    tree.delete(1)
+    tree.inOrderTreeWalk()
 </pre>
 </div>
 </div>

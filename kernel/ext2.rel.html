@@ -4,90 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Linux Kernel: Ext2</title>
-<!-- 2016-09-20 二 16:44 -->
+<!-- 2016-09-20 Tue 17:00 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
-  .title  { text-align: center; }
-  .todo   { font-family: monospace; color: red; }
-  .done   { color: green; }
-  .tag    { background-color: #eee; font-family: monospace;
-            padding: 2px; font-size: 80%; font-weight: normal; }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .center { margin-left: auto; margin-right: auto; text-align: center; }
-  .underline { text-decoration: underline; }
-  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
-  p.verse { margin-left: 3%; }
-  pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
-    padding: 8pt;
-    font-family: monospace;
-    overflow: auto;
-    margin: 1.2em;
-  }
-  pre.src {
-    position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
-  }
-  pre.src:before {
-    display: none;
-    position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
-    padding: 3px;
-    border: 1px solid black;
-  }
-  pre.src:hover:before { display: inline;}
-  pre.src-sh:before    { content: 'sh'; }
-  pre.src-bash:before  { content: 'sh'; }
-  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-R:before     { content: 'R'; }
-  pre.src-perl:before  { content: 'Perl'; }
-  pre.src-java:before  { content: 'Java'; }
-  pre.src-sql:before   { content: 'SQL'; }
-
-  table { border-collapse:collapse; }
-  caption.t-above { caption-side: top; }
-  caption.t-bottom { caption-side: bottom; }
-  td, th { vertical-align:top;  }
-  th.right  { text-align: center;  }
-  th.left   { text-align: center;   }
-  th.center { text-align: center; }
-  td.right  { text-align: right;  }
-  td.left   { text-align: left;   }
-  td.center { text-align: center; }
-  dt { font-weight: bold; }
-  .footpara:nth-child(2) { display: inline; }
-  .footpara { display: block; }
-  .footdef  { margin-bottom: 1em; }
-  .figure { padding: 1em; }
-  .figure p { text-align: center; }
-  .inlinetask {
-    padding: 10px;
-    border: 2px solid gray;
-    margin: 10px;
-    background: #ffffcc;
-  }
-  #org-div-home-and-up
-   { text-align: right; font-size: 70%; white-space: nowrap; }
-  textarea { overflow-x: auto; }
-  .linenr { font-size: smaller }
-  .code-highlighted { background-color: #ffff00; }
-  .org-info-js_info-navigation { border-style: none; }
-  #org-info-js_console-label
-    { font-size: 10px; font-weight: bold; white-space: nowrap; }
-  .org-info-js_search-highlight
-    { background-color: #ffff00; color: #000000; font-weight: bold; }
-  /*]]>*/-->
-</style>
+<link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -486,26 +407,26 @@ group, 并且在这个 group 的 inode table 中找到某一个 entry.
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #bd93f9;">ext2_new_inode</span>:
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_new_inode</span>:
   inode = new_inode(sb);
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#25214;&#19968;&#20010;&#21512;&#36866;&#30340; group</span>
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (S_ISDIR(mode)):
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25214;&#19968;&#20010;&#21512;&#36866;&#30340; group</span>
+  <span style="font-weight: bold;">if</span> (S_ISDIR(mode)):
     group = find_group_orlov(sb, dir);
-  <span style="color: #ff79c6; font-weight: bold;">else</span>:
+  <span style="font-weight: bold;">else</span>:
     group = find_group_other(sb, dir);
   bitmap_bh = read_inode_bitmap(sb, group);
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36890;&#36807; inode bitmap &#25214;&#19968;&#20010;&#21487;&#29992;&#30340; inode table entry</span>
-  ino = ext2_find_next_zero_bit((<span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span> *)bitmap_bh-&gt;b_data, EXT2_INODES_PER_GROUP(sb), ino);
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36890;&#36807; inode bitmap &#25214;&#19968;&#20010;&#21487;&#29992;&#30340; inode table entry</span>
+  ino = ext2_find_next_zero_bit((<span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span> *)bitmap_bh-&gt;b_data, EXT2_INODES_PER_GROUP(sb), ino);
   ext2_set_bit_atomic(sb_bgl_lock(sbi, group),ino, bitmap_bh-&gt;b_data)
   mark_buffer_dirty(bitmap_bh);
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#35745;&#31639; inode number</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#35745;&#31639; inode number</span>
   ino += group * EXT2_INODES_PER_GROUP(sb) + 1;
   inode-&gt;i_ino = ino;
   inode-&gt;i_uid = current-&gt;fsuid;
   inode-&gt;i_mode = mode;
   inode-&gt;i_mtime = inode-&gt;i_atime = inode-&gt;i_ctime = CURRENT_TIME_SEC;
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">...</span>
-  <span style="color: #ff79c6; font-weight: bold;">return</span> inode
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
+  <span style="font-weight: bold;">return</span> inode
 </pre>
 </div>
 
@@ -538,14 +459,14 @@ group
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #ff79c6; font-weight: bold;">for</span> (i = 1; i &lt; ngroups; i &lt;&lt;= 1) {
+<pre class="src src-c"><span style="font-weight: bold;">for</span> (i = 1; i &lt; ngroups; i &lt;&lt;= 1) {
     group += i;
-    <span style="color: #ff79c6; font-weight: bold;">if</span> (group &gt;= ngroups)
+    <span style="font-weight: bold;">if</span> (group &gt;= ngroups)
         group -= ngroups;
     desc = ext2_get_group_desc (sb, group, &amp;bh);
-    <span style="color: #ff79c6; font-weight: bold;">if</span> (desc &amp;&amp; le16_to_cpu(desc-&gt;bg_free_inodes_count) &amp;&amp;
+    <span style="font-weight: bold;">if</span> (desc &amp;&amp; le16_to_cpu(desc-&gt;bg_free_inodes_count) &amp;&amp;
         le16_to_cpu(desc-&gt;bg_free_blocks_count))
-        <span style="color: #ff79c6; font-weight: bold;">goto</span> <span style="color: #bd93f9;">found</span>;
+        <span style="font-weight: bold;">goto</span> <span style="font-weight: bold; text-decoration: underline;">found</span>;
 }
 </pre>
 </div>
@@ -556,14 +477,14 @@ group
 <div class="org-src-container">
 
 <pre class="src src-c">group = parent_group;
-<span style="color: #ff79c6; font-weight: bold;">for</span> (i = 0; i &lt; ngroups; i++) {
-    <span style="color: #ff79c6; font-weight: bold;">if</span> (++group &gt;= ngroups)
+<span style="font-weight: bold;">for</span> (i = 0; i &lt; ngroups; i++) {
+    <span style="font-weight: bold;">if</span> (++group &gt;= ngroups)
         group = 0;
     desc = ext2_get_group_desc (sb, group, &amp;bh);
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36825;&#37324;&#24182;&#19981;&#38656;&#35201; group &#26377; free block ..., &#22240;&#20026;&#26497;&#26377;&#21487;&#33021;&#25214;&#19981;&#21040;&#36825;&#26679;&#30340;</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">group</span>
-    <span style="color: #ff79c6; font-weight: bold;">if</span> (desc &amp;&amp; le16_to_cpu(desc-&gt;bg_free_inodes_count))
-        <span style="color: #ff79c6; font-weight: bold;">goto</span> <span style="color: #bd93f9;">found</span>;
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#37324;&#24182;&#19981;&#38656;&#35201; group &#26377; free block ..., &#22240;&#20026;&#26497;&#26377;&#21487;&#33021;&#25214;&#19981;&#21040;&#36825;&#26679;&#30340;</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">group</span>
+    <span style="font-weight: bold;">if</span> (desc &amp;&amp; le16_to_cpu(desc-&gt;bg_free_inodes_count))
+        <span style="font-weight: bold;">goto</span> <span style="font-weight: bold; text-decoration: underline;">found</span>;
 }
 </pre>
 </div>
@@ -595,15 +516,15 @@ inode, 修改 parent directory 的 dentry, 删除 inode 的 data block, 以及�
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #bd93f9;">ext2_free_inode</span>:
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_free_inode</span>:
   block_group = (ino - 1) / EXT2_INODES_PER_GROUP(sb);
   bit = (ino - 1) % EXT2_INODES_PER_GROUP(sb);
   bitmap_bh = read_inode_bitmap(sb, block_group);
-  ext2_clear_bit_atomic(sb_bgl_lock(EXT2_SB(sb), block_group),bit, (<span style="color: #f8f8f2;">void</span> *) bitmap_bh-&gt;b_data))
+  ext2_clear_bit_atomic(sb_bgl_lock(EXT2_SB(sb), block_group),bit, (<span style="font-weight: bold; text-decoration: underline;">void</span> *) bitmap_bh-&gt;b_data))
   ext2_release_inode(sb, block_group, is_directory);
     desc = ext2_get_group_desc(sb, group, &amp;bh);
     desc-&gt;bg_free_inodes_count = cpu_to_le16(le16_to_cpu(desc-&gt;bg_free_inodes_count) + 1);
-    <span style="color: #ff79c6; font-weight: bold;">if</span> (dir):
+    <span style="font-weight: bold;">if</span> (dir):
       desc-&gt;bg_used_dirs_count = cpu_to_le16(le16_to_cpu(desc-&gt;bg_used_dirs_count) - 1);
     mark_buffer_dirty(bh);
   mark_buffer_dirty(bitmap_bh);
@@ -616,21 +537,21 @@ unlink 调用 ext2_free_inode 的逻辑为:
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #bd93f9;">sys_unlink</span>:
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">sys_unlink</span>:
   path_lookup(name, LOOKUP_PARENT, &amp;nd);
   vfs_unlink(nd.dentry-&gt;d_inode, dentry);
     ext2_unlink ()
       ext2_delete_entry (de, page);
       ext2_dec_count(inode);
-  iput(inode);        <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">truncate the inode here </span><span style="color: #6272a4;">*/</span>
+  iput(inode);        <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">truncate the inode here </span><span style="font-weight: bold; font-style: italic;">*/</span>
     iput_final(inode)
     generic_drop_inode(inode)
-      <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>inode-&gt;i_nlink):
+      <span style="font-weight: bold;">if</span> (!inode-&gt;i_nlink):
         generic_delete_inode(inode);
           ext2_delete_inode(inode)
-            <span style="color: #6272a4;">// </span><span style="color: #6272a4;">ext2_truncate &#37322;&#25918; inode &#30340; data blocks (&#23450;&#20301; inode &#25152;</span>
-            <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26377;&#30340; block &#24182;&#20462;&#25913; block bitmap)</span>
-            <span style="color: #ff79c6; font-weight: bold;">if</span> (inode-&gt;i_blocks):
+            <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">ext2_truncate &#37322;&#25918; inode &#30340; data blocks (&#23450;&#20301; inode &#25152;</span>
+            <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26377;&#30340; block &#24182;&#20462;&#25913; block bitmap)</span>
+            <span style="font-weight: bold;">if</span> (inode-&gt;i_blocks):
               ext2_truncate (inode);
             ext2_free_inode (inode);
 </pre>
@@ -662,11 +583,11 @@ unlink 调用 ext2_free_inode 的逻辑为:
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #8be9fd;">#define</span>       <span style="color: #f8f8f2;">EXT2_NDIR_BLOCKS</span>                12
-<span style="color: #8be9fd;">#define</span>       <span style="color: #f8f8f2;">EXT2_IND_BLOCK</span>                  EXT2_NDIR_BLOCKS
-<span style="color: #8be9fd;">#define</span>       <span style="color: #f8f8f2;">EXT2_DIND_BLOCK</span>                 (EXT2_IND_BLOCK + 1)
-<span style="color: #8be9fd;">#define</span>       <span style="color: #f8f8f2;">EXT2_TIND_BLOCK</span>                 (EXT2_DIND_BLOCK + 1)
-<span style="color: #8be9fd;">#define</span>       <span style="color: #f8f8f2;">EXT2_N_BLOCKS</span>                   (EXT2_TIND_BLOCK + 1)
+<pre class="src src-c"><span style="font-weight: bold;">#define</span>       <span style="font-weight: bold; font-style: italic;">EXT2_NDIR_BLOCKS</span>                12
+<span style="font-weight: bold;">#define</span>       <span style="font-weight: bold; font-style: italic;">EXT2_IND_BLOCK</span>                  EXT2_NDIR_BLOCKS
+<span style="font-weight: bold;">#define</span>       <span style="font-weight: bold; font-style: italic;">EXT2_DIND_BLOCK</span>                 (EXT2_IND_BLOCK + 1)
+<span style="font-weight: bold;">#define</span>       <span style="font-weight: bold; font-style: italic;">EXT2_TIND_BLOCK</span>                 (EXT2_DIND_BLOCK + 1)
+<span style="font-weight: bold;">#define</span>       <span style="font-weight: bold; font-style: italic;">EXT2_N_BLOCKS</span>                   (EXT2_TIND_BLOCK + 1)
 </pre>
 </div>
 
@@ -699,51 +620,51 @@ i_blocks 最多只能表示 2T.
 
 <div class="org-src-container">
 
-<pre class="src src-c">ext2_get_block(<span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">inode</span> *<span style="color: #f8f8f2;">inode</span>, <span style="color: #f8f8f2;">sector_t</span> <span style="color: #f8f8f2;">iblock</span>, <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">buffer_head</span> *<span style="color: #f8f8f2;">bh_result</span>, <span style="color: #f8f8f2;">int</span> <span style="color: #bd93f9;">create</span>):
-  <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">offsets</span>[4];
-  <span style="color: #f8f8f2;">Indirect</span> <span style="color: #f8f8f2;">chain</span>[4];
-  <span style="color: #f8f8f2;">Indirect</span> *<span style="color: #f8f8f2;">partial</span>;
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">ext2_block_to_path &#20316;&#29992;&#26159;&#23558; iblock &#36716;&#25442;&#20026;&#19968;&#20010; offsets &#25968;&#32452;, &#36825;&#20010;&#25968;&#32452;&#20013;&#30340;&#31532; n &#39033;&#34920;&#31034;</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#31532; n &#32423; indirect block &#22312; n-1 &#32423; indirect block &#20013;&#30340; offset, &#20363;&#22914;:</span>
-  <span style="color: #6272a4;">// </span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509; iblock &#20026; 11, &#32780; offset[0] = 11, &#36820;&#22238; depth = 1</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509; iblock &#20026; 12, &#21017; offset[0] = 12 (EXT2_IND_BLOCK), offset[1] = 0, depth = 2</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509; iblock &#20026; 13, &#21017; offset[0] = 12, offset[1] = 1, depth = 2</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">...</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36825;&#20010;&#36807;&#31243;&#19981;&#38656;&#35201;&#20570; IO</span>
-  <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">depth</span> = ext2_block_to_path(inode, iblock, offsets, &amp;boundary);
-    <span style="color: #ff79c6; font-weight: bold;">if</span> (i_block &lt; 0):
-      ext2_warning (inode-&gt;i_sb, <span style="color: #f1fa8c;">"ext2_block_to_path"</span>, <span style="color: #f1fa8c;">"block &lt; 0"</span>);
-    <span style="color: #ff79c6; font-weight: bold;">else</span> <span style="color: #ff79c6; font-weight: bold;">if</span> (i_block &lt; direct_blocks):
+<pre class="src src-c">ext2_get_block(<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">inode</span> *<span style="font-weight: bold; font-style: italic;">inode</span>, <span style="font-weight: bold; text-decoration: underline;">sector_t</span> <span style="font-weight: bold; font-style: italic;">iblock</span>, <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">buffer_head</span> *<span style="font-weight: bold; font-style: italic;">bh_result</span>, <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; text-decoration: underline;">create</span>):
+  <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">offsets</span>[4];
+  <span style="font-weight: bold; text-decoration: underline;">Indirect</span> <span style="font-weight: bold; font-style: italic;">chain</span>[4];
+  <span style="font-weight: bold; text-decoration: underline;">Indirect</span> *<span style="font-weight: bold; font-style: italic;">partial</span>;
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">ext2_block_to_path &#20316;&#29992;&#26159;&#23558; iblock &#36716;&#25442;&#20026;&#19968;&#20010; offsets &#25968;&#32452;, &#36825;&#20010;&#25968;&#32452;&#20013;&#30340;&#31532; n &#39033;&#34920;&#31034;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#31532; n &#32423; indirect block &#22312; n-1 &#32423; indirect block &#20013;&#30340; offset, &#20363;&#22914;:</span>
+  <span style="font-weight: bold; font-style: italic;">// </span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; iblock &#20026; 11, &#32780; offset[0] = 11, &#36820;&#22238; depth = 1</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; iblock &#20026; 12, &#21017; offset[0] = 12 (EXT2_IND_BLOCK), offset[1] = 0, depth = 2</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; iblock &#20026; 13, &#21017; offset[0] = 12, offset[1] = 1, depth = 2</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#20010;&#36807;&#31243;&#19981;&#38656;&#35201;&#20570; IO</span>
+  <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">depth</span> = ext2_block_to_path(inode, iblock, offsets, &amp;boundary);
+    <span style="font-weight: bold;">if</span> (i_block &lt; 0):
+      ext2_warning (inode-&gt;i_sb, <span style="font-style: italic;">"ext2_block_to_path"</span>, <span style="font-style: italic;">"block &lt; 0"</span>);
+    <span style="font-weight: bold;">else</span> <span style="font-weight: bold;">if</span> (i_block &lt; direct_blocks):
       offsets[n++] = i_block;
       final = direct_blocks;
-    <span style="color: #ff79c6; font-weight: bold;">else</span> <span style="color: #ff79c6; font-weight: bold;">if</span> ( (i_block -= direct_blocks) &lt; indirect_blocks):
+    <span style="font-weight: bold;">else</span> <span style="font-weight: bold;">if</span> ( (i_block -= direct_blocks) &lt; indirect_blocks):
       offsets[n++] = EXT2_IND_BLOCK;
       offsets[n++] = i_block;
       final = ptrs;
-    <span style="color: #ff79c6; font-weight: bold;">else</span> <span style="color: #ff79c6; font-weight: bold;">if</span> ((i_block -= indirect_blocks) &lt; double_blocks):
+    <span style="font-weight: bold;">else</span> <span style="font-weight: bold;">if</span> ((i_block -= indirect_blocks) &lt; double_blocks):
       offsets[n++] = EXT2_DIND_BLOCK;
       offsets[n++] = i_block &gt;&gt; ptrs_bits;
       offsets[n++] = i_block &amp; (ptrs - 1);
       final = ptrs;
-    <span style="color: #ff79c6; font-weight: bold;">else</span> <span style="color: #ff79c6; font-weight: bold;">if</span> (((i_block -= double_blocks) &gt;&gt; (<span style="color: #f8f8f2;">ptrs_bits</span> * 2)) &lt; ptrs):
+    <span style="font-weight: bold;">else</span> <span style="font-weight: bold;">if</span> (((i_block -= double_blocks) &gt;&gt; (<span style="font-weight: bold; text-decoration: underline;">ptrs_bits</span> * 2)) &lt; ptrs):
       offsets[n++] = EXT2_TIND_BLOCK;
-      offsets[n++] = i_block &gt;&gt; (<span style="color: #f8f8f2;">ptrs_bits</span> * 2);
+      offsets[n++] = i_block &gt;&gt; (<span style="font-weight: bold; text-decoration: underline;">ptrs_bits</span> * 2);
       offsets[n++] = (i_block &gt;&gt; ptrs_bits) &amp; (ptrs - 1);
       offsets[n++] = i_block &amp; (ptrs - 1);
       final = ptrs;
-    <span style="color: #ff79c6; font-weight: bold;">return</span> n
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (depth == 0):
-    <span style="color: #ff79c6; font-weight: bold;">goto</span> <span style="color: #bd93f9;">out</span>;
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#25226;&#25972;&#20010; iblock[] &#21450;&#20854; indirect blocks &#30475;&#20570;&#19968;&#26869;&#26641;&#30340;&#35805;, &#19978;&#19968;&#27493;&#35745;&#31639;&#30340;</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">offsets &#25968;&#32452;&#30456;&#24403;&#20110;&#19968;&#20010;&#36941;&#21382;&#36825;&#20010;&#26641;&#30340;&#32034;&#24341;, &#19979;&#19968;&#27493;&#30340; ext2_get_branch</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#38656;&#35201;&#26681;&#25454;&#36825;&#20010;&#32034;&#24341;&#20174;&#30913;&#30424;&#35835;&#21462;&#30456;&#24212;&#30340; block, &#23558;&#32467;&#26524;&#20445;&#23384;&#22312; chain[] &#20013;,</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">chain &#19982; offsets &#26159;&#23545;&#24212;&#30340;: chain[depth-1] &#23601;&#26159;&#26368;&#32456; get_block &#38656;&#35201;</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#30340; block</span>
+    <span style="font-weight: bold;">return</span> n
+  <span style="font-weight: bold;">if</span> (depth == 0):
+    <span style="font-weight: bold;">goto</span> <span style="font-weight: bold; text-decoration: underline;">out</span>;
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25226;&#25972;&#20010; iblock[] &#21450;&#20854; indirect blocks &#30475;&#20570;&#19968;&#26869;&#26641;&#30340;&#35805;, &#19978;&#19968;&#27493;&#35745;&#31639;&#30340;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">offsets &#25968;&#32452;&#30456;&#24403;&#20110;&#19968;&#20010;&#36941;&#21382;&#36825;&#20010;&#26641;&#30340;&#32034;&#24341;, &#19979;&#19968;&#27493;&#30340; ext2_get_branch</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#38656;&#35201;&#26681;&#25454;&#36825;&#20010;&#32034;&#24341;&#20174;&#30913;&#30424;&#35835;&#21462;&#30456;&#24212;&#30340; block, &#23558;&#32467;&#26524;&#20445;&#23384;&#22312; chain[] &#20013;,</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">chain &#19982; offsets &#26159;&#23545;&#24212;&#30340;: chain[depth-1] &#23601;&#26159;&#26368;&#32456; get_block &#38656;&#35201;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#30340; block</span>
   partial = ext2_get_branch(inode, depth, offsets, chain, &amp;err);
-  <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">Simplest case - block found, no allocation needed </span><span style="color: #6272a4;">*/</span>
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>partial):
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">map_bh &#20250;&#23558; bh_result &#35774;&#32622;&#20026; BH_mapped</span>
+  <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Simplest case - block found, no allocation needed </span><span style="font-weight: bold; font-style: italic;">*/</span>
+  <span style="font-weight: bold;">if</span> (!partial):
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">map_bh &#20250;&#23558; bh_result &#35774;&#32622;&#20026; BH_mapped</span>
     map_bh(bh_result, inode-&gt;i_sb, le32_to_cpu(chain[depth-1].key));
 </pre>
 </div>
@@ -767,46 +688,46 @@ inode 不同的是, 分配 data block 主要考虑的是 locality, 简单的说:
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #bd93f9;">ext2_get_block</span>:
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20551;&#35774;&#21069;&#38754;&#30340;&#20195;&#30721;&#27809;&#26377;&#25214;&#21040;&#23545;&#24212;&#30340; block, &#35828;&#26126;&#38656;&#35201;&#20998;&#37197;&#19968;&#20010;&#26032;&#30340; block</span>
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_get_block</span>:
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20551;&#35774;&#21069;&#38754;&#30340;&#20195;&#30721;&#27809;&#26377;&#25214;&#21040;&#23545;&#24212;&#30340; block, &#35828;&#26126;&#38656;&#35201;&#20998;&#37197;&#19968;&#20010;&#26032;&#30340; block</span>
 
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">ext2_find_goal &#29992;&#26469;&#25214;&#19968;&#20010; block &#20316;&#20026; goal, &#23427;&#24182;&#19981;&#20851;&#24515;&#36825;&#20010; goal</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26159;&#21542;&#24050;&#32463;&#34987;&#21344;&#29992;, &#21482;&#26159;&#20026;&#20102;&#25214;&#19968;&#20010;&#26368;&#29702;&#24819;&#30340;&#30446;&#26631;, goal &#30495;&#27491;&#26159;&#21542;&#33021;&#20998;&#37197;&#20197;&#21450;</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#34987;&#21344;&#29992;&#20102;&#24590;&#20040;&#22788;&#29702;&#30001; ext2_alloc_branch &#22788;&#29702;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">ext2_find_goal &#29992;&#26469;&#25214;&#19968;&#20010; block &#20316;&#20026; goal, &#23427;&#24182;&#19981;&#20851;&#24515;&#36825;&#20010; goal</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26159;&#21542;&#24050;&#32463;&#34987;&#21344;&#29992;, &#21482;&#26159;&#20026;&#20102;&#25214;&#19968;&#20010;&#26368;&#29702;&#24819;&#30340;&#30446;&#26631;, goal &#30495;&#27491;&#26159;&#21542;&#33021;&#20998;&#37197;&#20197;&#21450;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#34987;&#21344;&#29992;&#20102;&#24590;&#20040;&#22788;&#29702;&#30001; ext2_alloc_branch &#22788;&#29702;</span>
   ext2_find_goal(inode, iblock, chain, partial, &amp;goal)
-    <span style="color: #ff79c6; font-weight: bold;">if</span> ((block == ei-&gt;i_next_alloc_block + 1) &amp;&amp; ei-&gt;i_next_alloc_goal):
+    <span style="font-weight: bold;">if</span> ((block == ei-&gt;i_next_alloc_block + 1) &amp;&amp; ei-&gt;i_next_alloc_goal):
       ei-&gt;i_next_alloc_block++;
       ei-&gt;i_next_alloc_goal++;
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509;&#24403;&#21069;&#26159;&#26576;&#31181;&#36830;&#32493;&#20998;&#37197;&#30340;&#24773;&#24418;, &#21017; goal &#20026;&#19978;&#19968;&#27425;&#20998;&#37197;&#30340; block+1</span>
-    <span style="color: #ff79c6; font-weight: bold;">if</span> (block == ei-&gt;i_next_alloc_block):
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509;&#24403;&#21069;&#26159;&#26576;&#31181;&#36830;&#32493;&#20998;&#37197;&#30340;&#24773;&#24418;, &#21017; goal &#20026;&#19978;&#19968;&#27425;&#20998;&#37197;&#30340; block+1</span>
+    <span style="font-weight: bold;">if</span> (block == ei-&gt;i_next_alloc_block):
       *goal = ei-&gt;i_next_alloc_goal;
-    <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>*goal):
+    <span style="font-weight: bold;">if</span> (!*goal):
       *goal = ext2_find_near(inode, partial);
-        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">ext2_find_near &#25214;&#19968;&#20010;&#21644; partial &#26368;&#25509;&#36817;&#30340; block, &#20998;&#19977;&#31181;&#24773;&#24418;</span>
-        <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">Try to find previous block </span><span style="color: #6272a4;">*/</span>
-        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">1. &#25214;&#19968;&#20010;&#20043;&#21069; indirect block &#20013;&#24050;&#32463;&#20998;&#37197;&#36807;&#30340; block</span>
-        <span style="color: #ff79c6; font-weight: bold;">for</span> (p = ind-&gt;p - 1; p &gt;= start; p--):
-          <span style="color: #ff79c6; font-weight: bold;">if</span> (*p)
-            <span style="color: #ff79c6; font-weight: bold;">return</span> le32_to_cpu(*p);
-        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">2. &#27809;&#26377;&#20998;&#37197;&#36807;, &#30452;&#25509;&#20351;&#29992; indirect block &#33258;&#36523;</span>
-        <span style="color: #ff79c6; font-weight: bold;">if</span> (ind-&gt;bh):
-          <span style="color: #ff79c6; font-weight: bold;">return</span> ind-&gt;bh-&gt;b_blocknr;
-        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">3. &#27809;&#26377;&#20351;&#29992; indirect block, &#35828;&#26126; inode &#30446;&#21069;&#21482;&#20351;&#29992;&#20102; direct block, &#21017;</span>
-        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20351;&#29992; inode (inode table) &#38468;&#36817;&#30340; block</span>
-        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#19979;&#38754;&#30340; heuristic &#26159;&#25351;: &#22312; inode &#25152;&#22312;&#30340; group &#25214;&#19968;&#20010; block, &#24182;&#19988;</span>
-        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36890;&#36807; pid &#36991;&#20813;&#22810;&#20010;&#36827;&#31243;&#20351;&#29992;&#21516;&#19968;&#22359; block &#21306;&#22495;...</span>
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">ext2_find_near &#25214;&#19968;&#20010;&#21644; partial &#26368;&#25509;&#36817;&#30340; block, &#20998;&#19977;&#31181;&#24773;&#24418;</span>
+        <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Try to find previous block </span><span style="font-weight: bold; font-style: italic;">*/</span>
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">1. &#25214;&#19968;&#20010;&#20043;&#21069; indirect block &#20013;&#24050;&#32463;&#20998;&#37197;&#36807;&#30340; block</span>
+        <span style="font-weight: bold;">for</span> (p = ind-&gt;p - 1; p &gt;= start; p--):
+          <span style="font-weight: bold;">if</span> (*p)
+            <span style="font-weight: bold;">return</span> le32_to_cpu(*p);
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">2. &#27809;&#26377;&#20998;&#37197;&#36807;, &#30452;&#25509;&#20351;&#29992; indirect block &#33258;&#36523;</span>
+        <span style="font-weight: bold;">if</span> (ind-&gt;bh):
+          <span style="font-weight: bold;">return</span> ind-&gt;bh-&gt;b_blocknr;
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">3. &#27809;&#26377;&#20351;&#29992; indirect block, &#35828;&#26126; inode &#30446;&#21069;&#21482;&#20351;&#29992;&#20102; direct block, &#21017;</span>
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20351;&#29992; inode (inode table) &#38468;&#36817;&#30340; block</span>
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19979;&#38754;&#30340; heuristic &#26159;&#25351;: &#22312; inode &#25152;&#22312;&#30340; group &#25214;&#19968;&#20010; block, &#24182;&#19988;</span>
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36890;&#36807; pid &#36991;&#20813;&#22810;&#20010;&#36827;&#31243;&#20351;&#29992;&#21516;&#19968;&#22359; block &#21306;&#22495;...</span>
         bg_start = (ei-&gt;i_block_group * EXT2_BLOCKS_PER_GROUP(inode-&gt;i_sb)) +
             le32_to_cpu(EXT2_SB(inode-&gt;i_sb)-&gt;s_es-&gt;s_first_data_block);
         colour = (current-&gt;pid % 16) * (EXT2_BLOCKS_PER_GROUP(inode-&gt;i_sb) / 16);
-        <span style="color: #ff79c6; font-weight: bold;">return</span> bg_start + colour;
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">find goal &#20197;&#21518;, ext2_alloc_branch &#36127;&#36131;&#30495;&#27491;&#21435;&#20998;&#37197; block</span>
+        <span style="font-weight: bold;">return</span> bg_start + colour;
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">find goal &#20197;&#21518;, ext2_alloc_branch &#36127;&#36131;&#30495;&#27491;&#21435;&#20998;&#37197; block</span>
   ext2_alloc_branch(inode, left, goal, offsets+(partial-chain), partial);
     ext2_new_block(goal)
-      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509; goal &#31354;&#38386;, &#36820;&#22238; goal, &#21542;&#21017;, &#21521;&#21518;&#19968;&#23450;&#33539;&#22260;&#20869;&#26597;&#25214;&#19968;&#20010;&#31354;&#38386;&#30340;</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; goal &#31354;&#38386;, &#36820;&#22238; goal, &#21542;&#21017;, &#21521;&#21518;&#19968;&#23450;&#33539;&#22260;&#20869;&#26597;&#25214;&#19968;&#20010;&#31354;&#38386;&#30340;</span>
       ret_block = grab_block(sb_bgl_lock(sbi, group_no),
                            bitmap_bh-&gt;b_data, group_size, ret_block);
-      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509;&#19978;&#19968;&#27493;&#27809;&#26377;&#25214;&#21040;, &#21017;&#20174;&#24403;&#21069; group &#24320;&#22987;&#20174;&#25152;&#26377; group &#26597;&#25214;</span>
-      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">...</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509;&#19978;&#19968;&#27493;&#27809;&#26377;&#25214;&#21040;, &#21017;&#20174;&#24403;&#21069; group &#24320;&#22987;&#20174;&#25152;&#26377; group &#26597;&#25214;</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
 </pre>
 </div>
 </div>
@@ -858,15 +779,15 @@ debugfs:  bmap hole 5
 <div class="outline-text-4" id="text-1-3-2">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #bd93f9;">block_read_full_page</span>:
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">block_read_full_page</span>:
   get_block(inode, iblock, bh, 0)
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23545;&#20110;&#31354;&#27934;&#37096;&#20998;&#30340; block, get_block &#36820;&#22238; BH_mapped &#20026; false</span>
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>buffer_mapped(bh)):
-      <span style="color: #f8f8f2;">void</span> *kaddr = kmap_atomic(page, KM_USER0);
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#20110;&#31354;&#27934;&#37096;&#20998;&#30340; block, get_block &#36820;&#22238; BH_mapped &#20026; false</span>
+  <span style="font-weight: bold;">if</span> (!buffer_mapped(bh)):
+      <span style="font-weight: bold; text-decoration: underline;">void</span> *kaddr = kmap_atomic(page, KM_USER0);
       memset(kaddr + i * blocksize, 0, blocksize);
       set_buffer_uptodate(bh);
-      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">continued, submit_bh(bh) is skipped</span>
-      <span style="color: #ff79c6; font-weight: bold;">continue</span>;
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">continued, submit_bh(bh) is skipped</span>
+      <span style="font-weight: bold;">continue</span>;
 </pre>
 </div>
 </div>
@@ -1053,12 +974,12 @@ ext2 在 read inode 时会负责初始化 inode-&gt;i_flags
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #bd93f9;">ext2_read_inode</span>:
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_read_inode</span>:
   ext2_set_inode_flags(inode)
-    <span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">flags</span> = EXT2_I(inode)-&gt;i_flags;
-    <span style="color: #ff79c6; font-weight: bold;">if</span> (flags &amp; EXT2_IMMUTABLE_FL):
+    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">flags</span> = EXT2_I(inode)-&gt;i_flags;
+    <span style="font-weight: bold;">if</span> (flags &amp; EXT2_IMMUTABLE_FL):
       inode-&gt;i_flags |= S_IMMUTABLE;
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">if xxx</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">if xxx</span>
 </pre>
 </div>
 </div>
@@ -1069,12 +990,12 @@ ext2 在 read inode 时会负责初始化 inode-&gt;i_flags
 <div class="outline-text-5" id="text-1-6-1-2">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #bd93f9;">ext2_ioctl</span>:
-  <span style="color: #ff79c6; font-weight: bold;">switch</span> (cmd) {
-    <span style="color: #ff79c6; font-weight: bold;">case</span> EXT2_IOC_GETFLAGS:
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_ioctl</span>:
+  <span style="font-weight: bold;">switch</span> (cmd) {
+    <span style="font-weight: bold;">case</span> EXT2_IOC_GETFLAGS:
       flags = ei-&gt;i_flags &amp; EXT2_FL_USER_VISIBLE;
-      <span style="color: #ff79c6; font-weight: bold;">return</span> put_user(flags, (<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">__user</span> *) arg);
-    <span style="color: #ff79c6; font-weight: bold;">case</span> EXT2_IOC_SETFLAGS:
+      <span style="font-weight: bold;">return</span> put_user(flags, (<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">__user</span> *) arg);
+    <span style="font-weight: bold;">case</span> EXT2_IOC_SETFLAGS:
       ei-&gt;i_flags = flags;
       ext2_set_inode_flags(inode);
 </pre>
@@ -1088,24 +1009,24 @@ ext2 在 read inode 时会负责初始化 inode-&gt;i_flags
 <div class="outline-text-4" id="text-1-6-2">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #bd93f9;">ext2_new_block</span>:
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">ext2_new_block</span>:
   reserve_blocks()
     free_blocks = percpu_counter_read_positive(&amp;sbi-&gt;s_freeblocks_counter);
     root_blocks = le32_to_cpu(es-&gt;s_r_blocks_count);
 
-    <span style="color: #ff79c6; font-weight: bold;">if</span> (free_blocks &lt; root_blocks + count &amp;&amp; <span style="color: #bd93f9;">!</span>capable(CAP_SYS_RESOURCE) &amp;&amp;
+    <span style="font-weight: bold;">if</span> (free_blocks &lt; root_blocks + count &amp;&amp; !capable(CAP_SYS_RESOURCE) &amp;&amp;
       sbi-&gt;s_resuid != current-&gt;fsuid &amp;&amp;
-      (sbi-&gt;s_resgid == 0 || <span style="color: #bd93f9;">!</span>in_group_p (sbi-&gt;s_resgid))):
-      <span style="color: #6272a4;">/*</span>
-<span style="color: #6272a4;">       * We are too close to reserve and we are not privileged.</span>
-<span style="color: #6272a4;">       * Can we allocate anything at all?</span>
-<span style="color: #6272a4;">       </span><span style="color: #6272a4;">*/</span>
-      <span style="color: #ff79c6; font-weight: bold;">if</span> (free_blocks &gt; root_blocks)
+      (sbi-&gt;s_resgid == 0 || !in_group_p (sbi-&gt;s_resgid))):
+      <span style="font-weight: bold; font-style: italic;">/*</span>
+<span style="font-weight: bold; font-style: italic;">       * We are too close to reserve and we are not privileged.</span>
+<span style="font-weight: bold; font-style: italic;">       * Can we allocate anything at all?</span>
+<span style="font-weight: bold; font-style: italic;">       </span><span style="font-weight: bold; font-style: italic;">*/</span>
+      <span style="font-weight: bold;">if</span> (free_blocks &gt; root_blocks)
         count = free_blocks - root_blocks;
-      <span style="color: #ff79c6; font-weight: bold;">else</span>
-        <span style="color: #ff79c6; font-weight: bold;">return</span> 0;
-    <span style="color: #ff79c6; font-weight: bold;">return</span> count;
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">reserve_blocks ends</span>
+      <span style="font-weight: bold;">else</span>
+        <span style="font-weight: bold;">return</span> 0;
+    <span style="font-weight: bold;">return</span> count;
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">reserve_blocks ends</span>
 </pre>
 </div>
 </div>
@@ -1119,12 +1040,12 @@ ext2 的目录的 data block 保存着一系列的 ext2_dir_entry_2:
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">ext2_dir_entry_2</span> {
-    <span style="color: #f8f8f2;">__le32</span>    <span style="color: #f8f8f2;">inode</span>;                  <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">Inode number </span><span style="color: #6272a4;">*/</span>
-    <span style="color: #f8f8f2;">__le16</span>    <span style="color: #f8f8f2;">rec_len</span>;                <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">Directory entry length </span><span style="color: #6272a4;">*/</span>
-    <span style="color: #f8f8f2;">__u8</span>      <span style="color: #f8f8f2;">name_len</span>;               <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">Name length </span><span style="color: #6272a4;">*/</span>
-    <span style="color: #f8f8f2;">__u8</span>      <span style="color: #f8f8f2;">file_type</span>;
-    <span style="color: #f8f8f2;">char</span>      <span style="color: #f8f8f2;">name</span>[EXT2_NAME_LEN];    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">File name </span><span style="color: #6272a4;">*/</span>
+<pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">ext2_dir_entry_2</span> {
+    <span style="font-weight: bold; text-decoration: underline;">__le32</span>    <span style="font-weight: bold; font-style: italic;">inode</span>;                  <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Inode number </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold; text-decoration: underline;">__le16</span>    <span style="font-weight: bold; font-style: italic;">rec_len</span>;                <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Directory entry length </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold; text-decoration: underline;">__u8</span>      <span style="font-weight: bold; font-style: italic;">name_len</span>;               <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Name length </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold; text-decoration: underline;">__u8</span>      <span style="font-weight: bold; font-style: italic;">file_type</span>;
+    <span style="font-weight: bold; text-decoration: underline;">char</span>      <span style="font-weight: bold; font-style: italic;">name</span>[EXT2_NAME_LEN];    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">File name </span><span style="font-weight: bold; font-style: italic;">*/</span>
 };
 </pre>
 </div>
@@ -1157,20 +1078,20 @@ extended attribute 主要用来实现 ACL (例如 user1, user2 可以访问这�
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #bd93f9;">sys_sync</span>:
-  sync_inodes(); <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">All mappings, inodes and their blockdevs </span><span style="color: #6272a4;">*/</span>
-    <span style="color: #ff79c6; font-weight: bold;">while</span> ((sb = get_super_to_sync()) != <span style="color: #bd93f9;">NULL</span>):
-      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">sb &#35760;&#24405;&#30340;&#25152;&#26377; dirty inode &#21450;&#20854; mappings &#34987;&#20889;&#22238;</span>
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">sys_sync</span>:
+  sync_inodes(); <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">All mappings, inodes and their blockdevs </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold;">while</span> ((sb = get_super_to_sync()) != <span style="font-weight: bold; text-decoration: underline;">NULL</span>):
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sb &#35760;&#24405;&#30340;&#25152;&#26377; dirty inode &#21450;&#20854; mappings &#34987;&#20889;&#22238;</span>
       sync_inodes_sb(sb, 0);
       sync_blockdev(sb-&gt;s_bdev);
-        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#30001;&#20110;&#25991;&#20214;&#31995;&#32479;&#20869;&#37096;&#23545;&#35774;&#22791;&#30340;&#35835;&#20889;&#37117;&#26159;&#36890;&#36807; bd_inode &#30340; pagecache</span>
-        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">(_bread), &#25152;&#20197; sync bd_inode &#30340; address_space &#20250;&#23548;&#33268;&#25991;&#20214;&#31995;&#32479;</span>
-        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20869;&#37096;&#30340;&#36825;&#26679;&#20462;&#25913;(&#21253;&#25324;&#23545; bitmap &#30340;&#20462;&#25913;)&#34987;&#20889;&#22238;</span>
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#30001;&#20110;&#25991;&#20214;&#31995;&#32479;&#20869;&#37096;&#23545;&#35774;&#22791;&#30340;&#35835;&#20889;&#37117;&#26159;&#36890;&#36807; bd_inode &#30340; pagecache</span>
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">(_bread), &#25152;&#20197; sync bd_inode &#30340; address_space &#20250;&#23548;&#33268;&#25991;&#20214;&#31995;&#32479;</span>
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20869;&#37096;&#30340;&#36825;&#26679;&#20462;&#25913;(&#21253;&#25324;&#23545; bitmap &#30340;&#20462;&#25913;)&#34987;&#20889;&#22238;</span>
         filemap_fdatawrite(bdev-&gt;bd_inode-&gt;i_mapping);
-  sync_supers(); <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">Write the superblocks </span><span style="color: #6272a4;">*/</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">sync_supers &#21482;&#26159;&#20462;&#25913; superblock &#24182;&#32622;&#30456;&#24212; block &#20026; dirty,</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21518;&#32493;&#30340; sync_inodes &#20250;&#20445;&#35777;&#23427;&#34987;&#20889;&#22238;</span>
-  sync_inodes(); <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">sync inodes again? </span><span style="color: #6272a4;">*/</span>
+  sync_supers(); <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Write the superblocks </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sync_supers &#21482;&#26159;&#20462;&#25913; superblock &#24182;&#32622;&#30456;&#24212; block &#20026; dirty,</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21518;&#32493;&#30340; sync_inodes &#20250;&#20445;&#35777;&#23427;&#34987;&#20889;&#22238;</span>
+  sync_inodes(); <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">sync inodes again? </span><span style="font-weight: bold; font-style: italic;">*/</span>
 </pre>
 </div>
 </div>

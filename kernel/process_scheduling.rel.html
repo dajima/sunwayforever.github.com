@@ -4,90 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Linux Kernel: Process Scheduling</title>
-<!-- 2016-09-20 二 16:44 -->
+<!-- 2016-09-20 Tue 17:00 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
-  .title  { text-align: center; }
-  .todo   { font-family: monospace; color: red; }
-  .done   { color: green; }
-  .tag    { background-color: #eee; font-family: monospace;
-            padding: 2px; font-size: 80%; font-weight: normal; }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .center { margin-left: auto; margin-right: auto; text-align: center; }
-  .underline { text-decoration: underline; }
-  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
-  p.verse { margin-left: 3%; }
-  pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
-    padding: 8pt;
-    font-family: monospace;
-    overflow: auto;
-    margin: 1.2em;
-  }
-  pre.src {
-    position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
-  }
-  pre.src:before {
-    display: none;
-    position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
-    padding: 3px;
-    border: 1px solid black;
-  }
-  pre.src:hover:before { display: inline;}
-  pre.src-sh:before    { content: 'sh'; }
-  pre.src-bash:before  { content: 'sh'; }
-  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-R:before     { content: 'R'; }
-  pre.src-perl:before  { content: 'Perl'; }
-  pre.src-java:before  { content: 'Java'; }
-  pre.src-sql:before   { content: 'SQL'; }
-
-  table { border-collapse:collapse; }
-  caption.t-above { caption-side: top; }
-  caption.t-bottom { caption-side: bottom; }
-  td, th { vertical-align:top;  }
-  th.right  { text-align: center;  }
-  th.left   { text-align: center;   }
-  th.center { text-align: center; }
-  td.right  { text-align: right;  }
-  td.left   { text-align: left;   }
-  td.center { text-align: center; }
-  dt { font-weight: bold; }
-  .footpara:nth-child(2) { display: inline; }
-  .footpara { display: block; }
-  .footdef  { margin-bottom: 1em; }
-  .figure { padding: 1em; }
-  .figure p { text-align: center; }
-  .inlinetask {
-    padding: 10px;
-    border: 2px solid gray;
-    margin: 10px;
-    background: #ffffcc;
-  }
-  #org-div-home-and-up
-   { text-align: right; font-size: 70%; white-space: nowrap; }
-  textarea { overflow-x: auto; }
-  .linenr { font-size: smaller }
-  .code-highlighted { background-color: #ffff00; }
-  .org-info-js_info-navigation { border-style: none; }
-  #org-info-js_console-label
-    { font-size: 10px; font-weight: bold; white-space: nowrap; }
-  .org-info-js_search-highlight
-    { background-color: #ffff00; color: #000000; font-weight: bold; }
-  /*]]>*/-->
-</style>
+<link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -247,19 +168,19 @@ scheduler 需要从这个队列中选择进程来执行
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">runqueue</span> {
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">runqueue &#32500;&#25252;&#30340;&#25152;&#26377; running &#36827;&#31243;&#30340;&#20010;&#25968;, &#26159; active &#21644; expired &#20043;&#21644;.</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36825;&#20010;&#20540;&#21453;&#24212;&#20102;&#24403;&#21069; cpu &#30340;&#36127;&#36733;&#31243;&#24230;    </span>
-    <span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">nr_running</span>;
-    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">curr &#21363; current, idle &#21363; swapper </span><span style="color: #6272a4;">*/</span>
-    <span style="color: #f8f8f2;">task_t</span> *<span style="color: #f8f8f2;">curr</span>, *<span style="color: #f8f8f2;">idle</span>;
-    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">&#26368;&#20027;&#35201;&#30340;&#25968;&#25454;&#32467;&#26500;: runqueue &#20013;&#25152;&#26377;&#30340;&#36827;&#31243;&#34987;&#20998;&#20026;&#20004;&#31867;: active &#19982;</span>
-<span style="color: #6272a4;">     * expired, active &#26159;&#25351;&#26102;&#38388;&#29255;&#23578;&#27809;&#26377;&#32791;&#23613;&#30340;&#36827;&#31243;, expired &#26159;&#25351;&#26412;&#27425;</span>
-<span style="color: #6272a4;">     * roundrobin &#36807;&#31243;&#20013;&#26102;&#38388;&#29255;&#24050;&#32463;&#32791;&#23613;&#30340;&#36827;&#31243;, scheduler &#21482;&#20250;&#20174; active</span>
-<span style="color: #6272a4;">     * &#20013;&#23547;&#25214; candidate, &#21442;&#32771; process </span><span style="color: #6272a4;">*/</span>
-    <span style="color: #f8f8f2;">prio_array_t</span> *<span style="color: #f8f8f2;">active</span>, *<span style="color: #f8f8f2;">expired</span>, <span style="color: #f8f8f2;">arrays</span>[2];
-    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">&#25351;&#31034;&#26159;&#21542;&#38656;&#35201;&#23558;&#24403;&#21069; runqueue &#30340; task &#36716;&#25442;&#21040;&#20854;&#23427; cpu </span><span style="color: #6272a4;">*/</span>
-    <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">active_balance</span>;
+<pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">runqueue</span> {
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">runqueue &#32500;&#25252;&#30340;&#25152;&#26377; running &#36827;&#31243;&#30340;&#20010;&#25968;, &#26159; active &#21644; expired &#20043;&#21644;.</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#20010;&#20540;&#21453;&#24212;&#20102;&#24403;&#21069; cpu &#30340;&#36127;&#36733;&#31243;&#24230;    </span>
+    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">nr_running</span>;
+    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">curr &#21363; current, idle &#21363; swapper </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold; text-decoration: underline;">task_t</span> *<span style="font-weight: bold; font-style: italic;">curr</span>, *<span style="font-weight: bold; font-style: italic;">idle</span>;
+    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#26368;&#20027;&#35201;&#30340;&#25968;&#25454;&#32467;&#26500;: runqueue &#20013;&#25152;&#26377;&#30340;&#36827;&#31243;&#34987;&#20998;&#20026;&#20004;&#31867;: active &#19982;</span>
+<span style="font-weight: bold; font-style: italic;">     * expired, active &#26159;&#25351;&#26102;&#38388;&#29255;&#23578;&#27809;&#26377;&#32791;&#23613;&#30340;&#36827;&#31243;, expired &#26159;&#25351;&#26412;&#27425;</span>
+<span style="font-weight: bold; font-style: italic;">     * roundrobin &#36807;&#31243;&#20013;&#26102;&#38388;&#29255;&#24050;&#32463;&#32791;&#23613;&#30340;&#36827;&#31243;, scheduler &#21482;&#20250;&#20174; active</span>
+<span style="font-weight: bold; font-style: italic;">     * &#20013;&#23547;&#25214; candidate, &#21442;&#32771; process </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold; text-decoration: underline;">prio_array_t</span> *<span style="font-weight: bold; font-style: italic;">active</span>, *<span style="font-weight: bold; font-style: italic;">expired</span>, <span style="font-weight: bold; font-style: italic;">arrays</span>[2];
+    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#25351;&#31034;&#26159;&#21542;&#38656;&#35201;&#23558;&#24403;&#21069; runqueue &#30340; task &#36716;&#25442;&#21040;&#20854;&#23427; cpu </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">active_balance</span>;
 }
 </pre>
 </div>
@@ -289,40 +210,40 @@ scheduler 需要从这个队列中选择进程来执行
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">task_struct</span> {
-    <span style="color: #ff79c6; font-weight: bold;">volatile</span> <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">state</span>;
+<pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span> {
+    <span style="font-weight: bold;">volatile</span> <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">state</span>;
 
-    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">dynamic priority </span><span style="color: #6272a4;">*/</span>
-    <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">prio</span>
-    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">static priority </span><span style="color: #6272a4;">*/</span>
-    <span style="color: #f8f8f2;">int</span> static_prio;
+    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">dynamic priority </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">prio</span>
+    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">static priority </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold; text-decoration: underline;">int</span> static_prio;
 
-    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">&#21644; runqueue &#26377;&#20851; </span><span style="color: #6272a4;">*/</span>
-    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">list_head</span> <span style="color: #f8f8f2;">run_list</span>;
-    <span style="color: #f8f8f2;">prio_array_t</span> *<span style="color: #f8f8f2;">array</span>;
+    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#21644; runqueue &#26377;&#20851; </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">list_head</span> <span style="font-weight: bold; font-style: italic;">run_list</span>;
+    <span style="font-weight: bold; text-decoration: underline;">prio_array_t</span> *<span style="font-weight: bold; font-style: italic;">array</span>;
 
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#24179;&#22343;&#30561;&#30496;&#26102;&#38388;, &#21644; time slice &#22823;&#23567;&#21450; interactive process &#30340;&#21028;&#23450;&#26377;&#20851;,</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#38656;&#35201;&#27880;&#24847;&#30340;&#26159; sleep_avg &#26159;&#25351; 1s &#20043;&#20869;&#22788;&#20110; sleeping &#30340;&#26102;&#38388;, &#20294;&#23427;&#30340;&#32479;</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#35745;&#26041;&#27861;&#24182;&#19981;&#26159;&#20005;&#26684;&#24847;&#20041;&#19978;&#30340;&#24179;&#22343;, &#21482;&#26159;&#19968;&#31181;&#36817;&#20284;&#30340;&#26041;&#27861;</span>
-    <span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">sleep_avg</span>;
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">timestamp &#26159;&#35760;&#24405; task &#19982;&#35745;&#31639; sleep_avg &#30456;&#20851;&#30340;&#26102;&#38388;&#25139;</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">1. &#34987; schedule in &#25110; out &#30340;&#26102;&#38388; (schedule)</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">2. &#34987;&#21796;&#37266;&#30340;&#26102;&#38388; (try_to_wake_up)            </span>
-    <span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">timestamp</span>, <span style="color: #f8f8f2;">last_ran</span>;
-    <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">activated</span>;
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#24179;&#22343;&#30561;&#30496;&#26102;&#38388;, &#21644; time slice &#22823;&#23567;&#21450; interactive process &#30340;&#21028;&#23450;&#26377;&#20851;,</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#38656;&#35201;&#27880;&#24847;&#30340;&#26159; sleep_avg &#26159;&#25351; 1s &#20043;&#20869;&#22788;&#20110; sleeping &#30340;&#26102;&#38388;, &#20294;&#23427;&#30340;&#32479;</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#35745;&#26041;&#27861;&#24182;&#19981;&#26159;&#20005;&#26684;&#24847;&#20041;&#19978;&#30340;&#24179;&#22343;, &#21482;&#26159;&#19968;&#31181;&#36817;&#20284;&#30340;&#26041;&#27861;</span>
+    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">sleep_avg</span>;
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">timestamp &#26159;&#35760;&#24405; task &#19982;&#35745;&#31639; sleep_avg &#30456;&#20851;&#30340;&#26102;&#38388;&#25139;</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">1. &#34987; schedule in &#25110; out &#30340;&#26102;&#38388; (schedule)</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">2. &#34987;&#21796;&#37266;&#30340;&#26102;&#38388; (try_to_wake_up)            </span>
+    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">timestamp</span>, <span style="font-weight: bold; font-style: italic;">last_ran</span>;
+    <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">activated</span>;
 
-    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">scheduler: SCHED_FIFO, SCHED_RR &#25110; SCHED_NORMAL </span><span style="color: #6272a4;">*/</span>
-    <span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">policy</span>;
+    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">scheduler: SCHED_FIFO, SCHED_RR &#25110; SCHED_NORMAL </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">policy</span>;
 
-    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">CPU mask </span><span style="color: #6272a4;">*/</span>
-    <span style="color: #f8f8f2;">cpumask_t</span> <span style="color: #f8f8f2;">cpus_allowed</span>;
+    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">CPU mask </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold; text-decoration: underline;">cpumask_t</span> <span style="font-weight: bold; font-style: italic;">cpus_allowed</span>;
 
-    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">&#24403;&#21069;&#36827;&#31243;&#21097;&#20313;&#30340;&#26102;&#38388;&#29255; </span><span style="color: #6272a4;">*/</span>
-    <span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">time_slice</span>
-    <span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">int</span> first_time_slice;
+    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#24403;&#21069;&#36827;&#31243;&#21097;&#20313;&#30340;&#26102;&#38388;&#29255; </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">time_slice</span>
+    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">int</span> first_time_slice;
 
-    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">&#23454;&#26102;&#20248;&#20808;&#32423;(policy &#38656;&#35201;&#26159; FIFO &#25110; RR) </span><span style="color: #6272a4;">*/</span>
-    <span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">rt_priority</span>;
+    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#23454;&#26102;&#20248;&#20808;&#32423;(policy &#38656;&#35201;&#26159; FIFO &#25110; RR) </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">rt_priority</span>;
 };
 </pre>
 </div>
@@ -411,55 +332,55 @@ slice_time
 <div class="outline-text-5" id="text-1-3-1-1">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #bd93f9;">scheduler_tick</span>:
-  <span style="color: #f8f8f2;">runqueue_t</span> *<span style="color: #f8f8f2;">rq</span> = this_rq();
-  <span style="color: #f8f8f2;">task_t</span> *<span style="color: #f8f8f2;">p</span> = current;
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (rt_task(p)):
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509; task &#26159;&#23454;&#26102;&#36827;&#31243; (p-&gt;prio &lt; 100), &#21017;&#36827;&#34892;&#29305;&#27530;&#22788;&#29702;:</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">1. &#33509; scheduler &#20026; SCHED_RR, &#21017; p-&gt;time_slice &#20943;&#19968;, &#33509; time_slice</span>
-    <span style="color: #6272a4;">//    </span><span style="color: #6272a4;">&#24050;&#32463;&#32791;&#23613;, &#21017;&#34917;&#20805; time_slice &#24182;&#25226; task &#25918;&#22312; active &#30340;&#26411;&#23614; (&#32780;&#19981;</span>
-    <span style="color: #6272a4;">//    </span><span style="color: #6272a4;">&#26159;&#20687; SCHED_NORMAL &#37027;&#26679;&#25918;&#22312; expired &#20013;), &#28982;&#21518;&#36890;&#36807;</span>
-    <span style="color: #6272a4;">//    </span><span style="color: #6272a4;">set_tsk_need_resched &#22312;&#23558;&#26469;&#35843;&#29992; schedule &#26469;&#35843;&#24230;&#21478;&#19968;&#20010;&#36827;&#31243;&#25191;&#34892;</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">2. &#33509; schedule &#20026; SCHED_FIFO, &#21017;&#19981;&#20570;&#20219;&#20309;&#21160;&#20316;, &#30452;&#25509;&#36820;&#22238;, &#22240;&#20026; FIFO</span>
-    <span style="color: #6272a4;">//    </span><span style="color: #6272a4;">&#24182;&#19981;&#38656;&#35201;&#32771;&#34385;&#26102;&#38388;&#29255;, &#23427;&#23436;&#20840;&#26159;&#25353;&#29031; FIFO &#26469;&#35843;&#24230;&#30340;: &#20808;&#26469;&#30340;&#20808;&#25191;&#34892;,</span>
-    <span style="color: #6272a4;">//    </span><span style="color: #6272a4;">&#30452;&#21040;&#23427;&#25191;&#34892;&#23436;&#25110;&#20027;&#21160;&#25918;&#24323;&#25110;&#34987;&#39640;&#20248;&#20808;&#32423;&#25250;&#21344;&#20026;&#27490;</span>
-    <span style="color: #ff79c6; font-weight: bold;">if</span> ((p-&gt;policy == SCHED_RR) &amp;&amp; <span style="color: #bd93f9;">!</span>--p-&gt;time_slice) {
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">scheduler_tick</span>:
+  <span style="font-weight: bold; text-decoration: underline;">runqueue_t</span> *<span style="font-weight: bold; font-style: italic;">rq</span> = this_rq();
+  <span style="font-weight: bold; text-decoration: underline;">task_t</span> *<span style="font-weight: bold; font-style: italic;">p</span> = current;
+  <span style="font-weight: bold;">if</span> (rt_task(p)):
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; task &#26159;&#23454;&#26102;&#36827;&#31243; (p-&gt;prio &lt; 100), &#21017;&#36827;&#34892;&#29305;&#27530;&#22788;&#29702;:</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">1. &#33509; scheduler &#20026; SCHED_RR, &#21017; p-&gt;time_slice &#20943;&#19968;, &#33509; time_slice</span>
+    <span style="font-weight: bold; font-style: italic;">//    </span><span style="font-weight: bold; font-style: italic;">&#24050;&#32463;&#32791;&#23613;, &#21017;&#34917;&#20805; time_slice &#24182;&#25226; task &#25918;&#22312; active &#30340;&#26411;&#23614; (&#32780;&#19981;</span>
+    <span style="font-weight: bold; font-style: italic;">//    </span><span style="font-weight: bold; font-style: italic;">&#26159;&#20687; SCHED_NORMAL &#37027;&#26679;&#25918;&#22312; expired &#20013;), &#28982;&#21518;&#36890;&#36807;</span>
+    <span style="font-weight: bold; font-style: italic;">//    </span><span style="font-weight: bold; font-style: italic;">set_tsk_need_resched &#22312;&#23558;&#26469;&#35843;&#29992; schedule &#26469;&#35843;&#24230;&#21478;&#19968;&#20010;&#36827;&#31243;&#25191;&#34892;</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">2. &#33509; schedule &#20026; SCHED_FIFO, &#21017;&#19981;&#20570;&#20219;&#20309;&#21160;&#20316;, &#30452;&#25509;&#36820;&#22238;, &#22240;&#20026; FIFO</span>
+    <span style="font-weight: bold; font-style: italic;">//    </span><span style="font-weight: bold; font-style: italic;">&#24182;&#19981;&#38656;&#35201;&#32771;&#34385;&#26102;&#38388;&#29255;, &#23427;&#23436;&#20840;&#26159;&#25353;&#29031; FIFO &#26469;&#35843;&#24230;&#30340;: &#20808;&#26469;&#30340;&#20808;&#25191;&#34892;,</span>
+    <span style="font-weight: bold; font-style: italic;">//    </span><span style="font-weight: bold; font-style: italic;">&#30452;&#21040;&#23427;&#25191;&#34892;&#23436;&#25110;&#20027;&#21160;&#25918;&#24323;&#25110;&#34987;&#39640;&#20248;&#20808;&#32423;&#25250;&#21344;&#20026;&#27490;</span>
+    <span style="font-weight: bold;">if</span> ((p-&gt;policy == SCHED_RR) &amp;&amp; !--p-&gt;time_slice) {
         p-&gt;time_slice = task_timeslice(p);
         set_tsk_need_resched(p);
         requeue_task(p, rq-&gt;active);
     }
-    <span style="color: #ff79c6; font-weight: bold;">goto</span> <span style="color: #bd93f9;">out</span>;
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">conventional scheduler</span>
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>--p-&gt;time_slice):
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">time_slice &#24050;&#32463;&#32791;&#23613;:</span>
-    <span style="color: #6272a4;">// </span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">1. &#23558; task &#20174; active &#20013; dequeue</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">2. set_tsk_need_resched &#25250;&#21344;&#24403;&#21069;&#36827;&#31243;</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">3. &#37325;&#26032;&#35745;&#31639;&#21160;&#24577;&#20248;&#20808;&#32423;</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">4. &#34917;&#20805; time_slice</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">5. &#33509; task &#19981;&#26159; interactive task &#25110;&#32773; expired &#24050;&#32463; startving, &#21017;&#23558;</span>
-    <span style="color: #6272a4;">//    </span><span style="color: #6272a4;">task enqueue &#21040; expired, &#21542;&#21017; task &#34987;&#37325;&#26032;&#25918;&#22238; active &#38431;&#23614;    </span>
+    <span style="font-weight: bold;">goto</span> <span style="font-weight: bold; text-decoration: underline;">out</span>;
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">conventional scheduler</span>
+  <span style="font-weight: bold;">if</span> (!--p-&gt;time_slice):
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">time_slice &#24050;&#32463;&#32791;&#23613;:</span>
+    <span style="font-weight: bold; font-style: italic;">// </span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">1. &#23558; task &#20174; active &#20013; dequeue</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">2. set_tsk_need_resched &#25250;&#21344;&#24403;&#21069;&#36827;&#31243;</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">3. &#37325;&#26032;&#35745;&#31639;&#21160;&#24577;&#20248;&#20808;&#32423;</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">4. &#34917;&#20805; time_slice</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">5. &#33509; task &#19981;&#26159; interactive task &#25110;&#32773; expired &#24050;&#32463; startving, &#21017;&#23558;</span>
+    <span style="font-weight: bold; font-style: italic;">//    </span><span style="font-weight: bold; font-style: italic;">task enqueue &#21040; expired, &#21542;&#21017; task &#34987;&#37325;&#26032;&#25918;&#22238; active &#38431;&#23614;    </span>
     dequeue_task(p, rq-&gt;active);
     set_tsk_need_resched(p);
 
     p-&gt;prio = effective_prio(p);
     p-&gt;time_slice = task_timeslice(p);
 
-    <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>TASK_INTERACTIVE(p) || EXPIRED_STARVING(rq)):
+    <span style="font-weight: bold;">if</span> (!TASK_INTERACTIVE(p) || EXPIRED_STARVING(rq)):
       enqueue_task(p, rq-&gt;expired);
-      <span style="color: #ff79c6; font-weight: bold;">if</span> (p-&gt;static_prio &lt; rq-&gt;best_expired_prio):
+      <span style="font-weight: bold;">if</span> (p-&gt;static_prio &lt; rq-&gt;best_expired_prio):
         rq-&gt;best_expired_prio = p-&gt;static_prio;
-    <span style="color: #ff79c6; font-weight: bold;">else</span>:
+    <span style="font-weight: bold;">else</span>:
       enqueue_task(p, rq-&gt;active);
-  <span style="color: #ff79c6; font-weight: bold;">else</span>:
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">interactive &#36827;&#31243;&#30340; time_slice &#26377;&#21487;&#33021;&#24456;&#38271;, &#32780;&#19988;&#23427;&#20204;&#20250;&#21453;&#22797;&#30340;&#37325;&#26032;&#36827;&#20837;</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">active, &#20026;&#36991;&#20813;&#36825;&#31181; task &#38271;&#26102;&#38388;&#21344;&#29992; CPU &#23548;&#33268;&#21516;&#20248;&#20808;&#32423;&#30340; task &#26080;&#27861;&#21450;</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26102;&#25191;&#34892;, &#23558; time_slice &#20998;&#20026;&#20960;&#20010; TIMESLICE_GRANULARITY, &#27599;&#24403;&#24050;&#29992;&#30340;</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">time_slice &#36798;&#21040; TIMESLICE_GRANULARITY &#30340;&#20493;&#25968;&#26102;((task_timeslice(p)</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">- p-&gt;time_slice) % TIMESLICE_GRANULARITY(p)), &#21017;&#20027;&#21160;&#25918;&#24323;&#19968;&#27425; (&#23558;</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">task &#31227;&#21160;&#21040; active &#38431;&#23614;),    </span>
-    <span style="color: #ff79c6; font-weight: bold;">if</span> (TASK_INTERACTIVE(p) &amp;&amp;
-          <span style="color: #bd93f9;">!</span>((task_timeslice(p) - p-&gt;time_slice) % TIMESLICE_GRANULARITY(p)) &amp;&amp;
+  <span style="font-weight: bold;">else</span>:
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">interactive &#36827;&#31243;&#30340; time_slice &#26377;&#21487;&#33021;&#24456;&#38271;, &#32780;&#19988;&#23427;&#20204;&#20250;&#21453;&#22797;&#30340;&#37325;&#26032;&#36827;&#20837;</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">active, &#20026;&#36991;&#20813;&#36825;&#31181; task &#38271;&#26102;&#38388;&#21344;&#29992; CPU &#23548;&#33268;&#21516;&#20248;&#20808;&#32423;&#30340; task &#26080;&#27861;&#21450;</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26102;&#25191;&#34892;, &#23558; time_slice &#20998;&#20026;&#20960;&#20010; TIMESLICE_GRANULARITY, &#27599;&#24403;&#24050;&#29992;&#30340;</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">time_slice &#36798;&#21040; TIMESLICE_GRANULARITY &#30340;&#20493;&#25968;&#26102;((task_timeslice(p)</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">- p-&gt;time_slice) % TIMESLICE_GRANULARITY(p)), &#21017;&#20027;&#21160;&#25918;&#24323;&#19968;&#27425; (&#23558;</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">task &#31227;&#21160;&#21040; active &#38431;&#23614;),    </span>
+    <span style="font-weight: bold;">if</span> (TASK_INTERACTIVE(p) &amp;&amp;
+          !((task_timeslice(p) - p-&gt;time_slice) % TIMESLICE_GRANULARITY(p)) &amp;&amp;
           (p-&gt;time_slice &gt;= TIMESLICE_GRANULARITY(p)) &amp;&amp;
           (p-&gt;array == rq-&gt;active)):
       requeue_task(p, rq-&gt;active);
@@ -478,11 +399,11 @@ task_timeslice 是根据 static_prio 来决定 task 的 time_slice
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #ff79c6; font-weight: bold;">static</span> <span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">int</span> <span style="color: #50fa7b; font-weight: bold;">task_timeslice</span>(<span style="color: #f8f8f2;">task_t</span> *<span style="color: #f8f8f2;">p</span>)
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (p-&gt;static_prio &lt; NICE_TO_PRIO(0)):
-    <span style="color: #ff79c6; font-weight: bold;">return</span> SCALE_PRIO(<span style="color: #f8f8f2;">DEF_TIMESLICE</span>*4, p-&gt;static_prio);
-  <span style="color: #ff79c6; font-weight: bold;">else</span>:
-    <span style="color: #ff79c6; font-weight: bold;">return</span> SCALE_PRIO(DEF_TIMESLICE, p-&gt;static_prio);
+<pre class="src src-c"><span style="font-weight: bold;">static</span> <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold;">task_timeslice</span>(<span style="font-weight: bold; text-decoration: underline;">task_t</span> *<span style="font-weight: bold; font-style: italic;">p</span>)
+  <span style="font-weight: bold;">if</span> (p-&gt;static_prio &lt; NICE_TO_PRIO(0)):
+    <span style="font-weight: bold;">return</span> SCALE_PRIO(<span style="font-weight: bold; text-decoration: underline;">DEF_TIMESLICE</span>*4, p-&gt;static_prio);
+  <span style="font-weight: bold;">else</span>:
+    <span style="font-weight: bold;">return</span> SCALE_PRIO(DEF_TIMESLICE, p-&gt;static_prio);
 </pre>
 </div>
 
@@ -521,20 +442,20 @@ sleep_avg 的计算, 是通过后面的 recalc_task_prio 函数
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #bd93f9;">effective_prio</span>:
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23545;&#20110; rt_task, &#30452;&#25509;&#36820;&#22238;</span>
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (rt_task(p)):
-    <span style="color: #ff79c6; font-weight: bold;">return</span> p-&gt;prio;
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23558; [0 .... MAX_SLEEP_AVG] &#26144;&#23556;&#20026; [-5 .... +5] &#30340; bonus, &#21363; sleep_avg</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36234;&#38271;, bonus &#36234;&#22823;, &#30456;&#24212;&#30340; prio &#30340;&#20248;&#20808;&#32423;&#20250;&#36234;&#39640;</span>
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">effective_prio</span>:
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#20110; rt_task, &#30452;&#25509;&#36820;&#22238;</span>
+  <span style="font-weight: bold;">if</span> (rt_task(p)):
+    <span style="font-weight: bold;">return</span> p-&gt;prio;
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23558; [0 .... MAX_SLEEP_AVG] &#26144;&#23556;&#20026; [-5 .... +5] &#30340; bonus, &#21363; sleep_avg</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36234;&#38271;, bonus &#36234;&#22823;, &#30456;&#24212;&#30340; prio &#30340;&#20248;&#20808;&#32423;&#20250;&#36234;&#39640;</span>
   bonus = CURRENT_BONUS(p) - MAX_BONUS / 2;
   prio = p-&gt;static_prio - bonus;
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">prio &#19981;&#20250;&#27604; MAX_RT_PRIO (100) &#26356;&#39640;</span>
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (prio &lt; MAX_RT_PRIO):
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">prio &#19981;&#20250;&#27604; MAX_RT_PRIO (100) &#26356;&#39640;</span>
+  <span style="font-weight: bold;">if</span> (prio &lt; MAX_RT_PRIO):
     prio = MAX_RT_PRIO;
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (prio &gt; MAX_PRIO-1):
+  <span style="font-weight: bold;">if</span> (prio &gt; MAX_PRIO-1):
     prio = MAX_PRIO-1;
-  <span style="color: #ff79c6; font-weight: bold;">return</span> prio
+  <span style="font-weight: bold;">return</span> prio
 </pre>
 </div>
 </div>
@@ -554,20 +475,20 @@ sleep_avg 的计算, 是通过后面的 recalc_task_prio 函数
 <div class="outline-text-4" id="text-1-3-2">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #bd93f9;">try_to_wake_up</span>:
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">try_to_wake_up</span>:
   activate_task()
     recalc_task_prio()
       sleep_time = now - p-&gt;timestamp;
-      <span style="color: #ff79c6; font-weight: bold;">if</span> (sleep_time &gt; NS_MAX_SLEEP_AVG):
+      <span style="font-weight: bold;">if</span> (sleep_time &gt; NS_MAX_SLEEP_AVG):
         sleep_time = NS_MAX_SLEEP_AVG;
       p-&gt;sleep_avg += sleep_time;
-      <span style="color: #ff79c6; font-weight: bold;">if</span> (p-&gt;sleep_avg &gt; NS_MAX_SLEEP_AVG):
+      <span style="font-weight: bold;">if</span> (p-&gt;sleep_avg &gt; NS_MAX_SLEEP_AVG):
         p-&gt;sleep_avg = NS_MAX_SLEEP_AVG;
       p-&gt;prio = effective_prio(p);
     __activate_task(p, rq);
       enqueue_task(p, rq-&gt;active);
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#25250;&#21344;  </span>
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (TASK_PREEMPTS_CURR(p, rq)):
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25250;&#21344;  </span>
+  <span style="font-weight: bold;">if</span> (TASK_PREEMPTS_CURR(p, rq)):
     resched_task(rq-&gt;curr);
 </pre>
 </div>
@@ -613,37 +534,37 @@ recalc_task_prio 负责 sleep_avg 的增加, 而 schedule 负责 sleep_avg 的�
 <div class="outline-text-4" id="text-1-3-3">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #bd93f9;">schedule</span>:
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">schedule</span>:
   prev = current;
   rq = this_rq();
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">schedule &#21482;&#20250;&#20174; active &#20013;&#21462;&#36827;&#31243;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">schedule &#21482;&#20250;&#20174; active &#20013;&#21462;&#36827;&#31243;</span>
   array = rq-&gt;active;
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>array-&gt;nr_active):
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">Switch the active and expired arrays.</span>
+  <span style="font-weight: bold;">if</span> (!array-&gt;nr_active):
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">Switch the active and expired arrays.</span>
     rq-&gt;active = rq-&gt;expired;
     rq-&gt;expired = array;
     array = rq-&gt;active;
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36825;&#19977;&#34892;&#20195;&#30721;&#21487;&#20197;&#24120;&#25968;&#26102;&#38388;&#20869;&#36873;&#25321; active &#20013;&#19968;&#20010;&#21160;&#24577;&#20248;&#20808;&#32423;&#26368;&#39640;&#30340;&#38142;&#34920;, &#25152;&#20197;</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#31216;&#20026; O(1) schedule</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#19977;&#34892;&#20195;&#30721;&#21487;&#20197;&#24120;&#25968;&#26102;&#38388;&#20869;&#36873;&#25321; active &#20013;&#19968;&#20010;&#21160;&#24577;&#20248;&#20808;&#32423;&#26368;&#39640;&#30340;&#38142;&#34920;, &#25152;&#20197;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#31216;&#20026; O(1) schedule</span>
   idx = sched_find_first_bit(array-&gt;bitmap);
   queue = array-&gt;queue + idx;
   next = list_entry(queue-&gt;next, task_t, run_list);
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>rt_task(next):
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23545;&#20110; conventional task, &#30452;&#25509;&#31227;&#21160;&#21040; active &#38431;&#23614;, &#22312;&#36825;&#19968;&#28857;&#19978;</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">SCHED_FIFO &#21450; SCHED_RR &#19982;&#23427;&#19981;&#21516;: &#23545;&#20110; rt_task, &#21482;&#26377;&#20027;&#21160; yield &#25165;&#20250;</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23548;&#33268;&#23427;&#34987;&#25918;&#22312;&#38431;&#23614;, &#34987;&#25250;&#21344;&#24182;&#19981;&#20250;&#23558;&#23427;&#25918;&#22312;&#38431;&#23614;</span>
+  <span style="font-weight: bold;">if</span> (!rt_task(next):
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#20110; conventional task, &#30452;&#25509;&#31227;&#21160;&#21040; active &#38431;&#23614;, &#22312;&#36825;&#19968;&#28857;&#19978;</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">SCHED_FIFO &#21450; SCHED_RR &#19982;&#23427;&#19981;&#21516;: &#23545;&#20110; rt_task, &#21482;&#26377;&#20027;&#21160; yield &#25165;&#20250;</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23548;&#33268;&#23427;&#34987;&#25918;&#22312;&#38431;&#23614;, &#34987;&#25250;&#21344;&#24182;&#19981;&#20250;&#23558;&#23427;&#25918;&#22312;&#38431;&#23614;</span>
     array = next-&gt;array;
     dequeue_task(next, array);
     enqueue_task(next, array);
 
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">sleep_avg &#30456;&#20851;</span>
-  <span style="color: #6272a4;">//</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">task_struct-&gt;timestamp &#26159;&#25351; task &#26368;&#36817;&#19968;&#27425;&#34987;&#35843;&#24230;&#30340;&#26102;&#38388; (schedule in</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#25110; out), &#25152;&#20197; run_time &#26159; prev &#26412;&#27425;&#36816;&#34892;&#30340;&#26102;&#38388;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sleep_avg &#30456;&#20851;</span>
+  <span style="font-weight: bold; font-style: italic;">//</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">task_struct-&gt;timestamp &#26159;&#25351; task &#26368;&#36817;&#19968;&#27425;&#34987;&#35843;&#24230;&#30340;&#26102;&#38388; (schedule in</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25110; out), &#25152;&#20197; run_time &#26159; prev &#26412;&#27425;&#36816;&#34892;&#30340;&#26102;&#38388;</span>
   run_time = now - prev-&gt;timestamp;
   prev-&gt;sleep_avg -= run_time;
   prev-&gt;timestamp = next-&gt;timestamp = now;
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">switch !</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">switch !</span>
   prepare_arch_switch(rq, next);
   prev = context_switch(rq, prev, next);
 </pre>
@@ -848,43 +769,43 @@ scheduler_tick 时会通过 load_balance 实现 pull task
 <div class="outline-text-5" id="text-1-5-1-1">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #bd93f9;">scheduler_tick</span>:
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">scheduler_tick</span>:
   rebalance_tick(cpu, rq, NOT_IDLE);
     this_load = this_rq-&gt;nr_running * SCHED_LOAD_SCALE;
     this_rq-&gt;cpu_load = (old_load + this_load) / 2;
     interval = sd-&gt;balance_interval;
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36890;&#36807; interval &#38480;&#21046; load_balance &#30340;&#39057;&#29575;    </span>
-    <span style="color: #ff79c6; font-weight: bold;">if</span> (j - sd-&gt;last_balance &gt;= interval):
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36890;&#36807; interval &#38480;&#21046; load_balance &#30340;&#39057;&#29575;    </span>
+    <span style="font-weight: bold;">if</span> (j - sd-&gt;last_balance &gt;= interval):
       sd-&gt;last_balance += interval;
       load_balance(this_cpu, this_rq, sd, idle)
-        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26681;&#25454; loading (nr_running) &#25214;&#19968;&#20010;&#26368;&#32321;&#24537;&#30340; cpu        </span>
+        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26681;&#25454; loading (nr_running) &#25214;&#19968;&#20010;&#26368;&#32321;&#24537;&#30340; cpu        </span>
         busiest = find_busiest_queue(group);
         move_tasks(this_rq, this_cpu, busiest,imbalance, sd, idle);
-          <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20248;&#20808;&#20174; expired &#20013;&#36873;&#25321;          </span>
-          <span style="color: #ff79c6; font-weight: bold;">if</span> (busiest-&gt;expired-&gt;nr_active):
+          <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20248;&#20808;&#20174; expired &#20013;&#36873;&#25321;          </span>
+          <span style="font-weight: bold;">if</span> (busiest-&gt;expired-&gt;nr_active):
             array = busiest-&gt;expired;
             dst_array = this_rq-&gt;expired;
-          <span style="color: #ff79c6; font-weight: bold;">else</span>:
+          <span style="font-weight: bold;">else</span>:
             array = busiest-&gt;active;
             dst_array = this_rq-&gt;active;
-          <span style="color: #bd93f9;">LOOP</span>:
-          <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#25214;&#21040; busiest &#20013;&#30340;&#19968;&#20010; task          </span>
+          <span style="font-weight: bold; text-decoration: underline;">LOOP</span>:
+          <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25214;&#21040; busiest &#20013;&#30340;&#19968;&#20010; task          </span>
           idx = find_next_bit(array-&gt;bitmap, MAX_PRIO, idx);
           head = array-&gt;queue + idx;
           curr = head-&gt;prev;
           tmp = list_entry(curr, task_t, run_list);
-          <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21028;&#26029; tmp &#26159;&#21542;&#21487;&#20197;&#20174; busiest &#36801;&#31227;&#21040; this_cpu          </span>
-          <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>can_migrate_task(tmp, busiest, this_cpu, sd, idle)):
-            <span style="color: #ff79c6; font-weight: bold;">goto</span> <span style="color: #bd93f9;">LOOP</span>
-          <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20174; busiest &#36801;&#31227;&#21040; this_cpu                </span>
+          <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21028;&#26029; tmp &#26159;&#21542;&#21487;&#20197;&#20174; busiest &#36801;&#31227;&#21040; this_cpu          </span>
+          <span style="font-weight: bold;">if</span> (!can_migrate_task(tmp, busiest, this_cpu, sd, idle)):
+            <span style="font-weight: bold;">goto</span> <span style="font-weight: bold; text-decoration: underline;">LOOP</span>
+          <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20174; busiest &#36801;&#31227;&#21040; this_cpu                </span>
           pull_task(busiest, src_array, tmp, this_rq, dst_array, this_cpu);
             dequeue_task(tmp, src_array);
             src_rq-&gt;nr_running--;
             this_rq-&gt;nr_running++;
             enqueue_task(tmp, dst_array);
-            <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509;&#36801;&#31227;&#21040; this_rq &#30340;&#36827;&#31243;&#30340;&#20248;&#20808;&#32423;&#39640;&#20110; this_rq-&gt;curr, &#21017;&#36890;&#36807;</span>
-            <span style="color: #6272a4;">// </span><span style="color: #6272a4;">resched_task &#25250;&#21344; this_rq-&gt;curr            </span>
-            <span style="color: #ff79c6; font-weight: bold;">if</span> (TASK_PREEMPTS_CURR(p, this_rq)):
+            <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509;&#36801;&#31227;&#21040; this_rq &#30340;&#36827;&#31243;&#30340;&#20248;&#20808;&#32423;&#39640;&#20110; this_rq-&gt;curr, &#21017;&#36890;&#36807;</span>
+            <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">resched_task &#25250;&#21344; this_rq-&gt;curr            </span>
+            <span style="font-weight: bold;">if</span> (TASK_PREEMPTS_CURR(p, this_rq)):
               resched_task(this_rq-&gt;curr);
 </pre>
 </div>
@@ -896,19 +817,19 @@ scheduler_tick 时会通过 load_balance 实现 pull task
 <div class="outline-text-5" id="text-1-5-1-2">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #bd93f9;">can_migrate_task</span>:
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#19977;&#31181;&#24773;&#20917;&#19979; migrate &#20250;&#22833;&#36133;:</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">1. p &#26159; busiest-&gt;current, &#21363;&#23427;&#27491;&#22312; busiest &#19978;&#36816;&#34892;, &#26174;&#28982;&#26080;&#27861;&#34987;</span>
-  <span style="color: #6272a4;">//    </span><span style="color: #6272a4;">migrate</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">2. p-&gt;cpus_allowed &#19981;&#21253;&#25324; this_cpu (&#36890;&#36807; sched_setaffinity &#35774;&#32622;&#30340;)</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">3. task_hot, &#21363; (now - p-&gt;last_ran) &#23567;&#20110;&#26576;&#20010;&#38376;&#38480;, &#35828;&#26126; task &#26368;&#36817;&#36816;&#34892;</span>
-  <span style="color: #6272a4;">//    </span><span style="color: #6272a4;">&#36807;, cache is hot, &#24212;&#35813;&#36991;&#20813; migrate        </span>
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (task_running(rq, p)):
-    <span style="color: #ff79c6; font-weight: bold;">return</span> 0;
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>cpu_isset(this_cpu, p-&gt;cpus_allowed)):
-    <span style="color: #ff79c6; font-weight: bold;">return</span> 0;
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (task_hot(p, rq-&gt;timestamp_last_tick, sd)):
-    <span style="color: #ff79c6; font-weight: bold;">return</span> 0;
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">can_migrate_task</span>:
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19977;&#31181;&#24773;&#20917;&#19979; migrate &#20250;&#22833;&#36133;:</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">1. p &#26159; busiest-&gt;current, &#21363;&#23427;&#27491;&#22312; busiest &#19978;&#36816;&#34892;, &#26174;&#28982;&#26080;&#27861;&#34987;</span>
+  <span style="font-weight: bold; font-style: italic;">//    </span><span style="font-weight: bold; font-style: italic;">migrate</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">2. p-&gt;cpus_allowed &#19981;&#21253;&#25324; this_cpu (&#36890;&#36807; sched_setaffinity &#35774;&#32622;&#30340;)</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">3. task_hot, &#21363; (now - p-&gt;last_ran) &#23567;&#20110;&#26576;&#20010;&#38376;&#38480;, &#35828;&#26126; task &#26368;&#36817;&#36816;&#34892;</span>
+  <span style="font-weight: bold; font-style: italic;">//    </span><span style="font-weight: bold; font-style: italic;">&#36807;, cache is hot, &#24212;&#35813;&#36991;&#20813; migrate        </span>
+  <span style="font-weight: bold;">if</span> (task_running(rq, p)):
+    <span style="font-weight: bold;">return</span> 0;
+  <span style="font-weight: bold;">if</span> (!cpu_isset(this_cpu, p-&gt;cpus_allowed)):
+    <span style="font-weight: bold;">return</span> 0;
+  <span style="font-weight: bold;">if</span> (task_hot(p, rq-&gt;timestamp_last_tick, sd)):
+    <span style="font-weight: bold;">return</span> 0;
 </pre>
 </div>
 </div>
@@ -928,18 +849,18 @@ push task 即 "将 task push 到空闲的 cpu 去执行", 一个例子就是 do_
 <div class="outline-text-5" id="text-1-5-2-1">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #bd93f9;">do_execve</span>:
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">do_execve</span>:
   sched_exec();
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#24403;&#21069; cpu &#24050;&#32463;&#24456;&#31354;&#38386;, &#19981;&#20877; push    </span>
-    <span style="color: #ff79c6; font-weight: bold;">if</span> (this_rq()-&gt;nr_running &lt;= 1):
-      <span style="color: #ff79c6; font-weight: bold;">goto</span> <span style="color: #bd93f9;">out</span>;
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#24403;&#21069; cpu &#24050;&#32463;&#24456;&#31354;&#38386;, &#19981;&#20877; push    </span>
+    <span style="font-weight: bold;">if</span> (this_rq()-&gt;nr_running &lt;= 1):
+      <span style="font-weight: bold;">goto</span> <span style="font-weight: bold; text-decoration: underline;">out</span>;
     new_cpu = find_idlest_cpu(current, this_cpu, sd);
     sched_migrate_task(current, new_cpu);
-      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#38656;&#35201;&#32771;&#34385; affinity      </span>
-      <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>cpu_isset(dest_cpu, p-&gt;cpus_allowed):
-        <span style="color: #ff79c6; font-weight: bold;">goto</span> <span style="color: #bd93f9;">out</span>;
-      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">migrate_task &#20250;&#21796;&#37266; migrate_thread &#21435;&#23436;&#25104; task &#30340;&#36801;&#31227;</span>
-      <span style="color: #6272a4;">// </span><span style="color: #6272a4; background-color: #373844;">TODO</span><span style="color: #6272a4;">: &#20026;&#20160;&#20040;&#38656;&#35201; migrate_thread      </span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#38656;&#35201;&#32771;&#34385; affinity      </span>
+      <span style="font-weight: bold;">if</span> (!cpu_isset(dest_cpu, p-&gt;cpus_allowed):
+        <span style="font-weight: bold;">goto</span> <span style="font-weight: bold; text-decoration: underline;">out</span>;
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">migrate_task &#20250;&#21796;&#37266; migrate_thread &#21435;&#23436;&#25104; task &#30340;&#36801;&#31227;</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">TODO</span><span style="font-weight: bold; font-style: italic;">: &#20026;&#20160;&#20040;&#38656;&#35201; migrate_thread      </span>
       migrate_task(p, dest_cpu, &amp;req)
 </pre>
 </div>
@@ -956,15 +877,15 @@ push task 即 "将 task push 到空闲的 cpu 去执行", 一个例子就是 do_
 <div class="outline-text-4" id="text-1-6-1">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #bd93f9;">set_user_nice</span>:
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (rt_task(p)):
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23545;&#20110; rt_task, static_prio &#20063;&#20250;&#34987; nice &#20462;&#25913;, &#22240;&#20026;&#35745;&#31639; time_slice</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36827;&#38656;&#35201;&#29992;&#21040;.</span>
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">set_user_nice</span>:
+  <span style="font-weight: bold;">if</span> (rt_task(p)):
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#20110; rt_task, static_prio &#20063;&#20250;&#34987; nice &#20462;&#25913;, &#22240;&#20026;&#35745;&#31639; time_slice</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36827;&#38656;&#35201;&#29992;&#21040;.</span>
     p-&gt;static_prio = NICE_TO_PRIO(nice);
-    <span style="color: #ff79c6; font-weight: bold;">goto</span> <span style="color: #bd93f9;">out</span>;
+    <span style="font-weight: bold;">goto</span> <span style="font-weight: bold; text-decoration: underline;">out</span>;
 
   array = p-&gt;array;
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (array):
+  <span style="font-weight: bold;">if</span> (array):
     dequeue_task(p, array);
 
   old_prio = p-&gt;prio;
@@ -973,11 +894,11 @@ push task 即 "将 task push 到空闲的 cpu 去执行", 一个例子就是 do_
   p-&gt;static_prio = NICE_TO_PRIO(nice);
   p-&gt;prio += delta;
 
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (array):
+  <span style="font-weight: bold;">if</span> (array):
     enqueue_task(p, array);
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22914;&#26524;&#35201;&#25552;&#39640;&#26576;&#20010; task &#30340;&#20248;&#20808;&#32423;, &#25110;&#32773;&#35201;&#38477;&#20302;&#24403;&#21069; task &#30340;&#20248;&#20808;&#32423;, &#21017;&#36890;&#36807;</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">resched_task &#35843;&#29992; scheduler, &#23454;&#29616; task &#30340;&#25250;&#21344;</span>
-    <span style="color: #ff79c6; font-weight: bold;">if</span> (delta &lt; 0 || (delta &gt; 0 &amp;&amp; task_running(rq, p))):
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22914;&#26524;&#35201;&#25552;&#39640;&#26576;&#20010; task &#30340;&#20248;&#20808;&#32423;, &#25110;&#32773;&#35201;&#38477;&#20302;&#24403;&#21069; task &#30340;&#20248;&#20808;&#32423;, &#21017;&#36890;&#36807;</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">resched_task &#35843;&#29992; scheduler, &#23454;&#29616; task &#30340;&#25250;&#21344;</span>
+    <span style="font-weight: bold;">if</span> (delta &lt; 0 || (delta &gt; 0 &amp;&amp; task_running(rq, p))):
       resched_task(rq-&gt;curr);
 </pre>
 </div>
@@ -989,20 +910,20 @@ push task 即 "将 task push 到空闲的 cpu 去执行", 一个例子就是 do_
 <div class="outline-text-4" id="text-1-6-2">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #bd93f9;">sys_sched_yield</span>:
-  <span style="color: #f8f8f2;">runqueue_t</span> *<span style="color: #f8f8f2;">rq</span> = this_rq_lock();
-  <span style="color: #f8f8f2;">prio_array_t</span> *<span style="color: #f8f8f2;">array</span> = current-&gt;array;
-  <span style="color: #f8f8f2;">prio_array_t</span> *<span style="color: #f8f8f2;">target</span> = rq-&gt;expired;
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23545;&#20110; rt_task &#26469;&#35828;, yield &#24182;&#19981;&#20250;&#23558; task &#31227;&#21160;&#21040; expired, &#32780;&#20165;&#20165;&#26159;&#31227;&#21160;</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21040; active &#30340;&#38431;&#23614;</span>
-  <span style="color: #ff79c6; font-weight: bold;">if</span> (rt_task(current)):
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">sys_sched_yield</span>:
+  <span style="font-weight: bold; text-decoration: underline;">runqueue_t</span> *<span style="font-weight: bold; font-style: italic;">rq</span> = this_rq_lock();
+  <span style="font-weight: bold; text-decoration: underline;">prio_array_t</span> *<span style="font-weight: bold; font-style: italic;">array</span> = current-&gt;array;
+  <span style="font-weight: bold; text-decoration: underline;">prio_array_t</span> *<span style="font-weight: bold; font-style: italic;">target</span> = rq-&gt;expired;
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#20110; rt_task &#26469;&#35828;, yield &#24182;&#19981;&#20250;&#23558; task &#31227;&#21160;&#21040; expired, &#32780;&#20165;&#20165;&#26159;&#31227;&#21160;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21040; active &#30340;&#38431;&#23614;</span>
+  <span style="font-weight: bold;">if</span> (rt_task(current)):
     target = rq-&gt;active;
 
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23545;&#20110; rt_task &#26469;&#35828;, &#36890;&#36807; dequeue_task &#21644; enqueue_task &#23558; task &#31227;&#21160;&#21040;</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">active &#38431;&#23614;, &#23545;&#20110; conventional task &#26469;&#35828;, &#23558; task &#20174; active &#31227;&#21160;&#21040;</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">expired.</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20294;&#30475;&#36215;&#26469; task &#30340; time_slice &#24182;&#27809;&#26377;&#36890;&#36807; task_timeslice &#36827;&#20837;&#34917;&#20805;, &#25152;&#20197;</span>
-  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23427;&#23558;&#34987; schedule &#26102;&#36824;&#20250;&#20351;&#29992;&#26087;&#30340; time_slice?</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#20110; rt_task &#26469;&#35828;, &#36890;&#36807; dequeue_task &#21644; enqueue_task &#23558; task &#31227;&#21160;&#21040;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">active &#38431;&#23614;, &#23545;&#20110; conventional task &#26469;&#35828;, &#23558; task &#20174; active &#31227;&#21160;&#21040;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">expired.</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20294;&#30475;&#36215;&#26469; task &#30340; time_slice &#24182;&#27809;&#26377;&#36890;&#36807; task_timeslice &#36827;&#20837;&#34917;&#20805;, &#25152;&#20197;</span>
+  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23427;&#23558;&#34987; schedule &#26102;&#36824;&#20250;&#20351;&#29992;&#26087;&#30340; time_slice?</span>
   dequeue_task(current, array);
   enqueue_task(current, target);
 
@@ -1025,36 +946,36 @@ push task 即 "将 task push 到空闲的 cpu 去执行", 一个例子就是 do_
 <div class="outline-text-4" id="text-1-6-5">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #bd93f9;">fork</span>:
+<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">fork</span>:
   sched_fork(p)
     p-&gt;state = TASK_RUNNING;
-    p-&gt;array = <span style="color: #bd93f9;">NULL</span>;
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#29238;&#23376;&#36827;&#31243;&#30340; time_slice &#37117;&#21464;&#20026;&#29238;&#36827;&#31243;&#30340;&#19968;&#21322;</span>
+    p-&gt;array = <span style="font-weight: bold; text-decoration: underline;">NULL</span>;
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#29238;&#23376;&#36827;&#31243;&#30340; time_slice &#37117;&#21464;&#20026;&#29238;&#36827;&#31243;&#30340;&#19968;&#21322;</span>
     p-&gt;time_slice = (current-&gt;time_slice + 1) &gt;&gt; 1;
     current-&gt;time_slice &gt;&gt;= 1;
   wake_up_new_task(p)
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#35745;&#31639;&#21160;&#24577;&#20248;&#20808;&#32423;, &#23545;&#20110; conventional process, prio &#30001; static_prio &#21644;</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">sleep_avg &#20915;&#23450;, &#23545;&#20110; real time process, prio &#19981;&#20250;&#20877;&#34987;&#20462;&#25913;, &#30452;&#25509;&#20351;</span>
-    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#29992; parent fork &#20986;&#26469;&#30340; prio</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#35745;&#31639;&#21160;&#24577;&#20248;&#20808;&#32423;, &#23545;&#20110; conventional process, prio &#30001; static_prio &#21644;</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sleep_avg &#20915;&#23450;, &#23545;&#20110; real time process, prio &#19981;&#20250;&#20877;&#34987;&#20462;&#25913;, &#30452;&#25509;&#20351;</span>
+    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#29992; parent fork &#20986;&#26469;&#30340; prio</span>
     p-&gt;prio = effective_prio(p);
-    <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>(clone_flags &amp; CLONE_VM)):
-      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">CLONE_VM &#27809;&#26377;&#32622;&#20301;, &#20808;&#35843;&#24230;&#23376;&#36827;&#31243;&#25191;&#34892;, &#22240;&#20026;&#26377;&#21487;&#33021;&#23376;&#36827;&#31243;&#20250;&#30452;&#25509;&#35843;&#29992;</span>
-      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">exec. &#36890;&#36807;&#35753;&#23376;&#36827;&#31243;&#20808;&#25191;&#34892; exec, &#21487;&#20197;&#36991;&#20813;&#29238;&#36827;&#31243;&#20889;&#20869;&#23384;&#26102;&#23548;&#33268;&#30340; COW,</span>
-      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22914;&#26524; CLONE_VM &#32622;&#20301;, &#21017;&#19981;&#20250;&#21457;&#29983; COW, &#20248;&#20808;&#35753;&#29238;&#36827;&#31243;&#25191;&#34892;</span>
+    <span style="font-weight: bold;">if</span> (!(clone_flags &amp; CLONE_VM)):
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">CLONE_VM &#27809;&#26377;&#32622;&#20301;, &#20808;&#35843;&#24230;&#23376;&#36827;&#31243;&#25191;&#34892;, &#22240;&#20026;&#26377;&#21487;&#33021;&#23376;&#36827;&#31243;&#20250;&#30452;&#25509;&#35843;&#29992;</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">exec. &#36890;&#36807;&#35753;&#23376;&#36827;&#31243;&#20808;&#25191;&#34892; exec, &#21487;&#20197;&#36991;&#20813;&#29238;&#36827;&#31243;&#20889;&#20869;&#23384;&#26102;&#23548;&#33268;&#30340; COW,</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22914;&#26524; CLONE_VM &#32622;&#20301;, &#21017;&#19981;&#20250;&#21457;&#29983; COW, &#20248;&#20808;&#35753;&#29238;&#36827;&#31243;&#25191;&#34892;</span>
       p-&gt;prio = current-&gt;prio;
       list_add_tail(&amp;p-&gt;run_list, &amp;current-&gt;run_list);
       p-&gt;array = current-&gt;array;
-      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">"&#35753;&#23376;&#36827;&#31243;&#20808;&#25191;&#34892;"&#26159;&#36890;&#36807;&#20004;&#28857;&#20570;&#21040;&#30340;:</span>
-      <span style="color: #6272a4;">//</span>
-      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">1. &#36890;&#36807; list_add_tail (&#32780;&#19981;&#26159;&#36890;&#24120;&#30340; enqueue_task) &#23558; p &#28155;&#21152;&#21040;</span>
-      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">active &#38142;&#34920;&#20013;, &#20294;&#20301;&#20110; current &#20043;&#21069;</span>
-      <span style="color: #6272a4;">//</span>
-      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">2. set_need_resched &#20250;&#20351; current &#36827;&#31243;&#36820;&#22238;&#21040; user mode &#21069;&#21457;&#29983;</span>
-      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">schedule, &#30001;&#20110; p &#19978;&#19968;&#27493;&#24050;&#32463;&#22312;&#38142;&#34920;&#20013; current &#20043;&#21069;, &#25152;&#20197;&#23427;&#26497;&#26377;&#21487;&#33021;</span>
-      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22312; schedule &#34987;&#36873;&#20013;, &#20294;&#21363;&#20351;&#27809;&#26377;&#36873;&#20013; p, &#20063;&#21487;&#20197;&#20445;&#35777; p &#32943;&#23450;&#22312;</span>
-      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">current &#20043;&#21069;&#34987;&#35843;&#24230;</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">"&#35753;&#23376;&#36827;&#31243;&#20808;&#25191;&#34892;"&#26159;&#36890;&#36807;&#20004;&#28857;&#20570;&#21040;&#30340;:</span>
+      <span style="font-weight: bold; font-style: italic;">//</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">1. &#36890;&#36807; list_add_tail (&#32780;&#19981;&#26159;&#36890;&#24120;&#30340; enqueue_task) &#23558; p &#28155;&#21152;&#21040;</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">active &#38142;&#34920;&#20013;, &#20294;&#20301;&#20110; current &#20043;&#21069;</span>
+      <span style="font-weight: bold; font-style: italic;">//</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">2. set_need_resched &#20250;&#20351; current &#36827;&#31243;&#36820;&#22238;&#21040; user mode &#21069;&#21457;&#29983;</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">schedule, &#30001;&#20110; p &#19978;&#19968;&#27493;&#24050;&#32463;&#22312;&#38142;&#34920;&#20013; current &#20043;&#21069;, &#25152;&#20197;&#23427;&#26497;&#26377;&#21487;&#33021;</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22312; schedule &#34987;&#36873;&#20013;, &#20294;&#21363;&#20351;&#27809;&#26377;&#36873;&#20013; p, &#20063;&#21487;&#20197;&#20445;&#35777; p &#32943;&#23450;&#22312;</span>
+      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">current &#20043;&#21069;&#34987;&#35843;&#24230;</span>
       set_need_resched();
-    <span style="color: #ff79c6; font-weight: bold;">else</span>:
+    <span style="font-weight: bold;">else</span>:
       enqueue_task(p, rq-&gt;active);
       rq-&gt;nr_running++;
 </pre>
