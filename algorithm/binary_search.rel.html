@@ -4,11 +4,90 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Algorithm: Binary Search</title>
-<!-- 2016-09-20 Tue 16:33 -->
+<!-- 2016-09-20 二 16:45 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
-<link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -72,57 +151,57 @@ for the JavaScript code in this tag.
 <div class="outline-text-2" id="text-1">
 <div class="org-src-container">
 
-<pre class="src src-python"><span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">-*- coding: utf-8 -*-</span>
-<span style="font-weight: bold;">class</span> <span style="font-weight: bold; text-decoration: underline;">Solution</span>(<span style="font-weight: bold;">object</span>):
+<pre class="src src-python"><span style="color: #6272a4;"># </span><span style="color: #6272a4;">-*- coding: utf-8 -*-</span>
+<span style="color: #ff79c6; font-weight: bold;">class</span> <span style="color: #f8f8f2;">Solution</span>(<span style="color: #8be9fd;">object</span>):
 
-    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">binarySearch</span>(<span style="font-weight: bold;">self</span>, A, value):
-        <span style="font-style: italic;">"""</span>
-<span style="font-style: italic;">        1 2 4 5 : 2 =&gt; 1</span>
-<span style="font-style: italic;">        returns: i for A[i] == value</span>
-<span style="font-style: italic;">        """</span>
-        <span style="font-weight: bold; font-style: italic;">f</span> = 0
-        <span style="font-weight: bold; font-style: italic;">t</span> = <span style="font-weight: bold;">len</span>(A) - 1
+    <span style="color: #ff79c6; font-weight: bold;">def</span> <span style="color: #50fa7b; font-weight: bold;">binarySearch</span>(<span style="color: #ff79c6; font-weight: bold;">self</span>, A, value):
+        <span style="color: #6272a4;">"""</span>
+<span style="color: #6272a4;">        1 2 4 5 : 2 =&gt; 1</span>
+<span style="color: #6272a4;">        returns: i for A[i] == value</span>
+<span style="color: #6272a4;">        """</span>
+        <span style="color: #f8f8f2;">f</span> = 0
+        <span style="color: #f8f8f2;">t</span> = <span style="color: #8be9fd;">len</span>(A) - 1
 
-        <span style="font-style: italic;">"""</span>
-<span style="font-style: italic;">        &#24490;&#29615;&#19981;&#21464;&#37327;:</span>
-<span style="font-style: italic;">        A[f..t] &#20043;&#22806;&#30340;&#37096;&#20998;&#19981;&#28385;&#36275; A[x] == value</span>
-<span style="font-style: italic;">        """</span>
-        <span style="font-weight: bold;">while</span> (<span style="font-weight: bold; text-decoration: underline;">True</span>):
-            <span style="font-weight: bold;">if</span> (f &gt; t):
-                <span style="font-weight: bold;">return</span> -1
-            <span style="font-weight: bold;">else</span>:
-                <span style="font-weight: bold; font-style: italic;">mid</span> = <span style="font-weight: bold;">int</span>((f + t) / 2)
-                <span style="font-weight: bold;">if</span> (A[mid] == value):
-                    <span style="font-weight: bold;">return</span> mid
-                <span style="font-weight: bold;">elif</span> (A[mid] &gt; value):
-                    <span style="font-weight: bold; font-style: italic;">t</span> = mid - 1
-                <span style="font-weight: bold;">else</span>:
-                    <span style="font-weight: bold; font-style: italic;">f</span> = mid + 1
+        <span style="color: #6272a4;">"""</span>
+<span style="color: #6272a4;">        &#24490;&#29615;&#19981;&#21464;&#37327;:</span>
+<span style="color: #6272a4;">        A[f..t] &#20043;&#22806;&#30340;&#37096;&#20998;&#19981;&#28385;&#36275; A[x] == value</span>
+<span style="color: #6272a4;">        """</span>
+        <span style="color: #ff79c6; font-weight: bold;">while</span> (<span style="color: #bd93f9;">True</span>):
+            <span style="color: #ff79c6; font-weight: bold;">if</span> (f &gt; t):
+                <span style="color: #ff79c6; font-weight: bold;">return</span> -1
+            <span style="color: #ff79c6; font-weight: bold;">else</span>:
+                <span style="color: #f8f8f2;">mid</span> = <span style="color: #8be9fd;">int</span>((f + t) / 2)
+                <span style="color: #ff79c6; font-weight: bold;">if</span> (A[mid] == value):
+                    <span style="color: #ff79c6; font-weight: bold;">return</span> mid
+                <span style="color: #ff79c6; font-weight: bold;">elif</span> (A[mid] &gt; value):
+                    <span style="color: #f8f8f2;">t</span> = mid - 1
+                <span style="color: #ff79c6; font-weight: bold;">else</span>:
+                    <span style="color: #f8f8f2;">f</span> = mid + 1
 
-    <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">binarySearchLarger</span>(<span style="font-weight: bold;">self</span>, A, value):
-        <span style="font-style: italic;">"""</span>
-<span style="font-style: italic;">        1 2 4 5 : 3 =&gt; 2</span>
-<span style="font-style: italic;">        returns: min(i for  A[i] &gt;= value)</span>
-<span style="font-style: italic;">        """</span>
-        <span style="font-weight: bold; font-style: italic;">f</span> = 0
-        <span style="font-weight: bold; font-style: italic;">t</span> = <span style="font-weight: bold;">len</span>(A) - 1
-        <span style="font-weight: bold; font-style: italic;">ret</span> = -1
-        <span style="font-weight: bold;">while</span> (<span style="font-weight: bold; text-decoration: underline;">True</span>):
-            <span style="font-weight: bold;">if</span> (f &gt; t):
-                <span style="font-weight: bold;">return</span> ret
-            <span style="font-weight: bold;">else</span>:
-                <span style="font-weight: bold; font-style: italic;">mid</span> = <span style="font-weight: bold;">int</span>((f + t) / 2)
-                <span style="font-weight: bold;">if</span> (A[mid] == value):
-                    <span style="font-weight: bold;">return</span> mid
-                <span style="font-weight: bold;">elif</span> (A[mid] &gt; value):
-                    <span style="font-weight: bold; font-style: italic;">t</span> = mid - 1
-                    <span style="font-weight: bold; font-style: italic;">ret</span> = mid
-                <span style="font-weight: bold;">else</span>:
-                    <span style="font-weight: bold; font-style: italic;">f</span> = mid + 1
+    <span style="color: #ff79c6; font-weight: bold;">def</span> <span style="color: #50fa7b; font-weight: bold;">binarySearchLarger</span>(<span style="color: #ff79c6; font-weight: bold;">self</span>, A, value):
+        <span style="color: #6272a4;">"""</span>
+<span style="color: #6272a4;">        1 2 4 5 : 3 =&gt; 2</span>
+<span style="color: #6272a4;">        returns: min(i for  A[i] &gt;= value)</span>
+<span style="color: #6272a4;">        """</span>
+        <span style="color: #f8f8f2;">f</span> = 0
+        <span style="color: #f8f8f2;">t</span> = <span style="color: #8be9fd;">len</span>(A) - 1
+        <span style="color: #f8f8f2;">ret</span> = -1
+        <span style="color: #ff79c6; font-weight: bold;">while</span> (<span style="color: #bd93f9;">True</span>):
+            <span style="color: #ff79c6; font-weight: bold;">if</span> (f &gt; t):
+                <span style="color: #ff79c6; font-weight: bold;">return</span> ret
+            <span style="color: #ff79c6; font-weight: bold;">else</span>:
+                <span style="color: #f8f8f2;">mid</span> = <span style="color: #8be9fd;">int</span>((f + t) / 2)
+                <span style="color: #ff79c6; font-weight: bold;">if</span> (A[mid] == value):
+                    <span style="color: #ff79c6; font-weight: bold;">return</span> mid
+                <span style="color: #ff79c6; font-weight: bold;">elif</span> (A[mid] &gt; value):
+                    <span style="color: #f8f8f2;">t</span> = mid - 1
+                    <span style="color: #f8f8f2;">ret</span> = mid
+                <span style="color: #ff79c6; font-weight: bold;">else</span>:
+                    <span style="color: #f8f8f2;">f</span> = mid + 1
 
-<span style="font-weight: bold;">print</span>(Solution().binarySearch([1, 2, 4, 5], 1))
-<span style="font-weight: bold;">print</span>(Solution().binarySearch([], 1))
-<span style="font-weight: bold;">print</span>(Solution().binarySearchLarger([1, 2, 4, 5], 3))
+<span style="color: #ff79c6; font-weight: bold;">print</span>(Solution().binarySearch([1, 2, 4, 5], 1))
+<span style="color: #ff79c6; font-weight: bold;">print</span>(Solution().binarySearch([], 1))
+<span style="color: #ff79c6; font-weight: bold;">print</span>(Solution().binarySearchLarger([1, 2, 4, 5], 3))
 </pre>
 </div>
 </div>

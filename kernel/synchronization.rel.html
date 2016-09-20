@@ -4,11 +4,90 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Linux Kernel: Synchronization</title>
-<!-- 2016-09-20 Tue 16:33 -->
+<!-- 2016-09-20 二 16:44 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
-<link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -129,22 +208,22 @@ syscall 返回(或 A 主动放弃 CPU, 例如阻塞)
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">#ifdef</span> CONFIG_PREEMPT
+<pre class="src src-c"><span style="color: #8be9fd;">#ifdef</span> CONFIG_PREEMPT
 ENTRY(resume_kernel)
-    <span style="font-weight: bold; text-decoration: underline;">cli</span>
-    <span style="font-weight: bold; font-style: italic;">cmpl</span> $0,<span style="font-weight: bold;">TI_preempt_count</span>(%ebp) # non-zero preempt_count ?
+    <span style="color: #f8f8f2;">cli</span>
+    <span style="color: #f8f8f2;">cmpl</span> $0,<span style="color: #50fa7b; font-weight: bold;">TI_preempt_count</span>(%ebp) # non-zero preempt_count ?
     jnz restore_all
 need_resched:
     movl TI_flags(%ebp), %ecx      # need_resched set ?
     testb $_TIF_NEED_RESCHED, %cl
     jz restore_all
-    testl $IF_MASK,EFLAGS(%esp)     # interrupts off (<span style="font-weight: bold; text-decoration: underline;">exception</span> <span style="font-weight: bold; font-style: italic;">path</span>) ?
+    testl $IF_MASK,EFLAGS(%esp)     # interrupts off (<span style="color: #f8f8f2;">exception</span> <span style="color: #f8f8f2;">path</span>) ?
     jz restore_all
     call preempt_schedule_irq
     jmp need_resched
-<span style="font-weight: bold;">#else</span>
-<span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">resume_kernel</span>              restore_all
-<span style="font-weight: bold;">#endif</span>
+<span style="color: #8be9fd;">#else</span>
+<span style="color: #8be9fd;">#define</span> <span style="color: #f8f8f2;">resume_kernel</span>              restore_all
+<span style="color: #8be9fd;">#endif</span>
 </pre>
 </div>
 
@@ -321,8 +400,8 @@ LOCK 前缀的 Read-Modify-Write 指令是原子的.
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">x</span> = 10;
-<span style="font-weight: bold; text-decoration: underline;">int64_t</span> <span style="font-weight: bold; font-style: italic;">y</span> = 10000000000000000;
+<pre class="src src-c"><span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">x</span> = 10;
+<span style="color: #f8f8f2;">int64_t</span> <span style="color: #f8f8f2;">y</span> = 10000000000000000;
 </pre>
 </div>
 
@@ -332,9 +411,9 @@ LOCK 前缀的 Read-Modify-Write 指令是原子的.
 
 <div class="org-src-container">
 
-<pre class="src src-asm"><span style="font-weight: bold;">movl</span>       <span style="font-weight: bold;">$10</span>, -12(<span style="font-weight: bold; font-style: italic;">%ebp</span>)
-<span style="font-weight: bold;">movl</span>       <span style="font-weight: bold;">$1874919424</span>, -24(<span style="font-weight: bold; font-style: italic;">%ebp</span>)
-<span style="font-weight: bold;">movl</span>       <span style="font-weight: bold;">$2328306</span>, -20(<span style="font-weight: bold; font-style: italic;">%ebp</span>)
+<pre class="src src-asm"><span style="color: #50fa7b; font-weight: bold;">movl</span>       <span style="color: #ff79c6; font-weight: bold;">$10</span>, -12(<span style="color: #f8f8f2;">%ebp</span>)
+<span style="color: #50fa7b; font-weight: bold;">movl</span>       <span style="color: #ff79c6; font-weight: bold;">$1874919424</span>, -24(<span style="color: #f8f8f2;">%ebp</span>)
+<span style="color: #50fa7b; font-weight: bold;">movl</span>       <span style="color: #ff79c6; font-weight: bold;">$2328306</span>, -20(<span style="color: #f8f8f2;">%ebp</span>)
 </pre>
 </div>
 
@@ -357,9 +436,9 @@ x++ 也可能被编译为:
 
 <div class="org-src-container">
 
-<pre class="src src-asm"><span style="font-weight: bold;">mov</span> [mem] <span style="font-weight: bold; font-style: italic;">%eax</span>
-<span style="font-weight: bold;">inc</span> <span style="font-weight: bold;">%eax</span>
-<span style="font-weight: bold;">mov</span> <span style="font-weight: bold;">%eax</span> [mem]
+<pre class="src src-asm"><span style="color: #50fa7b; font-weight: bold;">mov</span> [mem] <span style="color: #f8f8f2;">%eax</span>
+<span style="color: #50fa7b; font-weight: bold;">inc</span> <span style="color: #ff79c6; font-weight: bold;">%eax</span>
+<span style="color: #50fa7b; font-weight: bold;">mov</span> <span style="color: #ff79c6; font-weight: bold;">%eax</span> [mem]
 </pre>
 </div>
 
@@ -375,11 +454,11 @@ x++ 也可能被编译为:
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">static</span> __inline__ <span style="font-weight: bold; text-decoration: underline;">void</span> <span style="font-weight: bold;">atomic_add</span>(<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">i</span>, <span style="font-weight: bold; text-decoration: underline;">atomic_t</span> *<span style="font-weight: bold; font-style: italic;">v</span>) {
-    <span style="font-weight: bold;">__asm__</span> __volatile__(
-        LOCK <span style="font-style: italic;">"addl %1,%0"</span>
-        :<span style="font-style: italic;">"=m"</span> (v-&gt;counter)
-        :<span style="font-style: italic;">"ir"</span> (i), <span style="font-style: italic;">"m"</span> (v-&gt;counter));
+<pre class="src src-c"><span style="color: #ff79c6; font-weight: bold;">static</span> __inline__ <span style="color: #f8f8f2;">void</span> <span style="color: #50fa7b; font-weight: bold;">atomic_add</span>(<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">i</span>, <span style="color: #f8f8f2;">atomic_t</span> *<span style="color: #f8f8f2;">v</span>) {
+    <span style="color: #ff79c6; font-weight: bold;">__asm__</span> __volatile__(
+        LOCK <span style="color: #f1fa8c;">"addl %1,%0"</span>
+        :<span style="color: #f1fa8c;">"=m"</span> (v-&gt;counter)
+        :<span style="color: #f1fa8c;">"ir"</span> (i), <span style="color: #f1fa8c;">"m"</span> (v-&gt;counter));
 }
 </pre>
 </div>
@@ -397,10 +476,10 @@ x++ 也可能被编译为:
 
 <div class="org-src-container">
 
-<pre class="src src-asm"><span style="font-weight: bold;">mov</span> <span style="font-weight: bold;">%0</span> [mem1]
-<span style="font-weight: bold;">add</span> <span style="font-weight: bold;">%1</span> [mem1]
-<span style="font-weight: bold;">mov</span> <span style="font-weight: bold;">%2</span> [mem2]
-<span style="font-weight: bold;">mov</span> <span style="font-weight: bold;">%3</span> [mem3]
+<pre class="src src-asm"><span style="color: #50fa7b; font-weight: bold;">mov</span> <span style="color: #ff79c6; font-weight: bold;">%0</span> [mem1]
+<span style="color: #50fa7b; font-weight: bold;">add</span> <span style="color: #ff79c6; font-weight: bold;">%1</span> [mem1]
+<span style="color: #50fa7b; font-weight: bold;">mov</span> <span style="color: #ff79c6; font-weight: bold;">%2</span> [mem2]
+<span style="color: #50fa7b; font-weight: bold;">mov</span> <span style="color: #ff79c6; font-weight: bold;">%3</span> [mem3]
 </pre>
 </div>
 
@@ -410,10 +489,10 @@ x++ 也可能被编译为:
 
 <div class="org-src-container">
 
-<pre class="src src-asm"><span style="font-weight: bold;">mov</span> <span style="font-weight: bold;">%0</span> [mem1]
-<span style="font-weight: bold;">mov</span> <span style="font-weight: bold;">%2</span> [mem2]
-<span style="font-weight: bold;">mov</span> <span style="font-weight: bold;">%3</span> [mem3]
-<span style="font-weight: bold;">add</span> <span style="font-weight: bold;">%1</span> [mem1]
+<pre class="src src-asm"><span style="color: #50fa7b; font-weight: bold;">mov</span> <span style="color: #ff79c6; font-weight: bold;">%0</span> [mem1]
+<span style="color: #50fa7b; font-weight: bold;">mov</span> <span style="color: #ff79c6; font-weight: bold;">%2</span> [mem2]
+<span style="color: #50fa7b; font-weight: bold;">mov</span> <span style="color: #ff79c6; font-weight: bold;">%3</span> [mem3]
+<span style="color: #50fa7b; font-weight: bold;">add</span> <span style="color: #ff79c6; font-weight: bold;">%1</span> [mem1]
 </pre>
 </div>
 
@@ -455,7 +534,7 @@ Kernel 提供了一个 mb 宏做为 memory barrier, 其实现为:
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">#define</span> <span style="font-weight: bold;">mb</span>() alternative(<span style="font-style: italic;">"lock; addl $0,0(%%esp)"</span>, <span style="font-style: italic;">"mfence"</span>, X86_FEATURE_XMM2)
+<pre class="src src-c"><span style="color: #8be9fd;">#define</span> <span style="color: #50fa7b; font-weight: bold;">mb</span>() alternative(<span style="color: #f1fa8c;">"lock; addl $0,0(%%esp)"</span>, <span style="color: #f1fa8c;">"mfence"</span>, X86_FEATURE_XMM2)
 </pre>
 </div>
 </div>
@@ -474,7 +553,7 @@ kernel 提供了一个 barrier 宏做为 optimization barrier:
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">#define</span> <span style="font-weight: bold;">barrier</span>() <span style="font-weight: bold;">__asm__</span> __volatile__(<span style="font-style: italic;">""</span>: : :<span style="font-style: italic;">"memory"</span>)
+<pre class="src src-c"><span style="color: #8be9fd;">#define</span> <span style="color: #50fa7b; font-weight: bold;">barrier</span>() <span style="color: #ff79c6; font-weight: bold;">__asm__</span> __volatile__(<span style="color: #f1fa8c;">""</span>: : :<span style="color: #f1fa8c;">"memory"</span>)
 </pre>
 </div>
 
@@ -556,18 +635,18 @@ spin_lock 是由 BUILD_LOCK_OPS 这个宏定义的
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">spin_lock</span>:
+<pre class="src src-c"><span style="color: #bd93f9;">spin_lock</span>:
   preempt_disable();
-  <span style="font-weight: bold;">for</span> (;;):
-    <span style="font-weight: bold;">if</span> (likely(_raw_spin_trylock(lock))):
-      <span style="font-weight: bold;">break</span>;
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; _raw_spin_trylock &#36820;&#22238; 0, &#34920;&#31034; spin lock &#26159; locked &#29366;&#24577;, &#21017;&#22312;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">while &#20013; spin, &#30452;&#21040; spin_lock-&gt;slock &#20026; 1, &#28982;&#21518;&#20877;&#27425;&#23581;&#35797;.</span>
-    <span style="font-weight: bold; font-style: italic;">// </span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22312; spin &#30340;&#36807;&#31243;&#20013;, &#20869;&#26680;&#25250;&#21344;&#26159;&#24320;&#21551;&#30340;, &#22240;&#20026;&#27492;&#26102;&#20195;&#30721;&#24182;&#27809;&#26377;&#22312;&#20020;&#30028;&#21306;&#20013;.</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19968;&#26086; _raw_spin_trylock &#25104;&#21151;, &#20869;&#26680;&#25250;&#21344;&#19968;&#23450;&#26159;&#20851;&#38381;&#30340;    </span>
+  <span style="color: #ff79c6; font-weight: bold;">for</span> (;;):
+    <span style="color: #ff79c6; font-weight: bold;">if</span> (likely(_raw_spin_trylock(lock))):
+      <span style="color: #ff79c6; font-weight: bold;">break</span>;
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509; _raw_spin_trylock &#36820;&#22238; 0, &#34920;&#31034; spin lock &#26159; locked &#29366;&#24577;, &#21017;&#22312;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">while &#20013; spin, &#30452;&#21040; spin_lock-&gt;slock &#20026; 1, &#28982;&#21518;&#20877;&#27425;&#23581;&#35797;.</span>
+    <span style="color: #6272a4;">// </span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22312; spin &#30340;&#36807;&#31243;&#20013;, &#20869;&#26680;&#25250;&#21344;&#26159;&#24320;&#21551;&#30340;, &#22240;&#20026;&#27492;&#26102;&#20195;&#30721;&#24182;&#27809;&#26377;&#22312;&#20020;&#30028;&#21306;&#20013;.</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#19968;&#26086; _raw_spin_trylock &#25104;&#21151;, &#20869;&#26680;&#25250;&#21344;&#19968;&#23450;&#26159;&#20851;&#38381;&#30340;    </span>
     preempt_enable();
-    <span style="font-weight: bold;">while</span> (!spin_can_lock(lock)):
+    <span style="color: #ff79c6; font-weight: bold;">while</span> (<span style="color: #bd93f9;">!</span>spin_can_lock(lock)):
       cpu_relax();
     preempt_disable();
 </pre>
@@ -579,8 +658,8 @@ spin_lock 是由 BUILD_LOCK_OPS 这个宏定义的
 <div class="outline-text-5" id="text-1-4-1-1">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; CONFIG_SMP &#20026; false, &#21363; UP, &#21017; _raw_spin_trylock &#30452;&#25509;&#36820;&#22238; 1</span>
-<span style="font-weight: bold;">#define</span> <span style="font-weight: bold;">_raw_spin_trylock</span>(<span style="font-weight: bold; font-style: italic;">lock</span>)       (((<span style="font-weight: bold; text-decoration: underline;">void</span>)(lock), 1))
+<pre class="src src-c"><span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509; CONFIG_SMP &#20026; false, &#21363; UP, &#21017; _raw_spin_trylock &#30452;&#25509;&#36820;&#22238; 1</span>
+<span style="color: #8be9fd;">#define</span> <span style="color: #50fa7b; font-weight: bold;">_raw_spin_trylock</span>(<span style="color: #f8f8f2;">lock</span>)       (((<span style="color: #f8f8f2;">void</span>)(lock), 1))
 </pre>
 </div>
 
@@ -595,22 +674,22 @@ spin_lock 是由 BUILD_LOCK_OPS 这个宏定义的
 <div class="outline-text-5" id="text-1-4-1-2">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22312; MP &#19978;, _raw_spin_trylock &#23558; spin_lock-&gt;slock &#32622;&#20026; 0, &#24182;&#36820;&#22238; slock</span>
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#30340;&#26087;&#20540;</span>
-<span style="font-weight: bold; font-style: italic;">// </span>
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509;&#26087;&#20540;&#20026; 1, &#35828;&#26126; spin lock &#26159; unlocked &#29366;&#24577;, _raw_spin_trylock &#36820;&#22238; 1,</span>
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19978;&#23618;&#30340; spin_lock &#36820;&#22238;, &#33719;&#24471; spin_lock.</span>
-<span style="font-weight: bold; font-style: italic;">// </span>
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509;&#26087;&#20540;&#20026; 0, &#35828;&#26126; spin lock &#26159; locked &#29366;&#24577;, _raw_spin_trylock &#36820;&#22238; 0,</span>
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19978;&#23618; spin_lock &#32487;&#32493;&#24490;&#29615;</span>
-<span style="font-weight: bold; font-style: italic;">// </span>
-<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold;">_raw_spin_trylock</span>(<span style="font-weight: bold; text-decoration: underline;">spinlock_t</span> *<span style="font-weight: bold; font-style: italic;">lock</span>):
-  <span style="font-weight: bold; text-decoration: underline;">char</span> oldval;
-  <span style="font-weight: bold;">__asm__</span> __volatile__(
-      <span style="font-style: italic;">"xchgb %b0,%1"</span>
-      :<span style="font-style: italic;">"=q"</span> (oldval), <span style="font-style: italic;">"=m"</span> (lock-&gt;slock)
-      :<span style="font-style: italic;">"0"</span> (0) : <span style="font-style: italic;">"memory"</span>);
-  <span style="font-weight: bold;">return</span> oldval &gt; 0;
+<pre class="src src-c"><span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22312; MP &#19978;, _raw_spin_trylock &#23558; spin_lock-&gt;slock &#32622;&#20026; 0, &#24182;&#36820;&#22238; slock</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#30340;&#26087;&#20540;</span>
+<span style="color: #6272a4;">// </span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509;&#26087;&#20540;&#20026; 1, &#35828;&#26126; spin lock &#26159; unlocked &#29366;&#24577;, _raw_spin_trylock &#36820;&#22238; 1,</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#19978;&#23618;&#30340; spin_lock &#36820;&#22238;, &#33719;&#24471; spin_lock.</span>
+<span style="color: #6272a4;">// </span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509;&#26087;&#20540;&#20026; 0, &#35828;&#26126; spin lock &#26159; locked &#29366;&#24577;, _raw_spin_trylock &#36820;&#22238; 0,</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#19978;&#23618; spin_lock &#32487;&#32493;&#24490;&#29615;</span>
+<span style="color: #6272a4;">// </span>
+<span style="color: #f8f8f2;">int</span> <span style="color: #50fa7b; font-weight: bold;">_raw_spin_trylock</span>(<span style="color: #f8f8f2;">spinlock_t</span> *<span style="color: #f8f8f2;">lock</span>):
+  <span style="color: #f8f8f2;">char</span> oldval;
+  <span style="color: #ff79c6; font-weight: bold;">__asm__</span> __volatile__(
+      <span style="color: #f1fa8c;">"xchgb %b0,%1"</span>
+      :<span style="color: #f1fa8c;">"=q"</span> (oldval), <span style="color: #f1fa8c;">"=m"</span> (lock-&gt;slock)
+      :<span style="color: #f1fa8c;">"0"</span> (0) : <span style="color: #f1fa8c;">"memory"</span>);
+  <span style="color: #ff79c6; font-weight: bold;">return</span> oldval &gt; 0;
 </pre>
 </div>
 </div>
@@ -630,7 +709,7 @@ MP 上的 spin_unlock 为:
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">spin_unlock</span>:
+<pre class="src src-c"><span style="color: #bd93f9;">spin_unlock</span>:
   movb $1, slp-&gt;slock
   preempt_enable();
 </pre>
@@ -684,49 +763,49 @@ semaphore 简单的定义为:
 <div class="outline-text-5" id="text-1-5-1-1">
 <div class="org-src-container">
 
-<pre class="src src-asm"><span style="font-weight: bold;">down</span>:
-        <span style="font-weight: bold;">movl</span> $sem-&gt;count,<span style="font-weight: bold; font-style: italic;">%ecx</span>
+<pre class="src src-asm"><span style="color: #50fa7b; font-weight: bold;">down</span>:
+        <span style="color: #ff79c6; font-weight: bold;">movl</span> $sem-&gt;count,<span style="color: #f8f8f2;">%ecx</span>
         # &#23558; count &#20943; 1        
-        <span style="font-weight: bold;">lock</span><span style="font-weight: bold; font-style: italic;">; </span><span style="font-weight: bold; font-style: italic;">decl (%ecx);</span>
+        <span style="color: #ff79c6; font-weight: bold;">lock</span><span style="color: #6272a4;">; </span><span style="color: #6272a4;">decl (%ecx);</span>
         # &#33509; count &gt;= 0, &#36820;&#22238;         
-        <span style="font-weight: bold;">jns</span> 1f
-        <span style="font-weight: bold;">lea</span> <span style="font-weight: bold; font-style: italic;">%ecx</span>, <span style="font-weight: bold; font-style: italic;">%eax</span>
-        <span style="font-weight: bold;">pushl</span> <span style="font-weight: bold; font-style: italic;">%edx</span>
-        <span style="font-weight: bold;">pushl</span> <span style="font-weight: bold; font-style: italic;">%ecx</span>
+        <span style="color: #ff79c6; font-weight: bold;">jns</span> 1f
+        <span style="color: #ff79c6; font-weight: bold;">lea</span> <span style="color: #f8f8f2;">%ecx</span>, <span style="color: #f8f8f2;">%eax</span>
+        <span style="color: #ff79c6; font-weight: bold;">pushl</span> <span style="color: #f8f8f2;">%edx</span>
+        <span style="color: #ff79c6; font-weight: bold;">pushl</span> <span style="color: #f8f8f2;">%ecx</span>
         # &#36164;&#28304;&#19981;&#21487;&#29992;, &#35843;&#29992;  __down &#31561;&#24453;        
-        <span style="font-weight: bold;">call</span> __down
-        <span style="font-weight: bold;">popl</span> <span style="font-weight: bold; font-style: italic;">%ecx</span>
-        <span style="font-weight: bold;">popl</span> <span style="font-weight: bold; font-style: italic;">%edx</span>
-<span style="font-weight: bold;">1</span>:
+        <span style="color: #ff79c6; font-weight: bold;">call</span> __down
+        <span style="color: #ff79c6; font-weight: bold;">popl</span> <span style="color: #f8f8f2;">%ecx</span>
+        <span style="color: #ff79c6; font-weight: bold;">popl</span> <span style="color: #f8f8f2;">%edx</span>
+<span style="color: #50fa7b; font-weight: bold;">1</span>:
 </pre>
 </div>
 
 <div class="org-src-container">
 
-<pre class="src src-c">__down(<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">semaphore</span> * <span style="font-weight: bold; text-decoration: underline;">sem</span>):
-  <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span> *<span style="font-weight: bold; font-style: italic;">tsk</span> = current;
+<pre class="src src-c">__down(<span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">semaphore</span> * <span style="color: #bd93f9;">sem</span>):
+  <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">task_struct</span> *<span style="color: #f8f8f2;">tsk</span> = current;
   DECLARE_WAITQUEUE(wait, tsk);
-  <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">flags</span>;
+  <span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">flags</span>;
 
   tsk-&gt;state = TASK_UNINTERRUPTIBLE;
   add_wait_queue_exclusive_locked(&amp;sem-&gt;wait, &amp;wait);
 
   sem-&gt;sleepers++;
-  <span style="font-weight: bold;">for</span> (;;):
-    <span style="font-weight: bold; text-decoration: underline;">int</span> sleepers = sem-&gt;sleepers;
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23454;&#38469;&#19978;&#19979;&#38754;&#30340;&#20195;&#30721;&#31561;&#20215;&#20110;:</span>
-    <span style="font-weight: bold; font-style: italic;">// </span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">tmp = sem-&gt;sleeper + &amp;sem-&gt;count</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">if (tmp &gt;= 0) {</span>
-    <span style="font-weight: bold; font-style: italic;">//   </span><span style="font-weight: bold; font-style: italic;">sem-&gt;sleeper --;</span>
-    <span style="font-weight: bold; font-style: italic;">//   </span><span style="font-weight: bold; font-style: italic;">break;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">}</span>
-    <span style="font-weight: bold; font-style: italic;">// </span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20294;&#20026;&#20102;&#21407;&#23376;&#25805;&#20316;, &#20351;&#29992;&#20102; sem-&gt;count &#20195;&#26367;&#19978;&#38754;&#30340; tmp, &#23548;&#33268;&#21518;&#38754;&#22797;&#26434;&#30340;&#36923;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36753;...    </span>
-    <span style="font-weight: bold;">if</span> (!atomic_add_negative(sleepers - 1, &amp;sem-&gt;count)):
+  <span style="color: #ff79c6; font-weight: bold;">for</span> (;;):
+    <span style="color: #f8f8f2;">int</span> sleepers = sem-&gt;sleepers;
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23454;&#38469;&#19978;&#19979;&#38754;&#30340;&#20195;&#30721;&#31561;&#20215;&#20110;:</span>
+    <span style="color: #6272a4;">// </span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">tmp = sem-&gt;sleeper + &amp;sem-&gt;count</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">if (tmp &gt;= 0) {</span>
+    <span style="color: #6272a4;">//   </span><span style="color: #6272a4;">sem-&gt;sleeper --;</span>
+    <span style="color: #6272a4;">//   </span><span style="color: #6272a4;">break;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">}</span>
+    <span style="color: #6272a4;">// </span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20294;&#20026;&#20102;&#21407;&#23376;&#25805;&#20316;, &#20351;&#29992;&#20102; sem-&gt;count &#20195;&#26367;&#19978;&#38754;&#30340; tmp, &#23548;&#33268;&#21518;&#38754;&#22797;&#26434;&#30340;&#36923;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36753;...    </span>
+    <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>atomic_add_negative(sleepers - 1, &amp;sem-&gt;count)):
       sem-&gt;sleepers = 0;
-      <span style="font-weight: bold;">break</span>;
+      <span style="color: #ff79c6; font-weight: bold;">break</span>;
     sem-&gt;sleepers = 1;
     schedule();
     tsk-&gt;state = TASK_UNINTERRUPTIBLE;
@@ -742,23 +821,23 @@ semaphore 简单的定义为:
 <div class="outline-text-5" id="text-1-5-1-2">
 <div class="org-src-container">
 
-<pre class="src src-asm">        <span style="font-weight: bold;">movl</span> $sem-&gt;count,<span style="font-weight: bold; font-style: italic;">%ecx</span>
-        <span style="font-weight: bold;">lock</span><span style="font-weight: bold; font-style: italic;">; </span><span style="font-weight: bold; font-style: italic;">incl (%ecx)</span>
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">count + 1, &#33509; count &#22823;&#20110; 0, &#36820;&#22238;. &#21542;&#21017;&#21796;&#37266;&#20043;&#21069;&#31561;&#24453;&#30340;&#36827;&#31243;        </span>
-        <span style="font-weight: bold;">jg</span> 1f
-        <span style="font-weight: bold;">lea</span> <span style="font-weight: bold; font-style: italic;">%ecx</span>,<span style="font-weight: bold; font-style: italic;">%eax</span>
-        <span style="font-weight: bold;">pushl</span> <span style="font-weight: bold; font-style: italic;">%edx</span>
-        <span style="font-weight: bold;">pushl</span> <span style="font-weight: bold; font-style: italic;">%ecx</span>
-        <span style="font-weight: bold;">call</span> __up
-        <span style="font-weight: bold;">popl</span> <span style="font-weight: bold; font-style: italic;">%ecx</span>
-        <span style="font-weight: bold;">popl</span> <span style="font-weight: bold; font-style: italic;">%edx</span>
-<span style="font-weight: bold;">1</span>:
+<pre class="src src-asm">        <span style="color: #ff79c6; font-weight: bold;">movl</span> $sem-&gt;count,<span style="color: #f8f8f2;">%ecx</span>
+        <span style="color: #ff79c6; font-weight: bold;">lock</span><span style="color: #6272a4;">; </span><span style="color: #6272a4;">incl (%ecx)</span>
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">count + 1, &#33509; count &#22823;&#20110; 0, &#36820;&#22238;. &#21542;&#21017;&#21796;&#37266;&#20043;&#21069;&#31561;&#24453;&#30340;&#36827;&#31243;        </span>
+        <span style="color: #ff79c6; font-weight: bold;">jg</span> 1f
+        <span style="color: #ff79c6; font-weight: bold;">lea</span> <span style="color: #f8f8f2;">%ecx</span>,<span style="color: #f8f8f2;">%eax</span>
+        <span style="color: #ff79c6; font-weight: bold;">pushl</span> <span style="color: #f8f8f2;">%edx</span>
+        <span style="color: #ff79c6; font-weight: bold;">pushl</span> <span style="color: #f8f8f2;">%ecx</span>
+        <span style="color: #ff79c6; font-weight: bold;">call</span> __up
+        <span style="color: #ff79c6; font-weight: bold;">popl</span> <span style="color: #f8f8f2;">%ecx</span>
+        <span style="color: #ff79c6; font-weight: bold;">popl</span> <span style="color: #f8f8f2;">%edx</span>
+<span style="color: #50fa7b; font-weight: bold;">1</span>:
 </pre>
 </div>
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">__up</span>:
+<pre class="src src-c"><span style="color: #bd93f9;">__up</span>:
   wake_up(&amp;sem-&gt;wait);
 </pre>
 </div>

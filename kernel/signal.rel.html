@@ -4,11 +4,90 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Linux Kernel: Signal</title>
-<!-- 2016-09-20 Tue 16:33 -->
+<!-- 2016-09-20 二 16:44 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
-<link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -247,46 +326,46 @@ group_send_sig_info
 <div class="outline-text-5" id="text-1-3-1-1">
 <div class="org-src-container">
 
-<pre class="src src-c">specific_send_sig_info(sig, info, <span style="font-weight: bold; text-decoration: underline;">t</span>):
-  <span style="font-weight: bold;">if</span> (sig_ignored(t, sig)):
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">task_struct-&gt;block &#26159;&#19968;&#20010; 64 bit &#30340; mask, &#26631;&#35782;&#21738;&#20123; sig &#34987;</span>
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">block. &#34987; block &#30340; sig &#19981;&#33021;&#34987; ignore, &#22240;&#20026;&#23427;&#20204;&#38656;&#35201;&#34987;&#25918;&#22312; pending</span>
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">signal &#20013;&#20197;&#20415; unblock &#26102;&#36827;&#31243;&#33021;&#20877;&#27425;&#25910;&#21040;&#36825;&#20010; sig</span>
-        <span style="font-weight: bold;">if</span> (sigismember(&amp;t-&gt;blocked, sig)):
-          <span style="font-weight: bold;">return</span> 0;
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; t-&gt;sighand &#20013; sig &#23545;&#24212;&#30340; handler &#20026; SIG_IGN &#25110; handler &#20026;</span>
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">SIG_DFL &#20294; sig &#30340;&#40664;&#35748; handler &#20063;&#20026; ignore, &#21017;&#24573;&#30053;&#36825;&#20010; sig</span>
+<pre class="src src-c">specific_send_sig_info(sig, info, <span style="color: #bd93f9;">t</span>):
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (sig_ignored(t, sig)):
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">task_struct-&gt;block &#26159;&#19968;&#20010; 64 bit &#30340; mask, &#26631;&#35782;&#21738;&#20123; sig &#34987;</span>
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">block. &#34987; block &#30340; sig &#19981;&#33021;&#34987; ignore, &#22240;&#20026;&#23427;&#20204;&#38656;&#35201;&#34987;&#25918;&#22312; pending</span>
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">signal &#20013;&#20197;&#20415; unblock &#26102;&#36827;&#31243;&#33021;&#20877;&#27425;&#25910;&#21040;&#36825;&#20010; sig</span>
+        <span style="color: #ff79c6; font-weight: bold;">if</span> (sigismember(&amp;t-&gt;blocked, sig)):
+          <span style="color: #ff79c6; font-weight: bold;">return</span> 0;
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509; t-&gt;sighand &#20013; sig &#23545;&#24212;&#30340; handler &#20026; SIG_IGN &#25110; handler &#20026;</span>
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">SIG_DFL &#20294; sig &#30340;&#40664;&#35748; handler &#20063;&#20026; ignore, &#21017;&#24573;&#30053;&#36825;&#20010; sig</span>
         handler = t-&gt;sighand-&gt;action[sig-1].sa.sa_handler;
-        <span style="font-weight: bold;">return</span>   handler == SIG_IGN || (handler == SIG_DFL &amp;&amp; sig_kernel_ignore(sig));
-    <span style="font-weight: bold;">goto</span> <span style="font-weight: bold; text-decoration: underline;">out</span>;
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#27809;&#26377; ignore &#30340; sig &#26368;&#32456;&#38656;&#22312;&#25918;&#22312; t-&gt;pending &#20013;, sigpending-&gt;signal &#26159;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19968;&#20010; bitmask, &#26631;&#35782; pending &#21015;&#34920;&#20013;&#26159;&#21542;&#24050;&#32463;&#23384;&#22312;&#30456;&#21516; sig &#30340; signal.</span>
-  <span style="font-weight: bold; font-style: italic;">//</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#20110;&#26222;&#36890;&#30340; (&#38750; real time) &#30340; signal, &#23545;&#20110;&#21516;&#19968;&#20010; sig, pending &#21015;&#34920;&#20013;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26368;&#22810;&#21482;&#20250;&#20445;&#23384;&#19968;&#20010;&#23545;&#24212;&#30340; signal, &#21363;&#22810;&#20010;&#26222;&#36890; signal &#19981;&#20250;&#32047;&#31215;&#22312; pending</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20013;.</span>
-  <span style="font-weight: bold; font-style: italic;">//</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20294;&#23545;&#20110; real time signal, &#22810;&#20010; real time signal &#26159;&#21487;&#20197;&#22312; pending &#20013;&#32047;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#31215;&#30340;</span>
-  <span style="font-weight: bold;">if</span> (LEGACY_QUEUE(&amp;t-&gt;pending, sig)):
+        <span style="color: #ff79c6; font-weight: bold;">return</span>   handler == SIG_IGN || (handler == SIG_DFL &amp;&amp; sig_kernel_ignore(sig));
+    <span style="color: #ff79c6; font-weight: bold;">goto</span> <span style="color: #bd93f9;">out</span>;
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#27809;&#26377; ignore &#30340; sig &#26368;&#32456;&#38656;&#22312;&#25918;&#22312; t-&gt;pending &#20013;, sigpending-&gt;signal &#26159;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#19968;&#20010; bitmask, &#26631;&#35782; pending &#21015;&#34920;&#20013;&#26159;&#21542;&#24050;&#32463;&#23384;&#22312;&#30456;&#21516; sig &#30340; signal.</span>
+  <span style="color: #6272a4;">//</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23545;&#20110;&#26222;&#36890;&#30340; (&#38750; real time) &#30340; signal, &#23545;&#20110;&#21516;&#19968;&#20010; sig, pending &#21015;&#34920;&#20013;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26368;&#22810;&#21482;&#20250;&#20445;&#23384;&#19968;&#20010;&#23545;&#24212;&#30340; signal, &#21363;&#22810;&#20010;&#26222;&#36890; signal &#19981;&#20250;&#32047;&#31215;&#22312; pending</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20013;.</span>
+  <span style="color: #6272a4;">//</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20294;&#23545;&#20110; real time signal, &#22810;&#20010; real time signal &#26159;&#21487;&#20197;&#22312; pending &#20013;&#32047;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#31215;&#30340;</span>
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (LEGACY_QUEUE(&amp;t-&gt;pending, sig)):
         (((sig) &lt; SIGRTMIN) &amp;&amp; sigismember(&amp;(pending)-&gt;signal, (sig)))
-    <span style="font-weight: bold;">goto</span> <span style="font-weight: bold; text-decoration: underline;">out</span>;
+    <span style="color: #ff79c6; font-weight: bold;">goto</span> <span style="color: #bd93f9;">out</span>;
 
   send_signal(sig, info, t, &amp;t-&gt;pending);
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22914;&#26524; sig &#27809;&#26377; block, &#21017;&#21796;&#37266;&#36827;&#31243;&#20197;&#20415;&#23427;&#33021;&#21450;&#26102;&#21709;&#24212;&#36825;&#20010; signal</span>
-  <span style="font-weight: bold;">if</span> (!ret &amp;&amp; !sigismember(&amp;t-&gt;blocked, sig)):
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22914;&#26524; sig &#27809;&#26377; block, &#21017;&#21796;&#37266;&#36827;&#31243;&#20197;&#20415;&#23427;&#33021;&#21450;&#26102;&#21709;&#24212;&#36825;&#20010; signal</span>
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>ret &amp;&amp; <span style="color: #bd93f9;">!</span>sigismember(&amp;t-&gt;blocked, sig)):
     signal_wake_up(t, sig == SIGKILL);
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#35774;&#32622; TIF_SIGPENDING, &#20197;&#20415; ret_from_intr &#26102;&#33021;&#21457;&#29616;&#26377; pending signal</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#35774;&#32622; TIF_SIGPENDING, &#20197;&#20415; ret_from_intr &#26102;&#33021;&#21457;&#29616;&#26377; pending signal</span>
       set_tsk_thread_flag(t, TIF_SIGPENDING);
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#27491;&#24120;&#24773;&#20917;&#19979;&#21482;&#26377;&#22788;&#20110; TASK_INTERRUPTIBLE &#29366;&#24577;&#30340;&#36827;&#31243;&#25165;&#20250;&#34987;&#21796;&#37266;, &#20294;&#33509;</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sig &#20026; SIG_KILL, &#21017; TASK_STOPPED &#29366;&#24577;&#21644; TASK_TRACED &#29366;&#24577;&#30340;&#36827;&#31243;&#20063;</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20250;&#34987;&#21796;&#37266;.</span>
-      <span style="font-weight: bold; font-style: italic;">//</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25152;&#20197;&#27491;&#22312; sleep &#25110;&#38459;&#22622;&#22312; read &#19978;&#30340;&#36827;&#31243;&#20250;&#34987;&#21796;&#37266;, &#36825;&#20063;&#26159; signal &#23548;&#33268;&#31995;&#32479;&#35843;</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#29992;&#25552;&#21069;&#36820;&#22238;&#30340;&#21407;&#22240;. &#21478;&#22806;, &#22788;&#20110; D &#29366;&#24577; (TASK_UNINTERRUPTIBLE) &#30340;&#36827;</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#31243;&#19981;&#20250;&#34987;&#21796;&#37266;, &#25152;&#20197; D &#29366;&#24577;&#30340;&#36827;&#31243;&#26080;&#27861;&#21450;&#26102;&#21709;&#24212; signal</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#27491;&#24120;&#24773;&#20917;&#19979;&#21482;&#26377;&#22788;&#20110; TASK_INTERRUPTIBLE &#29366;&#24577;&#30340;&#36827;&#31243;&#25165;&#20250;&#34987;&#21796;&#37266;, &#20294;&#33509;</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">sig &#20026; SIG_KILL, &#21017; TASK_STOPPED &#29366;&#24577;&#21644; TASK_TRACED &#29366;&#24577;&#30340;&#36827;&#31243;&#20063;</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20250;&#34987;&#21796;&#37266;.</span>
+      <span style="color: #6272a4;">//</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#25152;&#20197;&#27491;&#22312; sleep &#25110;&#38459;&#22622;&#22312; read &#19978;&#30340;&#36827;&#31243;&#20250;&#34987;&#21796;&#37266;, &#36825;&#20063;&#26159; signal &#23548;&#33268;&#31995;&#32479;&#35843;</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#29992;&#25552;&#21069;&#36820;&#22238;&#30340;&#21407;&#22240;. &#21478;&#22806;, &#22788;&#20110; D &#29366;&#24577; (TASK_UNINTERRUPTIBLE) &#30340;&#36827;</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#31243;&#19981;&#20250;&#34987;&#21796;&#37266;, &#25152;&#20197; D &#29366;&#24577;&#30340;&#36827;&#31243;&#26080;&#27861;&#21450;&#26102;&#21709;&#24212; signal</span>
       mask = TASK_INTERRUPTIBLE;
-      <span style="font-weight: bold;">if</span> (resume):
+      <span style="color: #ff79c6; font-weight: bold;">if</span> (resume):
         mask |= TASK_STOPPED | TASK_TRACED;
       wake_up_state(t, mask)
 </pre>
@@ -299,35 +378,35 @@ group_send_sig_info
 <div class="outline-text-5" id="text-1-3-1-2">
 <div class="org-src-container">
 
-<pre class="src src-c">send_signal(sig, info, t, <span style="font-weight: bold; text-decoration: underline;">pending</span>):
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20998;&#37197;&#19968;&#20010; sigqueue, &#21518;&#38754;&#38656;&#35201;&#23558;&#23427;&#25554;&#20837; pending &#38142;&#34920;&#20013;</span>
+<pre class="src src-c">send_signal(sig, info, t, <span style="color: #bd93f9;">pending</span>):
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20998;&#37197;&#19968;&#20010; sigqueue, &#21518;&#38754;&#38656;&#35201;&#23558;&#23427;&#25554;&#20837; pending &#38142;&#34920;&#20013;</span>
   q = __sigqueue_alloc(t, GFP_ATOMIC);
   list_add_tail(&amp;q-&gt;list, &amp;signals-&gt;list);
-  <span style="font-weight: bold;">switch</span> ((<span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>) info):
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">send_signal &#26102;&#20256;&#20837;&#30340; info (siginfo) &#19968;&#33324;&#26159;&#30001;&#19978;&#23618;&#22635;&#20805;&#30340;, &#21253;&#21547;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">signo, errno, code, pid, uid, addr &#31561;&#25968;&#25454;. &#28982;&#21518; send_signal &#26102;&#36890;&#36807;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">copy_siginfo &#23558; info &#22797;&#21046;&#21040; q-&gt;info &#20013;.</span>
-    <span style="font-weight: bold; font-style: italic;">//</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20294;&#26377;&#26102; kernel &#26377;&#26102;&#20250;&#36890;&#36807; force_sig, send_sig &#21457;&#36865;&#19968;&#20123;&#20449;&#21495;, &#32780;&#19988;&#36825;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20123;&#20449;&#21495;&#24182;&#19981;&#38656;&#35201;&#36890;&#36807; siginfo &#20256;&#36882;&#22823;&#37096;&#20998;&#20449;&#24687;, &#20026;&#20102;&#36991;&#20813; copy_siginfo,</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">kernel &#20351;&#29992;&#29305;&#23450;&#30340; 0, 1 &#20570;&#20026; info &#24182;&#22312;&#36825;&#37324;&#36827;&#34892;&#29305;&#27530;&#30340;&#22788;&#29702;.</span>
-    <span style="font-weight: bold;">case</span> 0:
+  <span style="color: #ff79c6; font-weight: bold;">switch</span> ((<span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span>) info):
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">send_signal &#26102;&#20256;&#20837;&#30340; info (siginfo) &#19968;&#33324;&#26159;&#30001;&#19978;&#23618;&#22635;&#20805;&#30340;, &#21253;&#21547;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">signo, errno, code, pid, uid, addr &#31561;&#25968;&#25454;. &#28982;&#21518; send_signal &#26102;&#36890;&#36807;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">copy_siginfo &#23558; info &#22797;&#21046;&#21040; q-&gt;info &#20013;.</span>
+    <span style="color: #6272a4;">//</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20294;&#26377;&#26102; kernel &#26377;&#26102;&#20250;&#36890;&#36807; force_sig, send_sig &#21457;&#36865;&#19968;&#20123;&#20449;&#21495;, &#32780;&#19988;&#36825;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20123;&#20449;&#21495;&#24182;&#19981;&#38656;&#35201;&#36890;&#36807; siginfo &#20256;&#36882;&#22823;&#37096;&#20998;&#20449;&#24687;, &#20026;&#20102;&#36991;&#20813; copy_siginfo,</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">kernel &#20351;&#29992;&#29305;&#23450;&#30340; 0, 1 &#20570;&#20026; info &#24182;&#22312;&#36825;&#37324;&#36827;&#34892;&#29305;&#27530;&#30340;&#22788;&#29702;.</span>
+    <span style="color: #ff79c6; font-weight: bold;">case</span> 0:
       q-&gt;info.si_signo = sig;
       q-&gt;info.si_errno = 0;
       q-&gt;info.si_code = SI_USER;
       q-&gt;info.si_pid = current-&gt;pid;
       q-&gt;info.si_uid = current-&gt;uid;
-      <span style="font-weight: bold;">break</span>;
-    <span style="font-weight: bold;">case</span> 1:
+      <span style="color: #ff79c6; font-weight: bold;">break</span>;
+    <span style="color: #ff79c6; font-weight: bold;">case</span> 1:
       q-&gt;info.si_signo = sig;
       q-&gt;info.si_errno = 0;
       q-&gt;info.si_code = SI_KERNEL;
       q-&gt;info.si_pid = 0;
       q-&gt;info.si_uid = 0;
-      <span style="font-weight: bold;">break</span>;
-    <span style="font-weight: bold;">default</span>:
+      <span style="color: #ff79c6; font-weight: bold;">break</span>;
+    <span style="color: #ff79c6; font-weight: bold;">default</span>:
       copy_siginfo(&amp;q-&gt;info, info);
-      <span style="font-weight: bold;">break</span>;
+      <span style="color: #ff79c6; font-weight: bold;">break</span>;
 
     sigaddset(&amp;pending-&gt;signal, sig);
 </pre>
@@ -344,23 +423,23 @@ group_send_sig_info
 <div class="outline-text-5" id="text-1-3-2-1">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">group_send_sig_info</span>:
+<pre class="src src-c"><span style="color: #bd93f9;">group_send_sig_info</span>:
   __group_send_sig_info(sig, info, p);
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21516;&#19968;&#20010; thread group &#30340; t-&gt;signal &#21644; t-&gt;sighand &#26159;&#20849;&#20139;&#30340; (t-&gt;blocked</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21644; t-&gt;pending &#26159;&#21333;&#29420;&#30340;), &#25152;&#20197; sig_ignored &#23545; p &#25110;&#32773; p &#36825;&#20010;&#32447;&#31243;&#32452;&#20013;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#30340;&#25152;&#26377;&#32447;&#31243;&#37117;&#20250;&#36820;&#22238;&#30456;&#21516;&#30340;&#32467;&#26524;    </span>
-    <span style="font-weight: bold;">if</span> (sig_ignored(p, sig)):
-      <span style="font-weight: bold;">return</span> ret;
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sig &#23558;&#34987;&#21152;&#20837; p-&gt;shared_pending &#32780;&#19981;&#26159; t-&gt;pending    </span>
-    <span style="font-weight: bold;">if</span> (LEGACY_QUEUE(&amp;p-&gt;signal-&gt;shared_pending, sig)):
-      <span style="font-weight: bold;">return</span> ret;
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19982; specific_send_sig_info &#30456;&#21516;, &#21482;&#19981;&#36807;&#26159;&#21152;&#20837;&#21040; p-&gt;shared_pending &#32780;&#19981;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26159; t-&gt;pending    </span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21516;&#19968;&#20010; thread group &#30340; t-&gt;signal &#21644; t-&gt;sighand &#26159;&#20849;&#20139;&#30340; (t-&gt;blocked</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21644; t-&gt;pending &#26159;&#21333;&#29420;&#30340;), &#25152;&#20197; sig_ignored &#23545; p &#25110;&#32773; p &#36825;&#20010;&#32447;&#31243;&#32452;&#20013;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#30340;&#25152;&#26377;&#32447;&#31243;&#37117;&#20250;&#36820;&#22238;&#30456;&#21516;&#30340;&#32467;&#26524;    </span>
+    <span style="color: #ff79c6; font-weight: bold;">if</span> (sig_ignored(p, sig)):
+      <span style="color: #ff79c6; font-weight: bold;">return</span> ret;
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">sig &#23558;&#34987;&#21152;&#20837; p-&gt;shared_pending &#32780;&#19981;&#26159; t-&gt;pending    </span>
+    <span style="color: #ff79c6; font-weight: bold;">if</span> (LEGACY_QUEUE(&amp;p-&gt;signal-&gt;shared_pending, sig)):
+      <span style="color: #ff79c6; font-weight: bold;">return</span> ret;
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#19982; specific_send_sig_info &#30456;&#21516;, &#21482;&#19981;&#36807;&#26159;&#21152;&#20837;&#21040; p-&gt;shared_pending &#32780;&#19981;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26159; t-&gt;pending    </span>
     send_signal(sig, info, p, &amp;p-&gt;signal-&gt;shared_pending);
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#20110; specific_send_sig_info &#26469;&#35828;, &#36825;&#37324;&#20250;&#36890;&#36807; signal_wake_up &#21796;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#37266; p &#26469;&#21709;&#24212;&#36825;&#20010;&#20449;&#21495;. &#20294;&#23545;&#20110; group_send_sig_info &#26469;&#35828;, &#36825;&#37324;&#20250;&#36890;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36807;__group_complete_signal &#26469;&#36873;&#25321; p &#25152;&#22312;&#30340; thread group &#20013;&#30340;&#26576;&#19968;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20010; "&#21512;&#36866;" &#30340;&#32447;&#31243;&#26469;&#21709;&#24212;&#36825;&#20010;&#20449;&#21495;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23545;&#20110; specific_send_sig_info &#26469;&#35828;, &#36825;&#37324;&#20250;&#36890;&#36807; signal_wake_up &#21796;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#37266; p &#26469;&#21709;&#24212;&#36825;&#20010;&#20449;&#21495;. &#20294;&#23545;&#20110; group_send_sig_info &#26469;&#35828;, &#36825;&#37324;&#20250;&#36890;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36807;__group_complete_signal &#26469;&#36873;&#25321; p &#25152;&#22312;&#30340; thread group &#20013;&#30340;&#26576;&#19968;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20010; "&#21512;&#36866;" &#30340;&#32447;&#31243;&#26469;&#21709;&#24212;&#36825;&#20010;&#20449;&#21495;</span>
     __group_complete_signal(sig, p);
 </pre>
 </div>
@@ -372,44 +451,44 @@ group_send_sig_info
 <div class="outline-text-5" id="text-1-3-2-2">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">__group_complete_signal &#30340;&#30446;&#30340;&#26159;&#20174; p &#25152;&#22312;&#30340; thread group &#20013;&#36873;&#25321;&#19968;&#20010;</span>
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#32447;&#31243;&#26469;&#21796;&#37266;, &#20197;&#21709;&#24212;&#20043;&#21069;&#24050;&#32463;&#21152;&#20837;&#21040; p-&gt;shared_pending &#20013;&#30340;&#20449;&#21495;</span>
-__group_complete_signal(sig, <span style="font-weight: bold; text-decoration: underline;">p</span>):
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">wants_signal &#29992;&#26469;&#26816;&#26597; thread p &#26159;&#21542; "&#24212;&#35813;" &#21709;&#24212; sig, &#21709;&#24212; sig &#30340;&#26465;&#20214;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20026;:</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">1. sig &#27809;&#26377;&#34987; p block</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">2. p-&gt;state &#19981;&#26159; mask &#25152;&#25351;&#23450;&#30340; state</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">3. p &#27491;&#21344;&#29992;&#30528; cpu &#25110; p &#27809;&#26377;&#20219;&#20309; pending &#20449;&#21495; (p-&gt;pending &#21450;</span>
-  <span style="font-weight: bold; font-style: italic;">//    </span><span style="font-weight: bold; font-style: italic;">p-&gt;shared_pending &#20026;&#31354;)  </span>
-  <span style="font-weight: bold;">if</span> (wants_signal(sig, p, mask)):
-<span style="font-weight: bold;">        #define</span> <span style="font-weight: bold;">wants_signal</span>(<span style="font-weight: bold; font-style: italic;">sig</span>, <span style="font-weight: bold; font-style: italic;">p</span>, <span style="font-weight: bold; font-style: italic;">mask</span>)                      \
-          (!sigismember(&amp;(p)-&gt;blocked, sig)           \
-           &amp;&amp; !((p)-&gt;state &amp; mask)                    \
-           &amp;&amp; !((p)-&gt;flags &amp; PF_EXITING)                 \
-           &amp;&amp; (task_curr(p) || !signal_pending(p)))
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20248;&#20808;&#36873;&#25321; kill syscall &#26368;&#21021;&#25351;&#23450;&#30340;&#32447;&#31243;&#26469;&#21709;&#24212;&#20449;&#21495;    </span>
+<pre class="src src-c"><span style="color: #6272a4;">// </span><span style="color: #6272a4;">__group_complete_signal &#30340;&#30446;&#30340;&#26159;&#20174; p &#25152;&#22312;&#30340; thread group &#20013;&#36873;&#25321;&#19968;&#20010;</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#32447;&#31243;&#26469;&#21796;&#37266;, &#20197;&#21709;&#24212;&#20043;&#21069;&#24050;&#32463;&#21152;&#20837;&#21040; p-&gt;shared_pending &#20013;&#30340;&#20449;&#21495;</span>
+__group_complete_signal(sig, <span style="color: #bd93f9;">p</span>):
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">wants_signal &#29992;&#26469;&#26816;&#26597; thread p &#26159;&#21542; "&#24212;&#35813;" &#21709;&#24212; sig, &#21709;&#24212; sig &#30340;&#26465;&#20214;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20026;:</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">1. sig &#27809;&#26377;&#34987; p block</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">2. p-&gt;state &#19981;&#26159; mask &#25152;&#25351;&#23450;&#30340; state</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">3. p &#27491;&#21344;&#29992;&#30528; cpu &#25110; p &#27809;&#26377;&#20219;&#20309; pending &#20449;&#21495; (p-&gt;pending &#21450;</span>
+  <span style="color: #6272a4;">//    </span><span style="color: #6272a4;">p-&gt;shared_pending &#20026;&#31354;)  </span>
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (wants_signal(sig, p, mask)):
+<span style="color: #8be9fd;">        #define</span> <span style="color: #50fa7b; font-weight: bold;">wants_signal</span>(<span style="color: #f8f8f2;">sig</span>, <span style="color: #f8f8f2;">p</span>, <span style="color: #f8f8f2;">mask</span>)                      \
+          (<span style="color: #bd93f9;">!</span>sigismember(&amp;(p)-&gt;blocked, sig)           \
+           &amp;&amp; <span style="color: #bd93f9;">!</span>((p)-&gt;state &amp; mask)                    \
+           &amp;&amp; <span style="color: #bd93f9;">!</span>((p)-&gt;flags &amp; PF_EXITING)                 \
+           &amp;&amp; (task_curr(p) || <span style="color: #bd93f9;">!</span>signal_pending(p)))
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20248;&#20808;&#36873;&#25321; kill syscall &#26368;&#21021;&#25351;&#23450;&#30340;&#32447;&#31243;&#26469;&#21709;&#24212;&#20449;&#21495;    </span>
     t = p;
-  <span style="font-weight: bold;">else</span>:
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20174; thread group &#20013;&#36873;&#25321;&#19968;&#20010; wants_signal &#20026;&#30495;&#30340;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">p-&gt;signal-&gt;curr_target &#35760;&#24405;&#20102;&#19978;&#27425;&#21709;&#24212;&#20449;&#21495;&#30340; thread, &#36890;&#36807;&#36825;&#20010;&#21487;&#20197;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22312;&#19968;&#23450;&#31243;&#24230;&#19978;&#23454;&#29616;&#20449;&#21495;&#22788;&#29702;&#30340; load balancing      </span>
+  <span style="color: #ff79c6; font-weight: bold;">else</span>:
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20174; thread group &#20013;&#36873;&#25321;&#19968;&#20010; wants_signal &#20026;&#30495;&#30340;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">p-&gt;signal-&gt;curr_target &#35760;&#24405;&#20102;&#19978;&#27425;&#21709;&#24212;&#20449;&#21495;&#30340; thread, &#36890;&#36807;&#36825;&#20010;&#21487;&#20197;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22312;&#19968;&#23450;&#31243;&#24230;&#19978;&#23454;&#29616;&#20449;&#21495;&#22788;&#29702;&#30340; load balancing      </span>
     t = p-&gt;signal-&gt;curr_target;
-    <span style="font-weight: bold;">if</span> (t == <span style="font-weight: bold; text-decoration: underline;">NULL</span>):
+    <span style="color: #ff79c6; font-weight: bold;">if</span> (t == <span style="color: #bd93f9;">NULL</span>):
       t = p-&gt;signal-&gt;curr_target = p;
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36941;&#21382;&#25152;&#26377;&#30340; thread    </span>
-    <span style="font-weight: bold;">while</span> (!wants_signal(sig, t, mask)):
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36941;&#21382;&#25152;&#26377;&#30340; thread    </span>
+    <span style="color: #ff79c6; font-weight: bold;">while</span> (<span style="color: #bd93f9;">!</span>wants_signal(sig, t, mask)):
       t = next_thread(t);
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#27809;&#26377;&#20219;&#20309;&#19968;&#20010; thread wants_signal, &#37027;&#36825;&#37324;&#26080;&#27861;&#21796;&#37266;&#20219;&#20309;&#32447;&#31243;: &#21482;&#33021;&#31561;</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#30528;&#26576;&#20010;&#32447;&#31243; "&#33258;&#28982;" &#21796;&#37266;&#21518;&#26469;&#22788;&#29702;&#36825;&#20010;&#20449;&#21495;&#20102;      </span>
-      <span style="font-weight: bold;">if</span> (t == p-&gt;signal-&gt;curr_target)
-        <span style="font-weight: bold;">return</span>;
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#27809;&#26377;&#20219;&#20309;&#19968;&#20010; thread wants_signal, &#37027;&#36825;&#37324;&#26080;&#27861;&#21796;&#37266;&#20219;&#20309;&#32447;&#31243;: &#21482;&#33021;&#31561;</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#30528;&#26576;&#20010;&#32447;&#31243; "&#33258;&#28982;" &#21796;&#37266;&#21518;&#26469;&#22788;&#29702;&#36825;&#20010;&#20449;&#21495;&#20102;      </span>
+      <span style="color: #ff79c6; font-weight: bold;">if</span> (t == p-&gt;signal-&gt;curr_target)
+        <span style="color: #ff79c6; font-weight: bold;">return</span>;
     p-&gt;signal-&gt;curr_target = t;
 
-  <span style="font-weight: bold;">if</span> (sig_fatal(p, sig) ....):
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22914;&#26524;&#26159; fatal &#20449;&#21495;, &#30452;&#25509; kill &#25481; thread group &#20013;&#25152;&#26377;&#32447;&#31243;, &#36825;&#19968;&#28857;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19982; get_signal_to_deliver &#37324;&#30340;&#36923;&#36753;&#24046;&#19981;&#22810;      </span>
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (sig_fatal(p, sig) ....):
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22914;&#26524;&#26159; fatal &#20449;&#21495;, &#30452;&#25509; kill &#25481; thread group &#20013;&#25152;&#26377;&#32447;&#31243;, &#36825;&#19968;&#28857;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#19982; get_signal_to_deliver &#37324;&#30340;&#36923;&#36753;&#24046;&#19981;&#22810;      </span>
     ...
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26368;&#21518;, &#21796;&#37266; t &#26469;&#21709;&#24212;&#36825;&#20010;&#20449;&#21495;      </span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26368;&#21518;, &#21796;&#37266; t &#26469;&#21709;&#24212;&#36825;&#20010;&#20449;&#21495;      </span>
   signal_wake_up(t, sig == SIGKILL);
 </pre>
 </div>
@@ -425,8 +504,8 @@ __group_complete_signal(sig, <span style="font-weight: bold; text-decoration: un
 <div class="outline-text-5" id="text-1-3-3-1">
 <div class="org-src-container">
 
-<pre class="src src-c">sys_kill(<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">pid</span>, <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; text-decoration: underline;">sig</span>):
-  <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">siginfo</span> <span style="font-weight: bold; font-style: italic;">info</span>;
+<pre class="src src-c">sys_kill(<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">pid</span>, <span style="color: #f8f8f2;">int</span> <span style="color: #bd93f9;">sig</span>):
+  <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">siginfo</span> <span style="color: #f8f8f2;">info</span>;
 
   info.si_signo = sig;
   info.si_errno = 0;
@@ -435,21 +514,21 @@ __group_complete_signal(sig, <span style="font-weight: bold; text-decoration: un
   info.si_uid = current-&gt;uid;
 
   kill_something_info(sig, &amp;info, pid);
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; pid &#20026; 0, &#21017;&#34920;&#31034;&#35201;&#32473;&#24403;&#21069;&#36827;&#31243;&#25152;&#22312;&#36827;&#31243;&#32452;&#30340;&#25152;&#26377;&#36827;&#31243;&#21457;&#36865;&#20449;&#21495;. &#20851;&#20110;&#36827;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#31243;&#32452;, &#21442;&#32771; [[file:process.rel.org::*Processes%20Relationship][Processes Relationship]]  </span>
-  <span style="font-weight: bold;">if</span> (!pid):
-    <span style="font-weight: bold;">return</span> kill_pg_info(sig, info, process_group(current));
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">pg &#26159;&#25351; process group, &#21363;&#36827;&#31243;&#32452;</span>
-      <span style="font-weight: bold;">do_each_task_pid</span>(pgrp, PIDTYPE_PGID, p) {
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509; pid &#20026; 0, &#21017;&#34920;&#31034;&#35201;&#32473;&#24403;&#21069;&#36827;&#31243;&#25152;&#22312;&#36827;&#31243;&#32452;&#30340;&#25152;&#26377;&#36827;&#31243;&#21457;&#36865;&#20449;&#21495;. &#20851;&#20110;&#36827;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#31243;&#32452;, &#21442;&#32771; [[file:process.rel.org::*Processes%20Relationship][Processes Relationship]]  </span>
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>pid):
+    <span style="color: #ff79c6; font-weight: bold;">return</span> kill_pg_info(sig, info, process_group(current));
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">pg &#26159;&#25351; process group, &#21363;&#36827;&#31243;&#32452;</span>
+      <span style="color: #50fa7b; font-weight: bold;">do_each_task_pid</span>(pgrp, PIDTYPE_PGID, p) {
         group_send_sig_info(sig, info, p);
       } while_each_task_pid(pgrp, PIDTYPE_PGID, p);
 
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; pid &#20026;&#36127;&#25968;, &#21017;&#32473; -pid &#25152;&#25351;&#31034;&#30340;&#36827;&#31243;&#32452;&#30340;&#27599;&#20010;&#36827;&#31243;&#21457;&#36865;&#20449;&#21495;  </span>
-  <span style="font-weight: bold;">else</span> <span style="font-weight: bold;">if</span> (pid &lt; 0):
-    <span style="font-weight: bold;">return</span> kill_pg_info(sig, info, -pid);
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#32473; pid &#25351;&#31034;&#30340;&#36827;&#31243;&#21457;&#36865;&#20449;&#21495;      </span>
-  <span style="font-weight: bold;">else</span>:
-    <span style="font-weight: bold;">return</span> kill_proc_info(sig, info, pid);
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509; pid &#20026;&#36127;&#25968;, &#21017;&#32473; -pid &#25152;&#25351;&#31034;&#30340;&#36827;&#31243;&#32452;&#30340;&#27599;&#20010;&#36827;&#31243;&#21457;&#36865;&#20449;&#21495;  </span>
+  <span style="color: #ff79c6; font-weight: bold;">else</span> <span style="color: #ff79c6; font-weight: bold;">if</span> (pid &lt; 0):
+    <span style="color: #ff79c6; font-weight: bold;">return</span> kill_pg_info(sig, info, -pid);
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#32473; pid &#25351;&#31034;&#30340;&#36827;&#31243;&#21457;&#36865;&#20449;&#21495;      </span>
+  <span style="color: #ff79c6; font-weight: bold;">else</span>:
+    <span style="color: #ff79c6; font-weight: bold;">return</span> kill_proc_info(sig, info, pid);
       p = find_task_by_pid(pid);
       group_send_sig_info(sig, info, p);
 </pre>
@@ -462,18 +541,18 @@ __group_complete_signal(sig, <span style="font-weight: bold; text-decoration: un
 <div class="outline-text-5" id="text-1-3-3-2">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">do_page_fault</span>:
+<pre class="src src-c"><span style="color: #bd93f9;">do_page_fault</span>:
   info.si_signo = SIGSEGV;
   info.si_errno = 0;
-  info.si_addr = (<span style="font-weight: bold; text-decoration: underline;">void</span> <span style="font-weight: bold; font-style: italic;">__user</span> *)address;
+  info.si_addr = (<span style="color: #f8f8f2;">void</span> <span style="color: #f8f8f2;">__user</span> *)address;
   force_sig_info(SIGSEGV, &amp;info, tsk);
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; sig &#34987; blocked, &#21017; force_sig_info &#24378;&#21046;&#25226;&#23427; unblock; &#33509;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sa_handler &#34987;&#20462;&#25913;&#20026; SIG_IGN, &#21017; force_sig_info &#20250;&#24378;&#21046;&#25226;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sa_handler &#21464;&#20026; SIG_DFL...</span>
-    <span style="font-weight: bold; font-style: italic;">// </span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25152;&#20197;&#30475;&#36215;&#26469;&#24212;&#29992;&#25226; sa_handler &#20889;&#25104;&#19968;&#20010;&#31354;&#20989;&#25968;&#21644;&#30452;&#25509;&#35774;&#32622;&#20026; SIG_IGN &#36824;&#26159;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26377;&#20123;&#24046;&#21035;&#30340;          </span>
-    <span style="font-weight: bold;">if</span> (sigismember(&amp;t-&gt;blocked, sig) ||
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509; sig &#34987; blocked, &#21017; force_sig_info &#24378;&#21046;&#25226;&#23427; unblock; &#33509;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">sa_handler &#34987;&#20462;&#25913;&#20026; SIG_IGN, &#21017; force_sig_info &#20250;&#24378;&#21046;&#25226;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">sa_handler &#21464;&#20026; SIG_DFL...</span>
+    <span style="color: #6272a4;">// </span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#25152;&#20197;&#30475;&#36215;&#26469;&#24212;&#29992;&#25226; sa_handler &#20889;&#25104;&#19968;&#20010;&#31354;&#20989;&#25968;&#21644;&#30452;&#25509;&#35774;&#32622;&#20026; SIG_IGN &#36824;&#26159;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26377;&#20123;&#24046;&#21035;&#30340;          </span>
+    <span style="color: #ff79c6; font-weight: bold;">if</span> (sigismember(&amp;t-&gt;blocked, sig) ||
         t-&gt;sighand-&gt;action[sig-1].sa.sa_handler == SIG_IGN):
       t-&gt;sighand-&gt;action[sig-1].sa.sa_handler = SIG_DFL;
       sigdelset(&amp;t-&gt;blocked, sig);
@@ -512,8 +591,8 @@ resume_userspace
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">resume_userspace</span>:
-  <span style="font-weight: bold; text-decoration: underline;">movl</span> <span style="font-weight: bold;">TI_flags</span>(%ebp), %ecx
+<pre class="src src-c"><span style="color: #bd93f9;">resume_userspace</span>:
+  <span style="color: #f8f8f2;">movl</span> <span style="color: #50fa7b; font-weight: bold;">TI_flags</span>(%ebp), %ecx
   andl $_TIF_WORK_MASK, %ecx
 
   jne work_pending
@@ -524,12 +603,12 @@ work_pending:
 
 work_notifysig:
   call do_notify_resume
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">signal_wake_up &#26102;&#20250;&#32622;&#20301;.</span>
-    <span style="font-weight: bold; font-style: italic;">//</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21478;&#22806;&#26356;&#19968;&#33324;&#30340;&#24773;&#20917;&#19979;, kernel &#27599;&#27425;&#23545; pending &#30340;&#25913;&#21464;&#21518;&#37117;&#20250;&#35843;&#29992;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">recalc_sigpending_tsk &#26681;&#25454; pending-&gt;signal &#26469;&#23545; TIF_SIGPENDING &#32622;&#20301;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25110;&#22797;&#20301;</span>
-    <span style="font-weight: bold;">if</span> (thread_info_flags &amp; _TIF_SIGPENDING):
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">signal_wake_up &#26102;&#20250;&#32622;&#20301;.</span>
+    <span style="color: #6272a4;">//</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21478;&#22806;&#26356;&#19968;&#33324;&#30340;&#24773;&#20917;&#19979;, kernel &#27599;&#27425;&#23545; pending &#30340;&#25913;&#21464;&#21518;&#37117;&#20250;&#35843;&#29992;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">recalc_sigpending_tsk &#26681;&#25454; pending-&gt;signal &#26469;&#23545; TIF_SIGPENDING &#32622;&#20301;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#25110;&#22797;&#20301;</span>
+    <span style="color: #ff79c6; font-weight: bold;">if</span> (thread_info_flags &amp; _TIF_SIGPENDING):
       do_signal(regs,oldset);
 </pre>
 </div>
@@ -545,11 +624,11 @@ kernel space 调用 user space 下的 sa_handler
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">do_signal</span>:
-  signr = get_signal_to_deliver(&amp;info, &amp;ka, regs, <span style="font-weight: bold; text-decoration: underline;">NULL</span>);
-  <span style="font-weight: bold;">if</span> (signr &gt; 0):
+<pre class="src src-c"><span style="color: #bd93f9;">do_signal</span>:
+  signr = get_signal_to_deliver(&amp;info, &amp;ka, regs, <span style="color: #bd93f9;">NULL</span>);
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (signr &gt; 0):
     handle_signal(signr, &amp;info, &amp;ka, oldset, regs);
-    <span style="font-weight: bold;">return</span> 1
+    <span style="color: #ff79c6; font-weight: bold;">return</span> 1
 </pre>
 </div>
 </div>
@@ -565,57 +644,57 @@ signal 对应的 handler 是 SIG_DFL, 则执行默认的操作: ignore, coredump
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">get_signal_to_deliver</span>:
-  <span style="font-weight: bold; text-decoration: underline;">sigset_t</span> *<span style="font-weight: bold; font-style: italic;">mask</span> = &amp;current-&gt;blocked;
+<pre class="src src-c"><span style="color: #bd93f9;">get_signal_to_deliver</span>:
+  <span style="color: #f8f8f2;">sigset_t</span> *<span style="color: #f8f8f2;">mask</span> = &amp;current-&gt;blocked;
   signr = dequeue_signal(current, mask, info);
-    <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">signr</span> = __dequeue_signal(&amp;tsk-&gt;pending, mask, info);
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20174; pending-&gt;signal &#36825;&#20010; bitmask &#25214;&#21040; mask &#20043;&#22806;&#30340;&#31532;&#19968;&#20010; pending</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#30340; signr</span>
+    <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">signr</span> = __dequeue_signal(&amp;tsk-&gt;pending, mask, info);
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20174; pending-&gt;signal &#36825;&#20010; bitmask &#25214;&#21040; mask &#20043;&#22806;&#30340;&#31532;&#19968;&#20010; pending</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#30340; signr</span>
       sig = next_signal(pending, mask);
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20174; pending &#21015;&#34920;&#20013;&#25214;&#21040;&#23545;&#24212;&#20110; sig &#30340; siginfo</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20174; pending &#21015;&#34920;&#20013;&#25214;&#21040;&#23545;&#24212;&#20110; sig &#30340; siginfo</span>
       collect_signal(sig, pending, info)
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; pending &#20013;&#27809;&#26377;, &#21017;&#26597;&#25214; shared_pending. group_send_sig_info &#26102;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20250;&#23558;&#20449;&#21495;&#21152;&#20837;&#21040; shared_pending &#20013;      </span>
-    <span style="font-weight: bold;">if</span> (!signr):
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509; pending &#20013;&#27809;&#26377;, &#21017;&#26597;&#25214; shared_pending. group_send_sig_info &#26102;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20250;&#23558;&#20449;&#21495;&#21152;&#20837;&#21040; shared_pending &#20013;      </span>
+    <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>signr):
       signr = __dequeue_signal(&amp;tsk-&gt;signal-&gt;shared_pending, mask, info);
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#27809;&#26377;&#20219;&#20309; pending signal</span>
-  <span style="font-weight: bold;">if</span> (!signr):
-    <span style="font-weight: bold;">break</span>;
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#27809;&#26377;&#20219;&#20309; pending signal</span>
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>signr):
+    <span style="color: #ff79c6; font-weight: bold;">break</span>;
 
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25214;&#21040;&#19968;&#20010; pending signal</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#25214;&#21040;&#19968;&#20010; pending signal</span>
   ka = &amp;current-&gt;sighand-&gt;action[signr-1];
-  <span style="font-weight: bold;">if</span> (ka-&gt;sa.sa_handler == SIG_IGN):
-    <span style="font-weight: bold;">continue</span>;
-  <span style="font-weight: bold;">if</span> (ka-&gt;sa.sa_handler != SIG_DFL):
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25214;&#21040;&#19968;&#20010;&#26377; sa_handler &#30340;&#20449;&#21495;, &#36820;&#22238;&#21040;&#19978;&#23618;, &#21518;&#32493;&#20250;&#35843;&#29992; handle_signal</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26469;&#22788;&#29702;&#23427;</span>
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (ka-&gt;sa.sa_handler == SIG_IGN):
+    <span style="color: #ff79c6; font-weight: bold;">continue</span>;
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (ka-&gt;sa.sa_handler != SIG_DFL):
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#25214;&#21040;&#19968;&#20010;&#26377; sa_handler &#30340;&#20449;&#21495;, &#36820;&#22238;&#21040;&#19978;&#23618;, &#21518;&#32493;&#20250;&#35843;&#29992; handle_signal</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26469;&#22788;&#29702;&#23427;</span>
     *return_ka = *ka;
-    <span style="font-weight: bold;">if</span> (ka-&gt;sa.sa_flags &amp; SA_ONESHOT):
+    <span style="color: #ff79c6; font-weight: bold;">if</span> (ka-&gt;sa.sa_flags &amp; SA_ONESHOT):
       ka-&gt;sa.sa_handler = SIG_DFL;
-    <span style="font-weight: bold;">break</span>;
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21069;&#20004;&#20010;&#21028;&#26029;&#37117;&#19981;&#28385;&#36275;, &#36208; SIG_DFL &#30340;&#22788;&#29702;&#36335;&#24452;</span>
-  <span style="font-weight: bold;">if</span> (sig_kernel_ignore(signr)):
-    <span style="font-weight: bold;">continue</span>;
-  <span style="font-weight: bold;">if</span> (current-&gt;pid == 1):
-    <span style="font-weight: bold;">continue</span>;
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sig &#26159; SIGSTOP &#19968;&#31867;&#30340;&#20449;&#21495;</span>
-  <span style="font-weight: bold;">if</span> (sig_kernel_stop(signr)):
+    <span style="color: #ff79c6; font-weight: bold;">break</span>;
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21069;&#20004;&#20010;&#21028;&#26029;&#37117;&#19981;&#28385;&#36275;, &#36208; SIG_DFL &#30340;&#22788;&#29702;&#36335;&#24452;</span>
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (sig_kernel_ignore(signr)):
+    <span style="color: #ff79c6; font-weight: bold;">continue</span>;
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (current-&gt;pid == 1):
+    <span style="color: #ff79c6; font-weight: bold;">continue</span>;
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">sig &#26159; SIGSTOP &#19968;&#31867;&#30340;&#20449;&#21495;</span>
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (sig_kernel_stop(signr)):
     do_signal_stop(signr)
-    <span style="font-weight: bold;">continue</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21097;&#19979;&#30340;&#20840;&#26159; fatal &#20449;&#21495;</span>
-  <span style="font-weight: bold;">if</span> (sig_kernel_coredump(signr)):
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#38656;&#35201;&#29983;&#25104; coredump</span>
-    do_coredump((<span style="font-weight: bold; text-decoration: underline;">long</span>)signr, signr, regs);
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#20110; fatal &#20449;&#21495;, &#19981;&#20165;&#20165;&#26159;&#24403;&#21069;&#32447;&#31243;&#36864;&#20986;, &#32780;&#26159;&#25972;&#20010; thread group &#20013;&#30340;&#25152;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26377;&#32447;&#31243;&#37117;&#20250;&#36864;&#20986;</span>
+    <span style="color: #ff79c6; font-weight: bold;">continue</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21097;&#19979;&#30340;&#20840;&#26159; fatal &#20449;&#21495;</span>
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (sig_kernel_coredump(signr)):
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#38656;&#35201;&#29983;&#25104; coredump</span>
+    do_coredump((<span style="color: #f8f8f2;">long</span>)signr, signr, regs);
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23545;&#20110; fatal &#20449;&#21495;, &#19981;&#20165;&#20165;&#26159;&#24403;&#21069;&#32447;&#31243;&#36864;&#20986;, &#32780;&#26159;&#25972;&#20010; thread group &#20013;&#30340;&#25152;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26377;&#32447;&#31243;&#37117;&#20250;&#36864;&#20986;</span>
   do_group_exit(signr);
     zap_other_threads(current);
-      <span style="font-weight: bold;">for</span> (t = next_thread(p); t != p; t = next_thread(t)):
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#30456;&#24403;&#20110;&#32473;&#20854;&#23427;&#27599;&#20010;&#23376;&#32447;&#31243;&#37117;&#21457;&#36865;&#19968;&#20010; SIGKILL</span>
+      <span style="color: #ff79c6; font-weight: bold;">for</span> (t = next_thread(p); t != p; t = next_thread(t)):
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#30456;&#24403;&#20110;&#32473;&#20854;&#23427;&#27599;&#20010;&#23376;&#32447;&#31243;&#37117;&#21457;&#36865;&#19968;&#20010; SIGKILL</span>
         sigaddset(&amp;t-&gt;pending.signal, SIGKILL);
         rm_from_queue(SIG_KERNEL_STOP_MASK, &amp;t-&gt;pending);
         signal_wake_up(t, 1);
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">do_exit &#19981;&#20250;&#36820;&#22238;, &#25152;&#20197;&#21518;&#38754;&#30340; handle_signal &#24182;&#19981;&#20250;&#25191;&#34892;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">do_exit &#19981;&#20250;&#36820;&#22238;, &#25152;&#20197;&#21518;&#38754;&#30340; handle_signal &#24182;&#19981;&#20250;&#25191;&#34892;</span>
     do_exit(exit_code);
 </pre>
 </div>
@@ -627,17 +706,17 @@ signal 对应的 handler 是 SIG_DFL, 则执行默认的操作: ignore, coredump
 <div class="outline-text-5" id="text-1-4-1-2">
 <div class="org-src-container">
 
-<pre class="src src-c">handle_signal(sig, info, <span style="font-weight: bold; text-decoration: underline;">ka</span>, ...):
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26368;&#21021;&#24212;&#29992;&#36890;&#36807; sigaction &#26102;&#20351;&#29992;&#20102; SA_SIGINFO &#36825;&#20010; flag, &#34920;&#31034;&#19978;&#23618;&#30340;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">handler &#25191;&#34892;&#26102;&#38656;&#35201;&#25343;&#21040; siginfo &#20449;&#24687;, kernel &#38656;&#35201;&#35843;&#29992; sigaction &#26102;&#27880;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20876;&#30340; sa_sigaction &#22238;&#35843;, &#32780;&#19981;&#26159; sa_handler.</span>
-  <span style="font-weight: bold; font-style: italic;">//</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sa_sigaction &#22238;&#35843;&#30340;&#21407;&#22411;&#20026;:</span>
-  <span style="font-weight: bold; font-style: italic;">//</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">void (sa_action *) (int signr, siginfo_t * info, void *)</span>
-  <span style="font-weight: bold;">if</span> (ka-&gt;sa.sa_flags &amp; SA_SIGINFO):
+<pre class="src src-c">handle_signal(sig, info, <span style="color: #bd93f9;">ka</span>, ...):
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26368;&#21021;&#24212;&#29992;&#36890;&#36807; sigaction &#26102;&#20351;&#29992;&#20102; SA_SIGINFO &#36825;&#20010; flag, &#34920;&#31034;&#19978;&#23618;&#30340;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">handler &#25191;&#34892;&#26102;&#38656;&#35201;&#25343;&#21040; siginfo &#20449;&#24687;, kernel &#38656;&#35201;&#35843;&#29992; sigaction &#26102;&#27880;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20876;&#30340; sa_sigaction &#22238;&#35843;, &#32780;&#19981;&#26159; sa_handler.</span>
+  <span style="color: #6272a4;">//</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">sa_sigaction &#22238;&#35843;&#30340;&#21407;&#22411;&#20026;:</span>
+  <span style="color: #6272a4;">//</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">void (sa_action *) (int signr, siginfo_t * info, void *)</span>
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (ka-&gt;sa.sa_flags &amp; SA_SIGINFO):
     setup_rt_frame(sig, ka, info, oldset, regs);
-  <span style="font-weight: bold;">else</span>:
+  <span style="color: #ff79c6; font-weight: bold;">else</span>:
     setup_frame(sig, ka, oldset, regs);
 </pre>
 </div>
@@ -655,17 +734,17 @@ signal 对应的 handler 是 SIG_DFL, 则执行默认的操作: ignore, coredump
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">setup_frame</span>:
-  <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">sigframe</span> <span style="font-weight: bold; text-decoration: underline;">__user</span> *<span style="font-weight: bold; font-style: italic;">frame</span>;
-  frame = get_sigframe(ka, regs, <span style="font-weight: bold;">sizeof</span>(*frame));
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22312; user mode stack &#19978;&#21521;&#19979;&#25193;&#23637;&#20986;&#19968;&#22359;&#21306;&#22495;, &#23384;&#25918; sigframe</span>
+<pre class="src src-c"><span style="color: #bd93f9;">setup_frame</span>:
+  <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">sigframe</span> <span style="color: #f8f8f2;">__user</span> *<span style="color: #f8f8f2;">frame</span>;
+  frame = get_sigframe(ka, regs, <span style="color: #ff79c6; font-weight: bold;">sizeof</span>(*frame));
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22312; user mode stack &#19978;&#21521;&#19979;&#25193;&#23637;&#20986;&#19968;&#22359;&#21306;&#22495;, &#23384;&#25918; sigframe</span>
     esp = regs-&gt;esp;
-    <span style="font-weight: bold;">return</span> (<span style="font-weight: bold; text-decoration: underline;">void</span> <span style="font-weight: bold; font-style: italic;">__user</span> *)((esp - frame_size) &amp; -8ul);
+    <span style="color: #ff79c6; font-weight: bold;">return</span> (<span style="color: #f8f8f2;">void</span> <span style="color: #f8f8f2;">__user</span> *)((esp - frame_size) &amp; -8ul);
 
   __put_user(sig, &amp;frame-&gt;sig);
   setup_sigcontext(&amp;frame-&gt;sc, &amp;frame-&gt;fpstate, regs, set-&gt;sig[0]);
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23558; regs &#20013;&#21407;&#22987;&#20869;&#23481;&#20445;&#23384;&#22312; sigframe &#30340; sigcontext &#20013;, &#22240;&#20026;&#21518;&#38754; regs</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20013;&#30340;&#20869;&#23481;&#20250;&#34987;&#26367;&#25442;&#20026; sa_handler &#23545;&#24212;&#30340;&#37096;&#20998;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23558; regs &#20013;&#21407;&#22987;&#20869;&#23481;&#20445;&#23384;&#22312; sigframe &#30340; sigcontext &#20013;, &#22240;&#20026;&#21518;&#38754; regs</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20013;&#30340;&#20869;&#23481;&#20250;&#34987;&#26367;&#25442;&#20026; sa_handler &#23545;&#24212;&#30340;&#37096;&#20998;</span>
     __put_user(regs-&gt;edi, &amp;sc-&gt;edi);
     __put_user(regs-&gt;esi, &amp;sc-&gt;esi);
     __put_user(regs-&gt;ebp, &amp;sc-&gt;ebp);
@@ -675,45 +754,45 @@ signal 对应的 handler 是 SIG_DFL, 则执行默认的操作: ignore, coredump
     __put_user(regs-&gt;ecx, &amp;sc-&gt;ecx);
     __put_user(regs-&gt;eax, &amp;sc-&gt;eax);
     __put_user(regs-&gt;eip, &amp;sc-&gt;eip);
-    __put_user(regs-&gt;xcs, (<span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">__user</span> *)&amp;sc-&gt;cs);
+    __put_user(regs-&gt;xcs, (<span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">__user</span> *)&amp;sc-&gt;cs);
     __put_user(regs-&gt;eflags, &amp;sc-&gt;eflags);
     __put_user(regs-&gt;esp, &amp;sc-&gt;esp_at_signal);
 
   restorer = &amp;__kernel_sigreturn;
   __put_user(restorer, &amp;frame-&gt;pretcode);
 
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#37324;&#23545; regs &#37325;&#26032;&#36171;&#20540;, &#24403; do_signal &#36820;&#22238;&#21518; iret &#20250;&#36127;&#36131;&#29992; regs &#24674;&#22797;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">user space &#30340;&#19978;&#19979;&#25991;, &#23548;&#33268; user space &#20250;&#36339;&#36716;&#21040; sa_handler, &#24182;&#19988;&#21442;&#25968;&#20026;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sig, esp &#20026; frame.</span>
-  <span style="font-weight: bold; font-style: italic;">//   </span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25152;&#20197;, sa_handler &#22312; user mode &#25191;&#34892;&#26102; stack &#30340;&#24067;&#23616; (&#20174;&#39640;&#21040;&#20302;) &#20026;:</span>
-  <span style="font-weight: bold; font-style: italic;">//   </span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">..</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sigcontext</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sig</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">pretcode (__kernel_sigreturn)  &lt;-- esp</span>
-  <span style="font-weight: bold; font-style: italic;">//   </span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22240;&#20026; x86 &#40664;&#35748;&#20351;&#29992;&#26632;&#26469;&#20256;&#36882;&#21442;&#25968;, &#25152;&#20197; sa_handler &#25191;&#34892;&#26102;&#31532;&#19968;&#20010;&#21442;&#25968; signr</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19982;&#26632;&#19978;&#30340; sig &#26159;&#23545;&#24212;&#30340; // &#36825;&#37324;&#23545; regs &#37325;&#26032;&#36171;&#20540;, &#24403; do_signal &#36820;&#22238;&#21518;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">iret &#20250;&#36127;&#36131;&#29992; regs &#24674;&#22797; user space &#30340;&#19978;&#19979;&#25991;, &#23548;&#33268; user space &#20250;&#36339;&#36716;&#21040;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sa_handler, &#24182;&#19988;&#21442;&#25968;&#20026; sig, esp &#20026; frame.</span>
-  <span style="font-weight: bold; font-style: italic;">//   </span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25152;&#20197;, &#21442;&#32771; sigframe &#30340;&#23450;&#20041;, sa_handler &#22312; user mode &#25191;&#34892;&#26102; stack &#30340;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#24067;&#23616; (&#20174;&#39640;&#21040;&#20302;) &#20026;:</span>
-  <span style="font-weight: bold; font-style: italic;">// </span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">--high  </span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">..</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sigcontext</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sig</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">pretcode (__kernel_sigreturn)  &lt;-- esp</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">--low</span>
-  <span style="font-weight: bold; font-style: italic;">//     </span>
-  regs-&gt;esp = (<span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>) frame;
-  regs-&gt;eip = (<span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>) ka-&gt;sa.sa_handler;
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">x86 &#40664;&#35748;&#20351;&#29992;&#26632;&#26469;&#20256;&#36882;&#21442;&#25968;, &#36825;&#37324;&#24182;&#19981;&#26126;&#30830;&#35774;&#32622; eax &#30340;&#30446;&#30340;...</span>
-  regs-&gt;eax = (<span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>) sig;
-  regs-&gt;edx = (<span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>) 0;
-  regs-&gt;ecx = (<span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>) 0;
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36825;&#37324;&#23545; regs &#37325;&#26032;&#36171;&#20540;, &#24403; do_signal &#36820;&#22238;&#21518; iret &#20250;&#36127;&#36131;&#29992; regs &#24674;&#22797;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">user space &#30340;&#19978;&#19979;&#25991;, &#23548;&#33268; user space &#20250;&#36339;&#36716;&#21040; sa_handler, &#24182;&#19988;&#21442;&#25968;&#20026;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">sig, esp &#20026; frame.</span>
+  <span style="color: #6272a4;">//   </span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#25152;&#20197;, sa_handler &#22312; user mode &#25191;&#34892;&#26102; stack &#30340;&#24067;&#23616; (&#20174;&#39640;&#21040;&#20302;) &#20026;:</span>
+  <span style="color: #6272a4;">//   </span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">..</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">sigcontext</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">sig</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">pretcode (__kernel_sigreturn)  &lt;-- esp</span>
+  <span style="color: #6272a4;">//   </span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22240;&#20026; x86 &#40664;&#35748;&#20351;&#29992;&#26632;&#26469;&#20256;&#36882;&#21442;&#25968;, &#25152;&#20197; sa_handler &#25191;&#34892;&#26102;&#31532;&#19968;&#20010;&#21442;&#25968; signr</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#19982;&#26632;&#19978;&#30340; sig &#26159;&#23545;&#24212;&#30340; // &#36825;&#37324;&#23545; regs &#37325;&#26032;&#36171;&#20540;, &#24403; do_signal &#36820;&#22238;&#21518;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">iret &#20250;&#36127;&#36131;&#29992; regs &#24674;&#22797; user space &#30340;&#19978;&#19979;&#25991;, &#23548;&#33268; user space &#20250;&#36339;&#36716;&#21040;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">sa_handler, &#24182;&#19988;&#21442;&#25968;&#20026; sig, esp &#20026; frame.</span>
+  <span style="color: #6272a4;">//   </span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#25152;&#20197;, &#21442;&#32771; sigframe &#30340;&#23450;&#20041;, sa_handler &#22312; user mode &#25191;&#34892;&#26102; stack &#30340;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#24067;&#23616; (&#20174;&#39640;&#21040;&#20302;) &#20026;:</span>
+  <span style="color: #6272a4;">// </span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">--high  </span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">..</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">sigcontext</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">sig</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">pretcode (__kernel_sigreturn)  &lt;-- esp</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">--low</span>
+  <span style="color: #6272a4;">//     </span>
+  regs-&gt;esp = (<span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span>) frame;
+  regs-&gt;eip = (<span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span>) ka-&gt;sa.sa_handler;
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">x86 &#40664;&#35748;&#20351;&#29992;&#26632;&#26469;&#20256;&#36882;&#21442;&#25968;, &#36825;&#37324;&#24182;&#19981;&#26126;&#30830;&#35774;&#32622; eax &#30340;&#30446;&#30340;...</span>
+  regs-&gt;eax = (<span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span>) sig;
+  regs-&gt;edx = (<span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span>) 0;
+  regs-&gt;ecx = (<span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span>) 0;
   regs-&gt;xcs = __USER_CS;
 </pre>
 </div>
@@ -740,9 +819,9 @@ page 中的一个函数, 所以应用可以直接访问, 关于 vsyscall page, �
 
 <div class="org-src-container">
 
-<pre class="src src-asm"><span style="font-weight: bold;">pop</span> <span style="font-weight: bold;">%eax</span>
-<span style="font-weight: bold;">mov</span> <span style="font-weight: bold;">$0x77</span>,<span style="font-weight: bold; font-style: italic;">%eax</span>
-<span style="font-weight: bold;">int</span> <span style="font-weight: bold;">$0x80</span>
+<pre class="src src-asm"><span style="color: #50fa7b; font-weight: bold;">pop</span> <span style="color: #ff79c6; font-weight: bold;">%eax</span>
+<span style="color: #50fa7b; font-weight: bold;">mov</span> <span style="color: #ff79c6; font-weight: bold;">$0x77</span>,<span style="color: #f8f8f2;">%eax</span>
+<span style="color: #50fa7b; font-weight: bold;">int</span> <span style="color: #ff79c6; font-weight: bold;">$0x80</span>
 </pre>
 </div>
 
@@ -758,26 +837,26 @@ page 中的一个函数, 所以应用可以直接访问, 关于 vsyscall page, �
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">sys_sigreturn</span>:
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20026;&#20160;&#20040;&#26159; regs-&gt;esp - 8?</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26681;&#25454;&#21069;&#38754;&#25551;&#36848;&#30340; sa_handler &#30340;&#26632;&#24067;&#23616;:</span>
-  <span style="font-weight: bold; font-style: italic;">// </span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">--high</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sigcontext</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sig</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">pretcode (__kernel_sigreturn)  &lt;-- esp</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">--low</span>
-  <span style="font-weight: bold; font-style: italic;">// </span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#24403; sa_handler &#32467;&#26463;&#26102;&#35843;&#29992; ret &#20043;&#21069;, esp &#26159;&#25351;&#21521; __kernel_sigreturn &#30340;,</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20063;&#23601;&#26159; sigframe. ret &#25351;&#20196;&#20250;&#23548;&#33268; esp + 4, &#28982;&#21518; __kernel_sigreturn &#30340;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#31532;&#19968;&#21477;&#26159; pop %eax, &#23548;&#33268; esp &#20877;&#27425; + 4, &#27492;&#21518;&#36890;&#36807; int 0x80 &#36827;&#20837; syscall</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23548;&#33268;&#24403;&#21069;&#30340; esp &#24050;&#32463;&#20559;&#31163; sigframe 8 &#23383;&#33410;, &#25152;&#20197;&#36825;&#37324;&#38656;&#35201; -8 ... &#33267;&#20110;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">__kernel_sigreturn &#20026;&#21861;&#20250; pop %eax &#19981;&#28165;&#26970;...</span>
-  <span style="font-weight: bold; font-style: italic;">// </span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#24212;&#20110; sys_rt_sigreturn &#30340; __kernel_rt_sigreturn &#24182;&#27809;&#26377;&#36825;&#20010; pop &#25805;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20316;, &#25152;&#20197; sys_rt_sigreturn &#33719;&#24471; sigframe &#26102;&#21482;&#38656;&#35201; - 4    </span>
-  <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">sigframe</span> <span style="font-weight: bold; text-decoration: underline;">__user</span> *<span style="font-weight: bold; font-style: italic;">frame</span> = (<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">sigframe</span> <span style="font-weight: bold; text-decoration: underline;">__user</span> *)(regs-&gt;esp - 8);
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20351;&#29992; frame-&gt;sc &#24674;&#22797;&#26087;&#30340; regs  </span>
+<pre class="src src-c"><span style="color: #bd93f9;">sys_sigreturn</span>:
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20026;&#20160;&#20040;&#26159; regs-&gt;esp - 8?</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26681;&#25454;&#21069;&#38754;&#25551;&#36848;&#30340; sa_handler &#30340;&#26632;&#24067;&#23616;:</span>
+  <span style="color: #6272a4;">// </span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">--high</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">sigcontext</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">sig</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">pretcode (__kernel_sigreturn)  &lt;-- esp</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">--low</span>
+  <span style="color: #6272a4;">// </span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#24403; sa_handler &#32467;&#26463;&#26102;&#35843;&#29992; ret &#20043;&#21069;, esp &#26159;&#25351;&#21521; __kernel_sigreturn &#30340;,</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20063;&#23601;&#26159; sigframe. ret &#25351;&#20196;&#20250;&#23548;&#33268; esp + 4, &#28982;&#21518; __kernel_sigreturn &#30340;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#31532;&#19968;&#21477;&#26159; pop %eax, &#23548;&#33268; esp &#20877;&#27425; + 4, &#27492;&#21518;&#36890;&#36807; int 0x80 &#36827;&#20837; syscall</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23548;&#33268;&#24403;&#21069;&#30340; esp &#24050;&#32463;&#20559;&#31163; sigframe 8 &#23383;&#33410;, &#25152;&#20197;&#36825;&#37324;&#38656;&#35201; -8 ... &#33267;&#20110;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">__kernel_sigreturn &#20026;&#21861;&#20250; pop %eax &#19981;&#28165;&#26970;...</span>
+  <span style="color: #6272a4;">// </span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23545;&#24212;&#20110; sys_rt_sigreturn &#30340; __kernel_rt_sigreturn &#24182;&#27809;&#26377;&#36825;&#20010; pop &#25805;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20316;, &#25152;&#20197; sys_rt_sigreturn &#33719;&#24471; sigframe &#26102;&#21482;&#38656;&#35201; - 4    </span>
+  <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">sigframe</span> <span style="color: #f8f8f2;">__user</span> *<span style="color: #f8f8f2;">frame</span> = (<span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">sigframe</span> <span style="color: #f8f8f2;">__user</span> *)(regs-&gt;esp - 8);
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20351;&#29992; frame-&gt;sc &#24674;&#22797;&#26087;&#30340; regs  </span>
   restore_sigcontext(regs, &amp;frame-&gt;sc, &amp;eax)
 </pre>
 </div>
@@ -793,16 +872,16 @@ page 中的一个函数, 所以应用可以直接访问, 关于 vsyscall page, �
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">#include</span> <span style="font-style: italic;">&lt;signal.h&gt;</span>
+<pre class="src src-c"><span style="color: #8be9fd;">#include</span> <span style="color: #f1fa8c;">&lt;signal.h&gt;</span>
 
-<span style="font-weight: bold; text-decoration: underline;">void</span> * <span style="font-weight: bold;">foo</span>(<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">signr</span>) {
+<span style="color: #f8f8f2;">void</span> * <span style="color: #50fa7b; font-weight: bold;">foo</span>(<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">signr</span>) {
 
 }
 
-<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold;">main</span>(<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">argc</span>, <span style="font-weight: bold; text-decoration: underline;">char</span> *<span style="font-weight: bold; font-style: italic;">argv</span>[]) {
+<span style="color: #f8f8f2;">int</span> <span style="color: #50fa7b; font-weight: bold;">main</span>(<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">argc</span>, <span style="color: #f8f8f2;">char</span> *<span style="color: #f8f8f2;">argv</span>[]) {
     signal(10, foo);
     sleep(1000);
-    <span style="font-weight: bold;">return</span> 0;
+    <span style="color: #ff79c6; font-weight: bold;">return</span> 0;
 }
 </pre>
 </div>
@@ -947,23 +1026,23 @@ TASK_INTERRUPTIBLE 状态的进程唤醒, 但此时它们等待的事件并没�
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">pipe_readv</span>:
-  <span style="font-weight: bold;">for</span> (;;):
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">pipe &#30340; read &#25805;&#20316;&#38459;&#22622;, &#31561;&#24453; writer &#21521; pipe &#20889;&#25968;&#25454;</span>
+<pre class="src src-c"><span style="color: #bd93f9;">pipe_readv</span>:
+  <span style="color: #ff79c6; font-weight: bold;">for</span> (;;):
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">pipe &#30340; read &#25805;&#20316;&#38459;&#22622;, &#31561;&#24453; writer &#21521; pipe &#20889;&#25968;&#25454;</span>
     PIPE_WAITING_WRITERS(*inode)
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20551;&#35774;&#38459;&#22622;&#36807;&#31243;&#20013;&#26377;&#20449;&#21495;&#21457;&#29983;, &#24403;&#21069;&#36827;&#31243;&#34987;&#21796;&#37266;, &#21017; PIPE_WAITING_WRITERS</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20250;&#30452;&#25509;&#36820;&#22238;, &#25191;&#34892;&#19979;&#19968;&#26465;&#25351;&#20196; (signal_pending)</span>
-    <span style="font-weight: bold; font-style: italic;">// </span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">signal_pending &#20026;&#30495;, &#35828;&#26126;&#24403;&#21069;&#36827;&#31243;&#26377; pending signal, &#21017;&#35828;&#26126;&#26159;&#20449;&#21495;&#21796;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#37266;&#20102;&#24403;&#21069;&#36827;&#31243;, &#21017; syscall &#25552;&#21069;&#36820;&#22238; -ERESTARTSYS</span>
-    <span style="font-weight: bold; font-style: italic;">// </span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#30001;&#20110; syscall &#36820;&#22238;&#21518; (&#20294;&#22312;&#35843;&#29992; do_signal &#20043;&#21069;) &#20250;&#23558;&#36820;&#22238;&#20540; (eax) &#25918;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22312; pt_regs &#20013;, &#21518;&#32493; do_signal &#21487;&#20197;&#26681;&#25454; pt_regs-&gt;eax &#30693;&#36947;&#34987;&#25171;&#26029;&#30340;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">syscall &#20851;&#20110;&#37325;&#21551;&#30340;&#24847;&#22270;: &#36820;&#22238; EINTR &#30001;&#19978;&#23618;&#37325;&#21551; syscall, &#25110;&#30001; kernel</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#30452;&#25509;&#36890;&#36807;&#35774;&#32622; ip &#33258;&#21160;&#37325;&#21551; syscall    </span>
-    <span style="font-weight: bold;">if</span> (signal_pending(current)):
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20551;&#35774;&#38459;&#22622;&#36807;&#31243;&#20013;&#26377;&#20449;&#21495;&#21457;&#29983;, &#24403;&#21069;&#36827;&#31243;&#34987;&#21796;&#37266;, &#21017; PIPE_WAITING_WRITERS</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20250;&#30452;&#25509;&#36820;&#22238;, &#25191;&#34892;&#19979;&#19968;&#26465;&#25351;&#20196; (signal_pending)</span>
+    <span style="color: #6272a4;">// </span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">signal_pending &#20026;&#30495;, &#35828;&#26126;&#24403;&#21069;&#36827;&#31243;&#26377; pending signal, &#21017;&#35828;&#26126;&#26159;&#20449;&#21495;&#21796;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#37266;&#20102;&#24403;&#21069;&#36827;&#31243;, &#21017; syscall &#25552;&#21069;&#36820;&#22238; -ERESTARTSYS</span>
+    <span style="color: #6272a4;">// </span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#30001;&#20110; syscall &#36820;&#22238;&#21518; (&#20294;&#22312;&#35843;&#29992; do_signal &#20043;&#21069;) &#20250;&#23558;&#36820;&#22238;&#20540; (eax) &#25918;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22312; pt_regs &#20013;, &#21518;&#32493; do_signal &#21487;&#20197;&#26681;&#25454; pt_regs-&gt;eax &#30693;&#36947;&#34987;&#25171;&#26029;&#30340;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">syscall &#20851;&#20110;&#37325;&#21551;&#30340;&#24847;&#22270;: &#36820;&#22238; EINTR &#30001;&#19978;&#23618;&#37325;&#21551; syscall, &#25110;&#30001; kernel</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#30452;&#25509;&#36890;&#36807;&#35774;&#32622; ip &#33258;&#21160;&#37325;&#21551; syscall    </span>
+    <span style="color: #ff79c6; font-weight: bold;">if</span> (signal_pending(current)):
       ret = -ERESTARTSYS;
-      <span style="font-weight: bold;">break</span>;
+      <span style="color: #ff79c6; font-weight: bold;">break</span>;
 </pre>
 </div>
 </li>
@@ -972,32 +1051,32 @@ TASK_INTERRUPTIBLE 状态的进程唤醒, 但此时它们等待的事件并没�
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">handle_signal</span>:
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#24403;&#21069;&#26159;&#19968;&#20010; syscall  </span>
-  <span style="font-weight: bold;">if</span> (regs-&gt;orig_eax &gt;= 0):
-    <span style="font-weight: bold;">switch</span> (regs-&gt;eax):
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509;&#34987;&#25171;&#26029;&#30340; syscall &#36820;&#22238; ERESTART_RESTARTBLOCK &#25110; ERESTARTNOHAND,</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21017;&#30452;&#25509;&#23545;&#19978;&#23618;&#36820;&#22238; EINTR, &#30001;&#19978;&#23618;&#20915;&#23450;&#26159;&#21542;&#37325;&#21551; syscall</span>
-      <span style="font-weight: bold; font-style: italic;">// </span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; syscall &#36820;&#22238; ERESTARTSYS, &#21017;&#26681;&#25454; sigaction &#26159;&#21542;&#25351;&#23450;&#20102;</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">SA_RESTART &#20915;&#23450;&#26159;&#36820;&#22238; EINTR &#36824;&#26159;&#36890;&#36807;&#20462;&#25913; eip &#21644; eax &#30452;&#25509;&#30001;</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">kernel &#26469;&#37325;&#21551; syscall        </span>
-      <span style="font-weight: bold;">case</span> -ERESTART_RESTARTBLOCK:
-      <span style="font-weight: bold;">case</span> -ERESTARTNOHAND:
+<pre class="src src-c"><span style="color: #bd93f9;">handle_signal</span>:
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#24403;&#21069;&#26159;&#19968;&#20010; syscall  </span>
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (regs-&gt;orig_eax &gt;= 0):
+    <span style="color: #ff79c6; font-weight: bold;">switch</span> (regs-&gt;eax):
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509;&#34987;&#25171;&#26029;&#30340; syscall &#36820;&#22238; ERESTART_RESTARTBLOCK &#25110; ERESTARTNOHAND,</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21017;&#30452;&#25509;&#23545;&#19978;&#23618;&#36820;&#22238; EINTR, &#30001;&#19978;&#23618;&#20915;&#23450;&#26159;&#21542;&#37325;&#21551; syscall</span>
+      <span style="color: #6272a4;">// </span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509; syscall &#36820;&#22238; ERESTARTSYS, &#21017;&#26681;&#25454; sigaction &#26159;&#21542;&#25351;&#23450;&#20102;</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">SA_RESTART &#20915;&#23450;&#26159;&#36820;&#22238; EINTR &#36824;&#26159;&#36890;&#36807;&#20462;&#25913; eip &#21644; eax &#30452;&#25509;&#30001;</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">kernel &#26469;&#37325;&#21551; syscall        </span>
+      <span style="color: #ff79c6; font-weight: bold;">case</span> -ERESTART_RESTARTBLOCK:
+      <span style="color: #ff79c6; font-weight: bold;">case</span> -ERESTARTNOHAND:
         regs-&gt;eax = -EINTR;
-        <span style="font-weight: bold;">break</span>;
+        <span style="color: #ff79c6; font-weight: bold;">break</span>;
 
-      <span style="font-weight: bold;">case</span> -ERESTARTSYS:
-        <span style="font-weight: bold;">if</span> (!(ka-&gt;sa.sa_flags &amp; SA_RESTART)):
+      <span style="color: #ff79c6; font-weight: bold;">case</span> -ERESTARTSYS:
+        <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>(ka-&gt;sa.sa_flags &amp; SA_RESTART)):
           regs-&gt;eax = -EINTR;
-          <span style="font-weight: bold;">break</span>;
+          <span style="color: #ff79c6; font-weight: bold;">break</span>;
 
-      <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">fallthrough </span><span style="font-weight: bold; font-style: italic;">*/</span>
-      <span style="font-weight: bold;">case</span> -ERESTARTNOINTR:
+      <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">fallthrough </span><span style="color: #6272a4;">*/</span>
+      <span style="color: #ff79c6; font-weight: bold;">case</span> -ERESTARTNOINTR:
         regs-&gt;eax = regs-&gt;orig_eax;
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19981;&#35770; int 0x80 &#25110; sysenter, &#25351;&#20196;&#38271;&#24230;&#37117;&#26159; 2 bytes             </span>
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#19981;&#35770; int 0x80 &#25110; sysenter, &#25351;&#20196;&#38271;&#24230;&#37117;&#26159; 2 bytes             </span>
         regs-&gt;eip -= 2;
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">...</span>
   setup_frame
 </pre>
 </div>
@@ -1010,9 +1089,9 @@ TASK_INTERRUPTIBLE 状态的进程唤醒, 但此时它们等待的事件并没�
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">do</span> {
-    rc = (<span style="font-weight: bold; text-decoration: underline;">int</span>)the_sys_call();
-} <span style="font-weight: bold;">while</span>(rc &lt; 0 &amp;&amp; errno == EINTR);
+<pre class="src src-c"><span style="color: #ff79c6; font-weight: bold;">do</span> {
+    rc = (<span style="color: #f8f8f2;">int</span>)the_sys_call();
+} <span style="color: #ff79c6; font-weight: bold;">while</span>(rc &lt; 0 &amp;&amp; errno == EINTR);
 </pre>
 </div>
 </div>
@@ -1023,21 +1102,21 @@ TASK_INTERRUPTIBLE 状态的进程唤醒, 但此时它们等待的事件并没�
 <div class="outline-text-4" id="text-1-6-2">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">#include</span> <span style="font-style: italic;">&lt;setjmp.h&gt;</span>
+<pre class="src src-c"><span style="color: #8be9fd;">#include</span> <span style="color: #f1fa8c;">&lt;setjmp.h&gt;</span>
 
-<span style="font-weight: bold; text-decoration: underline;">jmp_buf</span> <span style="font-weight: bold; font-style: italic;">buff</span>;
+<span style="color: #f8f8f2;">jmp_buf</span> <span style="color: #f8f8f2;">buff</span>;
 
-<span style="font-weight: bold; text-decoration: underline;">void</span> <span style="font-weight: bold;">foo</span>(<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">sig</span>) {
-    printf(<span style="font-style: italic;">"foo\n"</span>);
+<span style="color: #f8f8f2;">void</span> <span style="color: #50fa7b; font-weight: bold;">foo</span>(<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">sig</span>) {
+    printf(<span style="color: #f1fa8c;">"foo\n"</span>);
     longjmp(buff, 1);
 }
 
-<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold;">main</span>(<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">argc</span>, <span style="font-weight: bold; text-decoration: underline;">char</span> *<span style="font-weight: bold; font-style: italic;">argv</span>[]) {
-    <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">x</span> = setjmp(buff);
+<span style="color: #f8f8f2;">int</span> <span style="color: #50fa7b; font-weight: bold;">main</span>(<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">argc</span>, <span style="color: #f8f8f2;">char</span> *<span style="color: #f8f8f2;">argv</span>[]) {
+    <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">x</span> = setjmp(buff);
     signal(11, foo);
-    printf(<span style="font-style: italic;">"hello %d\n"</span>, x);
+    printf(<span style="color: #f1fa8c;">"hello %d\n"</span>, x);
     sleep(20);
-    <span style="font-weight: bold;">return</span> 0;
+    <span style="color: #ff79c6; font-weight: bold;">return</span> 0;
 }
 </pre>
 </div>

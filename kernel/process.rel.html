@@ -4,11 +4,90 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Linux Kernel: Process</title>
-<!-- 2016-09-20 Tue 16:33 -->
+<!-- 2016-09-20 二 16:44 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
-<link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -122,77 +201,77 @@ Process Descriptor 即 task_struct 结构体, 它的主要成员有:
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span> {
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36827;&#31243;&#29366;&#24577;</span>
-    <span style="font-weight: bold;">volatile</span> <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">state</span>;
+<pre class="src src-c"><span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">task_struct</span> {
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36827;&#31243;&#29366;&#24577;</span>
+    <span style="color: #ff79c6; font-weight: bold;">volatile</span> <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">state</span>;
 
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">thread_info &#21450; kernel_stack</span>
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">thread_info</span> *<span style="font-weight: bold; font-style: italic;">thread_info</span>;
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">thread_info &#21450; kernel_stack</span>
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">thread_info</span> *<span style="color: #f8f8f2;">thread_info</span>;
 
-    <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">prio</span>, <span style="font-weight: bold; font-style: italic;">static_prio</span>;
+    <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">prio</span>, <span style="color: #f8f8f2;">static_prio</span>;
 
-    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">process &#30340;&#31532;&#19968;&#31181;&#32452;&#32455;&#26041;&#24335;: prio_array_t &#26159;&#19968;&#20010;&#21253;&#21547; 140 &#20010;</span>
-<span style="font-weight: bold; font-style: italic;">     * list_head &#30340;&#25968;&#32452;, &#23545;&#24212; 140 &#20010;&#36827;&#31243;&#20248;&#20808;&#32423;. p-&gt;run_list &#26159;&#36827;&#31243; p</span>
-<span style="font-weight: bold; font-style: italic;">     * &#22312; array[p-&gt;prio] &#36825;&#20010; list_head &#38142;&#34920;&#20013;&#30340; list entry.</span>
-<span style="font-weight: bold; font-style: italic;">     *</span>
-<span style="font-weight: bold; font-style: italic;">     * &#26681;&#25454; task &#30340;&#29366;&#24577;, task-&gt;array &#24517;&#23450;&#25351;&#21521; runqueue &#20013; active &#25110;</span>
-<span style="font-weight: bold; font-style: italic;">     * expire &#20013;&#30340;&#26576;&#19968;&#20010; prio_array_t. &#25152;&#26377; state &#20026; running (active)</span>
-<span style="font-weight: bold; font-style: italic;">     * &#30340;&#36827;&#31243; p &#32452;&#32455;&#22312; runqueue-&gt;active &#20013;, &#19988; p-&gt;array =</span>
-<span style="font-weight: bold; font-style: italic;">     * runqueue-&gt;active. &#25152;&#26377; state &#20026; running (expired) &#30340;&#36827;&#31243; p &#32452;&#32455;</span>
-<span style="font-weight: bold; font-style: italic;">     * &#22312; running-&gt;expired &#20013;, &#19988; p-&gt;array = runqueue-&gt;expired, &#20855;&#20307;&#30340;</span>
-<span style="font-weight: bold; font-style: italic;">     * &#21442;&#32771; process scheduling </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">process &#30340;&#31532;&#19968;&#31181;&#32452;&#32455;&#26041;&#24335;: prio_array_t &#26159;&#19968;&#20010;&#21253;&#21547; 140 &#20010;</span>
+<span style="color: #6272a4;">     * list_head &#30340;&#25968;&#32452;, &#23545;&#24212; 140 &#20010;&#36827;&#31243;&#20248;&#20808;&#32423;. p-&gt;run_list &#26159;&#36827;&#31243; p</span>
+<span style="color: #6272a4;">     * &#22312; array[p-&gt;prio] &#36825;&#20010; list_head &#38142;&#34920;&#20013;&#30340; list entry.</span>
+<span style="color: #6272a4;">     *</span>
+<span style="color: #6272a4;">     * &#26681;&#25454; task &#30340;&#29366;&#24577;, task-&gt;array &#24517;&#23450;&#25351;&#21521; runqueue &#20013; active &#25110;</span>
+<span style="color: #6272a4;">     * expire &#20013;&#30340;&#26576;&#19968;&#20010; prio_array_t. &#25152;&#26377; state &#20026; running (active)</span>
+<span style="color: #6272a4;">     * &#30340;&#36827;&#31243; p &#32452;&#32455;&#22312; runqueue-&gt;active &#20013;, &#19988; p-&gt;array =</span>
+<span style="color: #6272a4;">     * runqueue-&gt;active. &#25152;&#26377; state &#20026; running (expired) &#30340;&#36827;&#31243; p &#32452;&#32455;</span>
+<span style="color: #6272a4;">     * &#22312; running-&gt;expired &#20013;, &#19988; p-&gt;array = runqueue-&gt;expired, &#20855;&#20307;&#30340;</span>
+<span style="color: #6272a4;">     * &#21442;&#32771; process scheduling </span><span style="color: #6272a4;">*/</span>
 
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">list_head</span> <span style="font-weight: bold; font-style: italic;">run_list</span>;
-    <span style="font-weight: bold; text-decoration: underline;">prio_array_t</span> *<span style="font-weight: bold; font-style: italic;">array</span>;
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">list_head</span> <span style="color: #f8f8f2;">run_list</span>;
+    <span style="color: #f8f8f2;">prio_array_t</span> *<span style="color: #f8f8f2;">array</span>;
 
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">process &#30340;&#31532;&#20108;&#31181;&#32452;&#32455;&#26041;&#24335;: tasks &#23558;&#25152;&#26377;&#36827;&#31243;&#32452;&#32455;&#20026;&#19968;&#20010; list, &#23545;&#24212;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#30340; list_head &#20026; init_task.tasks</span>
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">list_head</span> <span style="font-weight: bold; font-style: italic;">tasks</span>;
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">process &#30340;&#31532;&#20108;&#31181;&#32452;&#32455;&#26041;&#24335;: tasks &#23558;&#25152;&#26377;&#36827;&#31243;&#32452;&#32455;&#20026;&#19968;&#20010; list, &#23545;&#24212;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#30340; list_head &#20026; init_task.tasks</span>
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">list_head</span> <span style="color: #f8f8f2;">tasks</span>;
 
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21644;&#20869;&#23384;&#30456;&#20851;&#30340;&#23383;&#27573;, &#21253;&#25324; vma, pgd &#31561;</span>
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">mm_struct</span> *<span style="font-weight: bold; font-style: italic;">mm</span>, *<span style="font-weight: bold; font-style: italic;">active_mm</span>;
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21644;&#20869;&#23384;&#30456;&#20851;&#30340;&#23383;&#27573;, &#21253;&#25324; vma, pgd &#31561;</span>
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">mm_struct</span> *<span style="color: #f8f8f2;">mm</span>, *<span style="color: #f8f8f2;">active_mm</span>;
 
-    <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">exit_state</span>;
-    <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">exit_code</span>, <span style="font-weight: bold; font-style: italic;">exit_signal</span>;
+    <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">exit_state</span>;
+    <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">exit_code</span>, <span style="color: #f8f8f2;">exit_signal</span>;
 
-    <span style="font-weight: bold; text-decoration: underline;">pid_t</span> <span style="font-weight: bold; font-style: italic;">pid</span>;
-    <span style="font-weight: bold; text-decoration: underline;">pid_t</span> <span style="font-weight: bold; font-style: italic;">tgid</span>;
+    <span style="color: #f8f8f2;">pid_t</span> <span style="color: #f8f8f2;">pid</span>;
+    <span style="color: #f8f8f2;">pid_t</span> <span style="color: #f8f8f2;">tgid</span>;
 
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span> *<span style="font-weight: bold; font-style: italic;">parent</span>;
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">task_struct</span> *<span style="color: #f8f8f2;">parent</span>;
 
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">process &#30340;&#31532;&#19977;&#31181;&#32452;&#32455;&#26041;&#24335;: &#36890;&#36807; children &#21644; sibling, &#21487;&#20197;&#25214;&#21040;&#36827;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#31243;&#30340;&#25152;&#26377;&#23376;&#36827;&#31243;</span>
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">list_head</span> <span style="font-weight: bold; font-style: italic;">children</span>;
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">list_head</span> <span style="font-weight: bold; font-style: italic;">sibling</span>;
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">process &#30340;&#31532;&#19977;&#31181;&#32452;&#32455;&#26041;&#24335;: &#36890;&#36807; children &#21644; sibling, &#21487;&#20197;&#25214;&#21040;&#36827;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#31243;&#30340;&#25152;&#26377;&#23376;&#36827;&#31243;</span>
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">list_head</span> <span style="color: #f8f8f2;">children</span>;
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">list_head</span> <span style="color: #f8f8f2;">sibling</span>;
 
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span> *<span style="font-weight: bold; font-style: italic;">group_leader</span>; <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">threadgroup leader </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">task_struct</span> *<span style="color: #f8f8f2;">group_leader</span>; <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">threadgroup leader </span><span style="color: #6272a4;">*/</span>
 
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">process &#30340;&#31532;&#22235;&#31181;&#32452;&#32455;&#26041;&#24335;: &#25152;&#26377;&#36827;&#31243;&#26681;&#25454;&#20854; pid, tgid, pgid, sid &#32452;&#32455;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22312;&#22235;&#26465;&#19981;&#21516;&#30340; hash table &#20445;&#23384;&#22312; pids &#25968;&#32452;&#20013;</span>
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">pid</span> <span style="font-weight: bold; font-style: italic;">pids</span>[PIDTYPE_MAX];
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">process &#30340;&#31532;&#22235;&#31181;&#32452;&#32455;&#26041;&#24335;: &#25152;&#26377;&#36827;&#31243;&#26681;&#25454;&#20854; pid, tgid, pgid, sid &#32452;&#32455;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22312;&#22235;&#26465;&#19981;&#21516;&#30340; hash table &#20445;&#23384;&#22312; pids &#25968;&#32452;&#20013;</span>
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">pid</span> <span style="color: #f8f8f2;">pids</span>[PIDTYPE_MAX];
 
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">user time &#19982; system time, timer interrupt &#26102;&#36890;&#36807;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">update_process_times &#26356;&#26032;</span>
-    <span style="font-weight: bold; text-decoration: underline;">cputime_t</span> <span style="font-weight: bold; font-style: italic;">utime</span>, <span style="font-weight: bold; font-style: italic;">stime</span>;
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">minor fault &#19982; major fault &#30340;&#32479;&#35745;</span>
-    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">min_flt</span>, <span style="font-weight: bold; font-style: italic;">maj_flt</span>;
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">user time &#19982; system time, timer interrupt &#26102;&#36890;&#36807;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">update_process_times &#26356;&#26032;</span>
+    <span style="color: #f8f8f2;">cputime_t</span> <span style="color: #f8f8f2;">utime</span>, <span style="color: #f8f8f2;">stime</span>;
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">minor fault &#19982; major fault &#30340;&#32479;&#35745;</span>
+    <span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">min_flt</span>, <span style="color: #f8f8f2;">maj_flt</span>;
 
-    <span style="font-weight: bold; text-decoration: underline;">uid_t</span> <span style="font-weight: bold; font-style: italic;">uid</span>,<span style="font-weight: bold; font-style: italic;">euid</span>,<span style="font-weight: bold; font-style: italic;">suid</span>,<span style="font-weight: bold; font-style: italic;">fsuid</span>;
-    <span style="font-weight: bold; text-decoration: underline;">gid_t</span> <span style="font-weight: bold; font-style: italic;">gid</span>,<span style="font-weight: bold; font-style: italic;">egid</span>,<span style="font-weight: bold; font-style: italic;">sgid</span>,<span style="font-weight: bold; font-style: italic;">fsgid</span>;
+    <span style="color: #f8f8f2;">uid_t</span> <span style="color: #f8f8f2;">uid</span>,<span style="color: #f8f8f2;">euid</span>,<span style="color: #f8f8f2;">suid</span>,<span style="color: #f8f8f2;">fsuid</span>;
+    <span style="color: #f8f8f2;">gid_t</span> <span style="color: #f8f8f2;">gid</span>,<span style="color: #f8f8f2;">egid</span>,<span style="color: #f8f8f2;">sgid</span>,<span style="color: #f8f8f2;">fsgid</span>;
 
-    <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">oomkilladj</span>; */
-    <span style="font-weight: bold; text-decoration: underline;">char</span> comm[TASK_COMM_LEN];
+    <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">oomkilladj</span>; */
+    <span style="color: #f8f8f2;">char</span> comm[TASK_COMM_LEN];
 
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36827;&#31243;&#20999;&#25442;&#26102;&#38656;&#35201;&#20174; thread &#20013;&#33719;&#21462;&#20445;&#23384;&#30340; kernel mode &#19979; esp, eip &#31561;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20449;&#24687;</span>
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">thread_struct</span> <span style="font-weight: bold; font-style: italic;">thread</span>;
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36827;&#31243;&#20999;&#25442;&#26102;&#38656;&#35201;&#20174; thread &#20013;&#33719;&#21462;&#20445;&#23384;&#30340; kernel mode &#19979; esp, eip &#31561;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20449;&#24687;</span>
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">thread_struct</span> <span style="color: #f8f8f2;">thread</span>;
 
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">fs_struct</span> *<span style="font-weight: bold; font-style: italic;">fs</span>;
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">fs_struct</span> *<span style="color: #f8f8f2;">fs</span>;
 
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">files_struct</span> *<span style="font-weight: bold; font-style: italic;">files</span>;
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">files_struct</span> *<span style="color: #f8f8f2;">files</span>;
 
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">signal_struct</span> *<span style="font-weight: bold; font-style: italic;">signal</span>;
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">sighand_struct</span> *<span style="font-weight: bold; font-style: italic;">sighand</span>;
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">signal_struct</span> *<span style="color: #f8f8f2;">signal</span>;
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">sighand_struct</span> *<span style="color: #f8f8f2;">sighand</span>;
 };
 </pre>
 </div>
@@ -309,10 +388,10 @@ EXIT_DEAD 状态, 因为它还需要维护一些信息等待父进程调用 wait
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span> {
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">thread_info</span> *<span style="font-weight: bold; font-style: italic;">thread_info</span>;
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
+<pre class="src src-c"><span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">task_struct</span> {
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">...</span>
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">thread_info</span> *<span style="color: #f8f8f2;">thread_info</span>;
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">...</span>
 }
 </pre>
 </div>
@@ -322,10 +401,10 @@ EXIT_DEAD 状态, 因为它还需要维护一些信息等待父进程调用 wait
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">thread_info</span> {
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span>     *<span style="font-weight: bold; font-style: italic;">task</span>;
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
-    <span style="font-weight: bold; text-decoration: underline;">__u8</span>                   <span style="font-weight: bold; font-style: italic;">supervisor_stack</span>[0];
+<pre class="src src-c"><span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">thread_info</span> {
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">task_struct</span>     *<span style="color: #f8f8f2;">task</span>;
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">...</span>
+    <span style="color: #f8f8f2;">__u8</span>                   <span style="color: #f8f8f2;">supervisor_stack</span>[0];
 };
 </pre>
 </div>
@@ -347,13 +426,13 @@ esp (kernel_stack) 的值得于 thread_info 的地址, 进而得到 task_struct,
 <ol class="org-ol"><li><a id="sec-1-1-3-1-1" name="sec-1-1-3-1-1"></a>current 宏<br  /><div class="outline-text-6" id="text-1-1-3-1-1">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">current</span>:
+<pre class="src src-c"><span style="color: #bd93f9;">current</span>:
   current_thread_info()-&gt;task;
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">thread_info</span> *<span style="font-weight: bold; font-style: italic;">ti</span>;
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20551;&#35774; THREAD_SIZE &#20026; 4k (0100 0000000000), &#21017; ~(THREAD_SIZE-1)</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20540;&#20026; 11 1111111111</span>
-    <span style="font-weight: bold;">__asm__</span>(<span style="font-style: italic;">"andl %%esp,%0; "</span>:<span style="font-style: italic;">"=r"</span> (ti) : <span style="font-style: italic;">"0"</span> (~(THREAD_SIZE - 1)));
-    <span style="font-weight: bold;">return</span> ti;
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">thread_info</span> *<span style="color: #f8f8f2;">ti</span>;
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20551;&#35774; THREAD_SIZE &#20026; 4k (0100 0000000000), &#21017; ~(THREAD_SIZE-1)</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20540;&#20026; 11 1111111111</span>
+    <span style="color: #ff79c6; font-weight: bold;">__asm__</span>(<span style="color: #f1fa8c;">"andl %%esp,%0; "</span>:<span style="color: #f1fa8c;">"=r"</span> (ti) : <span style="color: #f1fa8c;">"0"</span> (~(THREAD_SIZE - 1)));
+    <span style="color: #ff79c6; font-weight: bold;">return</span> ti;
 </pre>
 </div>
 </div>
@@ -395,8 +474,8 @@ linux 使用 list_head 数据结构来实现一个通用的链表, 并提供了�
 <ol class="org-ol"><li><a id="sec-1-1-3-2-1" name="sec-1-1-3-2-1"></a>list_head<br  /><div class="outline-text-6" id="text-1-1-3-2-1">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">list_head</span> {
-    <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">list_head</span> *<span style="font-weight: bold; font-style: italic;">next</span>, *<span style="font-weight: bold; font-style: italic;">prev</span>;
+<pre class="src src-c"><span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">list_head</span> {
+    <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">list_head</span> *<span style="color: #f8f8f2;">next</span>, *<span style="color: #f8f8f2;">prev</span>;
 };
 </pre>
 </div>
@@ -410,11 +489,11 @@ list_entry 的作用是给定一个 list_head, 得到外层的数据结构的地
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">ptr &#26159; list_head, type &#20026; data struct &#30340;&#31867;&#22411;, member &#20026; data</span>
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">structure &#20013; list_head &#23545;&#24212;&#30340;&#23383;&#27573;&#21517;</span>
-<span style="font-weight: bold;">#define</span> <span style="font-weight: bold;">container_of</span>(<span style="font-weight: bold; font-style: italic;">ptr</span>, <span style="font-weight: bold; font-style: italic;">type</span>, <span style="font-weight: bold; font-style: italic;">member</span>) ({                              \
-            <span style="font-weight: bold;">const</span> <span style="font-weight: bold;">typeof</span>( ((<span style="font-weight: bold; text-decoration: underline;">type</span> *)0)-&gt;member ) *<span style="font-weight: bold; font-style: italic;">__mptr</span> = (ptr);         \
-            (<span style="font-weight: bold; text-decoration: underline;">type</span> *)( (<span style="font-weight: bold; text-decoration: underline;">char</span> *)__mptr - offsetof(type,member) );})
+<pre class="src src-c"><span style="color: #6272a4;">// </span><span style="color: #6272a4;">ptr &#26159; list_head, type &#20026; data struct &#30340;&#31867;&#22411;, member &#20026; data</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">structure &#20013; list_head &#23545;&#24212;&#30340;&#23383;&#27573;&#21517;</span>
+<span style="color: #8be9fd;">#define</span> <span style="color: #50fa7b; font-weight: bold;">container_of</span>(<span style="color: #f8f8f2;">ptr</span>, <span style="color: #f8f8f2;">type</span>, <span style="color: #f8f8f2;">member</span>) ({                              \
+            <span style="color: #ff79c6; font-weight: bold;">const</span> <span style="color: #ff79c6; font-weight: bold;">typeof</span>( ((<span style="color: #f8f8f2;">type</span> *)0)-&gt;member ) *<span style="color: #f8f8f2;">__mptr</span> = (ptr);         \
+            (<span style="color: #f8f8f2;">type</span> *)( (<span style="color: #f8f8f2;">char</span> *)__mptr - offsetof(type,member) );})
 </pre>
 </div>
 
@@ -433,10 +512,10 @@ list_for_each 是通用的遍历链表的代码
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">pos &#26159;&#19968;&#20010;&#20020;&#26102;&#21464;&#37327;, &#34920;&#31034;&#36941;&#21382;&#36807;&#31243;&#20013;&#30340;"&#24403;&#21069;" list_head,</span>
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">head &#26159;&#20195;&#34920;&#38142;&#34920;&#22836;&#30340; list_head</span>
-<span style="font-weight: bold;">#define</span> <span style="font-weight: bold;">list_for_each</span>(<span style="font-weight: bold; font-style: italic;">pos</span>, <span style="font-weight: bold; font-style: italic;">head</span>)                                \
-    <span style="font-weight: bold;">for</span> (pos = (head)-&gt;next; pos != (head); pos = pos-&gt;next)
+<pre class="src src-c"><span style="color: #6272a4;">// </span><span style="color: #6272a4;">pos &#26159;&#19968;&#20010;&#20020;&#26102;&#21464;&#37327;, &#34920;&#31034;&#36941;&#21382;&#36807;&#31243;&#20013;&#30340;"&#24403;&#21069;" list_head,</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">head &#26159;&#20195;&#34920;&#38142;&#34920;&#22836;&#30340; list_head</span>
+<span style="color: #8be9fd;">#define</span> <span style="color: #50fa7b; font-weight: bold;">list_for_each</span>(<span style="color: #f8f8f2;">pos</span>, <span style="color: #f8f8f2;">head</span>)                                \
+    <span style="color: #ff79c6; font-weight: bold;">for</span> (pos = (head)-&gt;next; pos != (head); pos = pos-&gt;next)
 </pre>
 </div>
 
@@ -482,9 +561,9 @@ list_head 通过 list_entry 可以找到对应的外层数据结构
 <div class="outline-text-5" id="text-1-1-3-3">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">#define</span> <span style="font-weight: bold;">for_each_process</span>(<span style="font-weight: bold; font-style: italic;">p</span>) \
-      <span style="font-weight: bold;">for</span> (p=&amp;init_task;
-           (p=list_entry((p)-&gt;tasks.next, <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span>, tasks)) != &amp;init_task; )
+<pre class="src src-c"><span style="color: #8be9fd;">#define</span> <span style="color: #50fa7b; font-weight: bold;">for_each_process</span>(<span style="color: #f8f8f2;">p</span>) \
+      <span style="color: #ff79c6; font-weight: bold;">for</span> (p=&amp;init_task;
+           (p=list_entry((p)-&gt;tasks.next, <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">task_struct</span>, tasks)) != &amp;init_task; )
 </pre>
 </div>
 </div>
@@ -523,10 +602,10 @@ sibling 是 list entry
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33719;&#21462; task &#30340;&#25152;&#26377;&#23376;&#36827;&#31243;&#30340;&#20195;&#30721;</span>
-<span style="font-weight: bold;">list_for_each</span>(_p,&amp;tsk-&gt;children) {
-    p = list_entry(_p,<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">task_struct</span>,sibling);
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...</span>
+<pre class="src src-c"><span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33719;&#21462; task &#30340;&#25152;&#26377;&#23376;&#36827;&#31243;&#30340;&#20195;&#30721;</span>
+<span style="color: #50fa7b; font-weight: bold;">list_for_each</span>(_p,&amp;tsk-&gt;children) {
+    p = list_entry(_p,<span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">task_struct</span>,sibling);
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">...</span>
 }
 </pre>
 </div>
@@ -651,15 +730,15 @@ switch_to
 
 <div class="org-src-container">
 
-<pre class="src src-c">context_switch(prev, <span style="font-weight: bold; text-decoration: underline;">next</span>):
-  <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">mm_struct</span> *<span style="font-weight: bold; font-style: italic;">mm</span> = next-&gt;mm;
-  <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">mm_struct</span> *<span style="font-weight: bold; font-style: italic;">oldmm</span> = prev-&gt;active_mm;
-  <span style="font-weight: bold;">if</span> (unlikely(!mm)):
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">kernel_thread &#30340; mm &#20026; NULL, active_mm &#20026;&#23427; "&#20511;&#29992;" &#30340; mm, &#25152;&#20197;&#36825;&#37324;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">next &#26159;&#19968;&#20010; kernel_thread, &#30452;&#25509;&#20351;&#29992; prev-&gt;active_mm &#20570;&#20026;&#23427;&#30340;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">active_mm, &#19981;&#20877;&#38656;&#35201; switch_mm</span>
+<pre class="src src-c">context_switch(prev, <span style="color: #bd93f9;">next</span>):
+  <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">mm_struct</span> *<span style="color: #f8f8f2;">mm</span> = next-&gt;mm;
+  <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">mm_struct</span> *<span style="color: #f8f8f2;">oldmm</span> = prev-&gt;active_mm;
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (unlikely(<span style="color: #bd93f9;">!</span>mm)):
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">kernel_thread &#30340; mm &#20026; NULL, active_mm &#20026;&#23427; "&#20511;&#29992;" &#30340; mm, &#25152;&#20197;&#36825;&#37324;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">next &#26159;&#19968;&#20010; kernel_thread, &#30452;&#25509;&#20351;&#29992; prev-&gt;active_mm &#20570;&#20026;&#23427;&#30340;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">active_mm, &#19981;&#20877;&#38656;&#35201; switch_mm</span>
     next-&gt;active_mm = oldmm;
-  <span style="font-weight: bold;">else</span>:
+  <span style="color: #ff79c6; font-weight: bold;">else</span>:
     switch_mm(oldmm, mm, next);
       load_cr3(next-&gt;pgd);
   switch_to(prev, next, prev);
@@ -690,41 +769,41 @@ switch_to 是实现 kernel stack 切换的主要代码.
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">#define</span> <span style="font-weight: bold;">switch_to</span>(<span style="font-weight: bold; font-style: italic;">prev</span>,<span style="font-weight: bold; font-style: italic;">next</span>,<span style="font-weight: bold; font-style: italic;">last</span>)                                       \
-    <span style="font-weight: bold;">do</span> {                                                                \
-        <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">esi</span>,<span style="font-weight: bold; font-style: italic;">edi</span>;                                                \
-        <span style="font-weight: bold;">asm</span> (                                                           \
-            <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#20445;&#23384; eflags &#21040; prev kernel stack</span><span style="font-weight: bold; font-style: italic;">*/</span>                       \
-            <span style="font-style: italic;">"pushfl\n\t"</span>                                                \
-            <span style="font-style: italic;">"pushl %%ebp\n\t"</span>                                           \
-            <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#20445;&#23384; esp &#21040; prev-&gt;thread.esp</span><span style="font-weight: bold; font-style: italic;">*/</span>                           \
-            <span style="font-style: italic;">"movl %%esp,%0\n\t"</span>       <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">save ESP </span><span style="font-weight: bold; font-style: italic;">*/</span>                          \
-            <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#20174; next-&gt;thread.esp &#24674;&#22797; esp</span><span style="font-weight: bold; font-style: italic;">*/</span>                           \
-            <span style="font-style: italic;">"movl %5,%%esp\n\t"</span>                                         \
-            <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#23558; label 1 &#35774;&#32622;&#20026; prev-&gt;thread.eip</span><span style="font-weight: bold; font-style: italic;">*/</span>                     \
-            <span style="font-style: italic;">"movl $1f,%1\n\t"</span>                                           \
-            <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#23558; next-&gt;thread.eip push &#21040; stack, jmp _switch_to        \</span>
-<span style="font-weight: bold; font-style: italic;">             * &#36820;&#22238;&#26102;&#30340; ret &#25351;&#20196;&#20250;&#20174; stack &#19978;&#21462;&#36825;&#20010; eip &#20570;&#20026; PC         \</span>
-<span style="font-weight: bold; font-style: italic;">             * &#20174;&#32780;&#23454;&#29616;&#36339;&#36716;&#21040; next-&gt;thread.eip. &#23454;&#38469;&#19978;, &#36825;&#20010;            \</span>
-<span style="font-weight: bold; font-style: italic;">             * next-&gt;thread.eip                                         \</span>
-<span style="font-weight: bold; font-style: italic;">             * &#19968;&#33324;&#24773;&#20917;&#19979;&#20063;&#26159; label 1, &#26377;&#19968;&#20010;&#20363;&#22806;&#23601;&#26159; do_fork           \</span>
-<span style="font-weight: bold; font-style: italic;">             * &#26102;&#30340; ret_from_fork</span><span style="font-weight: bold; font-style: italic;">*/</span>                                     \
-            <span style="font-style: italic;">"pushl %6\n\t"</span>                                              \
-            <span style="font-weight: bold; font-style: italic;">/*</span><span style="font-weight: bold; font-style: italic;">__switch_to &#20250;&#20445;&#23384;&#19968;&#20123; FPU &#31561;, &#26368;&#37325;&#35201;&#30340;&#19968;&#28857;&#26159;, &#23427;&#20250;&#23558;     \</span>
-<span style="font-weight: bold; font-style: italic;">             * esp (&#19979;&#19968;&#20010;&#36827;&#31243;&#30340; kernel stack ) &#20445;&#23384;&#22312; tss &#20013;&#20197;&#20415;&#36827;&#31243;   \</span>
-<span style="font-weight: bold; font-style: italic;">             * &#36827;&#20837; kernel mode &#26102;&#33021;&#25214;&#21040; kernel stack</span><span style="font-weight: bold; font-style: italic;">*/</span>                 \
-            <span style="font-style: italic;">"jmp __switch_to\n"</span>                                         \
+<pre class="src src-c"><span style="color: #8be9fd;">#define</span> <span style="color: #50fa7b; font-weight: bold;">switch_to</span>(<span style="color: #f8f8f2;">prev</span>,<span style="color: #f8f8f2;">next</span>,<span style="color: #f8f8f2;">last</span>)                                       \
+    <span style="color: #ff79c6; font-weight: bold;">do</span> {                                                                \
+        <span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">esi</span>,<span style="color: #f8f8f2;">edi</span>;                                                \
+        <span style="color: #ff79c6; font-weight: bold;">asm</span> (                                                           \
+            <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">&#20445;&#23384; eflags &#21040; prev kernel stack</span><span style="color: #6272a4;">*/</span>                       \
+            <span style="color: #f1fa8c;">"pushfl\n\t"</span>                                                \
+            <span style="color: #f1fa8c;">"pushl %%ebp\n\t"</span>                                           \
+            <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">&#20445;&#23384; esp &#21040; prev-&gt;thread.esp</span><span style="color: #6272a4;">*/</span>                           \
+            <span style="color: #f1fa8c;">"movl %%esp,%0\n\t"</span>       <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">save ESP </span><span style="color: #6272a4;">*/</span>                          \
+            <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">&#20174; next-&gt;thread.esp &#24674;&#22797; esp</span><span style="color: #6272a4;">*/</span>                           \
+            <span style="color: #f1fa8c;">"movl %5,%%esp\n\t"</span>                                         \
+            <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">&#23558; label 1 &#35774;&#32622;&#20026; prev-&gt;thread.eip</span><span style="color: #6272a4;">*/</span>                     \
+            <span style="color: #f1fa8c;">"movl $1f,%1\n\t"</span>                                           \
+            <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">&#23558; next-&gt;thread.eip push &#21040; stack, jmp _switch_to        \</span>
+<span style="color: #6272a4;">             * &#36820;&#22238;&#26102;&#30340; ret &#25351;&#20196;&#20250;&#20174; stack &#19978;&#21462;&#36825;&#20010; eip &#20570;&#20026; PC         \</span>
+<span style="color: #6272a4;">             * &#20174;&#32780;&#23454;&#29616;&#36339;&#36716;&#21040; next-&gt;thread.eip. &#23454;&#38469;&#19978;, &#36825;&#20010;            \</span>
+<span style="color: #6272a4;">             * next-&gt;thread.eip                                         \</span>
+<span style="color: #6272a4;">             * &#19968;&#33324;&#24773;&#20917;&#19979;&#20063;&#26159; label 1, &#26377;&#19968;&#20010;&#20363;&#22806;&#23601;&#26159; do_fork           \</span>
+<span style="color: #6272a4;">             * &#26102;&#30340; ret_from_fork</span><span style="color: #6272a4;">*/</span>                                     \
+            <span style="color: #f1fa8c;">"pushl %6\n\t"</span>                                              \
+            <span style="color: #6272a4;">/*</span><span style="color: #6272a4;">__switch_to &#20250;&#20445;&#23384;&#19968;&#20123; FPU &#31561;, &#26368;&#37325;&#35201;&#30340;&#19968;&#28857;&#26159;, &#23427;&#20250;&#23558;     \</span>
+<span style="color: #6272a4;">             * esp (&#19979;&#19968;&#20010;&#36827;&#31243;&#30340; kernel stack ) &#20445;&#23384;&#22312; tss &#20013;&#20197;&#20415;&#36827;&#31243;   \</span>
+<span style="color: #6272a4;">             * &#36827;&#20837; kernel mode &#26102;&#33021;&#25214;&#21040; kernel stack</span><span style="color: #6272a4;">*/</span>                 \
+            <span style="color: #f1fa8c;">"jmp __switch_to\n"</span>                                         \
               tss-&gt;esp0 = thread-&gt;esp0;
-            <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">jmp ret &#21518;, eip &#21644; esp &#22343;&#20026; next-&gt;thread &#30456;&#24212;&#30340;&#20540;,       \</span>
-<span style="font-weight: bold; font-style: italic;">             * &#26631;&#24535;&#30528;&#20999;&#25442;&#24443;&#24213;&#23436;&#25104; </span><span style="font-weight: bold; font-style: italic;">*/</span>                                    \
-            <span style="font-style: italic;">"1:\t"</span>                                                      \
-            <span style="font-style: italic;">"popl %%ebp\n\t"</span>                                            \
-            <span style="font-style: italic;">"popfl"</span>                                                     \
-            :<span style="font-style: italic;">"=m"</span> (prev-&gt;thread.esp),<span style="font-style: italic;">"=m"</span> (prev-&gt;thread.eip),             \
-             <span style="font-style: italic;">"=a"</span> (last),<span style="font-style: italic;">"=S"</span> (esi),<span style="font-style: italic;">"=D"</span> (edi)                          \
-            :<span style="font-style: italic;">"m"</span> (next-&gt;thread.esp),<span style="font-style: italic;">"m"</span> (next-&gt;thread.eip),               \
-             <span style="font-style: italic;">"2"</span> (prev), <span style="font-style: italic;">"d"</span> (next));                                   \
-    } <span style="font-weight: bold;">while</span> (0)
+            <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">jmp ret &#21518;, eip &#21644; esp &#22343;&#20026; next-&gt;thread &#30456;&#24212;&#30340;&#20540;,       \</span>
+<span style="color: #6272a4;">             * &#26631;&#24535;&#30528;&#20999;&#25442;&#24443;&#24213;&#23436;&#25104; </span><span style="color: #6272a4;">*/</span>                                    \
+            <span style="color: #f1fa8c;">"1:\t"</span>                                                      \
+            <span style="color: #f1fa8c;">"popl %%ebp\n\t"</span>                                            \
+            <span style="color: #f1fa8c;">"popfl"</span>                                                     \
+            :<span style="color: #f1fa8c;">"=m"</span> (prev-&gt;thread.esp),<span style="color: #f1fa8c;">"=m"</span> (prev-&gt;thread.eip),             \
+             <span style="color: #f1fa8c;">"=a"</span> (last),<span style="color: #f1fa8c;">"=S"</span> (esi),<span style="color: #f1fa8c;">"=D"</span> (edi)                          \
+            :<span style="color: #f1fa8c;">"m"</span> (next-&gt;thread.esp),<span style="color: #f1fa8c;">"m"</span> (next-&gt;thread.eip),               \
+             <span style="color: #f1fa8c;">"2"</span> (prev), <span style="color: #f1fa8c;">"d"</span> (next));                                   \
+    } <span style="color: #ff79c6; font-weight: bold;">while</span> (0)
 </pre>
 </div>
 
@@ -793,14 +872,14 @@ sys_vfork 也是存在的, 但一般并不会使用.
 <div class="outline-text-5" id="text-1-3-1-2">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold;">fork</span>() {
-    <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">result</span> = syscall(
+<pre class="src src-c"><span style="color: #f8f8f2;">int</span> <span style="color: #50fa7b; font-weight: bold;">fork</span>() {
+    <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">result</span> = syscall(
         __NR_clone,
         FORK_FLAGS,
-        <span style="font-weight: bold; text-decoration: underline;">NULL</span>,                          <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">child_stack </span><span style="font-weight: bold; font-style: italic;">*/</span>
-        <span style="font-weight: bold; text-decoration: underline;">NULL</span>,                          <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">ptid </span><span style="font-weight: bold; font-style: italic;">*/</span>
-        <span style="font-weight: bold; text-decoration: underline;">NULL</span>,
-        &amp;(self-&gt;tid)             <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">ctid </span><span style="font-weight: bold; font-style: italic;">*/</span>
+        <span style="color: #bd93f9;">NULL</span>,                          <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">child_stack </span><span style="color: #6272a4;">*/</span>
+        <span style="color: #bd93f9;">NULL</span>,                          <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">ptid </span><span style="color: #6272a4;">*/</span>
+        <span style="color: #bd93f9;">NULL</span>,
+        &amp;(self-&gt;tid)             <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">ctid </span><span style="color: #6272a4;">*/</span>
         );
 </pre>
 </div>
@@ -808,18 +887,18 @@ sys_vfork 也是存在的, 但一般并不会使用.
 <div class="org-src-container">
 
 <pre class="src src-c">ENTRY(syscall)
-    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Push the callee save registers. </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">Push the callee save registers. </span><span style="color: #6272a4;">*/</span>
     push    %ebx
     push    %esi
     push    %edi
     push    %ebp
 
-    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">20(%esp) &#21363; syscall &#30340;&#31532;&#19968;&#20010;&#21442;&#25968; __NR_clone, &#20043;&#25152;&#20197;&#26159; 20(%esp) &#32780;&#19981;&#26159; 16(%esp) </span><span style="font-weight: bold; font-style: italic;">*/</span>
-    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#26159;&#22240;&#20026; syscall() &#26102;&#20250;&#22312;&#26632;&#19978; push &#19968;&#20010; eip, &#21363;&#24403;&#21069;&#26632;&#19978;&#30340;&#26679;&#23376;&#20026;: </span><span style="font-weight: bold; font-style: italic;">*/</span>
-    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">ebp|edi|esi|ebx|eip|__NR_clone|FORK_FLAGS|NULL|NULL|NULL|tid </span><span style="font-weight: bold; font-style: italic;">*/</span>
-    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">24(%esp) &#21363; FORK_FLAGS,....&#20197;&#27492;&#31867;&#25512; </span><span style="font-weight: bold; font-style: italic;">*/</span>
-    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#25353;&#29031;&#31995;&#32479;&#35843;&#29992;&#30340;&#32422;&#23450;, user mode &#38656;&#35201;&#23558; __NR__xxx &#21644;&#25152;&#26377;&#21442;&#25968;&#20381;&#27425;&#25918;&#22312; eax, </span><span style="font-weight: bold; font-style: italic;">*/</span>
-    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">ebx, ... &#20013; </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">20(%esp) &#21363; syscall &#30340;&#31532;&#19968;&#20010;&#21442;&#25968; __NR_clone, &#20043;&#25152;&#20197;&#26159; 20(%esp) &#32780;&#19981;&#26159; 16(%esp) </span><span style="color: #6272a4;">*/</span>
+    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">&#26159;&#22240;&#20026; syscall() &#26102;&#20250;&#22312;&#26632;&#19978; push &#19968;&#20010; eip, &#21363;&#24403;&#21069;&#26632;&#19978;&#30340;&#26679;&#23376;&#20026;: </span><span style="color: #6272a4;">*/</span>
+    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">ebp|edi|esi|ebx|eip|__NR_clone|FORK_FLAGS|NULL|NULL|NULL|tid </span><span style="color: #6272a4;">*/</span>
+    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">24(%esp) &#21363; FORK_FLAGS,....&#20197;&#27492;&#31867;&#25512; </span><span style="color: #6272a4;">*/</span>
+    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">&#25353;&#29031;&#31995;&#32479;&#35843;&#29992;&#30340;&#32422;&#23450;, user mode &#38656;&#35201;&#23558; __NR__xxx &#21644;&#25152;&#26377;&#21442;&#25968;&#20381;&#27425;&#25918;&#22312; eax, </span><span style="color: #6272a4;">*/</span>
+    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">ebx, ... &#20013; </span><span style="color: #6272a4;">*/</span>
 
     mov     20(%esp),%eax
     mov     24(%esp),%ebx
@@ -829,8 +908,8 @@ sys_vfork 也是存在的, 但一般并不会使用.
     mov     40(%esp),%edi
     mov     44(%esp),%ebp
 
-    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#31995;&#32479;&#35843;&#29992; </span><span style="font-weight: bold; font-style: italic;">*/</span>
-    <span style="font-weight: bold; text-decoration: underline;">int</span>     $0x80
+    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">&#31995;&#32479;&#35843;&#29992; </span><span style="color: #6272a4;">*/</span>
+    <span style="color: #f8f8f2;">int</span>     $0x80
 
     pop    %ebp
     pop    %edi
@@ -873,35 +952,35 @@ END(syscall)
 <div class="org-src-container">
 
 <pre class="src src-c">ENTRY(system_call)
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#37324;&#30340; pushl %eax &#23454;&#38469;&#19978;&#20462;&#25913;&#30340;&#26159; pt_regs-&gt;orig_eax, &#21518;&#32493;&#20250;&#26681;&#25454;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">orig_eax &#20540;&#21028;&#26029;&#24403;&#21069;&#26159;&#21542;&#26159;&#22312;&#25191;&#34892;&#19968;&#20010; syscall (&#20363;&#22914; handle_signal).</span>
-    <span style="font-weight: bold; font-style: italic;">// </span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#28982;&#32780; SAVE_ALL &#26102;&#20063;&#20250;&#20445;&#23384;&#19968;&#27425; %eax &#21040; pt_regs-&gt;eax..., &#36825;&#20004;&#20010; eax</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#30340;&#20316;&#29992;&#26159;?</span>
-    <span style="font-weight: bold; font-style: italic;">// </span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">pt_regs-&gt;eax &#27599;&#27425; interrupt &#37117;&#20250;&#35774;&#32622;, &#36890;&#36807; pt_regs-&gt;eax &#26080;&#27861;&#21028;&#26029;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#24403;&#21069;&#26159;&#21542;&#26159; syscall. &#36890;&#36807;&#21482;&#22312; system_call &#26102;&#35774;&#32622; orig_eax &#21487;&#20197;&#25226;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">orig_eax &#20570;&#25104; syscall &#30340;&#26631;&#35760; (&#22788;&#29702; irq &#26102;&#20063;&#20250; push &#19968;&#20010; orig_eax,</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20294;&#20026;&#19968;&#20010;&#36127;&#25968;, &#21487;&#20197;&#19982; syscall &#21306;&#20998;, &#20855;&#20307;&#21442;&#32771; do_IRQ)      </span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36825;&#37324;&#30340; pushl %eax &#23454;&#38469;&#19978;&#20462;&#25913;&#30340;&#26159; pt_regs-&gt;orig_eax, &#21518;&#32493;&#20250;&#26681;&#25454;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">orig_eax &#20540;&#21028;&#26029;&#24403;&#21069;&#26159;&#21542;&#26159;&#22312;&#25191;&#34892;&#19968;&#20010; syscall (&#20363;&#22914; handle_signal).</span>
+    <span style="color: #6272a4;">// </span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#28982;&#32780; SAVE_ALL &#26102;&#20063;&#20250;&#20445;&#23384;&#19968;&#27425; %eax &#21040; pt_regs-&gt;eax..., &#36825;&#20004;&#20010; eax</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#30340;&#20316;&#29992;&#26159;?</span>
+    <span style="color: #6272a4;">// </span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">pt_regs-&gt;eax &#27599;&#27425; interrupt &#37117;&#20250;&#35774;&#32622;, &#36890;&#36807; pt_regs-&gt;eax &#26080;&#27861;&#21028;&#26029;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#24403;&#21069;&#26159;&#21542;&#26159; syscall. &#36890;&#36807;&#21482;&#22312; system_call &#26102;&#35774;&#32622; orig_eax &#21487;&#20197;&#25226;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">orig_eax &#20570;&#25104; syscall &#30340;&#26631;&#35760; (&#22788;&#29702; irq &#26102;&#20063;&#20250; push &#19968;&#20010; orig_eax,</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20294;&#20026;&#19968;&#20010;&#36127;&#25968;, &#21487;&#20197;&#19982; syscall &#21306;&#20998;, &#20855;&#20307;&#21442;&#32771; do_IRQ)      </span>
     pushl %eax
     SAVE_ALL
     GET_THREAD_INFO(%ebp)
     call *sys_call_table(,%eax,4)
 
-    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#22312;&#26631;&#20934;&#30340; c &#35843;&#29992;&#32422;&#23450;&#20013;,  eax &#20445;&#23384;&#20989;&#25968;&#30340;&#36820;&#22238;&#20540;, &#25152;&#20197; sys_clone &#36820;&#22238;&#21518;,  </span><span style="font-weight: bold; font-style: italic;">*/</span>
-    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">eax &#20445;&#23384;&#36820;&#22238;&#20540; (&#23376;&#36827;&#31243; pid), &#19979;&#38754;&#30340; movl &#25351;&#20196; </span><span style="font-weight: bold; font-style: italic;">*/</span>
-    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#23558; eax &#20445;&#23384;&#22312; 24%(esp) &#22788;, &#21363; kernel stack &#20013;&#23545;&#24212;&#20110; SAVE_ALL &#26102; eax </span><span style="font-weight: bold; font-style: italic;">*/</span>
-    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#30340;&#20301;&#32622;, &#24403; syscall &#36820;&#22238;&#21040;&#29238;&#36827;&#31243;&#30340; user mode &#26102;, RESTORE_ALL &#20250;&#36890;&#36807; kernel stack </span><span style="font-weight: bold; font-style: italic;">*/</span>
-    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">&#24674;&#22797; eax, &#20174;&#32780;&#20351; user mode &#33021;&#25343;&#21040; sys_clone &#30340;&#36820;&#22238;&#20540; </span><span style="font-weight: bold; font-style: italic;">*/</span>
+    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">&#22312;&#26631;&#20934;&#30340; c &#35843;&#29992;&#32422;&#23450;&#20013;,  eax &#20445;&#23384;&#20989;&#25968;&#30340;&#36820;&#22238;&#20540;, &#25152;&#20197; sys_clone &#36820;&#22238;&#21518;,  </span><span style="color: #6272a4;">*/</span>
+    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">eax &#20445;&#23384;&#36820;&#22238;&#20540; (&#23376;&#36827;&#31243; pid), &#19979;&#38754;&#30340; movl &#25351;&#20196; </span><span style="color: #6272a4;">*/</span>
+    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">&#23558; eax &#20445;&#23384;&#22312; 24%(esp) &#22788;, &#21363; kernel stack &#20013;&#23545;&#24212;&#20110; SAVE_ALL &#26102; eax </span><span style="color: #6272a4;">*/</span>
+    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">&#30340;&#20301;&#32622;, &#24403; syscall &#36820;&#22238;&#21040;&#29238;&#36827;&#31243;&#30340; user mode &#26102;, RESTORE_ALL &#20250;&#36890;&#36807; kernel stack </span><span style="color: #6272a4;">*/</span>
+    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">&#24674;&#22797; eax, &#20174;&#32780;&#20351; user mode &#33021;&#25343;&#21040; sys_clone &#30340;&#36820;&#22238;&#20540; </span><span style="color: #6272a4;">*/</span>
     movl %eax,EAX(%esp)
 
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#35843;&#29992; RESTORE_ALL &#36820;&#22238;&#21069;&#21457;&#29616;&#26377;&#20854;&#23427;&#24037;&#20316;&#35201;&#20570;:  pending signal,</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">need_resched &#31561;, &#21017;&#36339;&#36716;&#21040; syscall_exit_work</span>
-    <span style="font-weight: bold; text-decoration: underline;">movl</span> <span style="font-weight: bold;">TI_flags</span>(%ebp), %ecx
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#35843;&#29992; RESTORE_ALL &#36820;&#22238;&#21069;&#21457;&#29616;&#26377;&#20854;&#23427;&#24037;&#20316;&#35201;&#20570;:  pending signal,</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">need_resched &#31561;, &#21017;&#36339;&#36716;&#21040; syscall_exit_work</span>
+    <span style="color: #f8f8f2;">movl</span> <span style="color: #50fa7b; font-weight: bold;">TI_flags</span>(%ebp), %ecx
     testw $_TIF_ALLWORK_MASK, %cx     # current-&gt;work
     jne syscall_exit_work
 
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#27809;&#26377;&#20854;&#23427;&#24037;&#20316;, &#30452;&#25509;&#35843;&#29992; RESTORE_ALL, &#36890;&#36807; iret &#36820;&#22238;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#27809;&#26377;&#20854;&#23427;&#24037;&#20316;, &#30452;&#25509;&#35843;&#29992; RESTORE_ALL, &#36890;&#36807; iret &#36820;&#22238;</span>
     RESTORE_ALL
 
 syscall_exit_work:
@@ -912,12 +991,12 @@ syscall_exit_work:
       RESTORE_ALL
 
 work_pending:
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26816;&#26597; TIF_NEED_RESCHED</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26816;&#26597; TIF_NEED_RESCHED</span>
     testb $_TIF_NEED_RESCHED, %cl
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; TIF_NEED_RESCHED &#27809;&#26377;&#32622;&#20301;, &#36339;&#36716;&#21040; work_notifysig &#26816;&#26597;&#26159;&#21542;&#26377;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">pending signal, &#33509; TIF_NEED_RESCHED &#32622;&#20301;, &#35843;&#29992; schedule</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509; TIF_NEED_RESCHED &#27809;&#26377;&#32622;&#20301;, &#36339;&#36716;&#21040; work_notifysig &#26816;&#26597;&#26159;&#21542;&#26377;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">pending signal, &#33509; TIF_NEED_RESCHED &#32622;&#20301;, &#35843;&#29992; schedule</span>
     jz work_notifysig
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21644;&#20449;&#21495;&#22788;&#29702;&#26377;&#20851;</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21644;&#20449;&#21495;&#22788;&#29702;&#26377;&#20851;</span>
       do_signal
     call schedule
     jmp restore_all
@@ -929,7 +1008,7 @@ work_pending:
 <li><a id="sec-1-3-1-3-2" name="sec-1-3-1-3-2"></a>SAVE_ALL<br  /><div class="outline-text-6" id="text-1-3-1-3-2">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">SAVE_ALL</span>                                \
+<pre class="src src-c"><span style="color: #8be9fd;">#define</span> <span style="color: #f8f8f2;">SAVE_ALL</span>                                \
     cld;                                        \
     pushl %es;                                  \
     pushl %ds;                                  \
@@ -982,56 +1061,56 @@ popl %eax;  \
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">pt_regs</span> {
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#20960;&#20010;&#23492;&#23384;&#22120;&#19982; SAVE_ALL &#26159;&#23545;&#24212;&#30340;</span>
-    <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">ebx</span>;
-    <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">ecx</span>;
-    <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">edx</span>;
-    <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">esi</span>;
-    <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">edi</span>;
-    <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">ebp</span>;
-    <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">eax</span>;
-    <span style="font-weight: bold; text-decoration: underline;">int</span>  <span style="font-weight: bold; font-style: italic;">xds</span>;
-    <span style="font-weight: bold; text-decoration: underline;">int</span>  <span style="font-weight: bold; font-style: italic;">xes</span>;
-    <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">orig_eax</span>;
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21518;&#38754;&#36825;&#20960;&#20010;&#23492;&#23384;&#22120;&#26159;&#21457;&#29983; interrupt &#26102;&#30828;&#20214;&#33258;&#21160;&#20445;&#23384;&#22312; kernel stack</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19978;&#30340;, &#20013;&#26029;&#32467;&#26463;&#26102; (&#25110; syscall &#36820;&#22238;&#21040; user mode &#26102;) iret &#20250;&#36127;&#36131;&#23558;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">kernel stack &#20013;&#30340;&#36825;&#20123;&#20869;&#23481;&#24674;&#22797;&#21040; user mode &#30456;&#24212;&#30340;&#23492;&#23384;&#22120;&#20013;.</span>
-    <span style="font-weight: bold; font-style: italic;">//</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21478;&#22806;, &#36890;&#36807;&#26597;&#30475; pt_regs &#20013; xcs &#30340;&#20540;, interrupt handler &#21487;&#20197;&#21028;&#26029;&#20986;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">interrupt &#26102;&#31995;&#32479;&#26159;&#21542;&#26159;&#22788;&#20110; user mode &#25110; kernel mode (&#21442;&#32771;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">user_mode &#20989;&#25968;)</span>
-    <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">eip</span>;
-    <span style="font-weight: bold; text-decoration: underline;">int</span>  <span style="font-weight: bold; font-style: italic;">xcs</span>;
-    <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">eflags</span>;
-    <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">esp</span>;
-    <span style="font-weight: bold; text-decoration: underline;">int</span>  <span style="font-weight: bold; font-style: italic;">xss</span>;
+<pre class="src src-c"><span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">pt_regs</span> {
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36825;&#20960;&#20010;&#23492;&#23384;&#22120;&#19982; SAVE_ALL &#26159;&#23545;&#24212;&#30340;</span>
+    <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">ebx</span>;
+    <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">ecx</span>;
+    <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">edx</span>;
+    <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">esi</span>;
+    <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">edi</span>;
+    <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">ebp</span>;
+    <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">eax</span>;
+    <span style="color: #f8f8f2;">int</span>  <span style="color: #f8f8f2;">xds</span>;
+    <span style="color: #f8f8f2;">int</span>  <span style="color: #f8f8f2;">xes</span>;
+    <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">orig_eax</span>;
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21518;&#38754;&#36825;&#20960;&#20010;&#23492;&#23384;&#22120;&#26159;&#21457;&#29983; interrupt &#26102;&#30828;&#20214;&#33258;&#21160;&#20445;&#23384;&#22312; kernel stack</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#19978;&#30340;, &#20013;&#26029;&#32467;&#26463;&#26102; (&#25110; syscall &#36820;&#22238;&#21040; user mode &#26102;) iret &#20250;&#36127;&#36131;&#23558;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">kernel stack &#20013;&#30340;&#36825;&#20123;&#20869;&#23481;&#24674;&#22797;&#21040; user mode &#30456;&#24212;&#30340;&#23492;&#23384;&#22120;&#20013;.</span>
+    <span style="color: #6272a4;">//</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21478;&#22806;, &#36890;&#36807;&#26597;&#30475; pt_regs &#20013; xcs &#30340;&#20540;, interrupt handler &#21487;&#20197;&#21028;&#26029;&#20986;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">interrupt &#26102;&#31995;&#32479;&#26159;&#21542;&#26159;&#22788;&#20110; user mode &#25110; kernel mode (&#21442;&#32771;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">user_mode &#20989;&#25968;)</span>
+    <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">eip</span>;
+    <span style="color: #f8f8f2;">int</span>  <span style="color: #f8f8f2;">xcs</span>;
+    <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">eflags</span>;
+    <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">esp</span>;
+    <span style="color: #f8f8f2;">int</span>  <span style="color: #f8f8f2;">xss</span>;
 };
 </pre>
 </div>
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold;">sys_clone</span>(<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">pt_regs</span> <span style="font-weight: bold; font-style: italic;">regs</span>):
-    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span> clone_flags;
-    <span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">newsp</span>;
-    <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">__user</span> *parent_tidptr, *<span style="font-weight: bold; font-style: italic;">child_tidptr</span>;
+<pre class="src src-c"><span style="color: #f8f8f2;">int</span> <span style="color: #50fa7b; font-weight: bold;">sys_clone</span>(<span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">pt_regs</span> <span style="color: #f8f8f2;">regs</span>):
+    <span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span> clone_flags;
+    <span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">newsp</span>;
+    <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">__user</span> *parent_tidptr, *<span style="color: #f8f8f2;">child_tidptr</span>;
 
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">regs.ebx &#23545;&#24212;&#20110; kernel stack &#19978;&#19968;&#22359;&#21306;&#22495;, &#36825;&#20010;&#21306;&#22495;&#30340;&#20540;&#20043;&#21069;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22312; SAVE_ALL &#26102;&#34987;&#36171;&#20540;&#20026; ebx, &#36861;&#28335;&#21040; user mode &#30340; fork &#23454;&#38469;&#23601;&#26159; FORK_FLAGS</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#20010;&#21442;&#25968;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">regs.ebx &#23545;&#24212;&#20110; kernel stack &#19978;&#19968;&#22359;&#21306;&#22495;, &#36825;&#20010;&#21306;&#22495;&#30340;&#20540;&#20043;&#21069;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22312; SAVE_ALL &#26102;&#34987;&#36171;&#20540;&#20026; ebx, &#36861;&#28335;&#21040; user mode &#30340; fork &#23454;&#38469;&#23601;&#26159; FORK_FLAGS</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36825;&#20010;&#21442;&#25968;</span>
     clone_flags = regs.ebx;
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21516;&#29702;, regs.ecx &#23545;&#24212; clone &#30340;&#31532;&#20108;&#20010;&#21442;&#25968; child_stack NULL</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21516;&#29702;, regs.ecx &#23545;&#24212; clone &#30340;&#31532;&#20108;&#20010;&#21442;&#25968; child_stack NULL</span>
     newsp = regs.ecx;
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">edx &#23545;&#24212;&#20110; ptid</span>
-    parent_tidptr = (<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">__user</span> *)regs.edx;
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">edi &#23545;&#24212;&#20110; ctid</span>
-    child_tidptr = (<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">__user</span> *)regs.edi;
-    <span style="font-weight: bold;">if</span> (!newsp)
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">edx &#23545;&#24212;&#20110; ptid</span>
+    parent_tidptr = (<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">__user</span> *)regs.edx;
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">edi &#23545;&#24212;&#20110; ctid</span>
+    child_tidptr = (<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">__user</span> *)regs.edi;
+    <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>newsp)
         newsp = regs.esp;
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">regs &#20316;&#20026; do_fork &#30340;&#21442;&#25968;, &#21518;&#38754; do_fork &#20250;&#22312; copy_thread &#26102;&#20351;&#29992;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">regs &#26469;&#21021;&#22987;&#21270;&#23376;&#36827;&#31243;&#30340; kernel stack</span>
-    <span style="font-weight: bold;">return</span> do_fork(clone_flags, newsp, &amp;regs, 0, parent_tidptr, child_tidptr);
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">regs &#20316;&#20026; do_fork &#30340;&#21442;&#25968;, &#21518;&#38754; do_fork &#20250;&#22312; copy_thread &#26102;&#20351;&#29992;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">regs &#26469;&#21021;&#22987;&#21270;&#23376;&#36827;&#31243;&#30340; kernel stack</span>
+    <span style="color: #ff79c6; font-weight: bold;">return</span> do_fork(clone_flags, newsp, &amp;regs, 0, parent_tidptr, child_tidptr);
 </pre>
 </div>
 </div>
@@ -1040,37 +1119,37 @@ popl %eax;  \
 <li><a id="sec-1-3-1-3-5" name="sec-1-3-1-3-5"></a>do_fork<br  /><div class="outline-text-6" id="text-1-3-1-3-5">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">do_fork</span>:
-  <span style="font-weight: bold; text-decoration: underline;">long</span> <span style="font-weight: bold; font-style: italic;">pid</span> = alloc_pidmap();
+<pre class="src src-c"><span style="color: #bd93f9;">do_fork</span>:
+  <span style="color: #f8f8f2;">long</span> <span style="color: #f8f8f2;">pid</span> = alloc_pidmap();
   p = copy_process(clone_flags, stack_start, regs, stack_size,
                    parent_tidptr, child_tidptr, pid);
     p = dup_task_struct(current);
     copy_files(clone_flags, p)
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22788;&#29702; CLONE_FILES</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22788;&#29702; CLONE_FILES</span>
     copy_fs(clone_flags, p)
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22788;&#29702; CLONE_FS</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22788;&#29702; CLONE_FS</span>
     copy_sighand(clone_flags, p)
     copy_signal(clone_flags, p)
     copy_mm(clone_flags, p)
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">CLONE_VM</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">....</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">CLONE_VM</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">....</span>
     copy_thread(0, clone_flags, stack_start, stack_size, p, regs);
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22797;&#21046; kernel stack</span>
-      childregs = ((<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">pt_regs</span> *) (THREAD_SIZE + (<span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>) p-&gt;thread_info)) - 1;
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22797;&#21046; kernel stack</span>
+      childregs = ((<span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">pt_regs</span> *) (THREAD_SIZE + (<span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span>) p-&gt;thread_info)) - 1;
       *childregs = *regs;
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20294; kernel stack &#20013;&#23545;&#24212; eax &#30340;&#37096;&#20998;&#24378;&#21046;&#20026; 0, &#22240;&#20026;&#23545;&#23376;&#36827;&#31243;&#26469;&#35828;, fork &#30340;&#36820;&#22238;&#20540;</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#24212;&#35813;&#20026; 0, &#32780;&#31995;&#32479;&#35843;&#29992;&#30340;&#36820;&#22238;&#20540;&#26159;&#25918;&#22312; eax &#20013;&#30340;. &#21518;&#38754; RESTORE_ALL &#20351;&#29992; kernel stack</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#24674;&#22797; eax &#20174;&#32780;&#20351;&#23427;&#20026; 0</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20294; kernel stack &#20013;&#23545;&#24212; eax &#30340;&#37096;&#20998;&#24378;&#21046;&#20026; 0, &#22240;&#20026;&#23545;&#23376;&#36827;&#31243;&#26469;&#35828;, fork &#30340;&#36820;&#22238;&#20540;</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#24212;&#35813;&#20026; 0, &#32780;&#31995;&#32479;&#35843;&#29992;&#30340;&#36820;&#22238;&#20540;&#26159;&#25918;&#22312; eax &#20013;&#30340;. &#21518;&#38754; RESTORE_ALL &#20351;&#29992; kernel stack</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#24674;&#22797; eax &#20174;&#32780;&#20351;&#23427;&#20026; 0</span>
       childregs-&gt;eax = 0;
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19978;&#23618;&#20256;&#36807;&#26469;&#30340; start_stack &#22312;&#36825;&#37324;&#34987;&#36171;&#32473; childregs-&gt;esp, &#38543;&#21518; child &#34987;&#35843;&#24230;&#26102;,</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">iret &#20250;&#23548;&#33268; user mode &#30340; esp &#34987;&#24674;&#22797;&#20026; stack_start</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#19978;&#23618;&#20256;&#36807;&#26469;&#30340; start_stack &#22312;&#36825;&#37324;&#34987;&#36171;&#32473; childregs-&gt;esp, &#38543;&#21518; child &#34987;&#35843;&#24230;&#26102;,</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">iret &#20250;&#23548;&#33268; user mode &#30340; esp &#34987;&#24674;&#22797;&#20026; stack_start</span>
       childregs-&gt;esp = stack_start;
-      p-&gt;thread.esp = (<span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>) childregs;
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">eip &#35774;&#32622;&#20026; ret_from_fork, &#21518;&#38754; switch_to &#26102;&#23545;&#23376;&#36827;&#31243;&#26469;&#35828;&#20250;&#25191;&#34892; ret_from_fork</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#20063;&#26159;&#23569;&#25968;&#30340; thread.eip &#19981;&#31561;&#20110; switch_to:label 1 &#30340;&#24773;&#20917;</span>
-      p-&gt;thread.eip = (<span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>) ret_from_fork;
+      p-&gt;thread.esp = (<span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span>) childregs;
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">eip &#35774;&#32622;&#20026; ret_from_fork, &#21518;&#38754; switch_to &#26102;&#23545;&#23376;&#36827;&#31243;&#26469;&#35828;&#20250;&#25191;&#34892; ret_from_fork</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36825;&#20063;&#26159;&#23569;&#25968;&#30340; thread.eip &#19981;&#31561;&#20110; switch_to:label 1 &#30340;&#24773;&#20917;</span>
+      p-&gt;thread.eip = (<span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span>) ret_from_fork;
   wake_up_new_task(p, clone_flags);
-  <span style="font-weight: bold;">return</span> pid;
+  <span style="color: #ff79c6; font-weight: bold;">return</span> pid;
 </pre>
 </div>
 </div>
@@ -1219,19 +1298,19 @@ ia32_sys_call_table, 因为 64 位的程序是不会通过 int 0x80 发起 sysca
 <ol class="org-ol"><li><a id="sec-1-3-2-2-1-1" name="sec-1-3-2-2-1-1"></a>sys_call_table 的初始化<br  /><div class="outline-text-7" id="text-1-3-2-2-1-1">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">syscall_init</span>:
+<pre class="src src-c"><span style="color: #bd93f9;">syscall_init</span>:
   wrmsrl(MSR_LSTAR, system_call);
 
-ENTRY(<span style="font-weight: bold; text-decoration: underline;">system_call</span>):
+ENTRY(<span style="color: #bd93f9;">system_call</span>):
   andl $__SYSCALL_MASK,%eax                  
   call *sys_call_table(,%rax,8)
 
 sys_call_table[__NR_syscall_max+1] = { 
-<span style="font-weight: bold;">  #define</span> <span style="font-weight: bold; font-style: italic;">__NR_read</span>    0
+<span style="color: #8be9fd;">  #define</span> <span style="color: #f8f8f2;">__NR_read</span>    0
   __SYSCALL(__NR_read, sys_read)
-<span style="font-weight: bold;">  #define</span> <span style="font-weight: bold; font-style: italic;">__NR_write</span>   1
+<span style="color: #8be9fd;">  #define</span> <span style="color: #f8f8f2;">__NR_write</span>   1
   __SYSCALL(__NR_write, sys_write)
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">...      </span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">...      </span>
 };
 </pre>
 </div>
@@ -1241,10 +1320,10 @@ sys_call_table[__NR_syscall_max+1] = {
 <li><a id="sec-1-3-2-2-1-2" name="sec-1-3-2-2-1-2"></a>ia32_sys_call_table 的初始化<br  /><div class="outline-text-7" id="text-1-3-2-2-1-2">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">trap_init</span>:
+<pre class="src src-c"><span style="color: #bd93f9;">trap_init</span>:
   set_system_gate(IA32_SYSCALL_VECTOR, ia32_syscall);
 
-ENTRY(<span style="font-weight: bold; text-decoration: underline;">ia32_syscall</span>):
+ENTRY(<span style="color: #bd93f9;">ia32_syscall</span>):
   call *ia32_sys_call_table(,%rax,8)
 
 ia32_sys_call_table:
@@ -1280,16 +1359,16 @@ syscall number 上做标记:
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">#ifdefined</span>(__ILP32__)
-<span style="font-weight: bold;">  #include</span> <span style="font-style: italic;">&lt;asm/unistd_x32.h&gt;</span>
-<span style="font-weight: bold;">#else</span>
-<span style="font-weight: bold;">  #include</span> <span style="font-style: italic;">&lt;asm/unistd_64.h&gt;</span>
-<span style="font-weight: bold;">#endif</span>
+<pre class="src src-c"><span style="color: #8be9fd;">#ifdefined</span>(__ILP32__)
+<span style="color: #8be9fd;">  #include</span> <span style="color: #f1fa8c;">&lt;asm/unistd_x32.h&gt;</span>
+<span style="color: #8be9fd;">#else</span>
+<span style="color: #8be9fd;">  #include</span> <span style="color: #f1fa8c;">&lt;asm/unistd_64.h&gt;</span>
+<span style="color: #8be9fd;">#endif</span>
 
-unistd_x32.<span style="font-weight: bold; text-decoration: underline;">h</span>:
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20854;&#20013; __X32_SYSCALL_BIT &#20026; 0x40000000, &#21363; bit 31     </span>
-<span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">__NR_read</span> (__X32_SYSCALL_BIT + 0)
-<span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">__NR_write</span> (__X32_SYSCALL_BIT + 1)
+unistd_x32.<span style="color: #bd93f9;">h</span>:
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20854;&#20013; __X32_SYSCALL_BIT &#20026; 0x40000000, &#21363; bit 31     </span>
+<span style="color: #8be9fd;">#define</span> <span style="color: #f8f8f2;">__NR_read</span> (__X32_SYSCALL_BIT + 0)
+<span style="color: #8be9fd;">#define</span> <span style="color: #f8f8f2;">__NR_write</span> (__X32_SYSCALL_BIT + 1)
 </pre>
 </div>
 </li>
@@ -1302,8 +1381,8 @@ unistd_x32.<span style="font-weight: bold; text-decoration: underline;">h</span>
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">system_call</span>:
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">__SYSCALL_MASK &#20026; (~(__X32_SYSCALL_BIT))  </span>
+<pre class="src src-c"><span style="color: #bd93f9;">system_call</span>:
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">__SYSCALL_MASK &#20026; (~(__X32_SYSCALL_BIT))  </span>
   andl $__SYSCALL_MASK,%eax
   call *sys_call_table(,%rax,8)
 </pre>
@@ -1314,14 +1393,14 @@ unistd_x32.<span style="font-weight: bold; text-decoration: underline;">h</span>
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">is_compat_task</span>:
-  <span style="font-weight: bold;">return</span> is_ia32_task() || is_x32_task();
+<pre class="src src-c"><span style="color: #bd93f9;">is_compat_task</span>:
+  <span style="color: #ff79c6; font-weight: bold;">return</span> is_ia32_task() || is_x32_task();
 
-<span style="font-weight: bold; text-decoration: underline;">is_x32_task</span>:
-  <span style="font-weight: bold;">if</span> (task_pt_regs(current)-&gt;orig_ax &amp; __X32_SYSCALL_BIT):
-    <span style="font-weight: bold;">return</span> <span style="font-weight: bold; text-decoration: underline;">true</span>;
-  <span style="font-weight: bold;">else</span>:
-    <span style="font-weight: bold;">return</span> <span style="font-weight: bold; text-decoration: underline;">false</span>;
+<span style="color: #bd93f9;">is_x32_task</span>:
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (task_pt_regs(current)-&gt;orig_ax &amp; __X32_SYSCALL_BIT):
+    <span style="color: #ff79c6; font-weight: bold;">return</span> <span style="color: #bd93f9;">true</span>;
+  <span style="color: #ff79c6; font-weight: bold;">else</span>:
+    <span style="color: #ff79c6; font-weight: bold;">return</span> <span style="color: #bd93f9;">false</span>;
 </pre>
 </div>
 </li>
@@ -1341,30 +1420,30 @@ vsyscall page 和一块特殊的 page: 这个 page 是由 kernel 分配的, 并�
 <ol class="org-ol"><li><a id="sec-1-3-2-3-1" name="sec-1-3-2-3-1"></a>x86_32 下 vsyscall page 的初始化<br  /><div class="outline-text-6" id="text-1-3-2-3-1">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">sysenter_setup</span>:
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20998;&#37197;&#19968;&#20010; page  </span>
-  <span style="font-weight: bold; text-decoration: underline;">void</span> *<span style="font-weight: bold; font-style: italic;">page</span> = (<span style="font-weight: bold; text-decoration: underline;">void</span> *)get_zeroed_page(GFP_ATOMIC);
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36890;&#36807; fixmap &#26144;&#23556;, &#24182;&#19988;&#25351;&#23450; page &#30340;&#26435;&#38480;&#20026; PAGE_READONLY_EXEC, &#21518;&#32773;&#20855;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20307;&#20026;: __pgprot(_PAGE_PRESENT | _PAGE_USER | _PAGE_ACCESSED),</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">_PAGE_USER &#36825;&#20010; flag &#34920;&#31034;&#36825;&#20010; page &#26159;&#21487;&#20197;&#34987; user mode &#35775;&#38382;&#30340;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">FIX_VSYSCALL &#36825;&#20010; fixmap &#23545;&#24212;&#30340;&#29289;&#29702;&#22320;&#22336;&#21363;&#26159; 0xffffe000</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">(VSYSCALL_BASE):</span>
-  <span style="font-weight: bold; font-style: italic;">// </span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">#define VSYSCALL_BASE    (__fix_to_virt(FIX_VSYSCALL))  </span>
+<pre class="src src-c"><span style="color: #bd93f9;">sysenter_setup</span>:
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20998;&#37197;&#19968;&#20010; page  </span>
+  <span style="color: #f8f8f2;">void</span> *<span style="color: #f8f8f2;">page</span> = (<span style="color: #f8f8f2;">void</span> *)get_zeroed_page(GFP_ATOMIC);
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36890;&#36807; fixmap &#26144;&#23556;, &#24182;&#19988;&#25351;&#23450; page &#30340;&#26435;&#38480;&#20026; PAGE_READONLY_EXEC, &#21518;&#32773;&#20855;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20307;&#20026;: __pgprot(_PAGE_PRESENT | _PAGE_USER | _PAGE_ACCESSED),</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">_PAGE_USER &#36825;&#20010; flag &#34920;&#31034;&#36825;&#20010; page &#26159;&#21487;&#20197;&#34987; user mode &#35775;&#38382;&#30340;</span>
+  <span style="color: #6272a4;">// </span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">FIX_VSYSCALL &#36825;&#20010; fixmap &#23545;&#24212;&#30340;&#29289;&#29702;&#22320;&#22336;&#21363;&#26159; 0xffffe000</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">(VSYSCALL_BASE):</span>
+  <span style="color: #6272a4;">// </span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">#define VSYSCALL_BASE    (__fix_to_virt(FIX_VSYSCALL))  </span>
   __set_fixmap(FIX_VSYSCALL, __pa(page), PAGE_READONLY_EXEC);
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22914;&#26524; CPU &#19981;&#25903;&#25345; sysenter/sysexit, &#21017;&#23558; vsyscall_int80_start &#22788;&#30340;&#20195;&#30721;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22797;&#21046;&#21040;&#36825;&#20010; page, &#21542;&#21017;&#23558; vsyscall_sysenter_start &#22788;&#30340;&#20195;&#30721;&#22797;&#29616;&#36807;&#26469;  </span>
-  <span style="font-weight: bold;">if</span> (!boot_cpu_has(X86_FEATURE_SEP)):
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22914;&#26524; CPU &#19981;&#25903;&#25345; sysenter/sysexit, &#21017;&#23558; vsyscall_int80_start &#22788;&#30340;&#20195;&#30721;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22797;&#21046;&#21040;&#36825;&#20010; page, &#21542;&#21017;&#23558; vsyscall_sysenter_start &#22788;&#30340;&#20195;&#30721;&#22797;&#29616;&#36807;&#26469;  </span>
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>boot_cpu_has(X86_FEATURE_SEP)):
     memcpy(page,&amp;vsyscall_int80_start,&amp;vsyscall_int80_end - &amp;vsyscall_int80_start);
-    <span style="font-weight: bold;">return</span> 0;
+    <span style="color: #ff79c6; font-weight: bold;">return</span> 0;
 
   memcpy(page,&amp;vsyscall_sysenter_start,&amp;vsyscall_sysenter_end - &amp;vsyscall_sysenter_start);
 
-  on_each_cpu(enable_sep_cpu, <span style="font-weight: bold; text-decoration: underline;">NULL</span>, 1, 1);
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25351;&#23450;&#20102; sysenter &#23545;&#24212;&#30340;&#22788;&#29702;&#20989;&#25968;(&#31867;&#20284;&#20110; syscall &#36825;&#20010; entry):</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">sysenter_entry    </span>
-    wrmsr(MSR_IA32_SYSENTER_EIP, (<span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>) sysenter_entry, 0);
+  on_each_cpu(enable_sep_cpu, <span style="color: #bd93f9;">NULL</span>, 1, 1);
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#25351;&#23450;&#20102; sysenter &#23545;&#24212;&#30340;&#22788;&#29702;&#20989;&#25968;(&#31867;&#20284;&#20110; syscall &#36825;&#20010; entry):</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">sysenter_entry    </span>
+    wrmsr(MSR_IA32_SYSENTER_EIP, (<span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span>) sysenter_entry, 0);
 </pre>
 </div>
 </div>
@@ -1407,15 +1486,15 @@ memory 命令):
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">#include</span> <span style="font-style: italic;">&lt;unistd.h&gt;</span>
-<span style="font-weight: bold;">#include</span> <span style="font-style: italic;">&lt;string.h&gt;</span>
+<pre class="src src-c"><span style="color: #8be9fd;">#include</span> <span style="color: #f1fa8c;">&lt;unistd.h&gt;</span>
+<span style="color: #8be9fd;">#include</span> <span style="color: #f1fa8c;">&lt;string.h&gt;</span>
 
-<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold;">main</span>() {
-    <span style="font-weight: bold; text-decoration: underline;">char</span> *<span style="font-weight: bold; font-style: italic;">p</span> = (<span style="font-weight: bold; text-decoration: underline;">char</span> *) 0xffffe000;
-    <span style="font-weight: bold; text-decoration: underline;">char</span> <span style="font-weight: bold; font-style: italic;">buf</span>[4096];
+<span style="color: #f8f8f2;">int</span> <span style="color: #50fa7b; font-weight: bold;">main</span>() {
+    <span style="color: #f8f8f2;">char</span> *<span style="color: #f8f8f2;">p</span> = (<span style="color: #f8f8f2;">char</span> *) 0xffffe000;
+    <span style="color: #f8f8f2;">char</span> <span style="color: #f8f8f2;">buf</span>[4096];
     memcpy(buf, p, 4096);
     write(1, buf, 4096);
-    <span style="font-weight: bold;">return</span> 0;
+    <span style="color: #ff79c6; font-weight: bold;">return</span> 0;
 }
 </pre>
 </div>
@@ -1551,11 +1630,11 @@ x86_64 上关于 vsyscall 的代码主要在 arch/x86_64/kernel/vsyscall.c 中
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">do_execve</span>:
-  <span style="font-weight: bold; text-decoration: underline;">create_elf_tables</span>:
-    <span style="font-weight: bold; text-decoration: underline;">ARCH_DLINFO</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">VSYSCALL_ENTRY &#21363;&#20026; __kernel_vsyscall &#30340;&#22320;&#22336;: 0xffffe400</span>
-      <span style="font-weight: bold;">NEW_AUX_ENT</span>(AT_SYSINFO,      VSYSCALL_ENTRY);
+<pre class="src src-c"><span style="color: #bd93f9;">do_execve</span>:
+  <span style="color: #bd93f9;">create_elf_tables</span>:
+    <span style="color: #f8f8f2;">ARCH_DLINFO</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">VSYSCALL_ENTRY &#21363;&#20026; __kernel_vsyscall &#30340;&#22320;&#22336;: 0xffffe400</span>
+      <span style="color: #50fa7b; font-weight: bold;">NEW_AUX_ENT</span>(AT_SYSINFO,      VSYSCALL_ENTRY);
 </pre>
 </div>
 </li>
@@ -1593,7 +1672,7 @@ glibc 中关于 __gettimeofday 的代码:
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">#define</span> <span style="font-weight: bold; font-style: italic;">VSYSCALL_ADDR_vgettimeofday</span>   0xffffffffff600000
+<pre class="src src-c"><span style="color: #8be9fd;">#define</span> <span style="color: #f8f8f2;">VSYSCALL_ADDR_vgettimeofday</span>   0xffffffffff600000
 ENTRY (__gettimeofday):
   movq        $VSYSCALL_ADDR_vgettimeofday, %rax
   callq       *%rax
@@ -1682,32 +1761,32 @@ kernel thread 与普通进程一样, 也是通过 do_fork 创建的, 但有些�
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">kernel_thread</span>:
-  <span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">pt_regs</span> <span style="font-weight: bold; font-style: italic;">regs</span>;
-  memset(&amp;regs, 0, <span style="font-weight: bold;">sizeof</span>(regs));
+<pre class="src src-c"><span style="color: #bd93f9;">kernel_thread</span>:
+  <span style="color: #ff79c6; font-weight: bold;">struct</span> <span style="color: #f8f8f2;">pt_regs</span> <span style="color: #f8f8f2;">regs</span>;
+  memset(&amp;regs, 0, <span style="color: #ff79c6; font-weight: bold;">sizeof</span>(regs));
 
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21518;&#38754;&#30340; kernel_thread_helper &#20250;&#20351;&#29992;&#36825;&#20004;&#20010;&#20540;</span>
-  regs.ebx = (<span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>) fn;
-  regs.edx = (<span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>) arg;
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21518;&#38754;&#30340; kernel_thread_helper &#20250;&#20351;&#29992;&#36825;&#20004;&#20010;&#20540;</span>
+  regs.ebx = (<span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span>) fn;
+  regs.edx = (<span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span>) arg;
 
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22312;&#36825;&#37324;&#20462;&#25913;&#20102; regs.eip &#21644; regs.xcs, &#24403; do_fork &#20986;&#26469;&#30340;&#23376;&#36827;&#31243;&#36890;&#36807;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">ret_from_fork &#36820;&#22238;&#26102;, interrupt &#30340;&#36890;&#29992;&#20195;&#30721;&#20250;&#20351;&#29992; regs &#24674;&#22797; eip, xcs,</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">esp..., &#23545;&#20110; syscall &#26469;&#35828;, &#36825;&#37096;&#20998;&#25805;&#20316;&#30456;&#24403;&#20110;"&#36820;&#22238; user mode", &#20294;&#23545;&#20110;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">kernel_thread &#26469;&#35828;, &#36825;&#19968;&#27493;&#25805;&#20316;&#20250;&#23548;&#33268;&#25191;&#34892;&#36335;&#24452;&#36339;&#36716;&#21040; kernel thread &#30340;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">fn</span>
-  <span style="font-weight: bold; font-style: italic;">//</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">regs.xcs &#20026; __KERNEL_CS, &#34920;&#26126; kernel thread &#36816;&#34892;&#22312; kernel mode</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">regs.esp &#36825;&#37324;&#24182;&#27809;&#26377;&#29305;&#21035;&#36171;&#20540;, &#26159;&#22240;&#20026; iret &#26102;&#22240;&#20026; regs.xcs &#25552;&#21069;&#24050;&#32463;&#20462;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25913;&#20026; __KERNEL_CS, &#23548;&#33268; cpu &#35748;&#20026;&#26412;&#27425; interrupt &#24182;&#27809;&#26377;&#21457;&#29983; stack &#30340;&#20999;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25442;, &#25152;&#20197; esp &#22312; iret &#26102;&#24182;&#19981;&#38656;&#35201;&#20999;&#25442;&#20026; regs.esp, &#20855;&#20307;&#21442;&#32771;[[*&#20851;&#20110;&#31995;&#32479;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#35843;&#29992;][&#20851;&#20110;&#31995;&#32479;&#35843;&#29992;]] &#30340;&#31532; 2 &#28857;</span>
-  regs.eip = (<span style="font-weight: bold; text-decoration: underline;">unsigned</span> <span style="font-weight: bold; text-decoration: underline;">long</span>) kernel_thread_helper;
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22312;&#36825;&#37324;&#20462;&#25913;&#20102; regs.eip &#21644; regs.xcs, &#24403; do_fork &#20986;&#26469;&#30340;&#23376;&#36827;&#31243;&#36890;&#36807;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">ret_from_fork &#36820;&#22238;&#26102;, interrupt &#30340;&#36890;&#29992;&#20195;&#30721;&#20250;&#20351;&#29992; regs &#24674;&#22797; eip, xcs,</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">esp..., &#23545;&#20110; syscall &#26469;&#35828;, &#36825;&#37096;&#20998;&#25805;&#20316;&#30456;&#24403;&#20110;"&#36820;&#22238; user mode", &#20294;&#23545;&#20110;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">kernel_thread &#26469;&#35828;, &#36825;&#19968;&#27493;&#25805;&#20316;&#20250;&#23548;&#33268;&#25191;&#34892;&#36335;&#24452;&#36339;&#36716;&#21040; kernel thread &#30340;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">fn</span>
+  <span style="color: #6272a4;">//</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">regs.xcs &#20026; __KERNEL_CS, &#34920;&#26126; kernel thread &#36816;&#34892;&#22312; kernel mode</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">regs.esp &#36825;&#37324;&#24182;&#27809;&#26377;&#29305;&#21035;&#36171;&#20540;, &#26159;&#22240;&#20026; iret &#26102;&#22240;&#20026; regs.xcs &#25552;&#21069;&#24050;&#32463;&#20462;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#25913;&#20026; __KERNEL_CS, &#23548;&#33268; cpu &#35748;&#20026;&#26412;&#27425; interrupt &#24182;&#27809;&#26377;&#21457;&#29983; stack &#30340;&#20999;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#25442;, &#25152;&#20197; esp &#22312; iret &#26102;&#24182;&#19981;&#38656;&#35201;&#20999;&#25442;&#20026; regs.esp, &#20855;&#20307;&#21442;&#32771;[[*&#20851;&#20110;&#31995;&#32479;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#35843;&#29992;][&#20851;&#20110;&#31995;&#32479;&#35843;&#29992;]] &#30340;&#31532; 2 &#28857;</span>
+  regs.eip = (<span style="color: #f8f8f2;">unsigned</span> <span style="color: #f8f8f2;">long</span>) kernel_thread_helper;
   regs.xcs = __KERNEL_CS;
   regs.eflags = X86_EFLAGS_IF | X86_EFLAGS_SF | X86_EFLAGS_PF | 0x2;
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">do_fork &#30340;&#31532;&#20108;&#20010;&#21442;&#25968;&#20026; stack_start, &#36825;&#37324;&#20026; 0, &#25152;&#20197; ret_from_fork &#26102;,</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">regs.esp &#20250;&#34987;&#20462;&#25913;&#20026; 0, &#20294;&#24182;&#27809;&#26377;&#20160;&#20040;&#29992;, &#22240;&#20026; iret &#26102;&#24182;&#19981;&#20250;&#36890;&#36807;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">regs.esp &#24674;&#22797; esp</span>
-  <span style="font-weight: bold;">return</span> do_fork(flags | CLONE_VM | CLONE_UNTRACED, 0, &amp;regs, 0, <span style="font-weight: bold; text-decoration: underline;">NULL</span>, <span style="font-weight: bold; text-decoration: underline;">NULL</span>);
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">do_fork &#30340;&#31532;&#20108;&#20010;&#21442;&#25968;&#20026; stack_start, &#36825;&#37324;&#20026; 0, &#25152;&#20197; ret_from_fork &#26102;,</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">regs.esp &#20250;&#34987;&#20462;&#25913;&#20026; 0, &#20294;&#24182;&#27809;&#26377;&#20160;&#20040;&#29992;, &#22240;&#20026; iret &#26102;&#24182;&#19981;&#20250;&#36890;&#36807;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">regs.esp &#24674;&#22797; esp</span>
+  <span style="color: #ff79c6; font-weight: bold;">return</span> do_fork(flags | CLONE_VM | CLONE_UNTRACED, 0, &amp;regs, 0, <span style="color: #bd93f9;">NULL</span>, <span style="color: #bd93f9;">NULL</span>);
 </pre>
 </div>
 </div>
@@ -1715,15 +1794,15 @@ kernel thread 与普通进程一样, 也是通过 do_fork 创建的, 但有些�
 <ol class="org-ol"><li><a id="sec-1-3-3-2-1-1" name="sec-1-3-3-2-1-1"></a>kernel_thread_helper<br  /><div class="outline-text-7" id="text-1-3-3-2-1-1">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">__asm__</span>(
-    <span style="font-style: italic;">".section .text\n"</span>
-    <span style="font-style: italic;">"kernel_thread_helper:\n\t"</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">kernel_thread_helper &#34987;&#35843;&#29992;&#26102;, ebx, edx &#24050;&#32463;&#36890;&#36807; RESTORE_ALL &#24674;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22797;&#20026; regs &#20013;&#30340;&#20540;</span>
-    <span style="font-style: italic;">"pushl %edx\n\t"</span>
-    <span style="font-style: italic;">"call *%ebx\n\t"</span>
-    <span style="font-style: italic;">"pushl %eax\n\t"</span>
-    <span style="font-style: italic;">"call do_exit\n"</span>
+<pre class="src src-c"><span style="color: #ff79c6; font-weight: bold;">__asm__</span>(
+    <span style="color: #f1fa8c;">".section .text\n"</span>
+    <span style="color: #f1fa8c;">"kernel_thread_helper:\n\t"</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">kernel_thread_helper &#34987;&#35843;&#29992;&#26102;, ebx, edx &#24050;&#32463;&#36890;&#36807; RESTORE_ALL &#24674;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22797;&#20026; regs &#20013;&#30340;&#20540;</span>
+    <span style="color: #f1fa8c;">"pushl %edx\n\t"</span>
+    <span style="color: #f1fa8c;">"call *%ebx\n\t"</span>
+    <span style="color: #f1fa8c;">"pushl %eax\n\t"</span>
+    <span style="color: #f1fa8c;">"call do_exit\n"</span>
     );
 </pre>
 </div>
@@ -1757,18 +1836,18 @@ schedule policy, uid 等, 这些也不是 kernel 期望的
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">lo_ioctl</span>:
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">ioctl &#26469;&#33258; syscall, &#25152;&#20197;&#36825;&#37324;&#35843;&#29992; kernel_thread &#30340;&#35805;&#20250;&#23548;&#33268;&#21019;&#24314;&#30340;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">kernel thread &#19982;&#21457;&#36215; ioctl &#30340;&#26222;&#36890;&#36827;&#31243;&#20849;&#20139;&#36164;&#28304;</span>
-  <span style="font-weight: bold; text-decoration: underline;">loop_set_fd</span>
-    <span style="font-weight: bold;">kernel_thread</span>(loop_thread, lo, CLONE_KERNEL);
+<pre class="src src-c"><span style="color: #bd93f9;">lo_ioctl</span>:
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">ioctl &#26469;&#33258; syscall, &#25152;&#20197;&#36825;&#37324;&#35843;&#29992; kernel_thread &#30340;&#35805;&#20250;&#23548;&#33268;&#21019;&#24314;&#30340;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">kernel thread &#19982;&#21457;&#36215; ioctl &#30340;&#26222;&#36890;&#36827;&#31243;&#20849;&#20139;&#36164;&#28304;</span>
+  <span style="color: #f8f8f2;">loop_set_fd</span>
+    <span style="color: #50fa7b; font-weight: bold;">kernel_thread</span>(loop_thread, lo, CLONE_KERNEL);
 
-<span style="font-weight: bold; text-decoration: underline;">loop_thread</span>:
-  daemonize(<span style="font-style: italic;">"loop%d"</span>, lo-&gt;lo_number);
+<span style="color: #bd93f9;">loop_thread</span>:
+  daemonize(<span style="color: #f1fa8c;">"loop%d"</span>, lo-&gt;lo_number);
     exit_mm(current);
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">Block and flush all signals    </span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">Block and flush all signals    </span>
     sigfillset(&amp;blocked);
-    sigprocmask(SIG_BLOCK, &amp;blocked, <span style="font-weight: bold; text-decoration: underline;">NULL</span>);
+    sigprocmask(SIG_BLOCK, &amp;blocked, <span style="color: #bd93f9;">NULL</span>);
     flush_signals(current);
     exit_fs(current); */
     fs = init_task.fs;
@@ -1778,10 +1857,10 @@ schedule policy, uid 等, 这些也不是 kernel 期望的
     reparent_to_init();
       current-&gt;parent = child_reaper;
       current-&gt;real_parent = child_reaper;
-      <span style="font-weight: bold;">if</span> ((current-&gt;policy == SCHED_NORMAL) &amp;&amp; (task_nice(current) &lt; 0)):
+      <span style="color: #ff79c6; font-weight: bold;">if</span> ((current-&gt;policy == SCHED_NORMAL) &amp;&amp; (task_nice(current) &lt; 0)):
         set_user_nice(current, 0);
       memcpy(current-&gt;signal-&gt;rlim, init_task.signal-&gt;rlim,
-        <span style="font-weight: bold;">sizeof</span>(current-&gt;signal-&gt;rlim));
+        <span style="color: #ff79c6; font-weight: bold;">sizeof</span>(current-&gt;signal-&gt;rlim));
     switch_uid(&amp;root_user);
 </pre>
 </div>
@@ -1834,9 +1913,9 @@ c 程序中 main 函数的调用路径为:
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">__start</span>:
-  <span style="font-weight: bold; text-decoration: underline;">__libc_start_main</span>
-    <span style="font-weight: bold;">exit</span>(<span style="font-weight: bold; text-decoration: underline;">main</span>())
+<pre class="src src-c"><span style="color: #bd93f9;">__start</span>:
+  <span style="color: #f8f8f2;">__libc_start_main</span>
+    <span style="color: #50fa7b; font-weight: bold;">exit</span>(<span style="color: #f8f8f2;">main</span>())
 </pre>
 </div>
 
@@ -1867,8 +1946,8 @@ init_thread_info.
 <div class="org-src-container">
 
 <pre class="src src-c">ENTRY(stack_start)
-.<span style="font-weight: bold; text-decoration: underline;">long</span> init_thread_union+THREAD_SIZE
-.<span style="font-weight: bold; text-decoration: underline;">long</span> __BOOT_DS
+.<span style="color: #f8f8f2;">long</span> init_thread_union+THREAD_SIZE
+.<span style="color: #f8f8f2;">long</span> __BOOT_DS
 ready:     .byte 0
 </pre>
 </div>
@@ -1885,12 +1964,12 @@ ready:     .byte 0
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">rest_init</span>:
-  kernel_thread(init, <span style="font-weight: bold; text-decoration: underline;">NULL</span>, CLONE_FS | CLONE_SIGHAND);
+<pre class="src src-c"><span style="color: #bd93f9;">rest_init</span>:
+  kernel_thread(init, <span style="color: #bd93f9;">NULL</span>, CLONE_FS | CLONE_SIGHAND);
   cpu_idle();
-    <span style="font-weight: bold;">while</span> (1):
-      <span style="font-weight: bold;">while</span> (!need_resched()):
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">idle          </span>
+    <span style="color: #ff79c6; font-weight: bold;">while</span> (1):
+      <span style="color: #ff79c6; font-weight: bold;">while</span> (<span style="color: #bd93f9;">!</span>need_resched()):
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">idle          </span>
         cpu_relax()  
       schedule()
 </pre>

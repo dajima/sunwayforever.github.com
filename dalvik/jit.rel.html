@@ -4,11 +4,90 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>Dalvik: JIT</title>
-<!-- 2016-09-20 Tue 16:33 -->
+<!-- 2016-09-20 二 16:44 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="Wei Sun (孙伟)" />
-<link rel="stylesheet" type="text/css" href="../stylesheets/main.css" media="screen" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -126,9 +205,9 @@ common_updateProfile 会在以下情况下被调用:
 
 <div class="org-src-container">
 
-<pre class="src src-java"><span style="font-weight: bold;">public</span> <span style="font-weight: bold;">static</span> <span style="font-weight: bold; text-decoration: underline;">void</span> <span style="font-weight: bold;">main</span>(<span style="font-weight: bold; text-decoration: underline;">String</span>[] <span style="font-weight: bold; font-style: italic;">args</span>) {
-    <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">result</span> = 0;
-    <span style="font-weight: bold;">for</span> (<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">i</span> = 0; i &lt; 1000; i++) {
+<pre class="src src-java"><span style="color: #ff79c6; font-weight: bold;">public</span> <span style="color: #ff79c6; font-weight: bold;">static</span> <span style="color: #f8f8f2;">void</span> <span style="color: #50fa7b; font-weight: bold;">main</span>(<span style="color: #f8f8f2;">String</span>[] <span style="color: #f8f8f2;">args</span>) {
+    <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">result</span> = 0;
+    <span style="color: #ff79c6; font-weight: bold;">for</span> (<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">i</span> = 0; i &lt; 1000; i++) {
         result += i;
     }
 }
@@ -166,29 +245,29 @@ if-ge, 最终这条 trace 的结果是:
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">common_updateProfile</span>:
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#37324;&#36127;&#36131;&#20174; thread-&gt;pJitProfTable &#20013;&#33719;&#24471;&#35813; rPC &#23545;&#24212;&#30340; threshold</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">(&#21021;&#22987;&#20026;&#26368;&#22823;&#20540; 40, &#27599;&#21629;&#20013;&#19968;&#27425;&#20943;&#19968;)&#33509; threshold &#24050;&#32463;&#20026; 0, &#35828;&#26126;&#35813;&#20195;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#30721;&#26159; hot &#30340;, &#28982;&#21518;&#20250;&#36339;&#21040; common_Profile &#36827;&#34892; JIT &#30456;&#20851;&#25805;&#20316;. &#21542;&#21017;&#30452;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25509;&#36890;&#36807; GOTO_NEXT &#32487;&#32493;&#25191;&#34892; interp</span>
-  <span style="font-weight: bold; text-decoration: underline;">common_Profile</span>:
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26681;&#25454; pc &#26597;&#25214;&#35813; trace &#26159;&#21542;&#24050;&#32463;&#34987;&#32534;&#35793;</span>
-    <span style="font-weight: bold; text-decoration: underline;">call</span>   <span style="font-weight: bold;">dvmJitGetTraceAddrThread</span>  # (pc, self)
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509;&#36824;&#27809;&#26377;&#34987;&#32534;&#35793;&#20986;&#26469;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36890;&#36807;&#26597;&#30475; interpBreak-&gt;subMode, &#30830;&#23450;&#26159;&#21542;&#24050;&#32463;&#22312;&#32534;&#35793; (kSubModeJitSV)</span>
-    <span style="font-weight: bold; text-decoration: underline;">movzwl</span>      <span style="font-weight: bold;">offThread_subMode</span>(%ebx), %ecx
+<pre class="src src-c"><span style="color: #bd93f9;">common_updateProfile</span>:
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36825;&#37324;&#36127;&#36131;&#20174; thread-&gt;pJitProfTable &#20013;&#33719;&#24471;&#35813; rPC &#23545;&#24212;&#30340; threshold</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">(&#21021;&#22987;&#20026;&#26368;&#22823;&#20540; 40, &#27599;&#21629;&#20013;&#19968;&#27425;&#20943;&#19968;)&#33509; threshold &#24050;&#32463;&#20026; 0, &#35828;&#26126;&#35813;&#20195;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#30721;&#26159; hot &#30340;, &#28982;&#21518;&#20250;&#36339;&#21040; common_Profile &#36827;&#34892; JIT &#30456;&#20851;&#25805;&#20316;. &#21542;&#21017;&#30452;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#25509;&#36890;&#36807; GOTO_NEXT &#32487;&#32493;&#25191;&#34892; interp</span>
+  <span style="color: #bd93f9;">common_Profile</span>:
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26681;&#25454; pc &#26597;&#25214;&#35813; trace &#26159;&#21542;&#24050;&#32463;&#34987;&#32534;&#35793;</span>
+    <span style="color: #f8f8f2;">call</span>   <span style="color: #50fa7b; font-weight: bold;">dvmJitGetTraceAddrThread</span>  # (pc, self)
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509;&#36824;&#27809;&#26377;&#34987;&#32534;&#35793;&#20986;&#26469;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36890;&#36807;&#26597;&#30475; interpBreak-&gt;subMode, &#30830;&#23450;&#26159;&#21542;&#24050;&#32463;&#22312;&#32534;&#35793; (kSubModeJitSV)</span>
+    <span style="color: #f8f8f2;">movzwl</span>      <span style="color: #50fa7b; font-weight: bold;">offThread_subMode</span>(%ebx), %ecx
     and         $(kSubModeJitTraceBuild | kSubModeJitSV), %ecx
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509;&#24050;&#32463;&#22312;&#32534;&#35793;, &#21017;&#32487;&#32493;&#20197; interp &#26041;&#24335;&#25191;&#34892;</span>
-    jne         3f                     # already doing JIT work, <span style="font-weight: bold;">continue</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509;&#24050;&#32463;&#22312;&#32534;&#35793;, &#21017;&#32487;&#32493;&#20197; interp &#26041;&#24335;&#25191;&#34892;</span>
+    jne         3f                     # already doing JIT work, <span style="color: #ff79c6; font-weight: bold;">continue</span>
     FETCH_INST
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21542;&#21017;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21542;&#21017;</span>
     call dvmJitCheckTraceRequest
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#24320;&#22987; trace build &#27169;&#24335;</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#24320;&#22987; trace build &#27169;&#24335;</span>
       dvmEnableSubMode (self, kSubModeJitTraceBuild);
-        <span style="font-weight: bold; text-decoration: underline;">updateInterpBreak</span>
-          <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20462;&#25913;&#20102; curHandlerTable, &#21518;&#32493; byte code &#30340;&#35299;&#37322;&#20250;&#36890;&#36807;&#36825;&#20010;</span>
-          <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">altHandlerTable &#35299;&#37322;</span>
-          <span style="font-weight: bold; font-style: italic;">newValue</span>.ctl.curHandlerTable = (newValue.ctl.breakFlags) ?
+        <span style="color: #f8f8f2;">updateInterpBreak</span>
+          <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20462;&#25913;&#20102; curHandlerTable, &#21518;&#32493; byte code &#30340;&#35299;&#37322;&#20250;&#36890;&#36807;&#36825;&#20010;</span>
+          <span style="color: #6272a4;">// </span><span style="color: #6272a4;">altHandlerTable &#35299;&#37322;</span>
+          <span style="color: #f8f8f2;">newValue</span>.ctl.curHandlerTable = (newValue.ctl.breakFlags) ?
             thread-&gt;altHandlerTable : thread-&gt;mainHandlerTable;
 </pre>
 </div>
@@ -201,38 +280,38 @@ code 的解释基本都是一样的, 例如:
 
 <div class="org-src-container">
 
-<pre class="src src-c">.L_ALT_OP_MOVE: <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">0x01 </span><span style="font-weight: bold; font-style: italic;">*/</span>
-<span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">File: armv5te/alt_stub.S </span><span style="font-weight: bold; font-style: italic;">*/</span>
-<span style="font-weight: bold; font-style: italic;">/*</span>
-<span style="font-weight: bold; font-style: italic;">* Inter-instruction transfer stub.  Call out to dvmCheckBefore to handle</span>
-<span style="font-weight: bold; font-style: italic;">* any interesting requests and then jump to the real instruction</span>
-<span style="font-weight: bold; font-style: italic;">* handler.    Note that the call to dvmCheckBefore is done as a tail call.</span>
-<span style="font-weight: bold; font-style: italic;">* rIBASE updates won't be seen until a refresh, and we can tell we have a</span>
-<span style="font-weight: bold; font-style: italic;">* stale rIBASE if breakFlags==0.  Always refresh rIBASE here, and then</span>
-<span style="font-weight: bold; font-style: italic;">* bail to the real handler if breakFlags==0.</span>
-<span style="font-weight: bold; font-style: italic;">*/</span>
+<pre class="src src-c">.L_ALT_OP_MOVE: <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">0x01 </span><span style="color: #6272a4;">*/</span>
+<span style="color: #6272a4;">/* </span><span style="color: #6272a4;">File: armv5te/alt_stub.S </span><span style="color: #6272a4;">*/</span>
+<span style="color: #6272a4;">/*</span>
+<span style="color: #6272a4;">* Inter-instruction transfer stub.  Call out to dvmCheckBefore to handle</span>
+<span style="color: #6272a4;">* any interesting requests and then jump to the real instruction</span>
+<span style="color: #6272a4;">* handler.    Note that the call to dvmCheckBefore is done as a tail call.</span>
+<span style="color: #6272a4;">* rIBASE updates won't be seen until a refresh, and we can tell we have a</span>
+<span style="color: #6272a4;">* stale rIBASE if breakFlags==0.  Always refresh rIBASE here, and then</span>
+<span style="color: #6272a4;">* bail to the real handler if breakFlags==0.</span>
+<span style="color: #6272a4;">*/</span>
 ldrb   r3, [rSELF, #offThread_breakFlags]
 adrl   lr, dvmAsmInstructionStart + (1 * 64)
-<span style="font-weight: bold; text-decoration: underline;">ldr</span>    <span style="font-weight: bold; font-style: italic;">rIBASE</span>, [rSELF, #offThread_curHandlerTable]
+<span style="color: #f8f8f2;">ldr</span>    <span style="color: #f8f8f2;">rIBASE</span>, [rSELF, #offThread_curHandlerTable]
 cmp    r3, #0
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26816;&#26597; interpBreak-&gt;subMode, &#33509;&#19981;&#26159; jni &#27169;&#24335;, &#21017;&#30452;&#25509;&#35843;&#29992;</span>
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">mainHandlerTable &#20013;&#30456;&#24212;&#30340; entry (dvmAsmInstructionStart &#23545;&#24212;&#20110; mainHandlerTable)</span>
-bxeq   lr                   @ nothing to <span style="font-weight: bold;">do</span> - jump to real handler
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26816;&#26597; interpBreak-&gt;subMode, &#33509;&#19981;&#26159; jni &#27169;&#24335;, &#21017;&#30452;&#25509;&#35843;&#29992;</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">mainHandlerTable &#20013;&#30456;&#24212;&#30340; entry (dvmAsmInstructionStart &#23545;&#24212;&#20110; mainHandlerTable)</span>
+bxeq   lr                   @ nothing to <span style="color: #ff79c6; font-weight: bold;">do</span> - jump to real handler
 EXPORT_PC()
-<span style="font-weight: bold; text-decoration: underline;">mov</span>    <span style="font-weight: bold; font-style: italic;">r0</span>, <span style="font-weight: bold; font-style: italic;">rPC</span>              @ arg0
-mov    r1, <span style="font-weight: bold; font-style: italic;">rFP</span>              @ arg1
-mov    r2, <span style="font-weight: bold;">rSELF</span>            @ arg2
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21542;&#21017;, &#35843;&#29992; dvmCheckBefore &#36827;&#34892; trace build</span>
-b      dvmCheckBefore       @ (dPC,dFP,self) <span style="font-weight: bold; text-decoration: underline;">tail</span> <span style="font-weight: bold;">call</span>
-  <span style="font-weight: bold;">if</span> (self-&gt;interpBreak.ctl.subMode &amp; kSubModeJitTraceBuild):
+<span style="color: #f8f8f2;">mov</span>    <span style="color: #f8f8f2;">r0</span>, <span style="color: #f8f8f2;">rPC</span>              @ arg0
+mov    r1, <span style="color: #f8f8f2;">rFP</span>              @ arg1
+mov    r2, <span style="color: #50fa7b; font-weight: bold;">rSELF</span>            @ arg2
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21542;&#21017;, &#35843;&#29992; dvmCheckBefore &#36827;&#34892; trace build</span>
+b      dvmCheckBefore       @ (dPC,dFP,self) <span style="color: #f8f8f2;">tail</span> <span style="color: #50fa7b; font-weight: bold;">call</span>
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (self-&gt;interpBreak.ctl.subMode &amp; kSubModeJitTraceBuild):
     dvmCheckJit(pc, self);
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; trace build &#27491;&#22312;&#36827;&#34892;</span>
-      <span style="font-weight: bold;">if</span> self-&gt;jitState == kJitTSelect:
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509; trace build &#27491;&#22312;&#36827;&#34892;</span>
+      <span style="color: #ff79c6; font-weight: bold;">if</span> self-&gt;jitState == kJitTSelect:
         self-&gt;trace[self-&gt;currTraceRun].info.frag.numInsts++;
         self-&gt;totalTraceLen++;
         self-&gt;currRunLen += len;
-      <span style="font-weight: bold;">else</span> <span style="font-weight: bold;">if</span> self-&gt;jitState == kJitTSelectEnd:
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">trace build &#32467;&#26463;, &#25552;&#20132;&#32473; compiler &#32534;&#35793;</span>
+      <span style="color: #ff79c6; font-weight: bold;">else</span> <span style="color: #ff79c6; font-weight: bold;">if</span> self-&gt;jitState == kJitTSelectEnd:
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">trace build &#32467;&#26463;, &#25552;&#20132;&#32473; compiler &#32534;&#35793;</span>
         dvmCompilerWorkEnqueue
 </pre>
 </div>
@@ -245,7 +324,7 @@ trace), 主要是 dvmCheckJit 中的这段代码:
 <div class="org-src-container">
 
 <pre class="src src-c">dvmCheckJit
-  <span style="font-weight: bold;">if</span> (!dexIsGoto(flags) &amp;&amp;
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>dexIsGoto(flags) &amp;&amp;
     ((flags &amp; (kInstrCanBranch |
                kInstrCanSwitch |
                kInstrCanReturn |
@@ -313,8 +392,8 @@ JitCodeCache 地址替换 chaining cell 对应的地址, 否则就切换到解�
 
 <div class="org-src-container">
 
-<pre class="src src-asm"><span style="font-weight: bold;">const</span>/16 v2, (#1000), (#0)
-<span style="font-weight: bold;">if-ge</span> <span style="font-weight: bold;">v0</span>, v2, (+6)
+<pre class="src src-asm"><span style="color: #50fa7b; font-weight: bold;">const</span>/16 v2, (#1000), (#0)
+<span style="color: #50fa7b; font-weight: bold;">if-ge</span> <span style="color: #ff79c6; font-weight: bold;">v0</span>, v2, (+6)
 </pre>
 </div>
 
@@ -354,7 +433,7 @@ dump 出 BasicBlock 对应的 CFG,以这段 java 为例:
 
 <div class="org-src-container">
 
-<pre class="src src-java"><span style="font-weight: bold;">for</span> (<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">i</span> = 0; i &lt; 1000; i++) {
+<pre class="src src-java"><span style="color: #ff79c6; font-weight: bold;">for</span> (<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">i</span> = 0; i &lt; 1000; i++) {
     sum += i;
 }
 </pre>
@@ -456,32 +535,32 @@ MIR2LIR 的过程大致是:
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">&#36941;&#21382;&#25152;&#26377;&#30340;</span> <span style="font-weight: bold; font-style: italic;">BasicBlock</span>:
-  &#33509; blockType &#19981;&#26159; chaining cell, <span style="font-weight: bold;">&#21017;&#36890;&#36807;</span> dvmCompilerAppendLIR(cUnit, (<span style="font-weight: bold; text-decoration: underline;">LIR</span> *) &amp;labelList[i]) &#28155;&#21152;&#19968;&#20010; pseudo <span style="font-weight: bold; text-decoration: underline;">LIR</span>
-    &#21518;&#38754;&#22788;&#29702; chaining cell &#20063;&#20250;&#25554;&#20837;&#19968;&#20010; <span style="font-weight: bold; text-decoration: underline;">pseudo</span> <span style="font-weight: bold; font-style: italic;">LIR</span>. &#36825;&#37324;&#27809;&#26377;&#20026; chaining cell &#25554;&#20837; pseudo LIR &#26159;&#22240;&#20026; pseudo LIR &#21518;&#38754;&#24517;&#39035;&#32039;&#25509;&#30528;&#35813; BasicBlock &#30340;&#20854;&#20182; LIR
-    &#22240;&#20026; chaining cell &#26159;&#22312;&#36941;&#21382;&#23436; kDalvikByteCode &#21518;&#22788;&#29702;&#30340;, <span style="font-weight: bold;">&#25152;&#20197;&#20250;&#22312;&#37027;&#26102;&#20877;&#25554;&#20837;</span> pseudo LIR. 
+<pre class="src src-c"><span style="color: #f8f8f2;">&#36941;&#21382;&#25152;&#26377;&#30340;</span> <span style="color: #f8f8f2;">BasicBlock</span>:
+  &#33509; blockType &#19981;&#26159; chaining cell, <span style="color: #50fa7b; font-weight: bold;">&#21017;&#36890;&#36807;</span> dvmCompilerAppendLIR(cUnit, (<span style="color: #f8f8f2;">LIR</span> *) &amp;labelList[i]) &#28155;&#21152;&#19968;&#20010; pseudo <span style="color: #f8f8f2;">LIR</span>
+    &#21518;&#38754;&#22788;&#29702; chaining cell &#20063;&#20250;&#25554;&#20837;&#19968;&#20010; <span style="color: #f8f8f2;">pseudo</span> <span style="color: #f8f8f2;">LIR</span>. &#36825;&#37324;&#27809;&#26377;&#20026; chaining cell &#25554;&#20837; pseudo LIR &#26159;&#22240;&#20026; pseudo LIR &#21518;&#38754;&#24517;&#39035;&#32039;&#25509;&#30528;&#35813; BasicBlock &#30340;&#20854;&#20182; LIR
+    &#22240;&#20026; chaining cell &#26159;&#22312;&#36941;&#21382;&#23436; kDalvikByteCode &#21518;&#22788;&#29702;&#30340;, <span style="color: #50fa7b; font-weight: bold;">&#25152;&#20197;&#20250;&#22312;&#37027;&#26102;&#20877;&#25554;&#20837;</span> pseudo LIR. 
   &#33509; blockType &#20026; kDalvikByteCode:
     &#36941;&#21382;&#35813; BasicBlock &#20013;&#30340;&#25152;&#26377; MIR:
-      &#33719;&#24471; MIR &#30340; format (&#21363; dalvik opcode &#30340; <span style="font-weight: bold; text-decoration: underline;">format</span> <span style="font-weight: bold; font-style: italic;">id</span>)
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20197; if-ge &#20026;&#20363;, &#20854; format &#20026; 22t (&#25351;&#20196;&#38271;&#24230;&#20026; 2*16 bits, &#20351;&#29992;&#20004;&#20010;&#23492;&#23384;&#22120;, &#26368;&#21518;&#36824;&#21253;&#25324;&#19968;&#20010; branching target)</span>
+      &#33719;&#24471; MIR &#30340; format (&#21363; dalvik opcode &#30340; <span style="color: #f8f8f2;">format</span> <span style="color: #f8f8f2;">id</span>)
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20197; if-ge &#20026;&#20363;, &#20854; format &#20026; 22t (&#25351;&#20196;&#38271;&#24230;&#20026; 2*16 bits, &#20351;&#29992;&#20004;&#20010;&#23492;&#23384;&#22120;, &#26368;&#21518;&#36824;&#21253;&#25324;&#19968;&#20010; branching target)</span>
       handleFmt22t(cUnit, mir, bb, labelList);
         opRegReg(cUnit, kOpCmp, rlSrc1.lowReg, rlSrc2.lowReg);
-          <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#29983;&#25104; LIR &#20026; kThumb2CmpRR, &#23545;&#24212;&#30340; assemble &#20026; cmp</span>
+          <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#29983;&#25104; LIR &#20026; kThumb2CmpRR, &#23545;&#24212;&#30340; assemble &#20026; cmp</span>
           newLIR2(cUnit, kThumb2CmpRR, rDestSrc1, rSrc2);
 
-        &#26681;&#25454; dalvik opcode <span style="font-weight: bold; text-decoration: underline;">&#33719;&#24471;&#20855;&#20307;&#30340;&#31867;&#22411;&#20026;</span> <span style="font-weight: bold;">kArmCondGe</span> ( format 22t &#36825;&#19968;&#31867; <span style="font-weight: bold;">if</span>-ge, <span style="font-weight: bold;">if</span>-ne, <span style="font-weight: bold;">if</span>-eq &#31561;&#22810;&#26465;&#25351;&#20196;), <span style="font-weight: bold;">&#20915;&#23450;&#21518;&#32493;&#26465;&#20214;&#36339;&#36716;&#30340;&#31867;&#22411;</span>
+        &#26681;&#25454; dalvik opcode <span style="color: #f8f8f2;">&#33719;&#24471;&#20855;&#20307;&#30340;&#31867;&#22411;&#20026;</span> <span style="color: #50fa7b; font-weight: bold;">kArmCondGe</span> ( format 22t &#36825;&#19968;&#31867; <span style="color: #ff79c6; font-weight: bold;">if</span>-ge, <span style="color: #ff79c6; font-weight: bold;">if</span>-ne, <span style="color: #ff79c6; font-weight: bold;">if</span>-eq &#31561;&#22810;&#26465;&#25351;&#20196;), <span style="color: #50fa7b; font-weight: bold;">&#20915;&#23450;&#21518;&#32493;&#26465;&#20214;&#36339;&#36716;&#30340;&#31867;&#22411;</span>
         genConditionalBranch(cUnit, cond, &amp;labelList[bb-&gt;taken-&gt;id]);
-          <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#24212;&#20110; taken</span>
-          <span style="font-weight: bold; text-decoration: underline;">ArmLIR</span> *<span style="font-weight: bold; font-style: italic;">branch</span> = opCondBranch(cUnit, condCode);
-            <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#29983;&#25104;&#30340; LIR &#20026; kThumb2BCond, &#19988;&#20855;&#20307;&#30340; ArmConditionCode &#20026; kArmCondGe</span>
-            newLIR2(cUnit, kThumb2BCond, 0 <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">offset to be patched </span><span style="font-weight: bold; font-style: italic;">*/</span>, condCode);
-          <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">take &#23545;&#24212;&#20110; LIR &#20445;&#23384;&#22312; generic.target &#20013;  </span>
-          branch-&gt;generic.target = (<span style="font-weight: bold; text-decoration: underline;">LIR</span> *) target;
+          <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23545;&#24212;&#20110; taken</span>
+          <span style="color: #f8f8f2;">ArmLIR</span> *<span style="color: #f8f8f2;">branch</span> = opCondBranch(cUnit, condCode);
+            <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#29983;&#25104;&#30340; LIR &#20026; kThumb2BCond, &#19988;&#20855;&#20307;&#30340; ArmConditionCode &#20026; kArmCondGe</span>
+            newLIR2(cUnit, kThumb2BCond, 0 <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">offset to be patched </span><span style="color: #6272a4;">*/</span>, condCode);
+          <span style="color: #6272a4;">// </span><span style="color: #6272a4;">take &#23545;&#24212;&#20110; LIR &#20445;&#23384;&#22312; generic.target &#20013;  </span>
+          branch-&gt;generic.target = (<span style="color: #f8f8f2;">LIR</span> *) target;
         genUnconditionalBranch(cUnit, &amp;labelList[bb-&gt;fallThrough-&gt;id]);
-          <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#24212;&#20110; fallThrough</span>
-          <span style="font-weight: bold; text-decoration: underline;">ArmLIR</span> *<span style="font-weight: bold; font-style: italic;">branch</span> = opNone(cUnit, kOpUncondBr);
+          <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23545;&#24212;&#20110; fallThrough</span>
+          <span style="color: #f8f8f2;">ArmLIR</span> *<span style="color: #f8f8f2;">branch</span> = opNone(cUnit, kOpUncondBr);
             newLIR0(cUnit, kThumbBUncond);
-          branch-&gt;generic.target = (<span style="font-weight: bold; text-decoration: underline;">LIR</span> *) target;
+          branch-&gt;generic.target = (<span style="color: #f8f8f2;">LIR</span> *) target;
 </pre>
 </div>
 
@@ -533,14 +612,14 @@ boundary LIR` 与 `chaining cell 的 pseudo LIR` 的引用关系.
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">handleNormalChainingCell</span>:
+<pre class="src src-c"><span style="color: #bd93f9;">handleNormalChainingCell</span>:
   insertChainingSwitch(cUnit);
-    <span style="font-weight: bold; text-decoration: underline;">ArmLIR</span> *<span style="font-weight: bold; font-style: italic;">branch</span> = newLIR0(cUnit, kThumbBUncond);
+    <span style="color: #f8f8f2;">ArmLIR</span> *<span style="color: #f8f8f2;">branch</span> = newLIR0(cUnit, kThumbBUncond);
     newLIR2(cUnit, kThumbOrr, r0, r0);
-    <span style="font-weight: bold; text-decoration: underline;">ArmLIR</span> *<span style="font-weight: bold; font-style: italic;">target</span> = newLIR0(cUnit, kArmPseudoTargetLabel);
+    <span style="color: #f8f8f2;">ArmLIR</span> *<span style="color: #f8f8f2;">target</span> = newLIR0(cUnit, kArmPseudoTargetLabel);
     target-&gt;defMask = ENCODE_ALL;
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#37324;&#30340; target &#26159;&#25351; chaining cell &#20869;&#37096;&#37027;&#20010; pseudo label.</span>
-    branch-&gt;generic.target = (<span style="font-weight: bold; text-decoration: underline;">LIR</span> *) target; 
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36825;&#37324;&#30340; target &#26159;&#25351; chaining cell &#20869;&#37096;&#37027;&#20010; pseudo label.</span>
+    branch-&gt;generic.target = (<span style="color: #f8f8f2;">LIR</span> *) target; 
   newLIR3(cUnit, kThumbLdrRRI5, r0, r6SELF,
                    offsetof(Thread, jitToInterpEntries.dvmJitToInterpNormal) &gt;&gt; 2);
   newLIR1(cUnit, kThumbBlxR, r0);
@@ -606,19 +685,19 @@ offset 代表着各个 LIR 生成的机器码 JitCodeCache 中最终的地址.
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#20010; ENCODING_MAP &#34920;&#31034;&#30340;&#26159; kThumbCmpRR &#30452;&#25509;&#32763;&#35793;&#20026; "cmp rA, rB" &#30340;&#24418;&#24335;</span>
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">ENCODING_MAP(kThumbCmpRR,        0x4280,</span>
-<span style="font-weight: bold; font-style: italic;">//     </span><span style="font-weight: bold; font-style: italic;">kFmtBitBlt, 2, 0, kFmtBitBlt, 5, 3, kFmtUnused, -1, -1,</span>
-<span style="font-weight: bold; font-style: italic;">//     </span><span style="font-weight: bold; font-style: italic;">kFmtUnused, -1, -1, IS_BINARY_OP | REG_USE01 | SETS_CCODES,</span>
-<span style="font-weight: bold; font-style: italic;">//     </span><span style="font-weight: bold; font-style: italic;">"cmp", "r!0d, r!1d", 1),</span>
-<span style="font-weight: bold; text-decoration: underline;">ArmEncodingMap</span> *<span style="font-weight: bold; font-style: italic;">encoder</span> = &amp;EncodingMap[lir-&gt;opcode];
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">skeleton &#20026; 0x4280, &#22312; thumb &#25351;&#20196;&#20013;,  0x4280 &#23545;&#24212;&#30340;&#23601;&#26159; cmp</span>
-<span style="font-weight: bold; text-decoration: underline;">u4</span> <span style="font-weight: bold; font-style: italic;">bits</span> = encoder-&gt;skeleton;
+<pre class="src src-c"><span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36825;&#20010; ENCODING_MAP &#34920;&#31034;&#30340;&#26159; kThumbCmpRR &#30452;&#25509;&#32763;&#35793;&#20026; "cmp rA, rB" &#30340;&#24418;&#24335;</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">ENCODING_MAP(kThumbCmpRR,        0x4280,</span>
+<span style="color: #6272a4;">//     </span><span style="color: #6272a4;">kFmtBitBlt, 2, 0, kFmtBitBlt, 5, 3, kFmtUnused, -1, -1,</span>
+<span style="color: #6272a4;">//     </span><span style="color: #6272a4;">kFmtUnused, -1, -1, IS_BINARY_OP | REG_USE01 | SETS_CCODES,</span>
+<span style="color: #6272a4;">//     </span><span style="color: #6272a4;">"cmp", "r!0d, r!1d", 1),</span>
+<span style="color: #f8f8f2;">ArmEncodingMap</span> *<span style="color: #f8f8f2;">encoder</span> = &amp;EncodingMap[lir-&gt;opcode];
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">skeleton &#20026; 0x4280, &#22312; thumb &#25351;&#20196;&#20013;,  0x4280 &#23545;&#24212;&#30340;&#23601;&#26159; cmp</span>
+<span style="color: #f8f8f2;">u4</span> <span style="color: #f8f8f2;">bits</span> = encoder-&gt;skeleton;
 value = (operand &lt;&lt; encoder-&gt;fieldLoc[i].start) &amp;
 ((1 &lt;&lt; (encoder-&gt;fieldLoc[i].end + 1)) - 1);
 bits |= value;
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">bits &#20013;&#21253;&#21547;&#20102;&#26426;&#22120;&#30721;&#21644;&#21442;&#25968;, &#26368;&#21518;&#34987;&#30452;&#25509;&#20889;&#21040; jitCodeCache &#20013;</span>
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26368;&#32456;&#29983;&#25104;&#30340;&#26426;&#22120;&#30721;&#20026; "cmp rA, rB"</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">bits &#20013;&#21253;&#21547;&#20102;&#26426;&#22120;&#30721;&#21644;&#21442;&#25968;, &#26368;&#21518;&#34987;&#30452;&#25509;&#20889;&#21040; jitCodeCache &#20013;</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26368;&#32456;&#29983;&#25104;&#30340;&#26426;&#22120;&#30721;&#20026; "cmp rA, rB"</span>
 *bufferAddr++ = bits &amp; 0xffff;
 </pre>
 </div>
@@ -632,11 +711,11 @@ bits |= value;
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">if</span> (lir-&gt;opcode == kThumb2BCond):
-   ArmLIR *targetLIR = (<span style="font-weight: bold; text-decoration: underline;">ArmLIR</span> *) lir-&gt;generic.target;
-   <span style="font-weight: bold; text-decoration: underline;">intptr_t</span> <span style="font-weight: bold; font-style: italic;">pc</span> = lir-&gt;generic.offset + 4;
-   <span style="font-weight: bold; text-decoration: underline;">intptr_t</span> <span style="font-weight: bold; font-style: italic;">target</span> = targetLIR-&gt;generic.offset;
-   <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">delta</span> = target - pc;
+<pre class="src src-c"><span style="color: #ff79c6; font-weight: bold;">if</span> (lir-&gt;opcode == kThumb2BCond):
+   ArmLIR *targetLIR = (<span style="color: #f8f8f2;">ArmLIR</span> *) lir-&gt;generic.target;
+   <span style="color: #f8f8f2;">intptr_t</span> <span style="color: #f8f8f2;">pc</span> = lir-&gt;generic.offset + 4;
+   <span style="color: #f8f8f2;">intptr_t</span> <span style="color: #f8f8f2;">target</span> = targetLIR-&gt;generic.offset;
+   <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">delta</span> = target - pc;
    lir-&gt;operands[0] = delta &gt;&gt; 1;
 </pre>
 </div>
@@ -647,14 +726,14 @@ bits |= value;
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">ENCODING_MAP(kThumb2BCond,        0xf0008000,</span>
-<span style="font-weight: bold; font-style: italic;">//       </span><span style="font-weight: bold; font-style: italic;">kFmtBrOffset, -1, -1, kFmtBitBlt, 25, 22, kFmtUnused, -1, -1,</span>
-<span style="font-weight: bold; font-style: italic;">//       </span><span style="font-weight: bold; font-style: italic;">kFmtUnused, -1, -1,</span>
-<span style="font-weight: bold; font-style: italic;">//       </span><span style="font-weight: bold; font-style: italic;">IS_BINARY_OP | IS_BRANCH | USES_CCODES,</span>
-<span style="font-weight: bold; font-style: italic;">//       </span><span style="font-weight: bold; font-style: italic;">"b!1c", "!0t", 2),</span>
+<pre class="src src-c"><span style="color: #6272a4;">// </span><span style="color: #6272a4;">ENCODING_MAP(kThumb2BCond,        0xf0008000,</span>
+<span style="color: #6272a4;">//       </span><span style="color: #6272a4;">kFmtBrOffset, -1, -1, kFmtBitBlt, 25, 22, kFmtUnused, -1, -1,</span>
+<span style="color: #6272a4;">//       </span><span style="color: #6272a4;">kFmtUnused, -1, -1,</span>
+<span style="color: #6272a4;">//       </span><span style="color: #6272a4;">IS_BINARY_OP | IS_BRANCH | USES_CCODES,</span>
+<span style="color: #6272a4;">//       </span><span style="color: #6272a4;">"b!1c", "!0t", 2),</span>
 
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#20010; encoder &#34920;&#31034; operand[1] &#20013;&#20445;&#23384;&#30528; condCode, operand[0] &#20445;&#23384;&#30528; branching target</span>
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#26368;&#32456;&#29983;&#25104;&#30340;&#26426;&#22120;&#30721;&#20026; "bge xxx"</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36825;&#20010; encoder &#34920;&#31034; operand[1] &#20013;&#20445;&#23384;&#30528; condCode, operand[0] &#20445;&#23384;&#30528; branching target</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#26368;&#32456;&#29983;&#25104;&#30340;&#26426;&#22120;&#30721;&#20026; "bge xxx"</span>
 </pre>
 </div>
 </li>
@@ -699,7 +778,7 @@ chaining cell 对应的 LIR 的翻译, 因为 `if-ge` 需要使用 chaining cell
 <pre class="src src-c">ENCODING_MAP(kThumbLdrRRI5,      0x6800,
   kFmtBitBlt, 2, 0, kFmtBitBlt, 5, 3, kFmtBitBlt, 10, 6,
   kFmtUnused, -1, -1, IS_TERTIARY_OP | REG_DEF0_USE1 | IS_LOAD,
-  <span style="font-style: italic;">"ldr"</span>, <span style="font-style: italic;">"r!0d, [r!1d, #!2E]"</span>, 1),
+  <span style="color: #f1fa8c;">"ldr"</span>, <span style="color: #f1fa8c;">"r!0d, [r!1d, #!2E]"</span>, 1),
 </pre>
 </div>
 </li>
@@ -787,29 +866,29 @@ template 生成, 以 monitor-enter 指令为例:
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">genMonitorEnter</span>:
-  genNullCheck(cUnit, rlSrc.sRegLow, r1, mir-&gt;offset, <span style="font-weight: bold; text-decoration: underline;">NULL</span>);                     
+<pre class="src src-c"><span style="color: #bd93f9;">genMonitorEnter</span>:
+  genNullCheck(cUnit, rlSrc.sRegLow, r1, mir-&gt;offset, <span style="color: #bd93f9;">NULL</span>);                     
   newLIR3(cUnit, kThumb2Ldrex, r2, r1,
-          offsetof(Object, lock) &gt;&gt; 2); <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">Get object-&gt;lock</span>
-  opRegImm(cUnit, kOpLsl, r3, LW_LOCK_OWNER_SHIFT); <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">Align owner</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">Is lock unheld on lock or held by us (==threadId) on unlock?</span>
+          offsetof(Object, lock) &gt;&gt; 2); <span style="color: #6272a4;">// </span><span style="color: #6272a4;">Get object-&gt;lock</span>
+  opRegImm(cUnit, kOpLsl, r3, LW_LOCK_OWNER_SHIFT); <span style="color: #6272a4;">// </span><span style="color: #6272a4;">Align owner</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">Is lock unheld on lock or held by us (==threadId) on unlock?</span>
   newLIR4(cUnit, kThumb2Bfi, r3, r2, 0, LW_LOCK_OWNER_SHIFT - 1);
   newLIR3(cUnit, kThumb2Bfc, r2, LW_HASH_STATE_SHIFT,
           LW_LOCK_OWNER_SHIFT - 1);
-  hopBranch = newLIR2(cUnit, kThumb2Cbnz, r2, 0);                          ;; <span style="font-weight: bold; text-decoration: underline;">cbnz</span>    <span style="font-weight: bold; font-style: italic;">r2</span>,0xa7567038 (L0xb7c68198)
-  newLIR4(cUnit, kThumb2Strex, r2, r3, r1, offsetof(Object, lock) &gt;&gt; 2);   ;; <span style="font-weight: bold; text-decoration: underline;">strex</span>   <span style="font-weight: bold; font-style: italic;">r2</span>,<span style="font-weight: bold; font-style: italic;">r3</span>, [r1, #4]
+  hopBranch = newLIR2(cUnit, kThumb2Cbnz, r2, 0);                          ;; <span style="color: #f8f8f2;">cbnz</span>    <span style="color: #f8f8f2;">r2</span>,0xa7567038 (L0xb7c68198)
+  newLIR4(cUnit, kThumb2Strex, r2, r3, r1, offsetof(Object, lock) &gt;&gt; 2);   ;; <span style="color: #f8f8f2;">strex</span>   <span style="color: #f8f8f2;">r2</span>,<span style="color: #f8f8f2;">r3</span>, [r1, #4]
   dvmCompilerGenMemBarrier(cUnit, kSY);                                    ;; dmb     #sy
-  branch = newLIR2(cUnit, kThumb2Cbz, r2, 0);                              ;; <span style="font-weight: bold; text-decoration: underline;">cbz</span>     <span style="font-weight: bold; font-style: italic;">r2</span>,0xa756704a (L0xb7c683d8)
+  branch = newLIR2(cUnit, kThumb2Cbz, r2, 0);                              ;; <span style="color: #f8f8f2;">cbz</span>     <span style="color: #f8f8f2;">r2</span>,0xa756704a (L0xb7c683d8)
 
   hopTarget = newLIR0(cUnit, kArmPseudoTargetLabel);
   hopTarget-&gt;defMask = ENCODE_ALL;
-  hopBranch-&gt;generic.target = (<span style="font-weight: bold; text-decoration: underline;">LIR</span> *)hopTarget;
+  hopBranch-&gt;generic.target = (<span style="color: #f8f8f2;">LIR</span> *)hopTarget;
 
-  newLIR3(cUnit, kThumb2StrRRI8Predec, r3, r5FP,                           ;; <span style="font-weight: bold; text-decoration: underline;">ldr</span>     <span style="font-weight: bold; font-style: italic;">r3</span>, [r15pc, #196]
-          <span style="font-weight: bold;">sizeof</span>(StackSaveArea) -                                          ;; <span style="font-weight: bold; text-decoration: underline;">ldr</span>     <span style="font-weight: bold; font-style: italic;">r4</span>, [r15pc, #188] 
-          offsetof(StackSaveArea, xtra.currentPc));                        ;; <span style="font-weight: bold; text-decoration: underline;">str</span>     <span style="font-weight: bold; font-style: italic;">r3</span>, [r5, #-8]
-  <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Call template, and don't return </span><span style="font-weight: bold; font-style: italic;">*/</span>
-  genRegCopy(cUnit, r0, r6SELF);                                           ;; <span style="font-weight: bold; text-decoration: underline;">movs</span>    <span style="font-weight: bold; font-style: italic;">r0</span>, <span style="font-weight: bold;">r6</span>
+  newLIR3(cUnit, kThumb2StrRRI8Predec, r3, r5FP,                           ;; <span style="color: #f8f8f2;">ldr</span>     <span style="color: #f8f8f2;">r3</span>, [r15pc, #196]
+          <span style="color: #ff79c6; font-weight: bold;">sizeof</span>(StackSaveArea) -                                          ;; <span style="color: #f8f8f2;">ldr</span>     <span style="color: #f8f8f2;">r4</span>, [r15pc, #188] 
+          offsetof(StackSaveArea, xtra.currentPc));                        ;; <span style="color: #f8f8f2;">str</span>     <span style="color: #f8f8f2;">r3</span>, [r5, #-8]
+  <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">Call template, and don't return </span><span style="color: #6272a4;">*/</span>
+  genRegCopy(cUnit, r0, r6SELF);                                           ;; <span style="color: #f8f8f2;">movs</span>    <span style="color: #f8f8f2;">r0</span>, <span style="color: #50fa7b; font-weight: bold;">r6</span>
   genDispatchToHandler(cUnit, TEMPLATE_MONITOR_ENTER);                     ;; blx_1   0xa75664c0
 </pre>
 </div>
@@ -826,12 +905,12 @@ CompilerTemplateAsm-armv7-a-neon.S 中定义的对应各个 template 的代码�
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">dvmCompilerSetupCodeCache</span>:
-  <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Copy the template code into the beginning of the code cache </span><span style="font-weight: bold; font-style: italic;">*/</span>
-  <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">templateSize</span> = (<span style="font-weight: bold; text-decoration: underline;">intptr_t</span>) dvmCompilerTemplateEnd -
-      (<span style="font-weight: bold; text-decoration: underline;">intptr_t</span>) dvmCompilerTemplateStart;
-  memcpy((<span style="font-weight: bold; text-decoration: underline;">void</span> *) gDvmJit.codeCache,
-         (<span style="font-weight: bold; text-decoration: underline;">void</span> *) dvmCompilerTemplateStart,
+<pre class="src src-c"><span style="color: #bd93f9;">dvmCompilerSetupCodeCache</span>:
+  <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">Copy the template code into the beginning of the code cache </span><span style="color: #6272a4;">*/</span>
+  <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">templateSize</span> = (<span style="color: #f8f8f2;">intptr_t</span>) dvmCompilerTemplateEnd -
+      (<span style="color: #f8f8f2;">intptr_t</span>) dvmCompilerTemplateStart;
+  memcpy((<span style="color: #f8f8f2;">void</span> *) gDvmJit.codeCache,
+         (<span style="color: #f8f8f2;">void</span> *) dvmCompilerTemplateStart,
          templateSize);
 </pre>
 </div>
@@ -933,59 +1012,59 @@ method-based-JIT (虽然 dalvik jit 是 trace-based JIT, 但这里是个例外)
 <div class="org-src-container">
 
 <pre class="src src-c">dvmCompilerInlineMIR
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">Analyze the basic block containing an invoke to see if it can be inlined</span>
-  <span style="font-weight: bold;">while</span> (<span style="font-weight: bold; text-decoration: underline;">true</span>):
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25195;&#25551;&#27599;&#19968;&#20010; BasicBlock</span>
-    BasicBlock *bb = (<span style="font-weight: bold; text-decoration: underline;">BasicBlock</span> *) dvmGrowableListIteratorNext(&amp;iterator);
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">bb-&gt;lastMIRInsn &#26159; BB &#20013;&#26368;&#21518;&#19968;&#20010; MIR, &#36825;&#37324;&#21482;&#38656;&#35201;&#26816;&#26597;&#26368;&#21518;&#19968;&#20010; MIR &#26159;&#19981;&#26159; invoke</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21363;&#21487;, &#22240;&#20026;&#22312; dvmCheckJit &#26102;, invoke &#20250;&#23548;&#33268; trace &#32467;&#26463;, &#25152;&#20197;&#22914;&#26524;&#19968;&#20010; BB &#21253;&#25324;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">invoke &#25351;&#20196;, &#21017;&#35813;&#25351;&#20196;&#19968;&#23450;&#26159; lastMIRInsn</span>
-    <span style="font-weight: bold; text-decoration: underline;">MIR</span> *<span style="font-weight: bold; font-style: italic;">lastMIRInsn</span> = bb-&gt;lastMIRInsn;
-    <span style="font-weight: bold; text-decoration: underline;">Opcode</span> <span style="font-weight: bold; font-style: italic;">opcode</span> = lastMIRInsn-&gt;dalvikInsn.opcode;
-    <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">flags</span> = (<span style="font-weight: bold; text-decoration: underline;">int</span>)dexGetFlagsFromOpcode(opcode);
-    <span style="font-weight: bold;">if</span> ((flags &amp; kInstrInvoke) == 0):
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509;&#26368;&#21518;&#19968;&#26465;&#25351;&#20196;&#19981;&#26159; invoke, &#21017;&#25195;&#25551;&#19979;&#19968;&#20010; BB</span>
-      <span style="font-weight: bold;">continue</span>;
-    <span style="font-weight: bold;">if</span> (<span style="font-weight: bold; text-decoration: underline;">opcode</span> <span style="font-weight: bold; font-style: italic;">is</span> <span style="font-style: italic;">"invoke-direct/invoke-static/invoke-super"</span>):
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">lastMIRInsn-&gt;meta.callsiteInfo-&gt;method &#26159;&#20309;&#26102;&#35760;&#24405;&#30340;?</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#22312; dvmCheckJit &#26102;, &#33509;&#24403;&#21069;&#25351;&#20196;&#20026; invoke, &#21017;&#32456;&#27490; trace, &#20294;&#22312;&#32467;&#26463;&#21069;&#20250;</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36890;&#36807; insertClassMethodInfo &#25226; invoke &#25351;&#20196;&#23545;&#24212;&#30340; callee &#20449;&#24687;&#20445;&#23384;&#36215;&#26469;</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#37324; lastMIRInsn &#20013;&#30340;&#20449;&#24687;&#23454;&#38469;&#19978;&#23601;&#26469;&#28304;&#20110; dvmCheckJit &#30340;&#36825;&#20010;&#21160;&#20316;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">Analyze the basic block containing an invoke to see if it can be inlined</span>
+  <span style="color: #ff79c6; font-weight: bold;">while</span> (<span style="color: #bd93f9;">true</span>):
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#25195;&#25551;&#27599;&#19968;&#20010; BasicBlock</span>
+    BasicBlock *bb = (<span style="color: #f8f8f2;">BasicBlock</span> *) dvmGrowableListIteratorNext(&amp;iterator);
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">bb-&gt;lastMIRInsn &#26159; BB &#20013;&#26368;&#21518;&#19968;&#20010; MIR, &#36825;&#37324;&#21482;&#38656;&#35201;&#26816;&#26597;&#26368;&#21518;&#19968;&#20010; MIR &#26159;&#19981;&#26159; invoke</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21363;&#21487;, &#22240;&#20026;&#22312; dvmCheckJit &#26102;, invoke &#20250;&#23548;&#33268; trace &#32467;&#26463;, &#25152;&#20197;&#22914;&#26524;&#19968;&#20010; BB &#21253;&#25324;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">invoke &#25351;&#20196;, &#21017;&#35813;&#25351;&#20196;&#19968;&#23450;&#26159; lastMIRInsn</span>
+    <span style="color: #f8f8f2;">MIR</span> *<span style="color: #f8f8f2;">lastMIRInsn</span> = bb-&gt;lastMIRInsn;
+    <span style="color: #f8f8f2;">Opcode</span> <span style="color: #f8f8f2;">opcode</span> = lastMIRInsn-&gt;dalvikInsn.opcode;
+    <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">flags</span> = (<span style="color: #f8f8f2;">int</span>)dexGetFlagsFromOpcode(opcode);
+    <span style="color: #ff79c6; font-weight: bold;">if</span> ((flags &amp; kInstrInvoke) == 0):
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509;&#26368;&#21518;&#19968;&#26465;&#25351;&#20196;&#19981;&#26159; invoke, &#21017;&#25195;&#25551;&#19979;&#19968;&#20010; BB</span>
+      <span style="color: #ff79c6; font-weight: bold;">continue</span>;
+    <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #f8f8f2;">opcode</span> <span style="color: #f8f8f2;">is</span> <span style="color: #f1fa8c;">"invoke-direct/invoke-static/invoke-super"</span>):
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">lastMIRInsn-&gt;meta.callsiteInfo-&gt;method &#26159;&#20309;&#26102;&#35760;&#24405;&#30340;?</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#22312; dvmCheckJit &#26102;, &#33509;&#24403;&#21069;&#25351;&#20196;&#20026; invoke, &#21017;&#32456;&#27490; trace, &#20294;&#22312;&#32467;&#26463;&#21069;&#20250;</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36890;&#36807; insertClassMethodInfo &#25226; invoke &#25351;&#20196;&#23545;&#24212;&#30340; callee &#20449;&#24687;&#20445;&#23384;&#36215;&#26469;</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36825;&#37324; lastMIRInsn &#20013;&#30340;&#20449;&#24687;&#23454;&#38469;&#19978;&#23601;&#26469;&#28304;&#20110; dvmCheckJit &#30340;&#36825;&#20010;&#21160;&#20316;</span>
       calleeMethod = lastMIRInsn-&gt;meta.callsiteInfo-&gt;method;
       tryInlineSingletonCallsite(cUnit, calleeMethod, lastMIRInsn, bb);
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">jni &#20989;&#25968;&#26080;&#27861;&#34987; inline </span>
-        <span style="font-weight: bold;">if</span> (dvmIsNativeMethod(calleeMethod)) <span style="font-weight: bold;">return</span> <span style="font-weight: bold; text-decoration: underline;">false</span>;
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">dvmCompilerAnalyzeMethodBody &#30340;&#20027;&#35201;&#24037;&#20316;&#26159;&#20998;&#26512; method &#26159;&#21542;&#26159;&#20197;&#19979;&#30340;&#24773;&#24418;:</span>
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">1. &#31354;&#26041;&#27861;</span>
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">2. getter/setter</span>
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">3. leaf</span>
-        <span style="font-weight: bold; text-decoration: underline;">CompilerMethodStats</span> *<span style="font-weight: bold; font-style: italic;">methodStats</span> = dvmCompilerAnalyzeMethodBody(calleeMethod, <span style="font-weight: bold; text-decoration: underline;">true</span>);
-        <span style="font-weight: bold;">if</span> (methodStats-&gt;attributes &amp; METHOD_IS_EMPTY):
-          <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">The original invoke instruction is effectively turned into NOP </span><span style="font-weight: bold; font-style: italic;">*/</span>
-          <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509; MIR &#30340; OptimizationFlags &#21253;&#25324; MIR_INLINED, &#21017;&#22312; MIR2LIR &#38454;&#27573;, &#36825;&#20010; MIR &#20250;&#34987;&#32763;&#35793;&#20026; NOP</span>
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">jni &#20989;&#25968;&#26080;&#27861;&#34987; inline </span>
+        <span style="color: #ff79c6; font-weight: bold;">if</span> (dvmIsNativeMethod(calleeMethod)) <span style="color: #ff79c6; font-weight: bold;">return</span> <span style="color: #bd93f9;">false</span>;
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">dvmCompilerAnalyzeMethodBody &#30340;&#20027;&#35201;&#24037;&#20316;&#26159;&#20998;&#26512; method &#26159;&#21542;&#26159;&#20197;&#19979;&#30340;&#24773;&#24418;:</span>
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">1. &#31354;&#26041;&#27861;</span>
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">2. getter/setter</span>
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">3. leaf</span>
+        <span style="color: #f8f8f2;">CompilerMethodStats</span> *<span style="color: #f8f8f2;">methodStats</span> = dvmCompilerAnalyzeMethodBody(calleeMethod, <span style="color: #bd93f9;">true</span>);
+        <span style="color: #ff79c6; font-weight: bold;">if</span> (methodStats-&gt;attributes &amp; METHOD_IS_EMPTY):
+          <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">The original invoke instruction is effectively turned into NOP </span><span style="color: #6272a4;">*/</span>
+          <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509; MIR &#30340; OptimizationFlags &#21253;&#25324; MIR_INLINED, &#21017;&#22312; MIR2LIR &#38454;&#27573;, &#36825;&#20010; MIR &#20250;&#34987;&#32763;&#35793;&#20026; NOP</span>
           invokeMIR-&gt;OptimizationFlags |= MIR_INLINED;
-        <span style="font-weight: bold;">if</span> (methodStats-&gt;attributes &amp; METHOD_IS_GETTER):
-          <span style="font-weight: bold;">return</span> inlineGetter(cUnit, calleeMethod, invokeMIR, invokeBB, <span style="font-weight: bold; text-decoration: underline;">false</span>,isRange);
-        <span style="font-weight: bold;">else</span> <span style="font-weight: bold;">if</span> (methodStats-&gt;attributes &amp; METHOD_IS_SETTER):
-          <span style="font-weight: bold;">return</span> inlineSetter(cUnit, calleeMethod, invokeMIR, invokeBB, <span style="font-weight: bold; text-decoration: underline;">false</span>,isRange);
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">end of tryInlineSingletonCallsite</span>
-      <span style="font-weight: bold;">if</span> (!inlined &amp;&amp;
-            !(gDvmJit.disableOpt &amp; (1 &lt;&lt; kMethodJit)) &amp;&amp;
-            !dvmIsNativeMethod(calleeMethod)):
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509;&#19978;&#19968;&#27493; tryInlineSingletonCallsite &#19981;&#25104;&#21151;, &#24182;&#19988; method-based-JIT &#21551;&#29992;, &#24182;&#19988;&#19981;&#26159; jni &#26041;&#27861;, &#21017;</span>
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23581;&#35797;&#20351;&#29992; method-based-JIT &#26469;&#32534;&#35793;&#25972;&#20010; method. &#20294;&#20005;&#26684;&#19978;&#35828;, &#36825;&#20010;&#21160;&#20316;&#24182;&#19981;&#26159; inline, &#23427;&#21482;&#26159;&#20351;&#24403;&#21069;</span>
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#30340; BB &#21487;&#20197;&#36890;&#36807;&#19968;&#20010; bl &#25351;&#20196;&#30452;&#25509;&#36339;&#36716;&#21040; method &#23545;&#24212;&#30340; jit code, &#32780;&#19981;&#38656;&#35201;&#36890;&#36807; dvmJitToInterpXXX &#20808;&#36716;&#21040;</span>
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">chaining cell (&#36825;&#26679;&#21363;&#20351; chaining &#36215;&#20316;&#29992;&#20063;&#36215;&#30721;&#20250;&#22810;&#19968;&#27425;&#36339;&#36716;).</span>
-        <span style="font-weight: bold;">if</span> (dvmJitGetMethodAddr(calleeMethod-&gt;insns)):
-          <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#37324;&#30340; MIR_INVOKE_METHOD_JIT &#22312; MIR2LIR &#26102;&#20250;&#29305;&#27530;&#22788;&#29702; </span>
+        <span style="color: #ff79c6; font-weight: bold;">if</span> (methodStats-&gt;attributes &amp; METHOD_IS_GETTER):
+          <span style="color: #ff79c6; font-weight: bold;">return</span> inlineGetter(cUnit, calleeMethod, invokeMIR, invokeBB, <span style="color: #bd93f9;">false</span>,isRange);
+        <span style="color: #ff79c6; font-weight: bold;">else</span> <span style="color: #ff79c6; font-weight: bold;">if</span> (methodStats-&gt;attributes &amp; METHOD_IS_SETTER):
+          <span style="color: #ff79c6; font-weight: bold;">return</span> inlineSetter(cUnit, calleeMethod, invokeMIR, invokeBB, <span style="color: #bd93f9;">false</span>,isRange);
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">end of tryInlineSingletonCallsite</span>
+      <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>inlined &amp;&amp;
+            <span style="color: #bd93f9;">!</span>(gDvmJit.disableOpt &amp; (1 &lt;&lt; kMethodJit)) &amp;&amp;
+            <span style="color: #bd93f9;">!</span>dvmIsNativeMethod(calleeMethod)):
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509;&#19978;&#19968;&#27493; tryInlineSingletonCallsite &#19981;&#25104;&#21151;, &#24182;&#19988; method-based-JIT &#21551;&#29992;, &#24182;&#19988;&#19981;&#26159; jni &#26041;&#27861;, &#21017;</span>
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23581;&#35797;&#20351;&#29992; method-based-JIT &#26469;&#32534;&#35793;&#25972;&#20010; method. &#20294;&#20005;&#26684;&#19978;&#35828;, &#36825;&#20010;&#21160;&#20316;&#24182;&#19981;&#26159; inline, &#23427;&#21482;&#26159;&#20351;&#24403;&#21069;</span>
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#30340; BB &#21487;&#20197;&#36890;&#36807;&#19968;&#20010; bl &#25351;&#20196;&#30452;&#25509;&#36339;&#36716;&#21040; method &#23545;&#24212;&#30340; jit code, &#32780;&#19981;&#38656;&#35201;&#36890;&#36807; dvmJitToInterpXXX &#20808;&#36716;&#21040;</span>
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">chaining cell (&#36825;&#26679;&#21363;&#20351; chaining &#36215;&#20316;&#29992;&#20063;&#36215;&#30721;&#20250;&#22810;&#19968;&#27425;&#36339;&#36716;).</span>
+        <span style="color: #ff79c6; font-weight: bold;">if</span> (dvmJitGetMethodAddr(calleeMethod-&gt;insns)):
+          <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36825;&#37324;&#30340; MIR_INVOKE_METHOD_JIT &#22312; MIR2LIR &#26102;&#20250;&#29305;&#27530;&#22788;&#29702; </span>
           lastMIRInsn-&gt;OptimizationFlags |= MIR_INVOKE_METHOD_JIT;
-        <span style="font-weight: bold;">else</span>:
-          <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">Compile the callee first </span><span style="font-weight: bold; font-style: italic;">*/</span>
+        <span style="color: #ff79c6; font-weight: bold;">else</span>:
+          <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">Compile the callee first </span><span style="color: #6272a4;">*/</span>
           dvmCompileMethod(calleeMethod, info);
           lastMIRInsn-&gt;OptimizationFlags |= MIR_INVOKE_METHOD_JIT;
-    <span style="font-weight: bold; font-style: italic;">//     </span><span style="font-weight: bold; font-style: italic;">if (opcode is "invoke-direct/invoke-static/invoke-super") ENDS HERE</span>
-    <span style="font-weight: bold;">if</span> (<span style="font-weight: bold; text-decoration: underline;">opcode</span> <span style="font-weight: bold; font-style: italic;">is</span> <span style="font-style: italic;">"invoke-virtual/invoke-interface"</span>):
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#19982; invoke-direct/invoke-static/invoke-super &#31867;&#20284;&#30340;&#22788;&#29702;</span>
+    <span style="color: #6272a4;">//     </span><span style="color: #6272a4;">if (opcode is "invoke-direct/invoke-static/invoke-super") ENDS HERE</span>
+    <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #f8f8f2;">opcode</span> <span style="color: #f8f8f2;">is</span> <span style="color: #f1fa8c;">"invoke-virtual/invoke-interface"</span>):
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#19982; invoke-direct/invoke-static/invoke-super &#31867;&#20284;&#30340;&#22788;&#29702;</span>
 </pre>
 </div>
 </div>
@@ -995,38 +1074,38 @@ method-based-JIT (虽然 dalvik jit 是 trace-based JIT, 但这里是个例外)
 <div class="outline-text-5" id="text-1-5-1-1">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; text-decoration: underline;">dvmCompilerAnalyzeMethodBody</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#25152;&#26377;&#23646;&#24615;&#34987;&#20808;&#32622;&#20301;, &#21518;&#38754;&#20250;&#36880;&#39033;&#26816;&#26597;&#26159;&#21542;&#27491;&#30830;</span>
-  <span style="font-weight: bold; font-style: italic;">attributes</span> = METHOD_IS_LEAF | METHOD_IS_THROW_FREE
+<pre class="src src-c"><span style="color: #f8f8f2;">dvmCompilerAnalyzeMethodBody</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#25152;&#26377;&#23646;&#24615;&#34987;&#20808;&#32622;&#20301;, &#21518;&#38754;&#20250;&#36880;&#39033;&#26816;&#26597;&#26159;&#21542;&#27491;&#30830;</span>
+  <span style="color: #f8f8f2;">attributes</span> = METHOD_IS_LEAF | METHOD_IS_THROW_FREE
              | METHOD_IS_CALLEE | METHOD_IS_GETTER | METHOD_IS_SETTER;
-  <span style="font-weight: bold;">while</span> (codePtr &lt; codeEnd):
-    <span style="font-weight: bold; text-decoration: underline;">int</span> width = parseInsn(codePtr, &amp;dalvikInsn, <span style="font-weight: bold; text-decoration: underline;">false</span>);
+  <span style="color: #ff79c6; font-weight: bold;">while</span> (codePtr &lt; codeEnd):
+    <span style="color: #f8f8f2;">int</span> width = parseInsn(codePtr, &amp;dalvikInsn, <span style="color: #bd93f9;">false</span>);
     analyzeInlineTarget
-      <span style="font-weight: bold;">if</span> (flags &amp; kInstrInvoke):
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#33509;&#21253;&#21547; invoke &#31867;&#25351;&#20196;, &#21017;&#19981;&#21487;&#33021;&#20026; LEAF</span>
+      <span style="color: #ff79c6; font-weight: bold;">if</span> (flags &amp; kInstrInvoke):
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#33509;&#21253;&#21547; invoke &#31867;&#25351;&#20196;, &#21017;&#19981;&#21487;&#33021;&#20026; LEAF</span>
         attributes &amp;= ~METHOD_IS_LEAF;
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">dvmCompilerDataFlowAttributes &#20013;&#23450;&#20041;&#20102;&#21508;&#20010; opcode &#30340;&#23646;&#24615;,</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20363;&#22914;: &#21482;&#26377; APUT,IPUT,SPUT &#31867;&#25351;&#20196;&#25165;&#21487;&#33021;&#26159; setter</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#21482;&#26377; AGET,IGET,SGET &#31867;&#25351;&#20196;&#25165;&#21487;&#33021;&#26159; getter</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">getter &#20989;&#25968;&#20013;&#21482;&#33021;&#21253;&#21547;&#19968;&#20010; AGET/IGET/SGET &#21152;&#19968;&#20010; return</span>
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">setter &#20989;&#25968;&#21482;&#33021;&#21253;&#21547;&#19968;&#20010; APUT/IPUT/SPUT &#25351;&#20196;</span>
-      <span style="font-weight: bold;">if</span> (!(flags &amp; kInstrCanReturn)):
-        <span style="font-weight: bold;">if</span> (!(dvmCompilerDataFlowAttributes[dalvikOpcode] &amp; DF_IS_GETTER)):
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">dvmCompilerDataFlowAttributes &#20013;&#23450;&#20041;&#20102;&#21508;&#20010; opcode &#30340;&#23646;&#24615;,</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20363;&#22914;: &#21482;&#26377; APUT,IPUT,SPUT &#31867;&#25351;&#20196;&#25165;&#21487;&#33021;&#26159; setter</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#21482;&#26377; AGET,IGET,SGET &#31867;&#25351;&#20196;&#25165;&#21487;&#33021;&#26159; getter</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">getter &#20989;&#25968;&#20013;&#21482;&#33021;&#21253;&#21547;&#19968;&#20010; AGET/IGET/SGET &#21152;&#19968;&#20010; return</span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">setter &#20989;&#25968;&#21482;&#33021;&#21253;&#21547;&#19968;&#20010; APUT/IPUT/SPUT &#25351;&#20196;</span>
+      <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>(flags &amp; kInstrCanReturn)):
+        <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>(dvmCompilerDataFlowAttributes[dalvikOpcode] &amp; DF_IS_GETTER)):
           attributes &amp;= ~METHOD_IS_GETTER;
-        <span style="font-weight: bold;">if</span> (!(dvmCompilerDataFlowAttributes[dalvikOpcode] &amp; DF_IS_SETTER)):
+        <span style="color: #ff79c6; font-weight: bold;">if</span> (<span style="color: #bd93f9;">!</span>(dvmCompilerDataFlowAttributes[dalvikOpcode] &amp; DF_IS_SETTER)):
           attributes &amp;= ~METHOD_IS_SETTER;
-      <span style="font-weight: bold;">if</span> (flags &amp; kInstrCanReturn):
-        <span style="font-weight: bold;">if</span> (dalvikOpcode == OP_RETURN_VOID):
-          <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#20110; getter &#20989;&#25968;, &#19981;&#21487;&#33021;&#36820;&#22238; void</span>
+      <span style="color: #ff79c6; font-weight: bold;">if</span> (flags &amp; kInstrCanReturn):
+        <span style="color: #ff79c6; font-weight: bold;">if</span> (dalvikOpcode == OP_RETURN_VOID):
+          <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23545;&#20110; getter &#20989;&#25968;, &#19981;&#21487;&#33021;&#36820;&#22238; void</span>
           attributes &amp;= ~METHOD_IS_GETTER;
-        <span style="font-weight: bold;">else</span>:
-          <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#20110; setter &#20989;&#25968;, &#24517;&#39035;&#36820;&#22238; void</span>
+        <span style="color: #ff79c6; font-weight: bold;">else</span>:
+          <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23545;&#20110; setter &#20989;&#25968;, &#24517;&#39035;&#36820;&#22238; void</span>
           attributes &amp;= ~METHOD_IS_SETTER;
-      <span style="font-weight: bold;">if</span> (offset == 0 &amp;&amp; dalvikOpcode == OP_RETURN_VOID):
+      <span style="color: #ff79c6; font-weight: bold;">if</span> (offset == 0 &amp;&amp; dalvikOpcode == OP_RETURN_VOID):
           attributes |= METHOD_IS_EMPTY;
-    <span style="font-weight: bold;">if</span> ((attributes &amp; (METHOD_IS_GETTER | METHOD_IS_SETTER)) &amp;&amp;
+    <span style="color: #ff79c6; font-weight: bold;">if</span> ((attributes &amp; (METHOD_IS_GETTER | METHOD_IS_SETTER)) &amp;&amp;
           (insnSize != 3)):
-      <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">getter/setter &#30340;&#22823;&#23567;&#24517;&#39035;&#20026; 3 (setter/getter+return)      </span>
+      <span style="color: #6272a4;">// </span><span style="color: #6272a4;">getter/setter &#30340;&#22823;&#23567;&#24517;&#39035;&#20026; 3 (setter/getter+return)      </span>
       attributes &amp;= ~(METHOD_IS_GETTER | METHOD_IS_SETTER);
 </pre>
 </div>
@@ -1038,14 +1117,14 @@ method-based-JIT (虽然 dalvik jit 是 trace-based JIT, 但这里是个例外)
 <div class="outline-text-5" id="text-1-5-1-2">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#29983;&#25104;&#19968;&#20010;&#26032;&#30340; MIR &#20195;&#34920;&#35201; inline &#36827;&#26469;&#30340;&#23545;&#24212;&#20110; setter &#20195;&#30721;&#30340;&#25351;&#20196;</span>
-<span style="font-weight: bold; text-decoration: underline;">MIR</span> *<span style="font-weight: bold; font-style: italic;">newSetterMIR</span> = (<span style="font-weight: bold; text-decoration: underline;">MIR</span> *)dvmCompilerNew(<span style="font-weight: bold;">sizeof</span>(MIR), <span style="font-weight: bold; text-decoration: underline;">true</span>);
-<span style="font-weight: bold; text-decoration: underline;">DecodedInstruction</span> <span style="font-weight: bold; font-style: italic;">setterInsn</span>;
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#20351;&#29992; calleeMethod-&gt;insns &#26469;&#21021;&#22987;&#21270; setterInsn</span>
+<pre class="src src-c"><span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#29983;&#25104;&#19968;&#20010;&#26032;&#30340; MIR &#20195;&#34920;&#35201; inline &#36827;&#26469;&#30340;&#23545;&#24212;&#20110; setter &#20195;&#30721;&#30340;&#25351;&#20196;</span>
+<span style="color: #f8f8f2;">MIR</span> *<span style="color: #f8f8f2;">newSetterMIR</span> = (<span style="color: #f8f8f2;">MIR</span> *)dvmCompilerNew(<span style="color: #ff79c6; font-weight: bold;">sizeof</span>(MIR), <span style="color: #bd93f9;">true</span>);
+<span style="color: #f8f8f2;">DecodedInstruction</span> <span style="color: #f8f8f2;">setterInsn</span>;
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#20351;&#29992; calleeMethod-&gt;insns &#26469;&#21021;&#22987;&#21270; setterInsn</span>
 dexDecodeInstruction(calleeMethod-&gt;insns, &amp;setterInsn);
 newSetterMIR-&gt;dalvikInsn = setterInsn;
 dvmCompilerInsertMIRAfter(invokeBB, invokeMIR, newSetterMIR);
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">invokeMIR &#26412;&#36523;&#21464;&#25104;&#19968;&#20010; NOP</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">invokeMIR &#26412;&#36523;&#21464;&#25104;&#19968;&#20010; NOP</span>
 invokeMIR-&gt;OptimizationFlags |= MIR_INLINED;
 </pre>
 </div>
@@ -1057,18 +1136,18 @@ invokeMIR-&gt;OptimizationFlags |= MIR_INLINED;
 <div class="outline-text-5" id="text-1-5-1-3">
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">invoke &#25351;&#20196;&#21518;&#38754;&#24517;&#28982;&#26159;&#19968;&#20010; move-result &#25351;&#20196;</span>
-<span style="font-weight: bold; text-decoration: underline;">BasicBlock</span> *<span style="font-weight: bold; font-style: italic;">moveResultBB</span> = invokeBB-&gt;fallThrough;
-<span style="font-weight: bold; text-decoration: underline;">MIR</span> *<span style="font-weight: bold; font-style: italic;">moveResultMIR</span> = moveResultBB-&gt;firstMIRInsn;
-<span style="font-weight: bold; text-decoration: underline;">MIR</span> *<span style="font-weight: bold; font-style: italic;">newGetterMIR</span> = (<span style="font-weight: bold; text-decoration: underline;">MIR</span> *)dvmCompilerNew(<span style="font-weight: bold;">sizeof</span>(MIR), <span style="font-weight: bold; text-decoration: underline;">true</span>);
-<span style="font-weight: bold; text-decoration: underline;">DecodedInstruction</span> <span style="font-weight: bold; font-style: italic;">getterInsn</span>;
+<pre class="src src-c"><span style="color: #6272a4;">// </span><span style="color: #6272a4;">invoke &#25351;&#20196;&#21518;&#38754;&#24517;&#28982;&#26159;&#19968;&#20010; move-result &#25351;&#20196;</span>
+<span style="color: #f8f8f2;">BasicBlock</span> *<span style="color: #f8f8f2;">moveResultBB</span> = invokeBB-&gt;fallThrough;
+<span style="color: #f8f8f2;">MIR</span> *<span style="color: #f8f8f2;">moveResultMIR</span> = moveResultBB-&gt;firstMIRInsn;
+<span style="color: #f8f8f2;">MIR</span> *<span style="color: #f8f8f2;">newGetterMIR</span> = (<span style="color: #f8f8f2;">MIR</span> *)dvmCompilerNew(<span style="color: #ff79c6; font-weight: bold;">sizeof</span>(MIR), <span style="color: #bd93f9;">true</span>);
+<span style="color: #f8f8f2;">DecodedInstruction</span> <span style="color: #f8f8f2;">getterInsn</span>;
 dexDecodeInstruction(calleeMethod-&gt;insns, &amp;getterInsn);
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">MIR &#30340; vA &#34920;&#31034;&#30446;&#30340;&#23492;&#23384;&#22120;, &#21363; a=getter() &#20013;&#30340; a</span>
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#20010;&#36171;&#20540;&#20351;&#24471; newGetterMIR &#25191;&#34892;&#32467;&#26524;&#30452;&#25509;&#34987;&#20889;&#21040; move-result &#25351;&#20196;</span>
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#30340;&#30446;&#30340;&#23492;&#23384;&#22120;</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">MIR &#30340; vA &#34920;&#31034;&#30446;&#30340;&#23492;&#23384;&#22120;, &#21363; a=getter() &#20013;&#30340; a</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36825;&#20010;&#36171;&#20540;&#20351;&#24471; newGetterMIR &#25191;&#34892;&#32467;&#26524;&#30452;&#25509;&#34987;&#20889;&#21040; move-result &#25351;&#20196;</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#30340;&#30446;&#30340;&#23492;&#23384;&#22120;</span>
 getterInsn.vA = moveResultMIR-&gt;dalvikInsn.vA;
 dvmCompilerInsertMIRAfter(invokeBB, invokeMIR, newGetterMIR);
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">invokeMIR &#19982; moveResultMIR &#37117;&#25104;&#20026; NOP</span>
+<span style="color: #6272a4;">// </span><span style="color: #6272a4;">invokeMIR &#19982; moveResultMIR &#37117;&#25104;&#20026; NOP</span>
 invokeMIR-&gt;OptimizationFlags |= MIR_INLINED;
 moveResultMIR-&gt;OptimizationFlags |= MIR_INLINED;
 </pre>
@@ -1086,9 +1165,9 @@ moveResultMIR-&gt;OptimizationFlags |= MIR_INLINED;
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#23545;&#20110; MIR_INLINED &#31867;&#22411;&#30340; invoke, MIR2LIR &#26102;&#30452;&#25509;&#36820;&#22238;, &#19981;&#29983;&#25104;&#20219;&#20309; LIR</span>
-<span style="font-weight: bold;">if</span> (mir-&gt;OptimizationFlags &amp; MIR_INLINED)
-  <span style="font-weight: bold;">return</span> <span style="font-weight: bold; text-decoration: underline;">false</span>;
+<pre class="src src-c"><span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#23545;&#20110; MIR_INLINED &#31867;&#22411;&#30340; invoke, MIR2LIR &#26102;&#30452;&#25509;&#36820;&#22238;, &#19981;&#29983;&#25104;&#20219;&#20309; LIR</span>
+<span style="color: #ff79c6; font-weight: bold;">if</span> (mir-&gt;OptimizationFlags &amp; MIR_INLINED)
+  <span style="color: #ff79c6; font-weight: bold;">return</span> <span style="color: #bd93f9;">false</span>;
 </pre>
 </div>
 
@@ -1101,21 +1180,21 @@ moveResultMIR-&gt;OptimizationFlags |= MIR_INLINED;
 
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="font-weight: bold;">case</span> OP_INVOKE_STATIC: {
-  <span style="font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">Method</span> *<span style="font-weight: bold; font-style: italic;">calleeMethod</span> = mir-&gt;meta.callsiteInfo-&gt;method;
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">genProcessArgsNoRange &#36127;&#36131;&#29983;&#25104;&#20195;&#30721;, &#23558;&#20989;&#25968;&#38656;&#35201;&#30340;&#21442;&#25968; push &#21040; FP &#25351;&#23450;&#30340;&#21306;&#22495;</span>
-  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36825;&#20063;&#23601;&#26159;&#25105;&#35748;&#20026;&#36825;&#36825;&#23646;&#20110; inline &#30340;&#21407;&#22240;</span>
+<pre class="src src-c"><span style="color: #ff79c6; font-weight: bold;">case</span> OP_INVOKE_STATIC: {
+  <span style="color: #ff79c6; font-weight: bold;">const</span> <span style="color: #f8f8f2;">Method</span> *<span style="color: #f8f8f2;">calleeMethod</span> = mir-&gt;meta.callsiteInfo-&gt;method;
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">genProcessArgsNoRange &#36127;&#36131;&#29983;&#25104;&#20195;&#30721;, &#23558;&#20989;&#25968;&#38656;&#35201;&#30340;&#21442;&#25968; push &#21040; FP &#25351;&#23450;&#30340;&#21306;&#22495;</span>
+  <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36825;&#20063;&#23601;&#26159;&#25105;&#35748;&#20026;&#36825;&#36825;&#23646;&#20110; inline &#30340;&#21407;&#22240;</span>
   genProcessArgsNoRange(cUnit, mir, dInsn, ...)
-  <span style="font-weight: bold;">if</span> (mir-&gt;OptimizationFlags &amp; MIR_INVOKE_METHOD_JIT):
-    <span style="font-weight: bold;">const</span> Method *calleeMethod = mir-&gt;meta.callsiteInfo-&gt;method;
-    <span style="font-weight: bold; text-decoration: underline;">void</span> *<span style="font-weight: bold; font-style: italic;">calleeAddr</span> = dvmJitGetMethodAddr(calleeMethod-&gt;insns);
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">genInvokeSingletonWholeMethod &#36127;&#36131;&#29983;&#25104; bl &#25351;&#20196;, &#30452;&#25509;&#36339;&#36716;&#21040;&#23545;&#24212;&#30340; jit code</span>
+  <span style="color: #ff79c6; font-weight: bold;">if</span> (mir-&gt;OptimizationFlags &amp; MIR_INVOKE_METHOD_JIT):
+    <span style="color: #ff79c6; font-weight: bold;">const</span> Method *calleeMethod = mir-&gt;meta.callsiteInfo-&gt;method;
+    <span style="color: #f8f8f2;">void</span> *<span style="color: #f8f8f2;">calleeAddr</span> = dvmJitGetMethodAddr(calleeMethod-&gt;insns);
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">genInvokeSingletonWholeMethod &#36127;&#36131;&#29983;&#25104; bl &#25351;&#20196;, &#30452;&#25509;&#36339;&#36716;&#21040;&#23545;&#24212;&#30340; jit code</span>
     genInvokeSingletonWholeMethod(cUnit, mir, calleeAddr, retChainingCell);
-  <span style="font-weight: bold;">else</span>:
-    <span style="font-weight: bold; font-style: italic;">/* </span><span style="font-weight: bold; font-style: italic;">r0 = calleeMethod </span><span style="font-weight: bold; font-style: italic;">*/</span>
-    loadConstant(cUnit, r0, (<span style="font-weight: bold; text-decoration: underline;">int</span>) calleeMethod);
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">genInvokeSingletonCommon &#20250;&#25353;&#29031;&#26631;&#20934;&#30340; java &#35843;&#29992;&#30340;&#26041;&#27861;&#26469;&#26500;&#36896; stack, &#28982;&#21518;</span>
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36890;&#36807; chaining cell &#26469;&#35843;&#29992;.</span>
+  <span style="color: #ff79c6; font-weight: bold;">else</span>:
+    <span style="color: #6272a4;">/* </span><span style="color: #6272a4;">r0 = calleeMethod </span><span style="color: #6272a4;">*/</span>
+    loadConstant(cUnit, r0, (<span style="color: #f8f8f2;">int</span>) calleeMethod);
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">genInvokeSingletonCommon &#20250;&#25353;&#29031;&#26631;&#20934;&#30340; java &#35843;&#29992;&#30340;&#26041;&#27861;&#26469;&#26500;&#36896; stack, &#28982;&#21518;</span>
+    <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36890;&#36807; chaining cell &#26469;&#35843;&#29992;.</span>
     genInvokeSingletonCommon(cUnit, mir, bb, labelList, pcrLabel,calleeMethod);
 </pre>
 </div>
@@ -1177,15 +1256,15 @@ load-store elimination 是一项在 LIR 阶段实施的优化.
 <div class="outline-text-4" id="text-1-6-1">
 <div class="org-src-container">
 
-<pre class="src src-java"><span style="font-weight: bold;">public</span> <span style="font-weight: bold;">class</span> <span style="font-weight: bold; text-decoration: underline;">Test</span> {
-    <span style="font-weight: bold;">static</span> <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">a</span>;
-    <span style="font-weight: bold;">static</span> <span style="font-weight: bold; text-decoration: underline;">void</span> <span style="font-weight: bold;">foo</span>() {
-        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">&#36890;&#36807; a = 1 &#36825;&#26465;&#25351;&#20196;&#38450;&#27490;&#36825;&#20010; foo &#30340;&#35843;&#29992;&#34987;&#20248;&#21270;&#20026;&#31354; (dalvik JIT LIR &#38454;&#27573;&#26377;&#36825;&#20010;&#20248;&#21270;...)</span>
+<pre class="src src-java"><span style="color: #ff79c6; font-weight: bold;">public</span> <span style="color: #ff79c6; font-weight: bold;">class</span> <span style="color: #f8f8f2;">Test</span> {
+    <span style="color: #ff79c6; font-weight: bold;">static</span> <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">a</span>;
+    <span style="color: #ff79c6; font-weight: bold;">static</span> <span style="color: #f8f8f2;">void</span> <span style="color: #50fa7b; font-weight: bold;">foo</span>() {
+        <span style="color: #6272a4;">// </span><span style="color: #6272a4;">&#36890;&#36807; a = 1 &#36825;&#26465;&#25351;&#20196;&#38450;&#27490;&#36825;&#20010; foo &#30340;&#35843;&#29992;&#34987;&#20248;&#21270;&#20026;&#31354; (dalvik JIT LIR &#38454;&#27573;&#26377;&#36825;&#20010;&#20248;&#21270;...)</span>
         a = 1;
     }
-    <span style="font-weight: bold;">public</span> <span style="font-weight: bold;">static</span> <span style="font-weight: bold; text-decoration: underline;">void</span> <span style="font-weight: bold;">main</span>(<span style="font-weight: bold; text-decoration: underline;">String</span>[] <span style="font-weight: bold; font-style: italic;">args</span>) {
-        <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">sum</span> = 0;
-        <span style="font-weight: bold;">for</span> (<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">i</span> = 0; i &lt; 100000; i++) {
+    <span style="color: #ff79c6; font-weight: bold;">public</span> <span style="color: #ff79c6; font-weight: bold;">static</span> <span style="color: #f8f8f2;">void</span> <span style="color: #50fa7b; font-weight: bold;">main</span>(<span style="color: #f8f8f2;">String</span>[] <span style="color: #f8f8f2;">args</span>) {
+        <span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">sum</span> = 0;
+        <span style="color: #ff79c6; font-weight: bold;">for</span> (<span style="color: #f8f8f2;">int</span> <span style="color: #f8f8f2;">i</span> = 0; i &lt; 100000; i++) {
             sum += i;
             foo();
         }
