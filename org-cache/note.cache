@@ -60,4 +60,4 @@
 (puthash "X59f41b263e4b842848f0953b7a3c48b4869b0bbf" 1474362315 org-publish-cache)
 (puthash "X830cd6d93005b14c12704602a67ec66dc364e4f5" 1474360706 org-publish-cache)
 (puthash "/home/sunway/note/index.org" '(:numbering nil :index nil) org-publish-cache)
-(puthash "Xbca19483a2b440622a5979df87da2cab01ce9e9e" 1474362411 org-publish-cache)
+(puthash "Xbca19483a2b440622a5979df87da2cab01ce9e9e" 1474509566 org-publish-cache)
